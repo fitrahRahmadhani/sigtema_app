@@ -18,9 +18,10 @@ use Livewire\Component;
 class Login extends Component
 {
     #[Validate('required', message: "Kolom email tidak boleh kosong")]
+    #[Validate('email', message: "Format email salah")]
     public string $email = '';
 
-    #[Validate('required|string')]
+    #[Validate('required', message: "Kolom password tidak boleh kosong")]
     public string $password = '';
 
     #[Validate('required', message: 'Verifikasi bahwa Anda bukan robot')]
