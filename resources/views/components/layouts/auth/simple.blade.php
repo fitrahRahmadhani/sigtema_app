@@ -3,20 +3,33 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white antialiased dark:bg-linear-to-b dark:from-neutral-950 dark:to-neutral-900">
-        <div class="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-            <div class="flex w-full max-w-sm flex-col gap-2">
-                <a href="{{ route('home') }}" class="flex flex-col items-center gap-2 font-medium" wire:navigate>
-                    <span class="flex h-9 w-9 mb-1 items-center justify-center rounded-md">
-                        <x-app-logo-icon class="size-9 fill-current text-black dark:text-white" />
-                    </span>
-                    <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
-                </a>
-                <div class="flex flex-col gap-6">
-                    {{ $slot }}
-                </div>
+    <body class="min-h-screen flex flex-col antialiased bg-primary-gray">
+        <header class="h-28 w-full flex justify-center items-center bg-secondary-gray relative z-10">
+            <img
+                src="{{ asset('assets/logo/sig-main-logo.png') }}"
+                class="h-14 mx-auto"
+                alt="Logo SIG">
+        </header>
+
+        <main class="flex-1 relative bg-primary-gray flex items-center justify-center overflow-hidden">
+            <!-- Background Image -->
+            <div class="absolute inset-0 w-full h-full">
+                <img
+                    src="{{ asset('assets/background/bg-auth.png') }}"
+                    class="w-full h-full object-cover"
+                    alt="Background">
             </div>
-        </div>
+
+            <!-- Content -->
+            <div class="relative z-10 w-full px-4">
+                {{ $slot }}
+            </div>
+        </main>
+
+        <footer class="h-12 flex justify-center text-xs md:text-sm items-center rounded-t-full w-full color-gradient relative z-10">
+            <p class="text-white">Copyright © 2025 SIG X Airlangga Psych Internship.</p>
+        </footer>
+
         @fluxScripts
     </body>
 </html>

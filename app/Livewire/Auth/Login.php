@@ -17,11 +17,14 @@ use Livewire\Component;
 #[Layout('components.layouts.auth')]
 class Login extends Component
 {
-    #[Validate('required|string|email')]
+    #[Validate('required', message: "Kolom email tidak boleh kosong")]
     public string $email = '';
 
     #[Validate('required|string')]
     public string $password = '';
+
+    #[Validate('required', message: 'Verifikasi bahwa Anda bukan robot')]
+    public string $gRecaptchaResponse = '';
 
     public bool $remember = false;
 
@@ -99,6 +102,6 @@ class Login extends Component
      */
     protected function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+        return Str::transliterate(Str::lower($this->email) . '|' . request()->ip());
     }
 }
