@@ -3,16 +3,16 @@
 namespace App\Livewire\Auth;
 
 use App\Models\User;
-use Illuminate\Auth\Events\Lockout;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\Session;
+use Livewire\Component;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Features;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
-use Livewire\Component;
+use Illuminate\Auth\Events\Lockout;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\ValidationException;
 
 #[Layout('components.layouts.auth')]
 class Login extends Component
@@ -28,7 +28,6 @@ class Login extends Component
     public string $gRecaptchaResponse = '';
 
     public bool $remember = false;
-
     /**
      * Handle an incoming authentication request.
      */
