@@ -16,7 +16,7 @@
         {{-- Nama dan email user --}}
         <div class="flex flex-col items-end">
             <p class="font-bold">Al Mukarom Sukidi</p>
-            <p class="text-sm">sukidi@sig.id</p>
+            <p class="text-sm text-gray-500">sukidi@sig.id</p>
         </div>
 
         {{-- Foto profile --}}
