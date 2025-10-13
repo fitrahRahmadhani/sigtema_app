@@ -1,4 +1,4 @@
-<flux:header class="bg-secondary-gray h-24">
+<flux:header class="bg-secondary-gray h-24 drop-shadow-lg">
     {{-- Sidebar Toggle --}}
     {{-- Toggle untuk membuka dan menutup sidebar pada layar kecil --}}
     <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
