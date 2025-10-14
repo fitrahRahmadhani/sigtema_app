@@ -68,7 +68,9 @@
                 <div class="flex-1 bg-yellow-200"></div>
                 <div class="w-full">
                     <button class="w-full py-2 text-center">
-                        <a href="" class="font-medium text-gray-400 hover:text-gray-600">See more</a>
+                        <a href="{{ route('career-path') }}" class="font-medium text-gray-400 hover:text-gray-600">
+                            See more
+                        </a>
                     </button>
                 </div>
             </div>
