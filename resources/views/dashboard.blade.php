@@ -83,145 +83,119 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('livewire:navigated', () => {
+            renderCharts();
+        });
+
+        function renderCharts() {
+            // Cegah duplikasi chart jika user berpindah halaman
+            if (window.myChartInstance) {
+                window.myChartInstance.destroy();
+            }
+            if (window.myDoughnutInstance) {
+                window.myDoughnutInstance.destroy();
+            }
+
+            // Line Chart
+            const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+            const data = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Team Performance',
+                        data: [65, 59, 80, 81, 56, 55, 40],
+                        borderColor: 'rgb(148 37 42)',
+                        backgroundColor: 'rgba(148, 37, 42, 0.2)',
+                        tension: 0,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    },
+                    {
+                        label: 'Department Performance',
+                        data: [28, 48, 40, 19, 86, 27, 90],
+                        borderColor: 'rgb(230 84 91)',
+                        backgroundColor: 'rgba(230, 84, 91, 0.2)',
+                        tension: 0,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    },
+                    {
+                        label: 'Units Performance',
+                        data: [36, 21, 33, 45, 68, 79, 24],
+                        borderColor: 'rgb(188 76 71)',
+                        backgroundColor: 'rgba(188, 76, 71, 0.2)',
+                        tension: 0,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    },
+                ],
+            };
+
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: { usePointStyle: true, pointStyle: 'rectRounded' },
+                        },
+                    },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 20 } } },
+                },
+            };
+
+            const ctx = document.getElementById('myChart');
+            if (ctx) {
+                window.myChartInstance = new Chart(ctx, config);
+            }
+
+            // Doughnut Chart
+            const doughnutData = {
+                labels: ['Management', 'Engineering', 'Sales', 'Marketing', 'HR'],
+                datasets: [
+                    {
+                        label: 'Employees by Department',
+                        data: [300, 1200, 800, 500, 200],
+                        backgroundColor: [
+                            'rgb(148, 37, 42)',
+                            'rgb(230, 84, 91)',
+                            'rgb(188, 76, 71)',
+                            'rgb(245, 158, 161)',
+                            'rgb(255, 205, 210)',
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                        hoverOffset: 10,
+                    },
+                ],
+            };
+
+            const doughnutCtx = document.getElementById('EmployeesDoughnutChart');
+            if (doughnutCtx) {
+                window.myDoughnutInstance = new Chart(doughnutCtx, {
+                    type: 'doughnut',
+                    data: doughnutData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom',
+                                labels: { usePointStyle: true, pointStyle: 'circle' },
+                            },
+                        },
+                    },
+                });
+            }
+        }
+
+        // Jalankan juga saat load pertama (untuk hard reload)
+        document.addEventListener('DOMContentLoaded', renderCharts);
+    </script>
 </x-layouts.app>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Line Chart
-        const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-        const data = {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Team Performance',
-                    data: [65, 59, 80, 81, 56, 55, 40],
-                    fill: false,
-                    borderColor: 'rgb(148 37 42)',
-                    backgroundColor: 'rgba(148, 37, 42, 0.2)',
-                    tension: 0,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                },
-                {
-                    label: 'Department Performance',
-                    data: [28, 48, 40, 19, 86, 27, 90],
-                    fill: false,
-                    borderColor: 'rgb(230 84 91)',
-                    backgroundColor: 'rgba(230, 84, 91, 0.2)',
-                    tension: 0,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                },
-                {
-                    label: 'Units Performance',
-                    data: [36, 21, 33, 45, 68, 79, 24],
-                    fill: false,
-                    borderColor: 'rgb(188 76 71)',
-                    backgroundColor: 'rgba(188, 76, 71, 0.2)',
-                    tension: 0,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                },
-            ],
-        };
-
-        const config = {
-            type: 'line',
-            data: data,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            pointStyle: 'rectRounded',
-                        },
-                    },
-                    title: {
-                        display: false,
-                    },
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 20,
-                        },
-                    },
-                },
-            },
-        };
-
-        // Render Line Chart
-        const ctx = document.getElementById('myChart').getContext('2d');
-        const myChart = new Chart(ctx, config);
-
-        // Doughnut Chart Configuration
-        const doughnutData = {
-            labels: ['Management', 'Engineering', 'Sales', 'Marketing', 'HR'],
-            datasets: [
-                {
-                    label: 'Employees by Department',
-                    data: [300, 1200, 800, 500, 200],
-                    backgroundColor: [
-                        'rgb(148, 37, 42)',
-                        'rgb(230, 84, 91)',
-                        'rgb(188, 76, 71)',
-                        'rgb(245, 158, 161)',
-                        'rgb(255, 205, 210)',
-                    ],
-                    borderColor: '#ffffff',
-                    borderWidth: 2,
-                    hoverOffset: 10,
-                },
-            ],
-        };
-
-        const doughnutConfig = {
-            type: 'doughnut',
-            data: doughnutData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: {
-                    padding: 10,
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            pointStyle: 'circle',
-                            padding: 12,
-                            font: {
-                                size: 12,
-                            },
-                        },
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                let label = context.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                label += context.parsed + ' employees';
-                                return label;
-                            },
-                        },
-                    },
-                },
-            },
-        };
-
-        // Render Doughnut Chart
-        const doughnutCtx = document.getElementById('EmployeesDoughnutChart').getContext('2d');
-        const employeesDoughnutChart = new Chart(doughnutCtx, doughnutConfig);
-    });
-</script>

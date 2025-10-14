@@ -4,6 +4,7 @@ namespace App\Livewire\Auth;
 
 use App\Models\User;
 use Livewire\Component;
+use Livewire\Attributes\Title;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Features;
 use Livewire\Attributes\Layout;
@@ -17,6 +18,8 @@ use Illuminate\Validation\ValidationException;
 #[Layout('components.layouts.auth')]
 class Login extends Component
 {
+    #[Title('Login')]
+
     #[Validate('required', message: "Kolom email tidak boleh kosong")]
     #[Validate('email', message: "Format email salah")]
     public string $email = '';
