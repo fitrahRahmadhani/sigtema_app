@@ -14,6 +14,7 @@ Route::view('dashboard', 'dashboard')
     ->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('career-path', App\Livewire\Pages\CareerPath::class)->name('career-path');
     Route::redirect('settings', 'settings/profile');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
