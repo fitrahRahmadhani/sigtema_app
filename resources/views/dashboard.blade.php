@@ -5,14 +5,18 @@
             {{-- Start cards data row 1 --}}
             <div class="order-1 col-span-3 grid grid-cols-2 gap-4 md:order-1 md:col-span-2">
                 <div class="flex gap-4 rounded-lg border border-gray-300 bg-white p-4">
-                    <div class="color-gradient h-10 w-10 rounded-full"></div>
+                    <div class="color-gradient flex h-10 w-10 items-center justify-center rounded-full">
+                        <img src="{{ asset('assets/icon/total_employees.png') }}" class="w-7" alt="" />
+                    </div>
                     <div class="flex flex-col">
                         <p class="text-primary-text text-5xl font-bold">3000</p>
                         <p class="mt-3 text-gray-500">Total Employees</p>
                     </div>
                 </div>
                 <div class="flex gap-4 rounded-lg border border-gray-300 bg-white p-4">
-                    <div class="color-gradient h-10 w-10 rounded-full"></div>
+                    <div class="color-gradient flex h-10 w-10 items-center justify-center rounded-full">
+                        <img src="{{ asset('assets/icon/vacant_positions.png') }}" class="w-6" alt="" />
+                    </div>
                     <div class="flex flex-col">
                         <p class="text-primary-text text-5xl font-bold">4</p>
                         <p class="mt-3 text-gray-500">Vacant Positions</p>
@@ -36,14 +40,18 @@
             {{-- Start cards data row 2 --}}
             <div class="order-2 col-span-3 grid grid-cols-2 gap-4 md:order-3 md:col-span-2">
                 <div class="flex gap-4 rounded-lg border border-gray-300 bg-white p-4">
-                    <div class="color-gradient h-10 w-10 rounded-full"></div>
+                    <div class="color-gradient flex h-10 w-10 items-center justify-center rounded-full">
+                        <img src="{{ asset('assets/icon/new_employees.png') }}" class="w-4" alt="" />
+                    </div>
                     <div class="flex flex-col">
                         <p class="text-primary-text text-5xl font-bold">10</p>
                         <p class="mt-3 text-gray-500">New Employees</p>
                     </div>
                 </div>
                 <div class="flex gap-4 rounded-lg border border-gray-300 bg-white p-4">
-                    <div class="color-gradient h-10 w-10 rounded-full"></div>
+                    <div class="color-gradient flex h-10 w-10 items-center justify-center rounded-full">
+                        <img src="{{ asset('assets/icon/resigned_employees.png') }}" class="w-4" alt="" />
+                    </div>
                     <div class="flex flex-col">
                         <p class="text-primary-text text-5xl font-bold">20</p>
                         <p class="mt-3 text-gray-500">Resigned Employees</p>
@@ -55,8 +63,14 @@
 
         <div class="grid h-full w-full grid-cols-3 gap-4">
             {{-- Employees Table --}}
-            <div class="col-span-2 h-full w-full rounded-xl border border-gray-300 bg-white p-4">
+            <div class="col-span-2 flex h-full w-full flex-col rounded-xl border border-gray-300 bg-white p-4">
                 <h6 class="text-primary-text mb-4 text-xl font-bold">Employees</h6>
+                <div class="flex-1 bg-yellow-200"></div>
+                <div class="w-full">
+                    <button class="w-full py-2 text-center">
+                        <a href="" class="font-medium text-gray-400 hover:text-gray-600">See more</a>
+                    </button>
+                </div>
             </div>
 
             {{-- Doughnut Chart --}}
