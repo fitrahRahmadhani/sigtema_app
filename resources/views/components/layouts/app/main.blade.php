@@ -2,6 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
         @include('partials.head')
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body class="bg-primary-gray min-h-screen">
         <!-- Start Sidebar Dashboard -->
