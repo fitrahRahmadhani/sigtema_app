@@ -46,7 +46,7 @@
         @apply bg-linear-to-r from-[#721d21] to-[#000000];
     }
     .color-gradient-reversed {
-        @apply bg-linear-to-r from-[#000000] to-[##721d21];
+        @apply bg-linear-to-r from-[#000000] to-[#721d21];
     }
 }
 
