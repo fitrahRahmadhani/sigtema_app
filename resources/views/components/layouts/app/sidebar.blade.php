@@ -36,7 +36,7 @@
         {{-- Career Path Menu with Dropdown --}}
         <div x-data="{ open: false }">
             <div class="hover:text-primary-text flex w-full items-center gap-2 rounded-md p-2 px-4 hover:bg-gray-100">
-                <a href="" class="flex flex-1 items-center gap-2" wire:navigate>
+                <a href="{{ route('career-path') }}" class="flex flex-1 items-center gap-2" wire:navigate>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -86,7 +86,11 @@
                 <button
                     class="hover:text-primary-text flex w-full items-center gap-2 rounded-md p-2 px-3 hover:bg-gray-100"
                 >
-                    <a href="" class="flex w-full items-center gap-2" wire:navigate>
+                    <a
+                        href="{{ route('vacant-positions.index') }}"
+                        class="flex w-full items-center gap-2"
+                        wire:navigate
+                    >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
