@@ -54,6 +54,28 @@
             class="absolute top-24 right-6 h-fit w-[200px] rounded-lg border border-zinc-200 bg-white p-2 text-gray-500 shadow-lg"
             style="display: none"
         >
+            {{-- Button untuk profile --}}
+            <button class="hover:text-primary-text flex w-full items-center gap-2 rounded-md p-2 hover:bg-gray-100">
+                <a href="" class="flex w-full items-center gap-2">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                        />
+                    </svg>
+
+                    <p>Profil Saya</p>
+                </a>
+            </button>
+
             {{-- Button untuk ganti password --}}
             <button class="hover:text-primary-text flex w-full items-center gap-2 rounded-md p-2 hover:bg-gray-100">
                 <a href="" class="flex w-full items-center gap-2">

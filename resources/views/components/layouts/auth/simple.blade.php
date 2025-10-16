@@ -31,7 +31,7 @@
         <footer
             class="color-gradient relative z-10 flex h-12 w-full items-center justify-center rounded-t-full text-xs md:text-sm"
         >
-            <p class="text-white">Copyright © 2025 SIG X Airlangga Psych Internship.</p>
+            <p class="text-white">Copyright &copy; {{ now()->year }} Unit of Opr HC, GA & Asset Management</p>
         </footer>
 
         @fluxScripts
