@@ -31,6 +31,7 @@ class Login extends Component
     public string $gRecaptchaResponse = '';
 
     public bool $remember = false;
+
     /**
      * Handle an incoming authentication request.
      */
@@ -68,11 +69,21 @@ class Login extends Component
     {
         $user = Auth::getProvider()->retrieveByCredentials(['email' => $this->email, 'password' => $this->password]);
 
-        if (! $user || ! Auth::getProvider()->validateCredentials($user, ['password' => $this->password])) {
+        // Jika email tidak ditemukan
+        if (! $user) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'email' => 'Email tidak terdaftar dalam sistem kami.',
+            ]);
+        }
+
+        // Jika password salah
+        if (! Auth::getProvider()->validateCredentials($user, ['password' => $this->password])) {
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'password' => 'Password yang Anda masukkan salah.',
             ]);
         }
 
@@ -91,12 +102,10 @@ class Login extends Component
         event(new Lockout(request()));
 
         $seconds = RateLimiter::availableIn($this->throttleKey());
+        $minutes = ceil($seconds / 60);
 
         throw ValidationException::withMessages([
-            'email' => __('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
+            'email' => "Terlalu banyak percobaan login gagal. Silakan coba lagi dalam {$minutes} menit.",
         ]);
     }
 

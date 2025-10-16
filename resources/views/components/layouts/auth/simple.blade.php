@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html
+    lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    {{-- class="dark" --}}
+    {{-- Aktifkan class="dark" jika ingin menggunakan dark mode --}}
+>
     <head>
         @include('partials.head')
     </head>
