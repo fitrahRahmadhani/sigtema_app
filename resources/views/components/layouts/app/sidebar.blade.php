@@ -158,7 +158,7 @@
 
         {{-- Copyright --}}
         <p class="pb-4 text-center text-xs text-gray-400 italic">
-            &copy; {{ now()->year }} SIG X Airlangga Psych Internship
+            &copy; {{ now()->year }} Unit of Opr HC, GA & Asset Management
         </p>
     </div>
 </flux:sidebar>
