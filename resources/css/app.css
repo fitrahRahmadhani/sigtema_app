@@ -62,7 +62,7 @@
 
 @layer components {
     .navbar {
-        @apply hover:bg-gray-100 hover:text-gray-700
+        @apply hover:bg-gray-100 hover:text-gray-700;
     }
     .active-navbar {
         @apply bg-gray-200 font-semibold text-gray-600;

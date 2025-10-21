@@ -200,7 +200,8 @@
             <!-- List Items -->
             @forelse ($positions as $position)
                 <!-- Desktop View -->
-                <div
+                <a
+                    href="{{ route('vacant-positions.show') }}"
                     class="hidden rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid md:grid-cols-12 md:gap-4"
                 >
                     <div class="col-span-3 flex flex-col justify-center">
@@ -242,10 +243,11 @@
                             </span>
                         @endif
                     </div>
-                </div>
+                </a>
 
                 <!-- Mobile View -->
-                <div
+                <a
+                    href="{{ route('vacant-positions.show') }}"
                     class="block rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
                 >
                     <div class="space-y-3">
@@ -296,7 +298,7 @@
                             @endif
                         </div>
                     </div>
-                </div>
+                </a>
             @empty
                 <div class="rounded-lg border border-gray-200 bg-white p-8 text-center">
                     <svg
