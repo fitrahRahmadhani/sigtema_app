@@ -10,8 +10,8 @@
     <div class="relative h-full w-full rounded-xl bg-white p-6 md:p-10">
         <!-- Header -->
         <div class="mb-8 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100">
+            <div class="flex items-start gap-4">
+                <div class="mt-2 flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -28,19 +28,20 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Candidates Match</h1>
-                    <p class="mt-1 text-sm text-gray-600">{{ count($candidates) }} candidates available</p>
+                    <p class="font-semibold text-gray-600 md:mt-1">Candidates match</p>
+                    <h6 class="text-2xl font-bold text-gray-900 md:text-3xl">Senior Manager Operations</h6>
+                    <p class="text-sm text-gray-600 md:mt-1">{{ count($candidates) }} candidates available</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="text-sm text-gray-600">Selected:</span>
-                <span class="rounded-full bg-[#721d21] px-3 py-1 text-sm font-semibold text-white">
+            <div class="flex flex-col items-center justify-end gap-1 md:flex-row md:gap-2">
+                <span class="block text-sm text-gray-600 md:inline">Selected:</span>
+                <span class="block rounded-full bg-[#721d21] px-3 py-1 text-sm font-semibold text-white md:inline">
                     {{ count($selectedCandidates) }} / 5
                 </span>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 gap-6 pb-24 md:grid-cols-2 lg:grid-cols-3">
+        <div id="candidate-match" class="grid grid-cols-1 gap-6 pb-24 md:grid-cols-2 lg:grid-cols-3">
             @foreach ($candidates as $index => $candidate)
                 @php
                     $isSelected = in_array($candidate['id'], $selectedCandidates);
@@ -127,20 +128,56 @@
                 x-transition:leave="transition duration-200 ease-in"
                 x-transition:leave-start="translate-y-0 opacity-100"
                 x-transition:leave-end="translate-y-8 opacity-0"
-                class="fixed right-0 bottom-0 left-0 z-10 flex items-center justify-center bg-gradient-to-t from-white via-white/95 to-transparent px-4 pt-8 pb-6"
+                class="fixed right-0 bottom-0 left-0 z-10 flex items-center justify-center bg-gradient-to-t from-white via-white/95 to-transparent px-4 pt-20 pb-6"
             >
                 <div class="flex max-w-7xl items-center justify-center gap-4 lg:pl-72">
                     <button
+                        type="button"
                         wire:click="$set('selectedCandidates', [])"
-                        class="rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 shadow-md transition-all hover:bg-gray-50 hover:shadow-lg active:scale-95"
+                        wire:loading.attr="disabled"
+                        wire:target="compareSelected"
+                        class="rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 shadow-md transition-all hover:bg-gray-50 hover:shadow-lg active:scale-95 disabled:opacity-50"
                     >
                         Clear Selection
                     </button>
                     <button
-                        class="rounded-lg bg-[#721d21] px-8 py-3 text-sm font-medium text-white shadow-md transition-all hover:bg-[#5a1719] hover:shadow-lg active:scale-95"
+                        type="button"
+                        wire:click="compareSelected"
+                        wire:loading.attr="disabled"
+                        wire:target="compareSelected"
+                        class="flex items-center justify-center gap-2 rounded-lg bg-[#721d21] px-8 py-3 text-sm font-medium text-white shadow-md transition-all hover:bg-[#5a1719] hover:shadow-lg active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
                     >
-                        Compare {{ count($selectedCandidates) }} Selected
-                        Candidate{{ count($selectedCandidates) > 1 ? 's' : '' }}
+                        <!-- Loading Spinner -->
+                        <svg
+                            wire:loading
+                            wire:target="compareSelected"
+                            class="h-5 w-5 animate-spin"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                class="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                stroke-width="4"
+                            ></circle>
+                            <path
+                                class="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                        </svg>
+
+                        <!-- Text  -->
+                        <span wire:loading.remove wire:target="compareSelected">
+                            Compare {{ count($selectedCandidates) }} Selected
+                            Candidate{{ count($selectedCandidates) > 1 ? 's' : '' }}
+                        </span>
+
+                        <span wire:loading wire:target="compareSelected">Comparing...</span>
                     </button>
                 </div>
             </div>
