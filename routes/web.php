@@ -14,10 +14,20 @@ Route::view('dashboard', 'dashboard')
     ->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
+    // Career Path
     Route::get('career-path', App\Livewire\Pages\CareerPath::class)->name('career-path');
+
+    // Vacant Positions
     Route::get('career-path/vacant-positions', App\Livewire\Pages\VacantPositions\Index::class)->name('vacant-positions.index');
     Route::get('career-path/vacant-positions/show', App\Livewire\Pages\VacantPositions\Show::class)->name('vacant-positions.show');
+
+    // Candidates Comparison
+    Route::get('career-path/candidates-comparison/index', App\Livewire\Pages\CandidatesComparison\Index::class)->name('vacant-positions.show');
     Route::redirect('settings', 'settings/profile');
+
+    // Employees Profile
+    Route::get('career-path/employees-profile', App\Livewire\Pages\EmployeesProfile\Index::class)->name('employees-profile.index');
+    Route::get('career-path/employees-profile/show', App\Livewire\Pages\EmployeesProfile\Show::class)->name('employees-profile.show');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');

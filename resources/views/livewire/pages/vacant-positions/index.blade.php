@@ -6,7 +6,7 @@
         <flux:breadcrumbs.item>Vacant Positions</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Main Card -->
+    <!-- Content -->
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
         <!-- Header -->
         <div class="mb-8 flex items-center gap-4">
@@ -188,13 +188,13 @@
         <div class="space-y-3 overflow-x-auto">
             <!-- Column Headers - Hidden on mobile -->
             <div
-                class="hidden place-items-center justify-items-start gap-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 md:grid md:grid-cols-12"
+                class="color-gradient hidden place-items-center justify-items-start gap-4 rounded-lg px-4 py-3 text-white md:grid md:grid-cols-12"
             >
-                <div class="col-span-3 text-sm font-semibold text-gray-700">Nama Posisi</div>
-                <div class="col-span-1 text-sm font-semibold text-gray-700">Kode Posisi</div>
-                <div class="col-span-3 text-sm font-semibold text-gray-700">Unit Kerja</div>
-                <div class="col-span-3 text-sm font-semibold text-gray-700">Departemen</div>
-                <div class="col-span-2 text-sm font-semibold text-gray-700">Kandidat</div>
+                <div class="col-span-3 text-sm font-semibold">Nama Posisi</div>
+                <div class="col-span-1 text-sm font-semibold">Kode Posisi</div>
+                <div class="col-span-3 text-sm font-semibold">Unit Kerja</div>
+                <div class="col-span-3 text-sm font-semibold">Departemen</div>
+                <div class="col-span-2 text-sm font-semibold">Kandidat</div>
             </div>
 
             <!-- List Items -->
