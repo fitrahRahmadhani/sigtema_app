@@ -38,11 +38,11 @@
         {{-- Career Path Menu with Dropdown --}}
         <div
             x-data="{
-                open: {{ request()->routeIs('career-path', 'vacant-positions.*') ? 'true' : 'false' }},
+                open: {{ request()->routeIs('career-path', 'vacant-positions.*', 'candidates-comparison.*', 'employees-profile.*') ? 'true' : 'false' }},
             }"
         >
             <div
-                class="{{ request()->routeIs('career-path', 'vacant-positions.*') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
+                class="{{ request()->routeIs('career-path', 'vacant-positions.*', 'candidates-comparison.*', 'employees-profile.*') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
             >
                 <a href="{{ route('career-path') }}" class="flex flex-1 items-center gap-2" wire:navigate>
                     <svg
@@ -63,8 +63,8 @@
                 </a>
                 <button
                     @click="open = !open"
-                    class="p-1 transition-transform duration-200"
-                    :class="{ 'rotate-180': open }"
+                    class="rounded-md p-1 transition-transform duration-200 hover:bg-gray-300"
+                    :class="{ 'rotate-180 bg-gray-300 ': open }"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -136,9 +136,9 @@
                 </a>
 
                 <a
-                    href="#"
+                    href="{{ route('employees-profile.index') }}"
                     wire:navigate
-                    class="navbar flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
+                    class="{{ request()->routeIs('employees-profile.*') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
