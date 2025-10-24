@@ -436,7 +436,9 @@
                         </thead>
                         <tbody>
                             <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                <td class="w-1/12 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">2025</td>
+                                <td class="w-1/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
+                                    2025
+                                </td>
                                 <td class="px-3 py-2 text-gray-600 sm:px-4">K1</td>
                             </tr>
                         </tbody>
