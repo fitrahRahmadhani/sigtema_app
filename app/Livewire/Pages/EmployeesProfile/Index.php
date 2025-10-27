@@ -5,10 +5,16 @@ namespace App\Livewire\Pages\EmployeesProfile;
 use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app')]
 class Index extends Component
 {
     use WithPagination;
+
+    #[Title('Employees Profile')]
+
 
     #[Url(as: 'q')]
     public $search = '';

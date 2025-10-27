@@ -9,7 +9,7 @@ use Livewire\Attributes\Layout;
 #[Layout('components.layouts.app')]
 class CareerPath extends Component
 {
-    #[Title('career path')]
+    #[Title('Career Path')]
 
     public function render()
     {
