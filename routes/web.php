@@ -22,7 +22,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('career-path/vacant-positions/show', App\Livewire\Pages\VacantPositions\Show::class)->name('vacant-positions.show');
 
     // Candidates Comparison
-    Route::get('career-path/candidates-comparison/index', App\Livewire\Pages\CandidatesComparison\Index::class)->name('vacant-positions.show');
+    Route::get('career-path/candidates-comparison/index', App\Livewire\Pages\CandidatesComparison\Index::class)->name('candidates-comparison.index');
     Route::redirect('settings', 'settings/profile');
 
     // Employees Profile

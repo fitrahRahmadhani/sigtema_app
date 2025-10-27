@@ -114,9 +114,9 @@
                 </a>
 
                 <a
-                    href="#"
+                    href="{{ route('candidates-comparison.index') }}"
                     wire:navigate
-                    class="navbar flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
+                    class="{{ request()->routeIs('candidates-comparison.*') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

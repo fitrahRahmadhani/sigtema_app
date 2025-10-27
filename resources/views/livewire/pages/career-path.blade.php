@@ -45,7 +45,10 @@
                     </div>
                 </div>
                 <div class="flex h-[8%] w-full items-center justify-center">
-                    <a href="" class="color-gradient mx-auto rounded-lg px-8 py-4">
+                    <a
+                        href="{{ route('candidate-comparison.index') }}"
+                        class="color-gradient mx-auto rounded-lg px-8 py-4"
+                    >
                         <button class="font-medium text-white">See More</button>
                     </a>
                 </div>
@@ -64,7 +67,10 @@
                     </div>
                 </div>
                 <div class="flex h-[8%] w-full items-center justify-center">
-                    <a href="" class="color-gradient mx-auto rounded-lg px-8 py-4">
+                    <a
+                        href="{{ route('employees-profile.index') }}"
+                        class="color-gradient mx-auto rounded-lg px-8 py-4"
+                    >
                         <button class="font-medium text-white">See More</button>
                     </a>
                 </div>
