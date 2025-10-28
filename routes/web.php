@@ -29,6 +29,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('career-path/employees-profile', App\Livewire\Pages\EmployeesProfile\Index::class)->name('employees-profile.index');
     Route::get('career-path/employees-profile/show', App\Livewire\Pages\EmployeesProfile\Show::class)->name('employees-profile.show');
 
+    // Organization Structure
+    Route::get('organization-structure', App\Livewire\Pages\OrgStructure\Index::class)->name('organization-structure.index');
+
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
