@@ -30,7 +30,7 @@
             @class(["pointer-events-auto relative w-full max-w-xs transform transition duration-300 ease-in-out"])
         >
             <div
-                class="{{ $alignment->is("bottom") ? "mt-3" : "mb-3" }} flex w-full gap-3 rounded-lg bg-white p-2 shadow-lg select-none dark:border dark:border-neutral-500 dark:bg-neutral-600"
+                class="{{ $alignment->is("bottom") ? "mt-3" : "mb-3" }} flex w-full gap-3 rounded-lg bg-white p-3 shadow-lg select-none dark:border dark:border-neutral-500 dark:bg-neutral-600"
             >
                 <div
                     class="h-fit rounded-md border p-1"
@@ -94,14 +94,27 @@
                         </svg>
                     </template>
                 </div>
-                <div class="w-[85%]">
-                    <p x-text="toast.message" class="text-neutral-600 dark:text-neutral-300"></p>
+                <div class="min-w-0 flex-1">
+                    {{-- Header (Title) - Default berdasarkan type --}}
+                    <p
+                        x-text="
+                            toast.select({
+                                error: 'Oops! Terjadi Kesalahan',
+                                info: 'Informasi untuk Anda',
+                                success: 'Yeay! Berhasil',
+                                warning: 'Perlu Perhatian',
+                            })
+                        "
+                        class="mb-0.5 font-semibold text-neutral-900 dark:text-white"
+                    ></p>
+                    {{-- Sub-header (Message) --}}
+                    <p x-text="toast.message" class="text-sm text-neutral-600 dark:text-neutral-300"></p>
                 </div>
                 @if ($closeable)
                     <button
                         @click="toast.dispose()"
                         aria-label="@lang("close")"
-                        class="{{ $alignment->is("bottom") ? "top-3" : "top-0" }} h-fit rounded-md p-2 text-gray-500 hover:bg-black/5 focus:outline-hidden focus:outline-none rtl:right-auto rtl:left-0 dark:bg-white/5 dark:text-gray-300"
+                        class="h-fit flex-shrink-0 rounded-md p-1.5 text-gray-500 hover:bg-black/5 focus:outline-hidden focus:outline-none dark:bg-white/5 dark:text-gray-300"
                     >
                         <svg
                             class="h-4 w-4"
