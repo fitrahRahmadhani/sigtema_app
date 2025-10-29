@@ -11,14 +11,16 @@
         <!-- Header -->
         <div class="mb-8 flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100">
+                <div
+                    class="color-gradient flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-white"
+                >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke-width="1.5"
                         stroke="currentColor"
-                        class="size-5"
+                        class="size-6"
                     >
                         <path
                             stroke-linecap="round"
