@@ -10,7 +10,7 @@
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
         <!-- Header -->
         <div class="mb-8 flex items-center gap-4">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100">
+            <div class="color-gradient flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-white">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"

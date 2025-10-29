@@ -181,6 +181,25 @@
                                     <p class="line-clamp-1 text-sm text-gray-600 lg:text-base">Business</p>
                                 </div>
                             </a>
+
+                            {{-- Position Item 5 --}}
+                            <a
+                                href="{{ route('vacant-positions.show') }}"
+                                class="grid grid-cols-12 gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 transition-all hover:border-[#721d21] hover:shadow-md"
+                            >
+                                <div class="col-span-4 flex items-center">
+                                    <p class="line-clamp-2 text-sm font-medium text-gray-900 lg:text-base">Sales</p>
+                                </div>
+                                <div class="col-span-2 flex items-center">
+                                    <p class="text-sm font-medium text-gray-700 lg:text-base">SL-005</p>
+                                </div>
+                                <div class="col-span-3 flex items-center">
+                                    <p class="line-clamp-1 text-sm text-gray-600 lg:text-base">Sales</p>
+                                </div>
+                                <div class="col-span-3 flex items-center">
+                                    <p class="line-clamp-1 text-sm text-gray-600 lg:text-base">Business</p>
+                                </div>
+                            </a>
                         </div>
                     </div>
 
@@ -299,7 +318,10 @@
                 {{-- See More Button --}}
                 <div class="mt-4 w-full border-t border-gray-200 pt-3">
                     <button class="w-full rounded-lg py-2 text-center transition-colors hover:bg-gray-50">
-                        <a href="{{ route('career-path') }}" class="font-medium text-gray-600 hover:text-[#721d21]">
+                        <a
+                            href="{{ route('vacant-positions.index') }}"
+                            class="font-medium text-gray-600 hover:text-[#721d21]"
+                        >
                             See more
                         </a>
                     </button>
