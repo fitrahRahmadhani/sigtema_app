@@ -35,8 +35,8 @@
             </div>
 
             <!-- Add Company Button -->
-            <button
-                wire:click="$dispatch('openModal', { component: 'company.create' })"
+            <a
+                href="{{ route('companies.create') }}"
                 class="color-gradient inline-flex items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
             >
                 <svg
@@ -50,7 +50,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
                 Add Company
-            </button>
+            </a>
         </div>
 
         <!-- Search and Filter Section -->
