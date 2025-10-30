@@ -6,5 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
-    //
+    protected $guarded = [];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    public function admin()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

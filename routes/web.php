@@ -36,6 +36,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('companies', App\Livewire\Pages\Companies\Index::class)->name('companies.index');
     Route::get('companies/show', App\Livewire\Pages\Companies\Show::class)->name('companies.show');
     Route::get('companies/create', App\Livewire\Pages\Companies\Create::class)->name('companies.create');
+    Route::get('companies/{company:slug}/edit', App\Livewire\Pages\Companies\Edit::class)->name('companies.edit');
+
+    Route::get('users', App\Livewire\Pages\Users\Index::class)->name('users.index');
+
+    Route::get('role-permissions', App\Livewire\Pages\RolePermission\Index::class)->name('role-permissions.index');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
