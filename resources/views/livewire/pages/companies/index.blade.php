@@ -147,7 +147,7 @@
                     <div class="col-span-1 flex items-center">
                         @if ($company->logo_path)
                             <img
-                                src="{{ asset($company->logo_path) }}"
+                                src="{{ \Storage::url($company->logo_path) }}"
                                 alt="{{ $company->name }}"
                                 class="h-12 w-12 rounded-lg border border-gray-200 object-cover"
                             />
@@ -193,7 +193,7 @@
                             <div class="flex items-center gap-2">
                                 @if ($company->admin->profile_path)
                                     <img
-                                        src="{{ Storage::url($company->admin->profile_path) }}"
+                                        src="{{ \Storage::url($company->admin->profile_path) }}"
                                         alt="{{ $company->admin->name }}"
                                         class="h-8 w-8 rounded-full border-2 border-white shadow-sm"
                                     />
@@ -218,12 +218,21 @@
 
                     <!-- Status -->
                     <div class="col-span-2 flex items-center">
-                        <span
-                            class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800"
-                        >
-                            <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-green-600"></span>
-                            Active
-                        </span>
+                        @if ($company->is_active)
+                            <span
+                                class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800"
+                            >
+                                <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-green-600"></span>
+                                Active
+                            </span>
+                        @else
+                            <span
+                                class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-800"
+                            >
+                                <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-gray-600"></span>
+                                Inactive
+                            </span>
+                        @endif
                     </div>
 
                     <!-- Actions -->
@@ -249,7 +258,7 @@
                             </svg>
                         </button>
                         <button
-                            wire:click="confirmDelete({{ $company->id }})"
+                            wire:click="confirmDelete({{ $company->id }}, '{{ $company->name }}')"
                             class="rounded-lg p-2 text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600"
                             title="Delete"
                         >
@@ -264,7 +273,7 @@
                                 <path
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
-                                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                                 />
                             </svg>
                         </button>
@@ -280,7 +289,7 @@
                         <div class="flex items-start gap-3 border-b border-gray-100 pb-4">
                             @if ($company->logo_path)
                                 <img
-                                    src="{{ Storage::url($company->logo_path) }}"
+                                    src="{{ \Storage::url($company->logo_path) }}"
                                     alt="{{ $company->name }}"
                                     class="h-16 w-16 flex-shrink-0 rounded-lg border border-gray-200 object-cover"
                                 />
@@ -322,7 +331,7 @@
                                 <div class="mt-2 flex items-center gap-3">
                                     @if ($company->admin->profile_path)
                                         <img
-                                            src="{{ Storage::url($company->admin->profile_path) }}"
+                                            src="{{ \Storage::url($company->admin->profile_path) }}"
                                             alt="{{ $company->admin->name }}"
                                             class="h-10 w-10 rounded-full border-2 border-white shadow-sm"
                                         />
@@ -345,12 +354,21 @@
 
                         <!-- Status & Actions -->
                         <div class="flex items-center justify-between border-t border-gray-100 pt-4">
-                            <span
-                                class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800"
-                            >
-                                <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-green-600"></span>
-                                Active
-                            </span>
+                            @if ($company->is_active)
+                                <span
+                                    class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800"
+                                >
+                                    <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-green-600"></span>
+                                    Active
+                                </span>
+                            @else
+                                <span
+                                    class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-800"
+                                >
+                                    <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-gray-600"></span>
+                                    Inactive
+                                </span>
+                            @endif
                             <div class="flex items-center gap-2">
                                 <button
                                     wire:click="edit({{ $company->id }})"
@@ -373,7 +391,7 @@
                                     </svg>
                                 </button>
                                 <button
-                                    wire:click="confirmDelete({{ $company->id }})"
+                                    wire:click="confirmDelete({{ $company->id }}, '{{ $company->name }}')"
                                     class="rounded-lg p-2 text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600"
                                     title="Delete"
                                 >
@@ -388,7 +406,7 @@
                                         <path
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
-                                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                                         />
                                     </svg>
                                 </button>
@@ -425,4 +443,5 @@
             </div>
         @endif
     </div>
+    <x-ui.modals.delete-confirmation />
 </div>

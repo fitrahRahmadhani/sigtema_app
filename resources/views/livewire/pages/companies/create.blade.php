@@ -159,7 +159,7 @@
                     <span class="text-red-900">*</span>
                 </label>
                 <input
-                    type="number"
+                    type="text"
                     id="cocd"
                     wire:model="cocd"
                     placeholder="Enter company code"
@@ -168,6 +168,19 @@
                 @error('cocd')
                     <p class="text-sm text-red-600">{{ $message }}</p>
                 @enderror
+            </div>
+
+            <!-- Is Active Toggle -->
+            <div class="space-y-2">
+                <label class="flex cursor-pointer items-center gap-3">
+                    <input
+                        type="checkbox"
+                        wire:model="is_active"
+                        class="h-5 w-5 rounded border-gray-300 text-red-900 transition focus:ring-2 focus:ring-red-900/20"
+                    />
+                    <span class="text-sm font-medium text-gray-700">Active Company</span>
+                </label>
+                <p class="text-xs text-gray-500">Set whether this company is currently active</p>
             </div>
 
             <!-- Form Actions -->

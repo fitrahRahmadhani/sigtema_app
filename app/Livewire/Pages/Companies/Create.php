@@ -4,10 +4,10 @@ namespace App\Livewire\Pages\Companies;
 
 use App\Models\Company;
 use Livewire\Component;
+use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
-use Masmerise\Toaster\Toaster;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 
 #[Layout('components.layouts.app')]
@@ -23,24 +23,35 @@ class Create extends Component
     #[Validate('required|string|max:255')]
     public $name;
 
-    #[Validate('required|numeric')]
+    #[Validate('required|string|max:255|unique:companies,cocd')]
     public $cocd;
+
+    #[Validate('boolean')]
+    public $is_active = true;
 
     public function save()
     {
         $this->validate();
 
-        $logoPath = $this->logo->store('companies/logos', 'public');
+        // Generate custom path: company-name_YYYYMMDD.extension
+        $date = now()->format('Ymd');
+        $slug = Str::uuid();
+        $extension = $this->logo->getClientOriginalExtension();
+        $filename = "{$slug}_{$date}.{$extension}";
+
+        // Store with custom filename
+        $logoPath = $this->logo->storeAs('companies/logos', $filename, 'public');
 
         Company::create([
-            'logo' => $logoPath,
+            'slug' => $slug,
             'name' => $this->name,
             'cocd' => $this->cocd,
+            'logo_path' => $logoPath,
+            'is_active' => $this->is_active,
         ]);
 
-        Toaster::success('Company created successfully');
 
-        return $this->redirect(route('companies.index'), navigate: true);
+        return redirect()->route('companies.index')->success('Company created successfully.');
     }
 
     public function render()
