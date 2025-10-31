@@ -42,8 +42,8 @@
                 <button
                     type="button"
                     wire:click="cancelDelete"
-                    wire:loading.attr="disabled"
-                    class="absolute top-4 right-4 rounded-lg p-1 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
+                    class="absolute top-4 right-4 rounded-lg p-1 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+                    :disabled="$wire.deleting"
                 >
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -101,10 +101,12 @@
                         type="button"
                         wire:click="delete"
                         wire:loading.attr="disabled"
+                        wire:target="delete"
                         class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                     >
                         <svg
                             wire:loading.remove
+                            wire:target="delete"
                             class="h-5 w-5"
                             fill="none"
                             viewBox="0 0 24 24"
@@ -119,6 +121,7 @@
                         </svg>
                         <svg
                             wire:loading
+                            wire:target="delete"
                             class="h-5 w-5 animate-spin"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -138,14 +141,14 @@
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                             ></path>
                         </svg>
-                        <span wire:loading.remove>Yes, Delete</span>
-                        <span wire:loading>Deleting...</span>
+                        <span wire:loading.remove wire:target="delete">Yes, Delete</span>
+                        <span wire:loading wire:target="delete">Deleting...</span>
                     </button>
                     <button
                         type="button"
                         wire:click="cancelDelete"
-                        wire:loading.attr="disabled"
-                        class="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-gray-300 transition ring-inset hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none sm:mt-0 sm:w-auto"
+                        class="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-gray-300 transition ring-inset hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:mt-0 sm:w-auto"
+                        :disabled="$wire.deleting"
                     >
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
