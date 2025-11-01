@@ -14,6 +14,6 @@ class Company extends Model
 
     public function admin()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(User::class);
     }
 }
