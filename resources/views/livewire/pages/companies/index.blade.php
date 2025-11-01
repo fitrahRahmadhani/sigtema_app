@@ -191,24 +191,24 @@
                     <div class="col-span-3 flex items-center gap-3 overflow-hidden">
                         @if ($company->admin)
                             <div class="flex items-center gap-2">
-                                @if ($company->admin->profile_path)
+                                @if ($company->admin->first()->profile_path)
                                     <img
-                                        src="{{ \Storage::url($company->admin->profile_path) }}"
-                                        alt="{{ $company->admin->name }}"
+                                        src="{{ \Storage::url($company->admin->first()->profile_path) }}"
+                                        alt="{{ $company->admin->first()->name }}"
                                         class="h-8 w-8 rounded-full border-2 border-white shadow-sm"
                                     />
                                 @else
                                     <div
                                         class="color-gradient flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br text-xs font-semibold text-white shadow-sm"
                                     >
-                                        {{ substr($company->admin->name, 0, 1) }}
+                                        {{ substr($company->admin->first()->name, 0, 1) }}
                                     </div>
                                 @endif
                                 <div class="min-w-0 flex-1">
                                     <p class="truncate text-sm font-medium text-gray-900">
-                                        {{ $company->admin->name }}
+                                        {{ $company->admin->first()->name }}
                                     </p>
-                                    <p class="truncate text-xs text-gray-500">{{ $company->admin->email }}</p>
+                                    <p class="truncate text-xs text-gray-500">{{ $company->admin->first()->email }}</p>
                                 </div>
                             </div>
                         @else
@@ -329,22 +329,26 @@
                             <p class="text-xs font-medium text-gray-500 uppercase">Administrator</p>
                             @if ($company->admin)
                                 <div class="mt-2 flex items-center gap-3">
-                                    @if ($company->admin->profile_path)
+                                    @if ($company->admin->first()->profile_path)
                                         <img
-                                            src="{{ \Storage::url($company->admin->profile_path) }}"
-                                            alt="{{ $company->admin->name }}"
+                                            src="{{ \Storage::url($company->admin->first()->profile_path) }}"
+                                            alt="{{ $company->admin->first()->name }}"
                                             class="h-10 w-10 rounded-full border-2 border-white shadow-sm"
                                         />
                                     @else
                                         <div
                                             class="color-gradient flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br text-sm font-semibold text-white shadow-sm"
                                         >
-                                            {{ substr($company->admin->name, 0, 1) }}
+                                            {{ substr($company->admin->first()->name, 0, 1) }}
                                         </div>
                                     @endif
                                     <div class="min-w-0 flex-1">
-                                        <p class="truncate font-medium text-gray-900">{{ $company->admin->name }}</p>
-                                        <p class="truncate text-sm text-gray-500">{{ $company->admin->email }}</p>
+                                        <p class="truncate font-medium text-gray-900">
+                                            {{ $company->admin->first()->name }}
+                                        </p>
+                                        <p class="truncate text-sm text-gray-500">
+                                            {{ $company->admin->first()->email }}
+                                        </p>
                                     </div>
                                 </div>
                             @else
