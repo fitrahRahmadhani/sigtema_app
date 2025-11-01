@@ -15,8 +15,8 @@
     >
         {{-- Nama dan email user --}}
         <div class="flex flex-col items-end">
-            <p class="font-bold">Al Mukarom Sukidi</p>
-            <p class="text-sm text-gray-500">sukidi@sig.id</p>
+            <p class="font-bold">{{ auth()->user()->name }}</p>
+            <p class="text-sm text-gray-500">{{ auth()->user()->email }}</p>
         </div>
 
         {{-- Foto profile --}}
