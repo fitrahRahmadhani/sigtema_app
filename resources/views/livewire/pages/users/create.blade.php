@@ -144,7 +144,7 @@
                         <input
                             type="text"
                             id="name"
-                            wire:model.blur="name"
+                            wire:model.live.debounce.500ms="name"
                             placeholder="Enter full name"
                             class="@error('name') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
@@ -162,7 +162,7 @@
                         <input
                             type="email"
                             id="email"
-                            wire:model.blur="email"
+                            wire:model.live.debounce.500ms="email"
                             placeholder="user@example.com"
                             class="@error('email') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
@@ -180,7 +180,7 @@
                         <input
                             type="password"
                             id="password"
-                            wire:model.blur="password"
+                            wire:model.live.debounce.500ms="password"
                             placeholder="••••••••"
                             class="@error('password') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
@@ -200,7 +200,7 @@
                         <input
                             type="password"
                             id="password_confirmation"
-                            wire:model.blur="password_confirmation"
+                            wire:model.live.debounce.500ms="password_confirmation"
                             placeholder="••••••••"
                             class="@error('password_confirmation') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />

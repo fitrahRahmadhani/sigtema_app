@@ -26,7 +26,7 @@ class Create extends Component
     #[Validate('required|email|max:255|unique:users,email')]
     public $email = '';
 
-    #[Validate('required|string|min:8|confirmed')]
+    #[Validate('required|string|min:8')]
     public $password = '';
 
     #[Validate('required|same:password')]

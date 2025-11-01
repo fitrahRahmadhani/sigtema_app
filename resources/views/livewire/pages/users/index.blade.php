@@ -285,7 +285,7 @@
                     <div class="col-span-2 flex flex-wrap items-center gap-1">
                         @forelse ($user->roles as $role)
                             <span
-                                class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800"
+                                class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800"
                             >
                                 {{ ucfirst($role->name) }}
                             </span>
@@ -430,7 +430,7 @@
                             <div class="mt-2 flex flex-wrap gap-2">
                                 @forelse ($user->roles as $role)
                                     <span
-                                        class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-800"
+                                        class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-800"
                                     >
                                         {{ ucfirst($role->name) }}
                                     </span>
