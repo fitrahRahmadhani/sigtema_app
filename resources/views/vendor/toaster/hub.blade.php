@@ -99,10 +99,10 @@
                     <p
                         x-text="
                             toast.select({
-                                error: 'Oops! Terjadi Kesalahan',
-                                info: 'Informasi untuk Anda',
-                                success: 'Yeay! Berhasil',
-                                warning: 'Perlu Perhatian',
+                                error: 'Oops! An Error Occurred',
+                                info: 'Information for You',
+                                success: 'Yay! Success',
+                                warning: 'Attention Needed',
                             })
                         "
                         class="mb-0.5 font-semibold text-neutral-900 dark:text-white"
