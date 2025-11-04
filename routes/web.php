@@ -38,6 +38,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('companies/create', App\Livewire\Pages\Companies\Create::class)->name('companies.create');
     Route::get('companies/{company:slug}/edit', App\Livewire\Pages\Companies\Edit::class)->name('companies.edit');
 
+    // Departments
+    Route::get('departments', App\Livewire\Pages\Departments\Index::class)->name('departments.index');
+    Route::get('departments/create', App\Livewire\Pages\Departments\Create::class)->name('departments.create');
+    Route::get('departments/{department:slug}/edit', App\Livewire\Pages\Departments\Edit::class)->name('departments.edit');
+
     Route::get('users', App\Livewire\Pages\Users\Index::class)->name('users.index');
     Route::get('users/create', App\Livewire\Pages\Users\Create::class)->name('users.create');
     Route::get('users/{user}/edit', App\Livewire\Pages\Users\Edit::class)->name('users.edit');
