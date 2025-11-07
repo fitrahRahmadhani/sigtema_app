@@ -30,7 +30,6 @@ class Edit extends Component
     #[Validate('required|exists:departemens,id')]
     public $departemen_id = '';
 
-    public $slug = '';
     public $departments = [];
 
     public function mount(WorkUnit $workUnit)
@@ -40,7 +39,6 @@ class Edit extends Component
         $this->work_unit_code = $workUnit->work_unit_code;
         $this->company_id = $workUnit->company_id;
         $this->departemen_id = $workUnit->departemen_id;
-        $this->slug = $workUnit->slug;
 
         // Load departments for the selected company
         if ($this->company_id) {
@@ -48,11 +46,6 @@ class Edit extends Component
                 ->orderBy('name')
                 ->get();
         }
-    }
-
-    public function updatedName()
-    {
-        $this->slug = Str::slug($this->name);
     }
 
     public function updatedCompanyId()
@@ -75,33 +68,14 @@ class Edit extends Component
         $this->validate();
 
         try {
-            // Generate unique slug if name changed
-            $slug = Str::slug($this->name);
-
-            // Check if slug needs to be unique (if changed)
-            if ($slug !== $this->workUnit->slug) {
-                $originalSlug = $slug;
-                $count = 1;
-
-                while (WorkUnit::where('slug', $slug)->where('id', '!=', $this->workUnit->id)->exists()) {
-                    $slug = $originalSlug . '-' . $count;
-                    $count++;
-                }
-            } else {
-                $slug = $this->workUnit->slug;
-            }
-
             $this->workUnit->update([
                 'name' => $this->name,
                 'work_unit_code' => $this->work_unit_code,
                 'company_id' => $this->company_id,
                 'departemen_id' => $this->departemen_id,
-                'slug' => $slug,
             ]);
 
-            Toaster::success('Work Unit updated successfully!');
-
-            return $this->redirect(route('work-units.index'), navigate: true);
+            return redirect()->route('work-units.index')->success('Work Unit updated successfully');
         } catch (\Exception $e) {
             Toaster::error('Failed to update work unit: ' . $e->getMessage());
         }
@@ -109,7 +83,7 @@ class Edit extends Component
 
     public function cancel()
     {
-        return $this->redirect(route('work-units.index'), navigate: true);
+        return redirect()->route('work-units.index');
     }
 
     public function render()

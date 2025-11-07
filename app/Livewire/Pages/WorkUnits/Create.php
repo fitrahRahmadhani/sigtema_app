@@ -28,17 +28,11 @@ class Create extends Component
     #[Validate('required|exists:departemens,id')]
     public $departemen_id = '';
 
-    public $slug = '';
     public $departments = [];
 
     public function mount()
     {
         $this->departments = collect();
-    }
-
-    public function updatedName()
-    {
-        $this->slug = Str::slug($this->name);
     }
 
     public function updatedCompanyId()
@@ -61,27 +55,15 @@ class Create extends Component
         $this->validate();
 
         try {
-            // Generate unique slug
-            $slug = Str::slug($this->name);
-            $originalSlug = $slug;
-            $count = 1;
-
-            while (WorkUnit::where('slug', $slug)->exists()) {
-                $slug = $originalSlug . '-' . $count;
-                $count++;
-            }
-
             WorkUnit::create([
+                'slug' => Str::uuid(),
                 'name' => $this->name,
                 'work_unit_code' => $this->work_unit_code,
                 'company_id' => $this->company_id,
                 'departemen_id' => $this->departemen_id,
-                'slug' => $slug,
             ]);
 
-            Toaster::success('Work Unit created successfully!');
-
-            return $this->redirect(route('work-units.index'), navigate: true);
+            return redirect()->route('work-units.index')->success('Work Unit created successfully');
         } catch (\Exception $e) {
             Toaster::error('Failed to create work unit: ' . $e->getMessage());
         }
@@ -89,7 +71,7 @@ class Create extends Component
 
     public function cancel()
     {
-        return $this->redirect(route('work-units.index'), navigate: true);
+        return redirect()->route('work-units.index')->success('Work Unit created successfully');
     }
 
     public function render()
