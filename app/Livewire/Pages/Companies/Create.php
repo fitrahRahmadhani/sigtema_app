@@ -23,7 +23,7 @@ class Create extends Component
     #[Validate('required|string|max:255')]
     public $name;
 
-    #[Validate('required|string|max:255|unique:companies,cocd')]
+    #[Validate('required|string|max:255')]
     public $cocd;
 
     #[Validate('boolean')]

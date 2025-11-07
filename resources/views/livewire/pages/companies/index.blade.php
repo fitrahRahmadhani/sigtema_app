@@ -189,7 +189,7 @@
 
                     <!-- Admin Info -->
                     <div class="col-span-3 flex items-center gap-3 overflow-hidden">
-                        @if ($company->admin)
+                        @if ($company->admin && $company->admin->first())
                             <div class="flex items-center gap-2">
                                 @if ($company->admin->first()->profile_path)
                                     <img
@@ -208,7 +208,9 @@
                                     <p class="truncate text-sm font-medium text-gray-900">
                                         {{ $company->admin->first()->name }}
                                     </p>
-                                    <p class="truncate text-xs text-gray-500">{{ $company->admin->first()->email }}</p>
+                                    <p class="truncate text-xs text-gray-500">
+                                        {{ $company->admin->first()->email }}
+                                    </p>
                                 </div>
                             </div>
                         @else
@@ -327,7 +329,7 @@
                         <!-- Admin Info -->
                         <div>
                             <p class="text-xs font-medium text-gray-500 uppercase">Administrator</p>
-                            @if ($company->admin)
+                            @if ($company->admin && $company->admin->first())
                                 <div class="mt-2 flex items-center gap-3">
                                     @if ($company->admin->first()->profile_path)
                                         <img
