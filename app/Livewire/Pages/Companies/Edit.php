@@ -48,7 +48,7 @@ class Edit extends Component
         $this->validate([
             'logo' => 'nullable|image|max:2048',
             'name' => 'required|string|max:255',
-            'cocd' => 'required|string|max:255|unique:companies,cocd,' . $this->company->id,
+            'cocd' => 'required|string|max:255,' . $this->company->id,
             'is_active' => 'boolean',
         ]);
 
@@ -78,9 +78,7 @@ class Edit extends Component
 
         $this->company->update($data);
 
-        session()->flash('success', 'Company updated successfully!');
-
-        return $this->redirect(route('companies.index'), navigate: true);
+        return redirect()->route('companies.index')->success('Company updated successfully.');
     }
 
     public function removeLogo()
