@@ -75,7 +75,7 @@
                                             | Created:
                                             <span class="font-mono">{{ $role->created_at->format('M d, Y') }}</span>
                                             | Users:
-                                            <span class="font-mono">{{ $role->users_count ?? 0 }}</span>
+                                            <span class="font-mono">{{ $roleCount ?? 0 }}</span>
                                         </p>
                                     </div>
                                 </div>

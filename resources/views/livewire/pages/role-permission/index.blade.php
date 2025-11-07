@@ -57,7 +57,7 @@
         <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
             <div class="grid gap-4 md:grid-cols-3">
                 <!-- Search Input -->
-                <div class="md:col-span-2">
+                <div class="md:col-span-3">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Search Roles</label>
                     <div class="relative">
                         <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
