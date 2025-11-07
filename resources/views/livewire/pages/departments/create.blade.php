@@ -48,6 +48,7 @@
                             type="text"
                             id="name"
                             wire:model.live="name"
+                            autocomplete="off"
                             placeholder="e.g., Human Resources, IT, Finance"
                             class="@error('name') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
@@ -55,35 +56,6 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-
-                    <!-- Slug Preview -->
-                    @if ($slug)
-                        <div>
-                            <label class="mb-2 block text-sm font-medium text-gray-700">
-                                URL Slug (Auto-generated)
-                            </label>
-                            <div
-                                class="flex items-center gap-2 rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.5"
-                                    stroke="currentColor"
-                                    class="h-5 w-5 text-gray-400"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"
-                                    />
-                                </svg>
-                                <span class="text-sm text-gray-600">{{ $slug }}</span>
-                            </div>
-                            <p class="mt-1 text-xs text-gray-500">This will be used in URLs and must be unique</p>
-                        </div>
-                    @endif
 
                     <!-- Company Selection -->
                     <div>

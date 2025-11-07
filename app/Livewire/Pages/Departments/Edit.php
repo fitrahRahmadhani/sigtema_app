@@ -8,8 +8,6 @@ use Livewire\Component;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
@@ -24,19 +22,11 @@ class Edit extends Component
     #[Validate('required|exists:companies,id')]
     public $company_id = '';
 
-    public $slug = '';
-
     public function mount(Departemen $department)
     {
         $this->department = $department;
         $this->name = $department->name;
         $this->company_id = $department->company_id;
-        $this->slug = $department->slug;
-    }
-
-    public function updatedName()
-    {
-        $this->slug = Str::slug($this->name);
     }
 
     public function save()
@@ -44,31 +34,14 @@ class Edit extends Component
         $this->validate();
 
         try {
-            // Generate unique slug if name changed
-            $slug = Str::slug($this->name);
-
-            // Check if slug needs to be unique (if changed)
-            if ($slug !== $this->department->slug) {
-                $originalSlug = $slug;
-                $count = 1;
-
-                while (Departemen::where('slug', $slug)->where('id', '!=', $this->department->id)->exists()) {
-                    $slug = $originalSlug . '-' . $count;
-                    $count++;
-                }
-            } else {
-                $slug = $this->department->slug;
-            }
-
             $this->department->update([
                 'name' => $this->name,
                 'company_id' => $this->company_id,
-                'slug' => $slug,
             ]);
 
             Toaster::success('Department updated successfully!');
 
-            return $this->redirect(route('departments.index'), navigate: true);
+            return redirect()->route('departments.index')->success('Department updated successfully');
         } catch (\Exception $e) {
             Toaster::error('Failed to update department: ' . $e->getMessage());
         }
@@ -76,7 +49,7 @@ class Edit extends Component
 
     public function cancel()
     {
-        return $this->redirect(route('departments.index'), navigate: true);
+        return redirect()->route('departments.index');
     }
 
     public function render()

@@ -21,37 +21,18 @@ class Create extends Component
     #[Validate('required|exists:companies,id')]
     public $company_id = '';
 
-    public $slug = '';
-
-    public function updatedName()
-    {
-        $this->slug = Str::slug($this->name);
-    }
-
     public function save()
     {
         $this->validate();
 
         try {
-            // Generate unique slug
-            $slug = Str::slug($this->name);
-            $originalSlug = $slug;
-            $count = 1;
-
-            while (Departemen::where('slug', $slug)->exists()) {
-                $slug = $originalSlug . '-' . $count;
-                $count++;
-            }
-
             Departemen::create([
+                'slug' => Str::uuid(),
                 'name' => $this->name,
                 'company_id' => $this->company_id,
-                'slug' => $slug,
             ]);
 
-            Toaster::success('Department created successfully!');
-
-            return $this->redirect(route('departments.index'), navigate: true);
+            return redirect()->route('departments.index')->success('Department created successfully');
         } catch (\Exception $e) {
             Toaster::error('Failed to create department: ' . $e->getMessage());
         }
