@@ -210,7 +210,7 @@
                     <!-- Work Unit Code -->
                     <div class="col-span-2">
                         <span
-                            class="inline-flex items-center rounded-md bg-purple-100 px-2.5 py-1 text-xs font-medium text-purple-800"
+                            class="inline-flex items-center rounded-md bg-blue-100 px-2.5 py-1 text-sm font-medium text-blue-800"
                         >
                             {{ $workUnit->work_unit_code }}
                         </span>
@@ -234,7 +234,7 @@
                     <!-- Company -->
                     <div class="col-span-2 overflow-hidden">
                         @if ($workUnit->company)
-                            <p class="truncate text-sm text-gray-600">{{ $workUnit->company->name }}</p>
+                            <p class="truncate text-sm text-gray-900">{{ $workUnit->company->name }}</p>
                             <p class="truncate text-xs text-gray-500">{{ $workUnit->company->cocd }}</p>
                         @else
                             <span class="text-sm text-gray-400 italic">No company</span>
