@@ -170,7 +170,6 @@
                     <div class="col-span-4 flex items-center gap-3">
                         <div class="min-w-0 flex-1">
                             <p class="truncate font-semibold text-gray-900">{{ $department->name }}</p>
-                            <p class="truncate text-sm text-gray-500">{{ Str::limit($department->slug, 30) }}</p>
                         </div>
                     </div>
 
@@ -269,9 +268,8 @@
                         <!-- Department Header -->
                         <div class="flex items-start gap-3 border-b border-gray-100 pb-4">
                             <div class="min-w-0 flex-1">
-                                <p class="text-sm font-medium text-gray-500 uppercase">Department</p>
+                                <p class="text-xs font-medium text-gray-500 uppercase">Department</p>
                                 <p class="mt-1 font-semibold text-gray-900">{{ $department->name }}</p>
-                                <p class="mt-1 text-sm text-gray-500">{{ $department->slug }}</p>
                             </div>
                         </div>
 
