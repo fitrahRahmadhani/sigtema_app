@@ -14,11 +14,13 @@ class Edit extends Component
 {
     public $roleId;
     public $roleName = '';
+    public $roleCount = 0;
     public $role;
 
     public function mount($id)
     {
         $this->roleId = $id;
+        $this->roleCount = Role::where('id',  $this->roleId)->count();
         $this->loadRole();
     }
 
@@ -40,10 +42,8 @@ class Edit extends Component
                 'name' => $this->roleName
             ]);
 
-            Toaster::success('Role updated successfully!');
-
             // Redirect to roles index
-            return $this->redirect(route('role-permission.index'), navigate: true);
+            return redirect()->route('role-permissions.index')->success('Role updated successfully!');
         } catch (\Exception $e) {
             Toaster::error('Error updating role: ' . $e->getMessage());
         }

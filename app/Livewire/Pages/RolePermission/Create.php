@@ -27,10 +27,8 @@ class Create extends Component
                 'guard_name' => 'web'
             ]);
 
-            Toaster::success('Role created successfully!');
-
             // Redirect to roles index
-            return $this->redirect(route('role-permissions.index'), navigate: true);
+            return redirect()->route('role-permissions.index')->success('Role created successfully!');
         } catch (\Exception $e) {
             Toaster::error('Error creating role: ' . $e->getMessage());
         }
