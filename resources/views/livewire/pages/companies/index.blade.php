@@ -195,7 +195,7 @@
                                     <img
                                         src="{{ \Storage::url($company->admin->first()->profile_path) }}"
                                         alt="{{ $company->admin->first()->name }}"
-                                        class="h-8 w-8 rounded-full border-2 border-white shadow-sm"
+                                        class="h-8 w-8 rounded-lg border-2 border-white shadow-sm"
                                     />
                                 @else
                                     <div
