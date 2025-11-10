@@ -48,6 +48,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('work-units/create', App\Livewire\Pages\WorkUnits\Create::class)->name('work-units.create');
     Route::get('work-units/{workUnit:slug}/edit', App\Livewire\Pages\WorkUnits\Edit::class)->name('work-units.edit');
 
+    // Positions
+    Route::get('positions', App\Livewire\Pages\Positions\Index::class)->name('positions.index');
+    Route::get('positions/create', App\Livewire\Pages\Positions\Create::class)->name('positions.create');
+    Route::get('positions/{position:slug}/edit', App\Livewire\Pages\Positions\Edit::class)->name('positions.edit');
+
     Route::get('users', App\Livewire\Pages\Users\Index::class)->name('users.index');
     Route::get('users/create', App\Livewire\Pages\Users\Create::class)->name('users.create');
     Route::get('users/{user}/edit', App\Livewire\Pages\Users\Edit::class)->name('users.edit');
