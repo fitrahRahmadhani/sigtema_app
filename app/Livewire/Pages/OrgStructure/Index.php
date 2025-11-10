@@ -28,7 +28,7 @@ class Index extends Component
                 'visible' => true,
                 'collapsed' => true, // CEO mulai dalam keadaan collapsed
                 'level' => 0,
-                'color' => 'bg-blue-600'
+                'photo' => null
             ],
             [
                 'id' => 2,
@@ -39,7 +39,7 @@ class Index extends Component
                 'visible' => false, // Children CEO hidden dulu
                 'collapsed' => true, // Jika di-show, dia juga collapsed
                 'level' => 1,
-                'color' => 'bg-green-600'
+                'photo' => null
             ],
             [
                 'id' => 3,
@@ -50,7 +50,7 @@ class Index extends Component
                 'visible' => false,
                 'collapsed' => true,
                 'level' => 1,
-                'color' => 'bg-green-600'
+                'photo' => null
             ],
             [
                 'id' => 4,
@@ -61,7 +61,7 @@ class Index extends Component
                 'visible' => false,
                 'collapsed' => true,
                 'level' => 1,
-                'color' => 'bg-green-600'
+                'photo' => null
             ],
             [
                 'id' => 5,
@@ -72,7 +72,7 @@ class Index extends Component
                 'visible' => false,
                 'collapsed' => true,
                 'level' => 2,
-                'color' => 'bg-purple-600'
+                'photo' => null
             ],
             [
                 'id' => 6,
@@ -83,7 +83,7 @@ class Index extends Component
                 'visible' => false,
                 'collapsed' => true,
                 'level' => 2,
-                'color' => 'bg-purple-600'
+                'photo' => null
             ],
             [
                 'id' => 7,
@@ -94,7 +94,7 @@ class Index extends Component
                 'visible' => false,
                 'collapsed' => true,
                 'level' => 2,
-                'color' => 'bg-purple-600'
+                'photo' => null
             ],
             [
                 'id' => 8,
@@ -105,7 +105,7 @@ class Index extends Component
                 'visible' => false,
                 'collapsed' => true,
                 'level' => 2,
-                'color' => 'bg-purple-600'
+                'photo' => null
             ],
             [
                 'id' => 9,
@@ -116,7 +116,7 @@ class Index extends Component
                 'visible' => false,
                 'collapsed' => true,
                 'level' => 2,
-                'color' => 'bg-purple-600'
+                'photo' => null
             ],
             [
                 'id' => 10,
@@ -127,7 +127,7 @@ class Index extends Component
                 'visible' => false,
                 'collapsed' => true,
                 'level' => 3,
-                'color' => 'bg-red-500'
+                'photo' => null
             ],
             [
                 'id' => 11,
@@ -138,7 +138,7 @@ class Index extends Component
                 'visible' => false,
                 'collapsed' => true,
                 'level' => 3,
-                'color' => 'bg-red-500'
+                'photo' => null
             ],
             [
                 'id' => 12,
@@ -149,7 +149,7 @@ class Index extends Component
                 'visible' => false,
                 'collapsed' => true,
                 'level' => 3,
-                'color' => 'bg-red-500'
+                'photo' => null
             ]
         ];
     }

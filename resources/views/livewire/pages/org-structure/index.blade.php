@@ -1,227 +1,228 @@
-<div>
-    <div class="min-h-screen bg-gray-50 p-4" wire:key="org-chart-main">
+<div class="org-chart-container">
+    <div wire:key="org-chart-main">
         <!-- Header Controls -->
-        <div class="mb-6 rounded-xl border bg-white p-6 shadow-sm">
+        <div class="mb-4 rounded-xl border bg-white p-6 shadow-sm">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-800">Organization Chart</h1>
-                    <p class="mt-1 text-gray-600">Struktur organisasi interaktif dengan fitur zoom dan toggle</p>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <!-- Zoom Controls -->
-                    <div class="flex items-center gap-2 rounded-lg bg-gray-100 p-2">
-                        <button
-                            wire:click="zoomOut"
-                            class="flex h-10 w-10 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                            {{ $zoom <= 50 ? 'disabled' : '' }}
-                        >
-                            <svg class="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                            </svg>
-                        </button>
-
-                        <div class="flex min-w-[60px] flex-col items-center">
-                            <span class="text-lg font-semibold text-gray-800">{{ $zoom }}%</span>
-                            <span class="text-xs text-gray-500">Zoom</span>
-                        </div>
-
-                        <button
-                            wire:click="zoomIn"
-                            class="flex h-10 w-10 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                            {{ $zoom >= 200 ? 'disabled' : '' }}
-                        >
-                            <svg class="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M12 4v16m8-8H4"
-                                />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <button
-                        wire:click="resetZoom"
-                        class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"
+                <div class="flex items-center gap-4">
+                    <div
+                        class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
                     >
-                        Reset View
-                    </button>
-                </div>
-            </div>
-
-            <!-- Stats -->
-            <div class="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-                <div class="rounded-lg bg-blue-50 p-4 text-center">
-                    <div class="text-2xl font-bold text-blue-600">{{ count($nodes) }}</div>
-                    <div class="text-sm text-blue-800">Total Karyawan</div>
-                </div>
-                <div class="rounded-lg bg-green-50 p-4 text-center">
-                    <div class="text-2xl font-bold text-green-600">
-                        {{ collect($nodes)->where('visible', true)->count() }}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            fill="currentColor"
+                            class="size-7 text-white"
+                            viewBox="0 0 16 16"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H11a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 5 7h2.5V6A1.5 1.5 0 0 1 6 4.5zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5zM3 11.5A1.5 1.5 0 0 1 4.5 10h1A1.5 1.5 0 0 1 7 11.5v1A1.5 1.5 0 0 1 5.5 14h-1A1.5 1.5 0 0 1 3 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a.5.5 0 0 1-1 0v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 1-1 0v-1z"
+                            />
+                        </svg>
                     </div>
-                    <div class="text-sm text-green-800">Terlihat</div>
-                </div>
-                <div class="rounded-lg bg-purple-50 p-4 text-center">
-                    <div class="text-2xl font-bold text-purple-600">{{ $zoom }}%</div>
-                    <div class="text-sm text-purple-800">Level Zoom</div>
-                </div>
-                <div class="rounded-lg bg-orange-50 p-4 text-center">
-                    <div class="text-2xl font-bold text-orange-600">
-                        {{ collect($nodes)->where('visible', false)->count() }}
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Organization Structure</h1>
+                        <p class="mt-1 text-sm text-gray-500">Manage your company's organization structure</p>
                     </div>
-                    <div class="text-sm text-orange-800">Tersembunyi</div>
                 </div>
             </div>
         </div>
 
         <!-- Org Chart Container -->
-        <div class="overflow-auto rounded-xl border bg-white p-8 shadow-sm">
-            <div
-                id="orgChartWrapper"
-                class="org-chart-wrapper min-w-max"
-                style="transform: scale({{ $zoom / 100 }}); transform-origin: top center"
-            >
-                @php
-                    $renderNode = null;
-                    $renderNode = function ($nodeId, $level = 0) use (&$renderNode) {
-                        $node = $this->getNode($nodeId);
-                        if (! $node || ! $node['visible']) {
-                            return '';
-                        }
-
-                        $children = $this->getChildNodes($nodeId);
-                        $hasVisibleChildren = count($children) > 0;
-                        $isCollapsed = $node['collapsed'];
-                        $totalChildren = collect($this->nodes)
-                            ->where('parent_id', $nodeId)
-                            ->count();
-
-                        $cardWidthClass = match ($level) {
-                            0 => 'w-80',
-                            1 => 'w-64',
-                            2 => 'w-56',
-                            default => 'w-48',
-                        };
-
-                        $textSize = match ($level) {
-                            0 => 'text-xl',
-                            1 => 'text-lg',
-                            default => 'text-base',
-                        };
-
-                        $subtextSize = match ($level) {
-                            0 => 'text-base',
-                            1 => 'text-sm',
-                            default => 'text-xs',
-                        };
-
-                        $nodeHtmlId = 'node-' . $nodeId;
-                        $childrenContainerId = 'children-' . $nodeId;
-
-                        $output = '<div class="org-node">';
-
-                        // Main container
-                        $output .= '<div class="flex flex-col items-center">';
-
-                        // Node Card
-                        $output .= '<div class="node-card-wrapper relative mb-4" id="' . $nodeHtmlId . '">';
-                        $output .= '<div wire:click="toggleNode(' . $node['id'] . ')" ';
-                        $output .= 'class="' . $node['color'] . ' ' . $cardWidthClass . ' cursor-pointer rounded-xl p-4 text-white shadow-lg transition-all duration-200 ">';
-                        $output .= '<div class="text-center">';
-                        $output .= '<div class="' . $textSize . ' font-bold">' . e($node['name']) . '</div>';
-                        $output .= '<div class="mt-1 ' . $subtextSize . ' font-medium opacity-90">' . e($node['title']) . '</div>';
-                        $output .= '<div class="' . ($level <= 1 ? 'text-sm' : 'text-xs') . ' opacity-80">' . e($node['department']) . '</div>';
-
-                        if ($this->hasChildren($nodeId)) {
-                            $output .= '<div class="mt-2 text-xs opacity-90">';
-                            $output .= $isCollapsed ? '► Tampilkan Tim (' . $totalChildren . ')' : '▼ Sembunyikan Tim';
-                            $output .= '</div>';
-                        }
-
-                        $output .= '</div></div>';
-
-                        // Bottom connector
-                        if ($hasVisibleChildren) {
-                            $output .= '<div class="connector-bottom absolute -bottom-4 left-1/2 h-4 w-0.5 -translate-x-1/2 bg-gray-400"></div>';
-                        }
-
-                        $output .= '</div>';
-
-                        // Children Container
-                        if ($hasVisibleChildren) {
-                            $childCount = count($children);
-
-                            $output .= '<div class="children-container relative flex gap-8" id="' . $childrenContainerId . '">';
-
-                            // Horizontal connector (will be positioned by JS)
-                            if ($childCount > 1) {
-                                $output .= '<div class="horizontal-line absolute top-0 h-0.5 bg-gray-400" data-parent="' . $nodeId . '"></div>';
+        <div class="relative rounded-xl border bg-white shadow-sm">
+            <!-- Scrollable Area -->
+            <div id="orgChartScrollArea" class="org-chart-scroll-area relative overflow-auto p-8">
+                <div
+                    id="orgChartWrapper"
+                    class="org-chart-wrapper min-w-max"
+                    style="transform: scale({{ $zoom / 100 }}); transform-origin: top center"
+                >
+                    <!-- Render Nodes via Blade -->
+                    @php
+                        $renderNode = null;
+                        $renderNode = function ($nodeId, $level = 0) use (&$renderNode) {
+                            $node = $this->getNode($nodeId);
+                            if (! $node || ! $node['visible']) {
+                                return '';
                             }
 
-                            // Render children
-                            foreach ($children as $index => $child) {
-                                $childHtmlId = 'node-' . $child['id'];
-                                $output .= '<div class="child-wrapper relative flex flex-col items-center" data-child-id="' . $child['id'] . '">';
+                            $children = $this->getChildNodes($nodeId);
+                            $hasVisibleChildren = count($children) > 0;
+                            $isCollapsed = $node['collapsed'];
+                            $totalChildren = collect($this->nodes)
+                                ->where('parent_id', $nodeId)
+                                ->count();
 
-                                // Top connector
-                                $output .= '<div class="connector-top h-8 w-0.5 bg-gray-400"></div>';
+                            $cardWidthClass = match ($level) {
+                                0 => 'w-96',
+                                1 => 'w-80',
+                                2 => 'w-72',
+                                default => 'w-64',
+                            };
 
-                                // Recursive child
-                                $output .= $renderNode($child['id'], $level + 1);
+                            $textSize = match ($level) {
+                                0 => 'text-lg',
+                                1 => 'text-base',
+                                default => 'text-sm',
+                            };
 
+                            $subtextSize = match ($level) {
+                                0 => 'text-sm',
+                                1 => 'text-xs',
+                                default => 'text-xs',
+                            };
+
+                            $nodeHtmlId = 'node-' . $nodeId;
+                            $childrenContainerId = 'children-' . $nodeId;
+
+                            $output = '<div class="org-node">';
+                            $output .= '<div class="flex flex-col items-center">';
+
+                            // Node Card
+                            $output .= '<div class="node-card-wrapper relative mb-4" id="' . $nodeHtmlId . '">';
+                            $output .= '<div wire:click="toggleNode(' . $node['id'] . ')" ';
+                            $output .= 'class="' . $cardWidthClass . ' flex cursor-pointer items-center gap-4 rounded-xl border border-gray-300 bg-white p-4 shadow-lg transition-all duration-200 hover:shadow-xl">';
+
+                            // === FOTO PROFIL ===
+                            $photoUrl = $node['photo'] ? asset('storage/' . $node['photo']) : null;
+                            $output .= '<div class="flex-shrink-0">';
+                            if ($photoUrl) {
+                                $output .= '<img src="' . e($photoUrl) . '" alt="Profile" class="h-20 w-14 rounded-lg object-cover bg-gray-100">';
+                            } else {
+                                $output .= '<div class="flex h-20 w-14 items-center justify-center rounded-lg bg-gray-100 text-gray-400">';
+                                $output .= '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-10 w-10">';
+                                $output .= '<path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />';
+                                $output .= '</svg>';
+                                $output .= '</div>';
+                            }
+                            $output .= '</div>';
+
+                            // === INFORMASI NODE ===
+                            $output .= '<div class="flex flex-col text-left">';
+                            $output .= '<div class="' . $textSize . ' font-bold text-gray-800">' . e($node['name']) . '</div>';
+                            $output .= '<div class="mt-0.5 ' . $subtextSize . ' font-medium text-gray-600">' . e($node['title']) . '</div>';
+                            $output .= '<div class="text-xs text-gray-500">' . e($node['department']) . '</div>';
+
+                            if ($this->hasChildren($nodeId)) {
+                                $output .= '<div class="mt-2 text-xs font-medium text-[#721d21]">';
+                                $output .= $isCollapsed ? '► Show Team (' . $totalChildren . ')' : '▼ Hide Team';
                                 $output .= '</div>';
                             }
 
+                            $output .= '</div></div>';
+
+                            if ($hasVisibleChildren) {
+                                $output .= '<div class="connector-bottom absolute -bottom-4 left-1/2 h-4 w-0.5 -translate-x-1/2 bg-gray-400"></div>';
+                            }
+
                             $output .= '</div>';
-                        }
 
-                        $output .= '</div></div>';
-                        return $output;
-                    };
+                            if ($hasVisibleChildren) {
+                                $childCount = count($children);
+                                $output .= '<div class="children-container relative flex gap-8" id="' . $childrenContainerId . '">';
+                                if ($childCount > 1) {
+                                    $output .= '<div class="horizontal-line absolute top-0 h-0.5 bg-gray-400" data-parent="' . $nodeId . '"></div>';
+                                }
+                                foreach ($children as $child) {
+                                    $output .= '<div class="child-wrapper relative flex flex-col items-center" data-child-id="' . $child['id'] . '">';
+                                    $output .= '<div class="connector-top h-8 w-0.5 bg-gray-400"></div>';
+                                    $output .= $renderNode($child['id'], $level + 1);
+                                    $output .= '</div>';
+                                }
+                                $output .= '</div>';
+                            }
 
-                    $roots = collect($this->nodes)
-                        ->whereNull('parent_id')
-                        ->where('visible', true);
-                @endphp
+                            $output .= '</div></div>';
+                            return $output;
+                        };
 
-                <div class="flex justify-center p-5">
-                    @foreach ($roots as $root)
-                        {!! $renderNode($root['id']) !!}
-                    @endforeach
+                        $roots = collect($this->nodes)
+                            ->whereNull('parent_id')
+                            ->where('visible', true);
+                    @endphp
+
+                    <div class="flex justify-center p-5">
+                        @foreach ($roots as $root)
+                            {!! $renderNode($root['id']) !!}
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zoom Controls -->
+            <div class="absolute right-4 bottom-4 z-20">
+                <div class="flex items-center gap-2 rounded-lg bg-gray-100 p-2 shadow-lg">
+                    <button
+                        wire:click="zoomOut"
+                        class="flex h-10 w-10 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                        {{ $zoom <= 50 ? 'disabled' : '' }}
+                    >
+                        <svg class="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                        </svg>
+                    </button>
+
+                    <div class="flex min-w-[60px] flex-col items-center">
+                        <div>
+                            <span id="zoomValue" class="text-lg font-semibold text-gray-800">
+                                {{ $zoom }}
+                            </span>
+                            <span>%</span>
+                        </div>
+                        <span class="text-xs text-gray-500">Zoom</span>
+                    </div>
+
+                    <button
+                        wire:click="zoomIn"
+                        class="flex h-10 w-10 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                        {{ $zoom >= 200 ? 'disabled' : '' }}
+                    >
+                        <svg class="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
     <style>
+        .org-chart-scroll-area {
+            overflow: auto;
+            position: relative;
+            max-height: 80vh;
+            cursor: grab; /* Default cursor for drag */
+        }
+
+        .org-chart-scroll-area:active {
+            cursor: grabbing;
+        }
+
         .org-chart-wrapper {
             min-height: 600px;
             transition: transform 0.3s ease-in-out;
+            transform-origin: top center;
         }
 
         .org-node {
             display: inline-block;
         }
 
-        /* Card hover effects */
         .node-card-wrapper > div {
             position: relative;
             z-index: 10;
         }
 
-        /* Connector colors */
         .connector-bottom,
         .connector-top,
         .horizontal-line {
-            background-color: #9ca3af !important;
+            background-color: #a5a7ac !important;
         }
 
-        /* Custom scrollbar */
         .overflow-auto::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
         }
 
         .overflow-auto::-webkit-scrollbar-track {
@@ -246,104 +247,109 @@
     </style>
 
     <script>
-        function updateOrgChartLines() {
-            // Get the wrapper to account for zoom
-            const wrapper = document.getElementById('orgChartWrapper');
-            if (!wrapper) return;
+        const wrapper = document.getElementById('orgChartWrapper');
+        const scrollArea = document.getElementById('orgChartScrollArea');
+        const zoomValueDisplay = document.getElementById('zoomValue');
+        let isDragging = false;
+        let startX, startY, scrollLeft, scrollTop;
+        let zoomLevel = {{ $zoom }};
 
-            // Get current zoom level from transform scale
+        // ======== DRAG TO PAN ========
+        scrollArea.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            scrollArea.classList.add('active');
+            startX = e.pageX - scrollArea.offsetLeft;
+            startY = e.pageY - scrollArea.offsetTop;
+            scrollLeft = scrollArea.scrollLeft;
+            scrollTop = scrollArea.scrollTop;
+        });
+
+        scrollArea.addEventListener('mouseleave', () => {
+            isDragging = false;
+            scrollArea.classList.remove('active');
+        });
+
+        scrollArea.addEventListener('mouseup', () => {
+            isDragging = false;
+            scrollArea.classList.remove('active');
+        });
+
+        scrollArea.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX - scrollArea.offsetLeft;
+            const y = e.pageY - scrollArea.offsetTop;
+            const walkX = (x - startX) * 1; // scroll speed multiplier
+            const walkY = (y - startY) * 1;
+            scrollArea.scrollLeft = scrollLeft - walkX;
+            scrollArea.scrollTop = scrollTop - walkY;
+        });
+
+        // ======== ZOOM VIA MOUSE SCROLL ========
+        scrollArea.addEventListener('wheel', (e) => {
+            // Zoom hanya jika Ctrl ditekan
+            if (!e.ctrlKey) return;
+
+            e.preventDefault(); // cegah scroll default
+            const delta = e.deltaY > 0 ? -10 : 10;
+            zoomLevel = Math.min(Math.max(50, zoomLevel + delta), 200); // batas zoom 50% - 200%
+            wrapper.style.transform = `scale(${zoomLevel / 100})`;
+            if (zoomValueDisplay) zoomValueDisplay.textContent = zoomLevel;
+        });
+
+        // ======== UPDATE ORG CHART LINES ========
+        function updateOrgChartLines() {
+            const horizontalLines = document.querySelectorAll('.horizontal-line');
             const transform = wrapper.style.transform;
             const scaleMatch = transform.match(/scale\(([\d.]+)\)/);
             const scale = scaleMatch ? parseFloat(scaleMatch[1]) : 1;
-
-            // Get all horizontal lines
-            const horizontalLines = document.querySelectorAll('.horizontal-line');
 
             horizontalLines.forEach((line) => {
                 const container = line.parentElement;
                 const childWrappers = container.querySelectorAll('.child-wrapper');
 
                 if (childWrappers.length > 1) {
-                    // Get first and last child positions
                     const firstChild = childWrappers[0];
                     const lastChild = childWrappers[childWrappers.length - 1];
-
-                    // Get their positions relative to container (using offsetLeft for accuracy)
-                    const firstChildRect = firstChild.getBoundingClientRect();
-                    const lastChildRect = lastChild.getBoundingClientRect();
+                    const firstRect = firstChild.getBoundingClientRect();
+                    const lastRect = lastChild.getBoundingClientRect();
                     const containerRect = container.getBoundingClientRect();
 
-                    // Calculate center positions accounting for scale
-                    const firstCenter =
-                        (firstChildRect.left - containerRect.left) / scale + firstChildRect.width / scale / 2;
-                    const lastCenter =
-                        (lastChildRect.left - containerRect.left) / scale + lastChildRect.width / scale / 2;
+                    const firstCenter = (firstRect.left - containerRect.left) / scale + firstRect.width / scale / 2;
+                    const lastCenter = (lastRect.left - containerRect.left) / scale + lastRect.width / scale / 2;
 
-                    // Set line position and width
                     line.style.left = firstCenter + 'px';
                     line.style.width = lastCenter - firstCenter + 'px';
                 }
             });
         }
 
-        // Debounce function to prevent too many calls
-        function debounce(func, wait) {
+        const debouncedUpdate = (func, wait = 10) => {
             let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
+            return function (...args) {
                 clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
+                timeout = setTimeout(() => func(...args), wait);
             };
-        }
+        };
 
-        // Create debounced version for resize only
-        const debouncedUpdate = debounce(updateOrgChartLines, 10);
-
-        // Run on page load
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(updateOrgChartLines, 100);
         });
 
-        // Run after Livewire updates
         document.addEventListener('livewire:initialized', () => {
-            // Hook into message received (when server responds)
-            Livewire.hook('message.received', (message, component) => {
-                // Use requestAnimationFrame for smooth updates
-                requestAnimationFrame(() => {
-                    setTimeout(updateOrgChartLines, 10);
-                });
-            });
-
-            // Hook into commit (before DOM updates)
-            Livewire.hook('commit', ({ component, commit, respond }) => {
-                requestAnimationFrame(() => {
-                    setTimeout(updateOrgChartLines, 10);
-                });
-            });
-
-            // Hook into morph updated (after DOM updates)
-            Livewire.hook('morph.updated', ({ el, component }) => {
-                requestAnimationFrame(() => {
-                    setTimeout(updateOrgChartLines, 10);
-                });
-            });
+            Livewire.hook('message.received', () => requestAnimationFrame(() => setTimeout(updateOrgChartLines, 10)));
+            Livewire.hook('commit', () => requestAnimationFrame(() => setTimeout(updateOrgChartLines, 10)));
+            Livewire.hook('morph.updated', () => requestAnimationFrame(() => setTimeout(updateOrgChartLines, 10)));
         });
 
-        // Run on window resize
-        window.addEventListener('resize', debouncedUpdate);
+        window.addEventListener('resize', debouncedUpdate(updateOrgChartLines));
 
-        // Watch for style changes on wrapper (zoom changes) - IMMEDIATE UPDATE
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                    // Use requestAnimationFrame for immediate smooth update
+                if (mutation.attributeName === 'style') {
                     requestAnimationFrame(() => {
                         updateOrgChartLines();
-                        // Double check after transition
-                        setTimeout(updateOrgChartLines, 50);
+                        setTimeout(updateOrgChartLines, 1);
                         setTimeout(updateOrgChartLines, 150);
                         setTimeout(updateOrgChartLines, 350);
                     });
@@ -351,30 +357,13 @@
             });
         });
 
-        // Start observing when DOM is ready
-        document.addEventListener('DOMContentLoaded', () => {
-            const wrapper = document.getElementById('orgChartWrapper');
-            if (wrapper) {
-                observer.observe(wrapper, {
-                    attributes: true,
-                    attributeFilter: ['style'],
-                });
-            }
-        });
+        if (wrapper) {
+            observer.observe(wrapper, { attributes: true, attributeFilter: ['style'] });
+            wrapper.addEventListener('transitionend', (e) => {
+                if (e.propertyName === 'transform') updateOrgChartLines();
+            });
+        }
 
-        // Watch for transitionend on wrapper
-        document.addEventListener('DOMContentLoaded', () => {
-            const wrapper = document.getElementById('orgChartWrapper');
-            if (wrapper) {
-                wrapper.addEventListener('transitionend', (e) => {
-                    if (e.propertyName === 'transform') {
-                        updateOrgChartLines();
-                    }
-                });
-            }
-        });
-
-        // Initial calls with multiple delays to ensure proper rendering
         setTimeout(updateOrgChartLines, 50);
         setTimeout(updateOrgChartLines, 150);
         setTimeout(updateOrgChartLines, 300);
