@@ -81,8 +81,7 @@
 
                             // Node Card
                             $output .= '<div class="node-card-wrapper relative mb-4" id="' . $nodeHtmlId . '">';
-                            $output .= '<div wire:click="toggleNode(' . $node['id'] . ')" ';
-                            $output .= 'class="' . $cardWidthClass . ' flex cursor-pointer items-center gap-4 rounded-xl border border-gray-300 bg-white p-4 shadow-lg transition-all duration-200 hover:shadow-xl">';
+                            $output .= '<div class="' . $cardWidthClass . ' flex cursor-default items-center gap-4 rounded-xl border border-gray-300 bg-white p-4 shadow-lg transition-all duration-200 hover:shadow-xl relative">';
 
                             // === FOTO PROFIL ===
                             $photoUrl = $node['photo'] ? asset('storage/' . $node['photo']) : null;
@@ -105,12 +104,23 @@
                             $output .= '<div class="text-xs text-gray-500">' . e($node['department']) . '</div>';
 
                             if ($this->hasChildren($nodeId)) {
-                                $output .= '<div class="mt-2 text-xs font-medium text-[#721d21]">';
+                                $output .= '<div wire:click="toggleNode(' . $node['id'] . ')" class="mt-2 cursor-pointer text-xs font-medium text-[#721d21] p-1 px-2 rounded-full hover:bg-[#721d2110]">';
                                 $output .= $isCollapsed ? '► Show Team (' . $totalChildren . ')' : '▼ Hide Team';
                                 $output .= '</div>';
                             }
+                            $output .= '</div>';
 
-                            $output .= '</div></div>';
+                            // === URL ===
+                            $url = route('dashboard');
+                            $output .= '<a href="' . $url . '" target="_blank" class="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-md  text-gray-500 text-xs hover:bg-gray-200 transition-colors">';
+                            $output .= '<button title="Candidate Comparison" class="w-full flex items-center justify-center">';
+                            $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">';
+                            $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />';
+                            $output .= '</svg>';
+                            $output .= '</button>';
+                            $output .= '</a>';
+
+                            $output .= '</div>';
 
                             if ($hasVisibleChildren) {
                                 $output .= '<div class="connector-bottom absolute -bottom-4 left-1/2 h-4 w-0.5 -translate-x-1/2 bg-gray-400"></div>';
@@ -226,17 +236,17 @@
         }
 
         .overflow-auto::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: #e5e7eb;
             border-radius: 5px;
         }
 
         .overflow-auto::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: #d1d5db;
             border-radius: 5px;
         }
 
         .overflow-auto::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+            background: #9ca3af;
         }
 
         @media (max-width: 1024px) {

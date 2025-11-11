@@ -53,13 +53,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('positions/create', App\Livewire\Pages\Positions\Create::class)->name('positions.create');
     Route::get('positions/{position:slug}/edit', App\Livewire\Pages\Positions\Edit::class)->name('positions.edit');
 
+    // Users
     Route::get('users', App\Livewire\Pages\Users\Index::class)->name('users.index');
     Route::get('users/create', App\Livewire\Pages\Users\Create::class)->name('users.create');
     Route::get('users/{user}/edit', App\Livewire\Pages\Users\Edit::class)->name('users.edit');
 
+    // Roles
     Route::get('role-permissions', App\Livewire\Pages\RolePermission\Index::class)->name('role-permissions.index');
     Route::get('role-permissions/create', App\Livewire\Pages\RolePermission\Create::class)->name('role-permissions.create');
     Route::get('role-permissions/{id}/edit', App\Livewire\Pages\RolePermission\Edit::class)->name('role-permissions.edit');
+
+    // Employees
+    Route::get('employees', App\Livewire\Pages\Employees\Index::class)->name('employees.index');
+    Route::get('employees/create', App\Livewire\Pages\Employees\Create::class)->name('employees.create');
+    Route::get('employees/{employee:slug}/edit', App\Livewire\Pages\Employees\Edit::class)->name('employees.edit');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
