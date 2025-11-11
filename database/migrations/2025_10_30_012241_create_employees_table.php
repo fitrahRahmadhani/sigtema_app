@@ -20,12 +20,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('email');
             $table->string('phone');
-            $table->string('birth_date');
+            $table->date('birth_date');
             $table->string('gender');
             $table->string('password');
             $table->string('personal_grade');
-            $table->string('hire_date');
-            $table->string('profile_path');
+            $table->date('hire_date');
+            $table->string('profile_path')->nullable();
             $table->timestamps();
         });
     }
