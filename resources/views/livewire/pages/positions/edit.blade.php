@@ -25,13 +25,13 @@
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
                         />
                     </svg>
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Edit Position</h1>
-                    <p class="mt-1 text-sm text-gray-500">Update position information</p>
+                    <p class="mt-1 text-sm text-gray-500">Update position details and organizational information</p>
                 </div>
             </div>
         </div>
@@ -41,9 +41,9 @@
             <!-- Position Information -->
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Position Information</h3>
-                <div class="grid gap-6 md:grid-cols-3">
+                <div class="grid gap-6 md:grid-cols-2">
                     <!-- Position Name -->
-                    <div class="md:col-span-3">
+                    <div class="md:col-span-2">
                         <label for="name" class="mb-2 block text-sm font-medium text-gray-700">
                             Position Name
                             <span class="text-red-600">*</span>
@@ -70,52 +70,12 @@
                             type="text"
                             id="position_code"
                             wire:model.blur="position_code"
-                            placeholder="e.g., POS-001, MGR-SR, ENG-SW"
+                            placeholder="e.g., 50057460, 50059476, 50059654"
                             class="@error('position_code') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
                         @error('position_code')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
-                    </div>
-
-                    <!-- Band -->
-                    <div>
-                        <label for="band" class="mb-2 block text-sm font-medium text-gray-700">
-                            Band
-                            <span class="text-red-600">*</span>
-                        </label>
-                        <div class="relative">
-                            <select
-                                id="band"
-                                wire:model="band"
-                                class="@error('band') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                            >
-                                <option value="">Select a band</option>
-                                <option value="Band 1">Band 1</option>
-                                <option value="Band 2">Band 2</option>
-                                <option value="Band 3">Band 3</option>
-                                <option value="Band 4">Band 4</option>
-                                <option value="Band 5">Band 5</option>
-                            </select>
-
-                            <!-- Dropdown Icon -->
-                            <svg
-                                class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
-
-                        @error('band')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-
-                        <p class="mt-1 text-xs text-gray-500">Career band level for this position</p>
                     </div>
 
                     <!-- Job Grade -->
@@ -125,11 +85,10 @@
                             <span class="text-red-600">*</span>
                         </label>
                         <input
-                            type="number"
+                            type="text"
                             id="job_grade"
                             wire:model.blur="job_grade"
                             placeholder="e.g., 11, 12, 13, 14, 15"
-                            min="1"
                             class="@error('job_grade') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
 
@@ -142,12 +101,12 @@
                 </div>
             </div>
 
-            <!-- Organization Assignment -->
+            <!-- Company Assignment -->
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
-                <h3 class="mb-4 text-lg font-semibold text-gray-900">Organization Assignment</h3>
-                <div class="space-y-6">
+                <h3 class="mb-4 text-lg font-semibold text-gray-900">Company Assignment</h3>
+                <div class="mb-6 grid gap-6">
                     <!-- Company Selection -->
-                    <div>
+                    <div class="md:col-span-2">
                         <label for="company_id" class="mb-2 block text-sm font-medium text-gray-700">
                             Company
                             <span class="text-red-600">*</span>
@@ -177,6 +136,84 @@
                             </svg>
                         </div>
                         @error('company_id')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                <div class="grid gap-6 md:grid-cols-2">
+                    <!-- Directorate -->
+                    <div>
+                        <label for="directorate" class="mb-2 block text-sm font-medium text-gray-700">
+                            Directorate
+                        </label>
+                        <input
+                            type="text"
+                            id="directorate"
+                            wire:model="directorate"
+                            placeholder="e.g., Technology Directorate, Finance Directorate"
+                            class="@error('directorate') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                        />
+                        @error('directorate')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Department -->
+                    <div>
+                        <label for="department" class="mb-2 block text-sm font-medium text-gray-700">Department</label>
+                        <input
+                            type="text"
+                            id="department"
+                            wire:model="department"
+                            placeholder="e.g., IT Department, HR Department"
+                            class="@error('department') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                        />
+                        @error('department')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Biro -->
+                    <div>
+                        <label for="biro" class="mb-2 block text-sm font-medium text-gray-700">Biro</label>
+                        <input
+                            type="text"
+                            id="biro"
+                            wire:model="biro"
+                            placeholder="e.g., Finance Biro, Operations Biro"
+                            class="@error('biro') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                        />
+                        @error('biro')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Section -->
+                    <div>
+                        <label for="section" class="mb-2 block text-sm font-medium text-gray-700">Section</label>
+                        <input
+                            type="text"
+                            id="section"
+                            wire:model="section"
+                            placeholder="e.g., Development Section, Recruitment Section"
+                            class="@error('section') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                        />
+                        @error('section')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Location -->
+                    <div class="md:col-span-2">
+                        <label for="location" class="mb-2 block text-sm font-medium text-gray-700">Location</label>
+                        <input
+                            type="text"
+                            id="location"
+                            wire:model="location"
+                            placeholder="e.g., Jakarta Head Office, Bandung Branch"
+                            class="@error('location') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                        />
+                        @error('location')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
@@ -221,7 +258,7 @@
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
                         />
                     </svg>
                     <svg

@@ -4,7 +4,6 @@ namespace App\Livewire\Pages\Positions;
 
 use App\Models\Position;
 use App\Models\Company;
-use App\Models\WorkUnit;
 use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
@@ -27,11 +26,14 @@ class Index extends Component
     #[Url(as: 'company')]
     public $companyFilter = '';
 
-    #[Url(as: 'band')]
-    public $bandFilter = '';
-
     #[Url(as: 'grade')]
     public $gradeFilter = '';
+
+    #[Url(as: 'department')]
+    public $departmentFilter = '';
+
+    #[Url(as: 'location')]
+    public $locationFilter = '';
 
     public function updatingSearch()
     {
@@ -45,20 +47,20 @@ class Index extends Component
 
     public function updatingCompanyFilter()
     {
-        $this->resetPage(); // Reset work unit filter when company changes
-    }
-
-    public function updatingWorkUnitFilter()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingBandFilter()
-    {
         $this->resetPage();
     }
 
     public function updatingGradeFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingDepartmentFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingLocationFilter()
     {
         $this->resetPage();
     }
@@ -69,7 +71,6 @@ class Index extends Component
         return $this->redirect(route('positions.edit', $position->slug), navigate: true);
     }
 
-    // Implement abstract methods from trait
     protected function getModelClass(): string
     {
         return Position::class;
@@ -80,6 +81,11 @@ class Index extends Component
         return 'Position';
     }
 
+    protected function performDelete($position): void
+    {
+        $position->delete();
+    }
+
     public function render()
     {
         $positions = Position::query()
@@ -88,44 +94,58 @@ class Index extends Component
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
                         ->orWhere('position_code', 'like', '%' . $this->search . '%')
-                        ->orWhere('band', 'like', '%' . $this->search . '%')
                         ->orWhere('job_grade', 'like', '%' . $this->search . '%')
+                        ->orWhere('directorate', 'like', '%' . $this->search . '%')
+                        ->orWhere('department', 'like', '%' . $this->search . '%')
+                        ->orWhere('biro', 'like', '%' . $this->search . '%')
+                        ->orWhere('section', 'like', '%' . $this->search . '%')
+                        ->orWhere('location', 'like', '%' . $this->search . '%')
                         ->orWhereHas('company', function ($companyQuery) {
                             $companyQuery->where('name', 'like', '%' . $this->search . '%');
                         });
                 });
             })
-            ->when($this->companyFilter, function ($query) {
-                $query->where('company_id', $this->companyFilter);
-            })
-            ->when($this->bandFilter, function ($query) {
-                $query->where('band', $this->bandFilter);
-            })
-            ->when($this->gradeFilter, function ($query) {
-                $query->where('job_grade', $this->gradeFilter);
-            })
+            ->when($this->companyFilter, fn($query) => $query->where('company_id', $this->companyFilter))
+            ->when($this->gradeFilter, fn($query) => $query->where('job_grade', $this->gradeFilter))
+            ->when($this->departmentFilter, fn($query) => $query->where('department', $this->departmentFilter))
+            ->when($this->locationFilter, fn($query) => $query->where('location', $this->locationFilter))
             ->when($this->sortBy === 'name_asc', fn($query) => $query->orderBy('name', 'asc'))
             ->when($this->sortBy === 'name_desc', fn($query) => $query->orderBy('name', 'desc'))
             ->when($this->sortBy === 'code_asc', fn($query) => $query->orderBy('position_code', 'asc'))
             ->when($this->sortBy === 'code_desc', fn($query) => $query->orderBy('position_code', 'desc'))
-            ->when($this->sortBy === 'band_asc', fn($query) => $query->orderBy('band', 'asc'))
-            ->when($this->sortBy === 'band_desc', fn($query) => $query->orderBy('band', 'desc'))
+            ->when($this->sortBy === 'grade_asc', fn($query) => $query->orderBy('job_grade', 'asc'))
+            ->when($this->sortBy === 'grade_desc', fn($query) => $query->orderBy('job_grade', 'desc'))
             ->when($this->sortBy === 'newest', fn($query) => $query->latest('created_at'))
             ->when($this->sortBy === 'oldest', fn($query) => $query->oldest('created_at'))
             ->paginate(10);
 
         $companies = Company::orderBy('name')->get();
 
+        // Get unique values for filters
+        $grades = Position::distinct()
+            ->whereNotNull('job_grade')
+            ->orderBy('job_grade')
+            ->pluck('job_grade')
+            ->toArray();
 
-        // Get unique bands and grades from existing positions
-        $bands = Position::distinct()->pluck('band')->sort()->values();
-        $grades = Position::distinct()->pluck('job_grade')->sort()->values();
+        $departments = Position::distinct()
+            ->whereNotNull('department')
+            ->orderBy('department')
+            ->pluck('department')
+            ->toArray();
+
+        $locations = Position::distinct()
+            ->whereNotNull('location')
+            ->orderBy('location')
+            ->pluck('location')
+            ->toArray();
 
         return view('livewire.pages.positions.index', [
             'positions' => $positions,
             'companies' => $companies,
-            'bands' => $bands,
             'grades' => $grades,
+            'departments' => $departments,
+            'locations' => $locations,
         ]);
     }
 }

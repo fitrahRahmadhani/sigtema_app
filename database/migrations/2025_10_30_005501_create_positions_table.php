@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('department')->nullable();
             $table->string('biro')->nullable();
             $table->string('section')->nullable();
+            $table->string('location')->nullable();
             $table->string('job_grade');
             $table->timestamps();
         });
