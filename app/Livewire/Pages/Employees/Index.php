@@ -60,6 +60,12 @@ class Index extends Component
         $this->resetPage();
     }
 
+    public function show($employeeId)
+    {
+        $employee = Employee::findOrFail($employeeId);
+        return $this->redirect(route('employees.show', $employee->slug), navigate: true);
+    }
+
     public function edit($employeeId)
     {
         $employee = Employee::findOrFail($employeeId);

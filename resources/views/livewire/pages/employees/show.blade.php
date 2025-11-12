@@ -1,0 +1,466 @@
+<div class="space-y-4 p-2">
+    <!-- Breadcrumbs -->
+    <!-- Breadcrumbs -->
+    <flux:breadcrumbs>
+        <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item href="{{ route('employees.index') }}">Employees</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item>Create Employee</flux:breadcrumbs.item>
+    </flux:breadcrumbs>
+
+    {{-- Content --}}
+    <div class="h-full w-full rounded-xl bg-white p-4 md:p-6 lg:p-10">
+        <!-- Header -->
+        <div class="mb-8 flex flex-col items-start gap-6 lg:flex-row lg:gap-8">
+            <div
+                class="flex h-32 w-28 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gray-300 bg-gray-100 sm:h-44 sm:w-40"
+            >
+                @if (! $employee->profile_path)
+                    <img
+                        src="{{ \Storage::url($employee->profile_path) }}"
+                        alt=""
+                        class="h-full w-full object-cover"
+                    />
+                @else
+                    <div class="text-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-32">
+                            <path
+                                fill-rule="evenodd"
+                                d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                    </div>
+                @endif
+            </div>
+            <div class="h-fit w-full flex-1">
+                <h6 class="text-xl font-bold text-gray-900 sm:text-2xl md:text-3xl">{{ $employee->name }}</h6>
+                <div class="mt-4 grid h-full w-full grid-cols-2 gap-4 sm:mt-6 sm:grid-cols-3 lg:grid-cols-5">
+                    <div class="w-full">
+                        <p class="text-primary-text font-semibold">Employee ID</p>
+                        <p class="">{{ $employee->employee_number }}</p>
+                    </div>
+                    <div class="w-full">
+                        <p class="text-primary-text font-semibold">Position</p>
+                        <p class="">{{ $employee->position->name }}</p>
+                    </div>
+                    <div class="w-full">
+                        <p class="text-primary-text font-semibold">Department/Unit</p>
+                        <p class="">
+                            Lorem ipsum
+                            <br />
+                            Lorem ipsum
+                        </p>
+                    </div>
+                    <div class="w-full">
+                        <p class="text-primary-text font-semibold">Hire Date</p>
+                        <p class="">{{ $employee->hired }}</p>
+                    </div>
+                    <div class="w-full">
+                        <p class="text-primary-text font-semibold">Office</p>
+                        <p class="">Tuban, Jawa Timur</p>
+                    </div>
+                    <div class="w-full">
+                        <p class="text-primary-text font-semibold">Contract Type</p>
+                        <p class="">{{ $employee->position->band }}</p>
+                    </div>
+                    <div class="w-full">
+                        <p class="text-primary-text font-semibold">Age</p>
+                        <p class="">{{ $employee->age }} years old</p>
+                    </div>
+                    <div class="w-full">
+                        <p class="text-primary-text font-semibold">Job Grade</p>
+                        <p class="">{{ $employee->position->job_grade }}</p>
+                    </div>
+                    <div class="w-full">
+                        <p class="text-primary-text font-semibold">Personal Grade</p>
+                        <p class="">{{ $employee->personal_grade }}</p>
+                    </div>
+                    <div class="w-full">
+                        <p class="text-primary-text font-semibold">Personality</p>
+                        <p class="">
+                            ESFJ DISC
+                            <br />
+                            PAPI KOSTICK
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Content --}}
+        <div class="w-full space-y-6 md:space-y-8">
+            <div class="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
+                <!-- Soft Competencies -->
+                <div class="w-full">
+                    <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                        <p class="text-base font-semibold text-white sm:text-lg">Soft Competencies</p>
+                    </div>
+                    <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-300 bg-gray-100 text-center">
+                                    <th
+                                        class="w-1/3 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
+                                    >
+                                        Competency
+                                    </th>
+                                    <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
+                                        Analytical Thinking
+                                    </td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        Ability to break down complex problems
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
+                                        Communication
+                                    </td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        Clear and effective expression of ideas
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
+                                        Leadership
+                                    </td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">Ability to guide and inspire teams</td>
+                                </tr>
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
+                                        Problem Solving
+                                    </td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        Finding effective solutions to challenges
+                                    </td>
+                                </tr>
+                                <tr class="transition-colors hover:bg-gray-50">
+                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
+                                        Teamwork
+                                    </td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        Collaborating effectively with others
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Technical Competencies -->
+                <div class="w-full">
+                    <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                        <p class="text-base font-semibold text-white sm:text-lg">Technical Competencies</p>
+                    </div>
+                    <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-300 bg-gray-100 text-center">
+                                    <th
+                                        class="w-1/6 border-r border-gray-300 px-3 py-2 text-center font-semibold text-gray-800 sm:px-4"
+                                    >
+                                        Year
+                                    </th>
+                                    <th class="w-2/6 border-r px-3 py-2 font-semibold text-gray-600 sm:px-4">Issuer</th>
+                                    <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Competencies</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td
+                                        class="w-1/6 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
+                                    >
+                                        2025
+                                    </td>
+                                    <td class="w-2/6 border-r px-3 py-2 text-gray-600 sm:px-4">BNSP</td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        Ability to break down complex problems
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td
+                                        class="w-1/6 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
+                                    >
+                                        2024
+                                    </td>
+                                    <td class="w-2/6 border-r px-3 py-2 text-gray-600 sm:px-4">BNSP</td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        Clear and effective expression of ideas
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td
+                                        class="w-1/6 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
+                                    >
+                                        2023
+                                    </td>
+                                    <td class="w-2/6 border-r px-3 py-2 text-gray-600 sm:px-4">BNSP</td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">Ability to guide and inspire teams</td>
+                                </tr>
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td
+                                        class="w-1/6 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
+                                    >
+                                        2022
+                                    </td>
+                                    <td class="w-2/6 border-r px-3 py-2 text-gray-600 sm:px-4">BNSP</td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        Finding effective solutions to challenges
+                                    </td>
+                                </tr>
+                                <tr class="transition-colors hover:bg-gray-50">
+                                    <td
+                                        class="w-1/6 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
+                                    >
+                                        2021
+                                    </td>
+                                    <td class="w-2/6 border-r px-3 py-2 text-gray-600 sm:px-4">BNSP</td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        Collaborating effectively with others
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Educations --}}
+            <div class="w-full">
+                <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                    <h6 class="text-base font-semibold text-white sm:text-lg">Educations</h6>
+                </div>
+                <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-300 bg-gray-100 text-center">
+                                <th class="border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4">
+                                    Period
+                                </th>
+                                <th class="border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4">
+                                    Level
+                                </th>
+                                <th class="border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4">
+                                    Major
+                                </th>
+                                <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Institution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                    2021 - 2024
+                                </td>
+                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">S1</td>
+                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                    Teknik Informatika
+                                </td>
+                                <td class="px-3 py-3 text-gray-600 sm:px-4">Universitas Brawijaya</td>
+                            </tr>
+                            <tr class="transition-colors hover:bg-gray-50">
+                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                    2019 - 2021
+                                </td>
+                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                    SMA
+                                </td>
+                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                    IPA
+                                </td>
+                                <td class="px-3 py-3 text-gray-600 sm:px-4">SMAN 1 Banyuwangi</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {{-- Position History --}}
+            <div class="w-full">
+                <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                    <h6 class="text-base font-semibold text-white sm:text-lg">Position History</h6>
+                </div>
+                <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-300 bg-gray-100 text-center">
+                                <th class="border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4">
+                                    Period
+                                </th>
+                                <th class="border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4">
+                                    Position
+                                </th>
+                                <th class="border-r border-gray-300 px-3 py-2 font-semibold text-gray-600 sm:px-4">
+                                    Section
+                                </th>
+                                <th class="px-3 py-2 font-semibold text-gray-800 sm:px-4">Company</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                    01-01-2018 - 31-12-2020
+                                </td>
+                                <td class="border-r border-gray-300 px-3 py-3 text-gray-800 sm:px-4">
+                                    Sales Representative
+                                </td>
+                                <td class="border-r px-3 py-3 text-gray-600 sm:px-4">
+                                    Section of East Java Sales 31-Sby Barat
+                                </td>
+                                <td class="px-3 py-3 text-center text-gray-800 sm:px-4">PT. SEMEN INDONESIA</td>
+                            </tr>
+                            <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                    10-10-2021 - 10-10-2024
+                                </td>
+                                <td class="border-r border-gray-300 px-3 py-3 text-gray-800 sm:px-4">
+                                    Manager of Area Sales
+                                </td>
+                                <td class="border-r px-3 py-3 text-gray-600 sm:px-4">
+                                    Section of Area Sales 51 52-Sby Madura
+                                </td>
+                                <td class="px-3 py-3 text-center text-gray-800 sm:px-4">PT. SEMEN INDONESIA</td>
+                            </tr>
+                            <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                    01-01-2016 - 31-12-2017
+                                </td>
+                                <td class="border-r border-gray-300 px-3 py-3 text-gray-800 sm:px-4">
+                                    Marketing Analyst
+                                </td>
+                                <td class="border-r px-3 py-3 text-gray-600 sm:px-4">
+                                    Section of Strategic Marketing Planning
+                                </td>
+                                <td class="px-3 py-3 text-center text-gray-800 sm:px-4">PT. SEMEN INDONESIA</td>
+                            </tr>
+                            <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                    01-02-2014 - 31-12-2015
+                                </td>
+                                <td class="border-r border-gray-300 px-3 py-3 text-gray-800 sm:px-4">
+                                    Assistant Sales Supervisor
+                                </td>
+                                <td class="border-r px-3 py-3 text-gray-600 sm:px-4">
+                                    Section of Sales Support Jawa Timur
+                                </td>
+                                <td class="px-3 py-3 text-center text-gray-800 sm:px-4">PT. SEMEN INDONESIA</td>
+                            </tr>
+                            <tr class="transition-colors hover:bg-gray-50">
+                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                    01-06-2010 - 31-01-2014
+                                </td>
+                                <td class="border-r border-gray-300 px-3 py-3 text-gray-800 sm:px-4">Sales Officer</td>
+                                <td class="border-r px-3 py-3 text-gray-600 sm:px-4">
+                                    Section of Regional Sales Madura
+                                </td>
+                                <td class="px-3 py-3 text-center text-gray-800 sm:px-4">PT. SEMEN INDONESIA</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {{-- Innovation --}}
+            <div class="w-full">
+                <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                    <p class="text-base font-semibold text-white sm:text-lg">Innovations</p>
+                </div>
+                <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-300 bg-gray-100 text-center">
+                                <th
+                                    class="w-1/12 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
+                                >
+                                    Rank
+                                </th>
+                                <th
+                                    class="w-6/12 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
+                                >
+                                    Innovation Title
+                                </th>
+                                <th
+                                    class="w-2/12 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
+                                >
+                                    Award
+                                </th>
+                                <th
+                                    class="w-2/12 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
+                                >
+                                    Category
+                                </th>
+                                <th class="w-1/12 px-3 py-2 font-semibold text-gray-600 sm:px-4">Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                <td class="w-1/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
+                                    Juara 1
+                                </td>
+                                <td class="w-6/12 border-r border-gray-300 px-3 py-2 text-start text-gray-800 sm:px-4">
+                                    Pengembangan Aset Inovasi Perusahaan Yang Menghasilkan Multiplier Effect Dari
+                                    Replikasi Inovasi Melalui Program ReportaSIG
+                                </td>
+                                <td class="w-2/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
+                                    SIG Innovation Award Tahun 2025
+                                </td>
+                                <td class="w-2/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
+                                    HC Optimization
+                                </td>
+                                <td class="w-1/12 px-3 py-2 text-center text-gray-600 sm:px-4">Inisiator</td>
+                            </tr>
+                            <tr class="transition-colors hover:bg-gray-50">
+                                <td class="w-1/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
+                                    Juara 2
+                                </td>
+                                <td class="w-6/12 border-r border-gray-300 px-3 py-2 text-start text-gray-800 sm:px-4">
+                                    Optimizing Data Warehouse Event Di Unit of Knowledge Management & Innovation Untuk
+                                    Executive Dashboard Learning Menggunakan Fitur Office 365
+                                </td>
+                                <td class="w-2/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
+                                    SIG Innovation Award Tahun 2024
+                                </td>
+                                <td class="w-2/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
+                                    HC Optimization
+                                </td>
+                                <td class="w-1/12 px-3 py-2 text-center text-gray-600 sm:px-4">Peserta</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {{-- MCU --}}
+            <div class="w-full">
+                <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                    <p class="text-base font-semibold text-white sm:text-lg">MCU History</p>
+                </div>
+                <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-300 bg-gray-100 text-center">
+                                <th
+                                    class="w-1/12 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
+                                >
+                                    Year
+                                </th>
+                                <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                <td class="w-1/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
+                                    2025
+                                </td>
+                                <td class="px-3 py-2 text-gray-600 sm:px-4">K1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
