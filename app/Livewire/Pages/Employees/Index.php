@@ -94,7 +94,7 @@ class Index extends Component
     public function render()
     {
         $employees = Employee::query()
-            ->with(['company', 'position.workUnit.departemen'])
+            ->with(['company'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
@@ -103,9 +103,6 @@ class Index extends Component
                         ->orWhere('phone', 'like', '%' . $this->search . '%')
                         ->orWhereHas('company', function ($companyQuery) {
                             $companyQuery->where('name', 'like', '%' . $this->search . '%');
-                        })
-                        ->orWhereHas('position', function ($posQuery) {
-                            $posQuery->where('name', 'like', '%' . $this->search . '%');
                         });
                 });
             })

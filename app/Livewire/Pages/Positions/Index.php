@@ -27,9 +27,6 @@ class Index extends Component
     #[Url(as: 'company')]
     public $companyFilter = '';
 
-    #[Url(as: 'work_unit')]
-    public $workUnitFilter = '';
-
     #[Url(as: 'band')]
     public $bandFilter = '';
 
@@ -48,8 +45,7 @@ class Index extends Component
 
     public function updatingCompanyFilter()
     {
-        $this->resetPage();
-        $this->workUnitFilter = ''; // Reset work unit filter when company changes
+        $this->resetPage(); // Reset work unit filter when company changes
     }
 
     public function updatingWorkUnitFilter()
@@ -87,7 +83,7 @@ class Index extends Component
     public function render()
     {
         $positions = Position::query()
-            ->with(['company', 'workUnit.departemen'])
+            ->with(['company'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
@@ -96,17 +92,11 @@ class Index extends Component
                         ->orWhere('job_grade', 'like', '%' . $this->search . '%')
                         ->orWhereHas('company', function ($companyQuery) {
                             $companyQuery->where('name', 'like', '%' . $this->search . '%');
-                        })
-                        ->orWhereHas('workUnit', function ($wuQuery) {
-                            $wuQuery->where('name', 'like', '%' . $this->search . '%');
                         });
                 });
             })
             ->when($this->companyFilter, function ($query) {
                 $query->where('company_id', $this->companyFilter);
-            })
-            ->when($this->workUnitFilter, function ($query) {
-                $query->where('work_unit_id', $this->workUnitFilter);
             })
             ->when($this->bandFilter, function ($query) {
                 $query->where('band', $this->bandFilter);
@@ -126,10 +116,6 @@ class Index extends Component
 
         $companies = Company::orderBy('name')->get();
 
-        // Get work units based on company filter
-        $workUnits = $this->companyFilter
-            ? WorkUnit::where('company_id', $this->companyFilter)->orderBy('name')->get()
-            : WorkUnit::orderBy('name')->get();
 
         // Get unique bands and grades from existing positions
         $bands = Position::distinct()->pluck('band')->sort()->values();
@@ -138,7 +124,6 @@ class Index extends Component
         return view('livewire.pages.positions.index', [
             'positions' => $positions,
             'companies' => $companies,
-            'workUnits' => $workUnits,
             'bands' => $bands,
             'grades' => $grades,
         ]);

@@ -31,29 +31,8 @@ class Create extends Component
     #[Validate('required|exists:companies,id')]
     public $company_id = '';
 
-    #[Validate('required|exists:work_units,id')]
-    public $work_unit_id = '';
+    public function mount() {}
 
-    public $workUnits = [];
-
-    public function mount()
-    {
-        $this->workUnits = collect();
-    }
-
-    public function updatedCompanyId()
-    {
-        $this->work_unit_id = '';
-
-        if ($this->company_id) {
-            $this->workUnits = WorkUnit::where('company_id', $this->company_id)
-                ->with('departemen')
-                ->orderBy('name')
-                ->get();
-        } else {
-            $this->workUnits = collect();
-        }
-    }
 
     public function save()
     {
@@ -66,7 +45,6 @@ class Create extends Component
                 'band' => $this->band,
                 'job_grade' => $this->job_grade,
                 'company_id' => $this->company_id,
-                'work_unit_id' => $this->work_unit_id,
                 'slug' => Str::uuid(),
             ]);
 

@@ -145,34 +145,6 @@
                     </div>
                 </div>
 
-                <!-- Work Unit Filter -->
-                <div class="relative">
-                    <label class="mb-2 block text-sm font-medium text-gray-700">Work Unit</label>
-                    <div class="relative">
-                        <select
-                            wire:model.live="workUnitFilter"
-                            class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                            @if (!$companyFilter) disabled @endif
-                        >
-                            <option value="">{{ $companyFilter ? 'All Work Units' : 'Select company first' }}</option>
-                            @foreach ($workUnits as $workUnit)
-                                <option value="{{ $workUnit->id }}">{{ $workUnit->name }}</option>
-                            @endforeach
-                        </select>
-                        <svg
-                            class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                    <p class="mt-1 text-xs text-gray-500">* Select company first</p>
-                </div>
-
                 <!-- Band Filter -->
                 <div class="relative">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Band</label>
