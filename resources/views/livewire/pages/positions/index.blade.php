@@ -80,7 +80,7 @@
                         <input
                             type="text"
                             wire:model.live.debounce.300ms="search"
-                            placeholder="Search by name, code, band, grade, company, or work unit..."
+                            placeholder="Search by name, code, job grade, company, or organizational unit..."
                             class="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
                     </div>
@@ -98,8 +98,8 @@
                             <option value="name_desc">Name (Z-A)</option>
                             <option value="code_asc">Code (A-Z)</option>
                             <option value="code_desc">Code (Z-A)</option>
-                            <option value="band_asc">Band (A-Z)</option>
-                            <option value="band_desc">Band (Z-A)</option>
+                            <option value="grade_asc">Grade (Low-High)</option>
+                            <option value="grade_desc">Grade (High-Low)</option>
                             <option value="newest">Newest First</option>
                             <option value="oldest">Oldest First</option>
                         </select>
@@ -145,17 +145,17 @@
                     </div>
                 </div>
 
-                <!-- Band Filter -->
+                <!-- Job Grade Filter -->
                 <div class="relative">
-                    <label class="mb-2 block text-sm font-medium text-gray-700">Band</label>
+                    <label class="mb-2 block text-sm font-medium text-gray-700">Job Grade</label>
                     <div class="relative">
                         <select
-                            wire:model.live="bandFilter"
+                            wire:model.live="gradeFilter"
                             class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         >
-                            <option value="">All Bands</option>
-                            @foreach ($bands as $band)
-                                <option value="{{ $band }}">{{ $band }}</option>
+                            <option value="">All Grades</option>
+                            @foreach ($grades as $grade)
+                                <option value="{{ $grade }}">{{ $grade }}</option>
                             @endforeach
                         </select>
                         <svg
@@ -171,17 +171,43 @@
                     </div>
                 </div>
 
-                <!-- Job Grade Filter -->
+                <!-- Department Filter -->
                 <div class="relative">
-                    <label class="mb-2 block text-sm font-medium text-gray-700">Job Grade</label>
+                    <label class="mb-2 block text-sm font-medium text-gray-700">Department</label>
                     <div class="relative">
                         <select
-                            wire:model.live="gradeFilter"
+                            wire:model.live="departmentFilter"
                             class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         >
-                            <option value="">All Grades</option>
-                            @foreach ($grades as $grade)
-                                <option value="{{ $grade }}">{{ $grade }}</option>
+                            <option value="">All Departments</option>
+                            @foreach ($departments as $department)
+                                <option value="{{ $department }}">{{ $department }}</option>
+                            @endforeach
+                        </select>
+                        <svg
+                            class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Location Filter -->
+                <div class="relative">
+                    <label class="mb-2 block text-sm font-medium text-gray-700">Location</label>
+                    <div class="relative">
+                        <select
+                            wire:model.live="locationFilter"
+                            class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                        >
+                            <option value="">All Locations</option>
+                            @foreach ($locations as $location)
+                                <option value="{{ $location }}">{{ $location }}</option>
                             @endforeach
                         </select>
                         <svg
@@ -215,11 +241,11 @@
                 class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
             >
                 <div class="col-span-3 text-sm font-semibold">Position</div>
-                <div class="col-span-2 text-sm font-semibold">Work Unit</div>
-                <div class="col-span-2 text-sm font-semibold">Company</div>
-                <div class="col-span-2 text-sm font-semibold">Band</div>
+                <div class="col-span-3 text-sm font-semibold">Organizational Unit</div>
+                <div class="col-span-3 text-sm font-semibold">Company</div>
+                <div class="col-span-1 text-sm font-semibold">Location</div>
                 <div class="col-span-1 text-sm font-semibold">Job Grade</div>
-                <div class="col-span-2 text-center text-sm font-semibold">Actions</div>
+                <div class="col-span-1 text-center text-sm font-semibold">Actions</div>
             </div>
 
             <!-- List Items -->
@@ -240,22 +266,24 @@
                         </div>
                     </div>
 
-                    <!-- Work Unit -->
-                    <div class="col-span-2 overflow-hidden">
-                        @if ($position->workUnit)
-                            <p class="truncate text-sm font-medium text-gray-900">{{ $position->workUnit->name }}</p>
-                            @if ($position->workUnit->departemen)
-                                <p class="truncate text-xs text-gray-500">
-                                    {{ $position->workUnit->departemen->name }}
-                                </p>
+                    <!-- Organizational Unit -->
+                    <div class="col-span-3 overflow-hidden">
+                        @if ($position->department)
+                            <p class="truncate text-sm font-medium text-gray-900">{{ $position->department }}</p>
+                            @if ($position->directorate)
+                                <p class="truncate text-xs text-gray-500">{{ $position->directorate }}</p>
+                            @endif
+
+                            @if ($position->section)
+                                <p class="truncate text-xs text-gray-400">{{ $position->section }}</p>
                             @endif
                         @else
-                            <span class="text-sm text-gray-400 italic">No work unit</span>
+                            <span class="text-sm text-gray-400 italic">No department</span>
                         @endif
                     </div>
 
                     <!-- Company -->
-                    <div class="col-span-2 overflow-hidden">
+                    <div class="col-span-3 overflow-hidden">
                         @if ($position->company)
                             <p class="truncate text-sm text-gray-600">{{ $position->company->name }}</p>
                             <p class="truncate text-xs text-gray-500">{{ $position->company->cocd }}</p>
@@ -264,13 +292,17 @@
                         @endif
                     </div>
 
-                    <!-- Band -->
-                    <div class="col-span-2">
-                        <span
-                            class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-800"
-                        >
-                            {{ $position->band }}
-                        </span>
+                    <!-- Location -->
+                    <div class="col-span-1">
+                        @if ($position->location)
+                            <span
+                                class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-800"
+                            >
+                                {{ $position->location }}
+                            </span>
+                        @else
+                            <span class="text-sm text-gray-400 italic">No location</span>
+                        @endif
                     </div>
 
                     <!-- Job Grade -->
@@ -283,7 +315,7 @@
                     </div>
 
                     <!-- Actions -->
-                    <div class="col-span-2 flex items-center justify-center gap-2">
+                    <div class="col-span-1 flex items-center justify-center gap-2">
                         <button
                             wire:click="edit({{ $position->id }})"
                             class="rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-[#721d21]"
@@ -345,21 +377,17 @@
                             </div>
                         </div>
 
-                        <!-- Work Unit & Company -->
+                        <!-- Organizational Unit & Company -->
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <p class="text-xs font-medium text-gray-500 uppercase">Work Unit</p>
-                                @if ($position->workUnit)
-                                    <p class="mt-1 text-sm font-medium text-gray-900">
-                                        {{ $position->workUnit->name }}
-                                    </p>
-                                    @if ($position->workUnit->departemen)
-                                        <p class="text-xs text-gray-500">
-                                            {{ $position->workUnit->departemen->name }}
-                                        </p>
+                                <p class="text-xs font-medium text-gray-500 uppercase">Organizational Unit</p>
+                                @if ($position->department)
+                                    <p class="mt-1 text-sm font-medium text-gray-900">{{ $position->department }}</p>
+                                    @if ($position->directorate)
+                                        <p class="text-xs text-gray-500">{{ $position->directorate }}</p>
                                     @endif
                                 @else
-                                    <p class="mt-1 text-sm text-gray-400 italic">No work unit</p>
+                                    <p class="mt-1 text-sm text-gray-400 italic">No department</p>
                                 @endif
                             </div>
 
@@ -377,15 +405,19 @@
                             </div>
                         </div>
 
-                        <!-- Band & Grade -->
+                        <!-- Location & Grade -->
                         <div class="flex items-center gap-3">
                             <div>
-                                <p class="text-xs font-medium text-gray-500 uppercase">Band</p>
-                                <span
-                                    class="mt-1 inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-800"
-                                >
-                                    {{ $position->band }}
-                                </span>
+                                <p class="text-xs font-medium text-gray-500 uppercase">Location</p>
+                                @if ($position->location)
+                                    <span
+                                        class="mt-1 inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-800"
+                                    >
+                                        {{ $position->location }}
+                                    </span>
+                                @else
+                                    <p class="mt-1 text-sm text-gray-400 italic">No location</p>
+                                @endif
                             </div>
                             <div>
                                 <p class="text-xs font-medium text-gray-500 uppercase">Job Grade</p>

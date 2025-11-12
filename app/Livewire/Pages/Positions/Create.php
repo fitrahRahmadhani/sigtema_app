@@ -4,7 +4,6 @@ namespace App\Livewire\Pages\Positions;
 
 use App\Models\Position;
 use App\Models\Company;
-use App\Models\WorkUnit;
 use Livewire\Component;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
@@ -23,16 +22,28 @@ class Create extends Component
     public $position_code = '';
 
     #[Validate('required|string|max:50')]
-    public $band = '';
-
-    #[Validate('required|string|max:50')]
     public $job_grade = '';
 
     #[Validate('required|exists:companies,id')]
     public $company_id = '';
 
-    public function mount() {}
+    // Field baru berdasarkan skema database
+    #[Validate('nullable|string|max:255')]
+    public $directorate = '';
 
+    #[Validate('nullable|string|max:255')]
+    public $department = '';
+
+    #[Validate('nullable|string|max:255')]
+    public $biro = '';
+
+    #[Validate('nullable|string|max:255')]
+    public $section = '';
+
+    #[Validate('nullable|string|max:255')]
+    public $location = '';
+
+    public function mount() {}
 
     public function save()
     {
@@ -42,10 +53,14 @@ class Create extends Component
             Position::create([
                 'name' => $this->name,
                 'position_code' => $this->position_code,
-                'band' => $this->band,
                 'job_grade' => $this->job_grade,
                 'company_id' => $this->company_id,
-                'slug' => Str::uuid(),
+                'directorate' => $this->directorate,
+                'department' => $this->department,
+                'biro' => $this->biro,
+                'section' => $this->section,
+                'location' => $this->location,
+                'slug' => Str::slug($this->name . '-' . Str::random(6)),
             ]);
 
             return redirect()->route('positions.index')->success('Position created successfully');
@@ -56,7 +71,7 @@ class Create extends Component
 
     public function cancel()
     {
-        return redirect()->route('positions.index')->success('Position created successfully');
+        return redirect()->route('positions.index');
     }
 
     public function render()
