@@ -69,6 +69,7 @@ Route::middleware(['auth'])->group(function () {
     // Employees
     Route::get('employees', App\Livewire\Pages\Employees\Index::class)->name('employees.index');
     Route::get('employees/create', App\Livewire\Pages\Employees\Create::class)->name('employees.create');
+    Route::get('employees/{employee:slug}/show', App\Livewire\Pages\Employees\Show::class)->name('employees.show');
     Route::get('employees/{employee:slug}/edit', App\Livewire\Pages\Employees\Edit::class)->name('employees.edit');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
