@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('company_id')->constrained('companies');
             $table->foreignId('position_id')->constrained('positions');
             $table->foreignId('superior_id')->constrained('positions');
-            $table->string('relation_type');
+            $table->string('relation_type')->nullable();
             $table->timestamps();
         });
     }

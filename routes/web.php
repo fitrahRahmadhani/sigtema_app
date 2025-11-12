@@ -31,6 +31,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Organization Structure
     Route::get('organization-structure', App\Livewire\Pages\OrgStructure\Index::class)->name('organization-structure.index');
+    Route::get('organization-structure/table', App\Livewire\Pages\OrgStructure\Table::class)->name('organization-structure.table');
+    Route::get('organization-structure/create', App\Livewire\Pages\OrgStructure\Create::class)->name('organization-structure.create');
+    Route::get('organization-structure/{hierarchy}/edit', App\Livewire\Pages\OrgStructure\Edit::class)->name('organization-structure.edit');
 
     // Companies
     Route::get('companies', App\Livewire\Pages\Companies\Index::class)->name('companies.index');
