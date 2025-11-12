@@ -119,27 +119,38 @@
                             $output .= '</div>';
 
                             // === INFORMASI NODE ===
-                            $output .= '<div class="flex flex-col text-left">';
-                            $output .= '<div class="' . $textSize . ' font-bold text-gray-800">' . e($node['name']) . '</div>';
-                            $output .= '<div class="mt-0.5 ' . $subtextSize . ' font-medium text-gray-600">' . e($node['title']) . '</div>';
-                            $output .= '<div class="text-xs text-gray-500">' . e($node['department']) . '</div>';
+                            $output .= '<div class="flex flex-col text-left flex-1 min-w-0">';
+                            $output .= '<div class="' . $textSize . ' font-bold text-gray-800 truncate">' . e($node['name']) . '</div>';
+                            $output .= '<div class="mt-0.5 ' . $subtextSize . ' font-medium text-gray-600 truncate">' . e($node['title']) . '</div>';
+                            $output .= '<div class="text-xs text-gray-500 truncate">' . e($node['department']) . '</div>';
 
                             if ($this->hasChildren($nodeId)) {
-                                $output .= '<div wire:click="toggleNode(' . $node['id'] . ')" class="mt-2 cursor-pointer text-xs font-medium text-[#721d21] p-1 px-2 rounded-full hover:bg-[#721d2110]">';
+                                $output .= '<div wire:click="toggleNode(' . $node['id'] . ')" class="mt-2 cursor-pointer text-xs font-medium text-[#721d21] p-1 px-2 rounded-full hover:bg-[#721d2110] inline-block">';
                                 $output .= $isCollapsed ? '► Show Team (' . $totalChildren . ')' : '▼ Hide Team';
                                 $output .= '</div>';
                             }
                             $output .= '</div>';
 
-                            // === URL ===
-                            $url = route('dashboard');
-                            $output .= '<a href="' . $url . '" target="_blank" class="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-md  text-gray-500 text-xs hover:bg-gray-200 transition-colors">';
-                            $output .= '<button title="Candidate Comparison" class="w-full flex items-center justify-center">';
-                            $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">';
-                            $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />';
+                            // === BUTTON URL ===
+                            $output .= '<div class="flex flex-col self-start gap-2 ml-2">';
+
+                            // Button 1 - Candidate Comparison
+                            $comparisonUrl = route('dashboard');
+                            $output .= '<a href="' . $comparisonUrl . '" target="_blank" class="flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors" title="Candidate Comparison">';
+                            $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">';
+                            $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />';
                             $output .= '</svg>';
-                            $output .= '</button>';
                             $output .= '</a>';
+
+                            // Button 2 - Employee Details
+                            $employeeUrl = route('dashboard');
+                            $output .= '<a href="' . $employeeUrl . '" target="_blank" class="flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors" title="Employee Profile">';
+                            $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">';
+                            $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />';
+                            $output .= '</svg>';
+                            $output .= '</a>';
+
+                            $output .= '</div>';
 
                             $output .= '</div>';
 
