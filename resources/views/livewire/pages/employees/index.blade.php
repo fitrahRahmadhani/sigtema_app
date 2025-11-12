@@ -214,8 +214,7 @@
             <div
                 class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
             >
-                <div class="col-span-1 text-sm font-semibold">Photo</div>
-                <div class="col-span-2 text-sm font-semibold">Employee</div>
+                <div class="col-span-3 text-sm font-semibold">Employee</div>
                 <div class="col-span-2 text-sm font-semibold">Contact</div>
                 <div class="col-span-3 text-sm font-semibold">Position</div>
                 <div class="col-span-2 text-sm font-semibold">Company</div>
@@ -228,42 +227,43 @@
                 <div
                     class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
                 >
-                    <!-- Photo -->
-                    <div class="col-span-1 flex items-center">
-                        @if ($employee->profile_path)
-                            <img
-                                src="{{ \Storage::url($employee->profile_path) }}"
-                                alt="{{ $employee->name }}"
-                                class="h-12 w-12 rounded-lg border-2 border-gray-200 object-cover"
-                            />
-                        @else
-                            <div
-                                class="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-50 bg-gradient-to-br text-lg font-semibold text-gray-300 shadow-sm"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="currentColor"
-                                    class="size-8"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                            </div>
-                        @endif
-                    </div>
-
                     <!-- Employee Info -->
-                    <div class="col-span-2 flex flex-col justify-center">
-                        <p class="line-clamp-1 text-sm font-semibold text-gray-900">{{ $employee->name }}</p>
-                        <span
-                            class="mt-1 inline-flex w-fit items-center rounded-md bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800"
-                        >
-                            {{ $employee->employee_number }}
-                        </span>
+                    <div class="col-span-3 flex gap-2">
+                        <!-- Photo -->
+                        <div class="flex flex-shrink-0 items-center">
+                            @if ($employee->profile_path)
+                                <img
+                                    src="{{ \Storage::url($employee->profile_path) }}"
+                                    alt="{{ $employee->name }}"
+                                    class="h-12 w-12 rounded-lg border-2 border-gray-200 object-cover"
+                                />
+                            @else
+                                <div
+                                    class="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-50 bg-gradient-to-br text-lg font-semibold text-gray-300 shadow-sm"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                        class="size-8"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
+                                            clip-rule="evenodd"
+                                        />
+                                    </svg>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="flex flex-col justify-center">
+                            <p class="line-clamp-1 text-sm font-semibold text-gray-900">{{ $employee->name }}</p>
+                            <span
+                                class="mt-1 inline-flex w-fit items-center rounded-md bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800"
+                            >
+                                {{ $employee->employee_number }}
+                            </span>
+                        </div>
                     </div>
 
                     <!-- Contact -->
@@ -355,7 +355,7 @@
                                 <img
                                     src="{{ \Storage::url($employee->profile_path) }}"
                                     alt="{{ $employee->name }}"
-                                    class="h-16 w-16 flex-shrink-0 rounded-full border-2 border-gray-200 object-cover"
+                                    class="h-16 w-16 flex-shrink-0 rounded-lg border-2 border-gray-200 object-cover"
                                 />
                             @else
                                 <div
