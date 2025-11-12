@@ -41,16 +41,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('companies/create', App\Livewire\Pages\Companies\Create::class)->name('companies.create');
     Route::get('companies/{company:slug}/edit', App\Livewire\Pages\Companies\Edit::class)->name('companies.edit');
 
-    // Departments
-    Route::get('departments', App\Livewire\Pages\Departments\Index::class)->name('departments.index');
-    Route::get('departments/create', App\Livewire\Pages\Departments\Create::class)->name('departments.create');
-    Route::get('departments/{department:slug}/edit', App\Livewire\Pages\Departments\Edit::class)->name('departments.edit');
-
-    // Work Units
-    Route::get('work-units', App\Livewire\Pages\WorkUnits\Index::class)->name('work-units.index');
-    Route::get('work-units/create', App\Livewire\Pages\WorkUnits\Create::class)->name('work-units.create');
-    Route::get('work-units/{workUnit:slug}/edit', App\Livewire\Pages\WorkUnits\Edit::class)->name('work-units.edit');
-
     // Positions
     Route::get('positions', App\Livewire\Pages\Positions\Index::class)->name('positions.index');
     Route::get('positions/create', App\Livewire\Pages\Positions\Create::class)->name('positions.create');

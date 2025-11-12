@@ -12,9 +12,4 @@ class Position extends Model
     {
         return $this->belongsTo(Company::class);
     }
-
-    public function workUnit()
-    {
-        return $this->belongsTo(WorkUnit::class);
-    }
 }

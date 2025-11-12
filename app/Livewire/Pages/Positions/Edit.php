@@ -33,11 +33,8 @@ class Edit extends Component
     #[Validate('required|exists:companies,id')]
     public $company_id = '';
 
-    #[Validate('required|exists:work_units,id')]
-    public $work_unit_id = '';
 
     public $slug = '';
-    public $workUnits = [];
 
     public function mount(Position $position)
     {
@@ -47,16 +44,7 @@ class Edit extends Component
         $this->band = $position->band;
         $this->job_grade = $position->job_grade;
         $this->company_id = $position->company_id;
-        $this->work_unit_id = $position->work_unit_id;
         $this->slug = $position->slug;
-
-        // Load work units for the selected company
-        if ($this->company_id) {
-            $this->workUnits = WorkUnit::where('company_id', $this->company_id)
-                ->with('departemen')
-                ->orderBy('name')
-                ->get();
-        }
     }
 
     public function updatedName()
@@ -64,19 +52,6 @@ class Edit extends Component
         $this->slug = Str::slug($this->name);
     }
 
-    public function updatedCompanyId()
-    {
-        $this->work_unit_id = '';
-
-        if ($this->company_id) {
-            $this->workUnits = WorkUnit::where('company_id', $this->company_id)
-                ->with('departemen')
-                ->orderBy('name')
-                ->get();
-        } else {
-            $this->workUnits = collect();
-        }
-    }
 
     public function save()
     {
@@ -103,7 +78,6 @@ class Edit extends Component
                 'band' => $this->band,
                 'job_grade' => $this->job_grade,
                 'company_id' => $this->company_id,
-                'work_unit_id' => $this->work_unit_id,
                 'slug' => $slug,
             ]);
 

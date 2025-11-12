@@ -71,7 +71,6 @@ class Create extends Component
 
         if ($this->company_id) {
             $this->positions = Position::where('company_id', $this->company_id)
-                ->with('workUnit')
                 ->orderBy('name')
                 ->get();
         } else {

@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('positions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained('companies');
-            $table->foreignId('work_unit_id')->constrained('work_units');
             $table->string('slug');
             $table->string('position_code');
             $table->string('name');
-            $table->string('band');
+            $table->string('directorate')->nullable();
+            $table->string('department')->nullable();
+            $table->string('biro')->nullable();
+            $table->string('section')->nullable();
             $table->string('job_grade');
             $table->timestamps();
         });
