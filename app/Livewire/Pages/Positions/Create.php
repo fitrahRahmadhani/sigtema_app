@@ -2,14 +2,15 @@
 
 namespace App\Livewire\Pages\Positions;
 
-use App\Models\Position;
 use App\Models\Company;
 use Livewire\Component;
+use App\Models\Employee;
+use App\Models\Position;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Title;
+use Masmerise\Toaster\Toaster;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
-use Illuminate\Support\Str;
-use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
 #[Title('Create Position')]
@@ -43,14 +44,23 @@ class Create extends Component
     #[Validate('nullable|string|max:255')]
     public $location = '';
 
+    public $employees = [];
+    public $employee_id;
+
     public function mount() {}
+
+    public function updatedCompanyId()
+    {
+        $company = Company::find($this->company_id);
+        $this->employees = $company->employees ?? [];
+    }
 
     public function save()
     {
         $this->validate();
 
         try {
-            Position::create([
+            $position = Position::create([
                 'name' => $this->name,
                 'position_code' => $this->position_code,
                 'job_grade' => $this->job_grade,
@@ -62,6 +72,11 @@ class Create extends Component
                 'location' => $this->location,
                 'slug' => Str::slug($this->name . '-' . Str::random(6)),
             ]);
+
+            if ($this->employee_id) {
+                $employee = Employee::find($this->employee_id);
+                $employee->update(['position_id' => $position->id]);
+            }
 
             return redirect()->route('positions.index')->success('Position created successfully');
         } catch (\Exception $e) {

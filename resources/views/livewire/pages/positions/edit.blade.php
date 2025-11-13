@@ -220,6 +220,51 @@
                 </div>
             </div>
 
+            <!-- Employee Assignment -->
+            <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="mb-4 text-lg font-semibold text-gray-900">Employee Assignment</h3>
+                    <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">Optional</span>
+                </div>
+                <div class="mb-6">
+                    <!-- Employee Selection -->
+                    <div class="w-full">
+                        <label for="employee_id" class="mb-2 block text-sm font-medium text-gray-700">
+                            Employee
+                            <span class="text-red-600">*</span>
+                        </label>
+                        <div class="relative">
+                            <select
+                                id="employee_id"
+                                wire:model.live="employee_id"
+                                class="@error('employee_id') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                @if (!$company_id) disabled @endif
+                            >
+                                <option value="">
+                                    {{ $company_id ? 'Select employee' : 'Select company first' }}
+                                </option>
+                                @foreach ($employees as $employee)
+                                    <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                                @endforeach
+                            </select>
+                            <svg
+                                class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                        @error('employee_id')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
             <!-- Form Actions -->
             <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
                 <button
