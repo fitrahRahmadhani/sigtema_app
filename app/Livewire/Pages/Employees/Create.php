@@ -4,7 +4,6 @@ namespace App\Livewire\Pages\Employees;
 
 use App\Models\Employee;
 use App\Models\Company;
-use App\Models\Position;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Title;
@@ -49,6 +48,9 @@ class Create extends Component
     #[Validate('required|date')]
     public $hire_date = '';
 
+    #[Validate('required|in:band 1, band 2, band 3, band 4, band 5')]
+    public $band = '';
+
     #[Validate('required|exists:companies,id')]
     public $company_id = '';
 
@@ -57,26 +59,6 @@ class Create extends Component
 
     #[Validate('nullable|image|max:2048')]
     public $profile_photo;
-
-    public $positions = [];
-
-    public function mount()
-    {
-        $this->positions = collect();
-    }
-
-    public function updatedCompanyId()
-    {
-        $this->position_id = '';
-
-        if ($this->company_id) {
-            $this->positions = Position::where('company_id', $this->company_id)
-                ->orderBy('name')
-                ->get();
-        } else {
-            $this->positions = collect();
-        }
-    }
 
     public function save()
     {
@@ -93,9 +75,9 @@ class Create extends Component
                 'gender' => $this->gender,
                 'password' => Hash::make($this->password),
                 'personal_grade' => $this->personal_grade,
+                'band' => $this->band,
                 'hire_date' => $this->hire_date,
                 'company_id' => $this->company_id,
-                'position_id' => $this->position_id,
             ];
 
             if ($this->profile_photo) {

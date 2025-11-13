@@ -26,7 +26,7 @@ class Edit extends Component
 
     public $name, $employee_number, $email, $phone;
     public $birth_date, $gender, $personal_grade, $hire_date;
-    public $company_id, $position_id, $slug;
+    public $company_id,  $slug;
 
     #[Validate('nullable|string|min:8|confirmed')]
     public $password = '';
@@ -36,7 +36,6 @@ class Edit extends Component
     public $profile_photo;
 
     public $existing_profile_photo = null;
-    public $positions = [];
 
     public function mount(Employee $employee)
     {
@@ -50,16 +49,8 @@ class Edit extends Component
         $this->personal_grade = $employee->personal_grade;
         $this->hire_date = $employee->hire_date->format('Y-m-d');
         $this->company_id = $employee->company_id;
-        $this->position_id = $employee->position_id;
         $this->slug = $employee->slug;
         $this->existing_profile_photo = $employee->profile_path;
-
-        if ($this->company_id) {
-            $this->positions = Position::where('company_id', $this->company_id)
-                ->with('workUnit')
-                ->orderBy('name')
-                ->get();
-        }
     }
 
     public function rules()
@@ -74,7 +65,6 @@ class Edit extends Component
             'personal_grade' => 'required|string|max:50',
             'hire_date' => 'required|date',
             'company_id' => 'required|exists:companies,id',
-            'position_id' => 'required|exists:positions,id',
             'password' => 'nullable|string|min:8|confirmed',
             'profile_photo' => 'nullable|image|max:2048',
         ];
@@ -83,20 +73,6 @@ class Edit extends Component
     public function updatedName()
     {
         $this->slug = Str::slug($this->name);
-    }
-
-    public function updatedCompanyId()
-    {
-        $this->position_id = '';
-
-        if ($this->company_id) {
-            $this->positions = Position::where('company_id', $this->company_id)
-                ->with('workUnit')
-                ->orderBy('name')
-                ->get();
-        } else {
-            $this->positions = collect();
-        }
     }
 
     public function deleteExistingPhoto()
@@ -140,7 +116,6 @@ class Edit extends Component
                 'personal_grade' => $this->personal_grade,
                 'hire_date' => $this->hire_date,
                 'company_id' => $this->company_id,
-                'position_id' => $this->position_id,
                 'slug' => $slug,
             ];
 

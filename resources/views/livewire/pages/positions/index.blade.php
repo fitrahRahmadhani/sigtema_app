@@ -241,8 +241,9 @@
                 class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
             >
                 <div class="col-span-3 text-sm font-semibold">Position</div>
-                <div class="col-span-3 text-sm font-semibold">Organizational Unit</div>
-                <div class="col-span-3 text-sm font-semibold">Company</div>
+                <div class="col-span-2 text-sm font-semibold">Employee on Duty</div>
+                <div class="col-span-2 text-sm font-semibold">Organizational Unit</div>
+                <div class="col-span-2 text-sm font-semibold">Company</div>
                 <div class="col-span-1 text-sm font-semibold">Location</div>
                 <div class="col-span-1 text-sm font-semibold">Job Grade</div>
                 <div class="col-span-1 text-center text-sm font-semibold">Actions</div>
@@ -266,8 +267,27 @@
                         </div>
                     </div>
 
+                    <!-- Employee Unit -->
+                    <div class="col-span-2 overflow-hidden">
+                        @if ($position->employee)
+                            <p class="truncate text-sm font-medium text-gray-900">{{ $position->employee->name }}</p>
+                            @if ($position->employee->employee_number)
+                                <p class="truncate text-xs text-gray-400">
+                                    {{ $position->employee->employee_number }}
+                                </p>
+                            @endif
+                        @else
+                            <p
+                                class="mt-1 w-fit rounded-full bg-red-50 px-2 py-1 text-sm font-medium text-red-500 italic"
+                            >
+                                Vacant
+                                <span class="hidden lg:inline">Position</span>
+                            </p>
+                        @endif
+                    </div>
+
                     <!-- Organizational Unit -->
-                    <div class="col-span-3 overflow-hidden">
+                    <div class="col-span-2 overflow-hidden">
                         @if ($position->department)
                             <p class="truncate text-sm font-medium text-gray-900">{{ $position->department }}</p>
                             @if ($position->directorate)
@@ -283,7 +303,7 @@
                     </div>
 
                     <!-- Company -->
-                    <div class="col-span-3 overflow-hidden">
+                    <div class="col-span-2 overflow-hidden">
                         @if ($position->company)
                             <p class="truncate text-sm text-gray-600">{{ $position->company->name }}</p>
                             <p class="truncate text-xs text-gray-500">{{ $position->company->cocd }}</p>
@@ -375,6 +395,23 @@
                                     {{ $position->position_code }}
                                 </span>
                             </div>
+                        </div>
+
+                        <!-- Employee -->
+                        <div>
+                            <p class="text-xs font-medium text-gray-500 uppercase">Employee on Duty</p>
+                            @if ($position->employee)
+                                <p class="mt-1 text-sm font-medium text-gray-900">{{ $position->employee->name }}</p>
+                                @if ($position->employee->employee_number)
+                                    <p class="text-xs text-gray-500">{{ $position->employee->employee_number }}</p>
+                                @endif
+                            @else
+                                <p
+                                    class="mt-1 w-fit rounded-full bg-red-50 px-2 py-1 text-sm font-medium text-red-500 italic"
+                                >
+                                    Vacant Position
+                                </p>
+                            @endif
                         </div>
 
                         <!-- Organizational Unit & Company -->

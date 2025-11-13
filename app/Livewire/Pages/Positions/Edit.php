@@ -2,13 +2,14 @@
 
 namespace App\Livewire\Pages\Positions;
 
-use App\Models\Position;
 use App\Models\Company;
 use Livewire\Component;
+use App\Models\Employee;
+use App\Models\Position;
 use Livewire\Attributes\Title;
+use Masmerise\Toaster\Toaster;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
-use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
 #[Title('Edit Position')]
@@ -44,6 +45,9 @@ class Edit extends Component
     #[Validate('nullable|string|max:255')]
     public $location = '';
 
+    public $employees = [];
+    public $employee_id;
+
     public function mount(Position $position)
     {
         $this->position = $position;
@@ -58,6 +62,12 @@ class Edit extends Component
         $this->biro = $position->biro;
         $this->section = $position->section;
         $this->location = $position->location;
+    }
+
+    public function updatedCompanyId()
+    {
+        $company = Company::find($this->company_id);
+        $this->employees = $company->employees ?? [];
     }
 
     public function save()
@@ -77,8 +87,12 @@ class Edit extends Component
                 'location' => $this->location,
             ]);
 
-            Toaster::success('Position updated successfully');
-            return redirect()->route('positions.index');
+            if ($this->employee_id) {
+                $employee = Employee::find($this->employee_id);
+                $employee->update(['position_id' => $this->position->id]);
+            }
+
+            return redirect()->route('positions.index')->success('Position updated successfully');
         } catch (\Exception $e) {
             Toaster::error('Failed to update position: ' . $e->getMessage());
         }

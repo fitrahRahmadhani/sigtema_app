@@ -308,7 +308,7 @@
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <div class="mb-4 flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-900">Change Password</h3>
-                    <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">Optional</span>
+                    <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">Optional</span>
                 </div>
                 <p class="mb-4 text-sm text-gray-600">Leave blank to keep the current password</p>
                 <div class="grid gap-6 md:grid-cols-2">
@@ -380,46 +380,6 @@
                             </svg>
                         </div>
                         @error('company_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="position_id" class="mb-2 block text-sm font-medium text-gray-700">
-                            Position
-                            <span class="text-red-600">*</span>
-                        </label>
-                        <div class="relative">
-                            <select
-                                id="position_id"
-                                wire:model="position_id"
-                                @if (!$company_id) disabled @endif
-                                class="@error('position_id') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100"
-                            >
-                                <option value="">
-                                    {{ $company_id ? 'Select a position' : 'Select company first' }}
-                                </option>
-                                @foreach ($positions as $position)
-                                    <option value="{{ $position->id }}">
-                                        {{ $position->name }}
-                                        @if ($position->workUnit)
-                                            - {{ $position->workUnit->name }}
-                                        @endif
-                                    </option>
-                                @endforeach
-                            </select>
-                            <svg
-                                class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
-                        @error('position_id')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
