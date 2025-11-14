@@ -26,7 +26,7 @@ class Edit extends Component
 
     public $name, $employee_number, $email, $phone;
     public $birth_date, $gender, $personal_grade, $hire_date;
-    public $company_id,  $slug;
+    public $company_id, $band;
 
     #[Validate('nullable|string|min:8|confirmed')]
     public $password = '';
@@ -44,12 +44,12 @@ class Edit extends Component
         $this->employee_number = $employee->employee_number;
         $this->email = $employee->email;
         $this->phone = $employee->phone;
-        $this->birth_date = $employee->birth_date->format('Y-m-d');
+        $this->birth_date = $employee->birth_date?->format('Y-m-d');
         $this->gender = $employee->gender;
         $this->personal_grade = $employee->personal_grade;
-        $this->hire_date = $employee->hire_date->format('Y-m-d');
+        $this->hire_date = $employee->hire_date?->format('Y-m-d');
+        $this->band = $employee->band;
         $this->company_id = $employee->company_id;
-        $this->slug = $employee->slug;
         $this->existing_profile_photo = $employee->profile_path;
     }
 
@@ -60,19 +60,15 @@ class Edit extends Component
             'employee_number' => ['required', 'string', Rule::unique('employees')->ignore($this->employee->id)],
             'email' => ['required', 'email', Rule::unique('employees')->ignore($this->employee->id)],
             'phone' => 'required|string|max:20',
-            'birth_date' => 'required|date',
+            'birth_date' => 'nullable|date',
             'gender' => 'required|in:male,female',
             'personal_grade' => 'required|string|max:50',
-            'hire_date' => 'required|date',
+            'hire_date' => 'nullable|date',
+            'band' => 'required|in:band 1,band 2,band 3,band 4,band 5',
             'company_id' => 'required|exists:companies,id',
             'password' => 'nullable|string|min:8|confirmed',
             'profile_photo' => 'nullable|image|max:2048',
         ];
-    }
-
-    public function updatedName()
-    {
-        $this->slug = Str::slug($this->name);
     }
 
     public function deleteExistingPhoto()
@@ -92,20 +88,6 @@ class Edit extends Component
         $this->validate();
 
         try {
-            $slug = Str::slug($this->name);
-
-            if ($slug !== $this->employee->slug) {
-                $originalSlug = $slug;
-                $count = 1;
-
-                while (Employee::where('slug', $slug)->where('id', '!=', $this->employee->id)->exists()) {
-                    $slug = $originalSlug . '-' . $count;
-                    $count++;
-                }
-            } else {
-                $slug = $this->employee->slug;
-            }
-
             $data = [
                 'name' => $this->name,
                 'employee_number' => $this->employee_number,
@@ -116,7 +98,6 @@ class Edit extends Component
                 'personal_grade' => $this->personal_grade,
                 'hire_date' => $this->hire_date,
                 'company_id' => $this->company_id,
-                'slug' => $slug,
             ];
 
             if ($this->password) {
@@ -134,9 +115,7 @@ class Edit extends Component
 
             $this->employee->update($data);
 
-            Toaster::success('Employee updated successfully!');
-
-            return $this->redirect(route('employees.index'), navigate: true);
+            return redirect()->route('employees.index')->success('Employee updated successfully!');
         } catch (\Exception $e) {
             Toaster::error('Failed to update employee: ' . $e->getMessage());
         }

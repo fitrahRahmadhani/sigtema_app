@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained('companies');
-            $table->foreignId('position_id')->constrained('positions');
             $table->string('slug');
             $table->string('employee_number');
             $table->string('name');
@@ -22,7 +21,7 @@ return new class extends Migration
             $table->string('phone');
             $table->date('birth_date')->nullable();
             $table->string('gender');
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->string('personal_grade');
             $table->string('band');
             $table->date('hire_date')->nullable();

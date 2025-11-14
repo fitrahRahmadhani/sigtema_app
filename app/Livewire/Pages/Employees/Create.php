@@ -31,7 +31,7 @@ class Create extends Component
     #[Validate('required|string|max:20')]
     public $phone = '';
 
-    #[Validate('required|date')]
+    #[Validate('nullable|date')]
     public $birth_date = '';
 
     #[Validate('required|in:male,female')]
@@ -45,17 +45,14 @@ class Create extends Component
     #[Validate('required|string|max:50')]
     public $personal_grade = '';
 
-    #[Validate('required|date')]
+    #[Validate('nullable|date')]
     public $hire_date = '';
 
-    #[Validate('required|in:band 1, band 2, band 3, band 4, band 5')]
+    #[Validate('required|in:band 1,band 2,band 3,band 4,band 5')]
     public $band = '';
 
     #[Validate('required|exists:companies,id')]
     public $company_id = '';
-
-    #[Validate('required|exists:positions,id')]
-    public $position_id = '';
 
     #[Validate('nullable|image|max:2048')]
     public $profile_photo;
@@ -71,14 +68,23 @@ class Create extends Component
                 'employee_number' => $this->employee_number,
                 'email' => $this->email,
                 'phone' => $this->phone,
-                'birth_date' => $this->birth_date,
                 'gender' => $this->gender,
-                'password' => Hash::make($this->password),
                 'personal_grade' => $this->personal_grade,
                 'band' => $this->band,
-                'hire_date' => $this->hire_date,
                 'company_id' => $this->company_id,
             ];
+
+            if (!empty($this->birth_date)) {
+                $data['birth_date'] = $this->birth_date;
+            }
+
+            if (!empty($this->hire_date)) {
+                $data['hire_date'] = $this->hire_date;
+            }
+
+            if (!empty($this->password)) {
+                $data['password'] = Hash::make($this->password);
+            }
 
             if ($this->profile_photo) {
                 $path = $this->profile_photo->store('employees', 'public');
@@ -95,7 +101,7 @@ class Create extends Component
 
     public function cancel()
     {
-        return redirect()->route('employees.index')->success('Employee created successfully');
+        return redirect()->route('employees.index');
     }
 
     public function render()
