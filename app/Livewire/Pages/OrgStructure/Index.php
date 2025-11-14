@@ -3,155 +3,102 @@
 namespace App\Livewire\Pages\OrgStructure;
 
 use Livewire\Component;
+use App\Models\Employee;
+use App\Models\Position;
 use Livewire\Attributes\Title;
+use App\Models\EmployeeHierarchy;
 
 #[Title('Organization Structure')]
 class Index extends Component
 {
     public $zoom = 100;
     public $nodes = [];
+    public $companyId;
 
-    public function mount()
+    public function mount($companyId = null)
     {
+        // Ambil company_id dari user yang sedang login atau parameter
+        $this->companyId = 1;
         $this->initializeChart();
     }
 
     private function initializeChart()
     {
-        $this->nodes = [
-            [
-                'id' => 1,
-                'name' => 'Sarah Johnson',
-                'title' => 'CEO',
-                'department' => 'Executive',
-                'parent_id' => null,
-                'visible' => true,
-                'collapsed' => true, // CEO mulai dalam keadaan collapsed
-                'level' => 0,
-                'photo' => null
-            ],
-            [
-                'id' => 2,
-                'name' => 'Mike Chen',
-                'title' => 'CTO',
-                'department' => 'Technology',
-                'parent_id' => 1,
-                'visible' => false, // Children CEO hidden dulu
-                'collapsed' => true, // Jika di-show, dia juga collapsed
-                'level' => 1,
-                'photo' => null
-            ],
-            [
-                'id' => 3,
-                'name' => 'Lisa Rodriguez',
-                'title' => 'CFO',
-                'department' => 'Finance',
-                'parent_id' => 1,
-                'visible' => false,
-                'collapsed' => true,
-                'level' => 1,
-                'photo' => null
-            ],
-            [
-                'id' => 4,
-                'name' => 'David Kim',
-                'title' => 'COO',
-                'department' => 'Operations',
-                'parent_id' => 1,
-                'visible' => false,
-                'collapsed' => true,
-                'level' => 1,
-                'photo' => null
-            ],
-            [
-                'id' => 5,
-                'name' => 'Alex Thompson',
-                'title' => 'Dev Manager',
-                'department' => 'Engineering',
-                'parent_id' => 2,
-                'visible' => false,
-                'collapsed' => true,
-                'level' => 2,
-                'photo' => null
-            ],
-            [
-                'id' => 6,
-                'name' => 'Maria Garcia',
-                'title' => 'Design Lead',
-                'department' => 'Product Design',
-                'parent_id' => 2,
-                'visible' => false,
-                'collapsed' => true,
-                'level' => 2,
-                'photo' => null
-            ],
-            [
-                'id' => 7,
-                'name' => 'James Wilson',
-                'title' => 'Accounting Manager',
-                'department' => 'Finance',
-                'parent_id' => 3,
-                'visible' => false,
-                'collapsed' => true,
-                'level' => 2,
-                'photo' => null
-            ],
-            [
-                'id' => 8,
-                'name' => 'Emma Davis',
-                'title' => 'Budget Analyst',
-                'department' => 'Finance',
-                'parent_id' => 3,
-                'visible' => false,
-                'collapsed' => true,
-                'level' => 2,
-                'photo' => null
-            ],
-            [
-                'id' => 9,
-                'name' => 'Robert Brown',
-                'title' => 'Ops Manager',
-                'department' => 'Operations',
-                'parent_id' => 4,
-                'visible' => false,
-                'collapsed' => true,
-                'level' => 2,
-                'photo' => null
-            ],
-            [
-                'id' => 10,
-                'name' => 'Sophia Lee',
-                'title' => 'Senior Developer',
-                'department' => 'Engineering',
-                'parent_id' => 5,
-                'visible' => false,
-                'collapsed' => true,
-                'level' => 3,
-                'photo' => null
-            ],
-            [
-                'id' => 11,
-                'name' => 'Daniel Martin',
-                'title' => 'Frontend Lead',
-                'department' => 'Engineering',
-                'parent_id' => 5,
-                'visible' => false,
-                'collapsed' => true,
-                'level' => 3,
-                'photo' => null
-            ],
-            [
-                'id' => 12,
-                'name' => 'Karen White',
-                'title' => 'Logistics Coordinator',
-                'department' => 'Operations',
-                'parent_id' => 9,
-                'visible' => false,
-                'collapsed' => true,
-                'level' => 3,
-                'photo' => null
-            ]
-        ];
+        // Ambil semua hierarki untuk company ini
+        $hierarchies = EmployeeHierarchy::where('company_id', $this->companyId)
+            ->with(['position.employee', 'superior'])
+            ->get();
+
+        // Ambil semua position yang terlibat
+        $positionIds = $hierarchies->pluck('position_id')
+            ->merge($hierarchies->pluck('superior_id'))
+            ->unique();
+
+        $positions = Position::whereIn('id', $positionIds)
+            ->with(['employee' => function ($query) {
+                $query->where('company_id', $this->companyId)
+                    ->latest('created_at');
+            }])
+            ->get();
+
+        // Build nodes array
+        $this->nodes = [];
+        $nodeIdCounter = 1;
+        $positionToNodeId = [];
+
+        // Cari root positions (yang tidak ada sebagai child di hierarki)
+        $childPositionIds = $hierarchies->pluck('position_id')->toArray();
+        $rootPositionIds = $positionIds->diff($childPositionIds)->values();
+
+        // Jika tidak ada root yang jelas, ambil position dengan level tertinggi
+        if ($rootPositionIds->isEmpty()) {
+            $rootPositionIds = collect([$hierarchies->first()->superior_id]);
+        }
+
+        // Function untuk build tree recursively
+        $buildNode = function ($positionId, $parentNodeId = null, $level = 0) use (&$buildNode, &$nodeIdCounter, &$positionToNodeId, $positions, $hierarchies) {
+            // Cek apakah position ini sudah dibuat nodenya (prevent duplicate)
+            if (isset($positionToNodeId[$positionId])) {
+                return;
+            }
+
+            $position = $positions->firstWhere('id', $positionId);
+            if (!$position) return;
+
+            // Ambil employee yang menduduki position ini
+            $employee = $position->employee;
+
+            $nodeId = $nodeIdCounter++;
+            $positionToNodeId[$positionId] = $nodeId;
+
+            // Hitung total children
+            $childrenCount = $hierarchies->where('superior_id', $positionId)->count();
+
+            $this->nodes[] = [
+                'id' => $nodeId,
+                'position_id' => $positionId,
+                'name' => $employee ? $employee->name : 'Vacant Position',
+                'title' => $position->name,
+                'department' => $position->department->name ?? '-',
+                'parent_id' => $parentNodeId,
+                'visible' => $level === 0 ? true : false, // Only root visible
+                'collapsed' => $childrenCount > 0, // Collapsed if has children
+                'level' => $level,
+                'photo' => $employee ? $employee->profile_path : null,
+                'employee_id' => $employee ? $employee->id : null,
+            ];
+
+            // Build children nodes
+            $children = $hierarchies->where('superior_id', $positionId);
+            foreach ($children as $child) {
+                $buildNode($child->position_id, $nodeId, $level + 1);
+            }
+        };
+
+        // Build tree dari root positions
+        foreach ($rootPositionIds as $rootId) {
+            $buildNode($rootId);
+        }
     }
 
     public function toggleNode($nodeId)
@@ -255,9 +202,20 @@ class Index extends Component
         }
     }
 
+    public function showEmployeeDetail($id)
+    {
+        $employee = Employee::find($id);
+        return redirect()->route('employees.show', [$employee->slug]);
+    }
+
     public function resetZoom()
     {
         $this->zoom = 100;
+    }
+
+    public function refreshChart()
+    {
+        $this->initializeChart();
     }
 
     public function render()

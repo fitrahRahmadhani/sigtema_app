@@ -140,9 +140,9 @@ class Employee extends Model
     /**
      * Get employee's age
      */
-    public function getAgeAttribute(): int
+    public function getAgeAttribute()
     {
-        return $this->birth_date ? $this->birth_date->age : 0;
+        return $this->birth_date ? $this->birth_date->age : "-";
     }
 
     /**
@@ -151,5 +151,88 @@ class Employee extends Model
     public function getTenureAttribute(): int
     {
         return $this->hire_date ? $this->hire_date->diffInYears(now()) : 0;
+    }
+
+    /**
+     * Mendapatkan superior employee (atasan langsung)
+     */
+    public function getSuperiorEmployee()
+    {
+        if (!$this->position) {
+            return null;
+        }
+
+        $superiorPosition = $this->position->getSuperiorPosition($this->company_id);
+
+        if (!$superiorPosition) {
+            return null;
+        }
+
+        return self::where('company_id', $this->company_id)
+            ->where('position_id', $superiorPosition->id)
+            ->where('status', 'active')
+            ->first();
+    }
+
+    /**
+     * Mendapatkan subordinate employees (bawahan langsung)
+     */
+    public function getSubordinateEmployees()
+    {
+        if (!$this->position) {
+            return collect();
+        }
+
+        $subordinatePositions = $this->position->getSubordinatePositions($this->company_id);
+
+        if ($subordinatePositions->isEmpty()) {
+            return collect();
+        }
+
+        return self::where('company_id', $this->company_id)
+            ->whereIn('position_id', $subordinatePositions->pluck('id'))
+            ->where('status', 'active')
+            ->get();
+    }
+
+    public function getHiredAttribute()
+    {
+        return $this->hire_date ? $this->hire_date->format('d F Y') : "-";
+    }
+
+    /**
+     * Cek apakah employee adalah CEO/Top Level
+     */
+    public function isTopLevel(): bool
+    {
+        if (!$this->position) {
+            return false;
+        }
+
+        return $this->position->isRootPosition($this->company_id);
+    }
+
+    /**
+     * Scope untuk employee aktif
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    /**
+     * Scope untuk filter berdasarkan company
+     */
+    public function scopeForCompany($query, $companyId)
+    {
+        return $query->where('company_id', $companyId);
+    }
+
+    /**
+     * Scope untuk filter berdasarkan position
+     */
+    public function scopeInPosition($query, $positionId)
+    {
+        return $query->where('position_id', $positionId);
     }
 }

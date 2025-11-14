@@ -18,6 +18,115 @@ class Position extends Model
         return $this->belongsTo(Employee::class);
     }
 
+    /**
+     * Relasi ke EmployeeHierarchy sebagai position
+     */
+    public function hierarchyAsPosition()
+    {
+        return $this->hasMany(EmployeeHierarchy::class, 'position_id');
+    }
+
+    /**
+     * Relasi ke EmployeeHierarchy sebagai superior
+     */
+    public function hierarchyAsSuperior()
+    {
+        return $this->hasMany(EmployeeHierarchy::class, 'superior_id');
+    }
+
+    /**
+     * Mendapatkan superior position
+     */
+    public function getSuperiorPosition($companyId = null)
+    {
+        $query = $this->hierarchyAsPosition();
+
+        if ($companyId) {
+            $query->where('company_id', $companyId);
+        }
+
+        $hierarchy = $query->with('superior')->first();
+
+        return $hierarchy ? $hierarchy->superior : null;
+    }
+
+    /**
+     * Mendapatkan subordinate positions
+     */
+    public function getSubordinatePositions($companyId = null)
+    {
+        $query = $this->hierarchyAsSuperior();
+
+        if ($companyId) {
+            $query->where('company_id', $companyId);
+        }
+
+        return $query->with('position')->get()->pluck('position');
+    }
+
+    /**
+     * Cek apakah position ini adalah root (tidak punya superior)
+     */
+    public function isRootPosition($companyId = null): bool
+    {
+        $query = $this->hierarchyAsPosition();
+
+        if ($companyId) {
+            $query->where('company_id', $companyId);
+        }
+
+        return $query->doesntExist();
+    }
+
+    /**
+     * Cek apakah position ini punya subordinates
+     */
+    public function hasSubordinates($companyId = null): bool
+    {
+        $query = $this->hierarchyAsSuperior();
+
+        if ($companyId) {
+            $query->where('company_id', $companyId);
+        }
+
+        return $query->exists();
+    }
+
+    /**
+     * Mendapatkan level/tingkat position dalam hierarchy
+     */
+    public function getHierarchyLevel($companyId): int
+    {
+        $level = 0;
+        $currentPosition = $this;
+
+        while ($superior = $currentPosition->getSuperiorPosition($companyId)) {
+            $level++;
+            $currentPosition = $superior;
+
+            // Prevent infinite loop
+            if ($level > 10) break;
+        }
+
+        return $level;
+    }
+
+    /**
+     * Scope untuk position aktif
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope untuk filter berdasarkan company
+     */
+    public function scopeForCompany($query, $companyId)
+    {
+        return $query->where('company_id', $companyId);
+    }
+
     public function getWorkUnitAttribute()
     {
         if (!empty($this->section)) {

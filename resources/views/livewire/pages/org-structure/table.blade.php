@@ -229,14 +229,34 @@
 
                     <!-- Position -->
                     <div class="col-span-3 flex flex-col justify-center">
-                        <div class="text-sm font-medium text-gray-900">{{ $hierarchy->position->name }}</div>
-                        <div class="text-xs text-gray-500">{{ $hierarchy->position->code }}</div>
+                        <a
+                            href="{{ route('positions.edit', $hierarchy->position->slug) }}"
+                            class="text-sm font-medium text-gray-900 underline"
+                        >
+                            {{ $hierarchy->position->name }}
+                        </a>
+                        <div class="text-xs text-gray-500">{{ $hierarchy->position->position_code }}</div>
+                        <p
+                            class="bg-{{ $hierarchy->position->employee ? 'blue' : 'pink' }}-100 text-{{ $hierarchy->position->employee ? 'blue' : 'pink' }}-800 mt-1 inline-flex w-fit items-center rounded-md px-2 py-0.5 text-xs font-medium"
+                        >
+                            {{ $hierarchy->position->employee->name ?? 'Vacant Position' }}
+                        </p>
                     </div>
 
                     <!-- Reports To -->
                     <div class="col-span-3 flex flex-col justify-center">
-                        <div class="text-sm font-medium text-gray-900">{{ $hierarchy->superior->name }}</div>
-                        <div class="text-xs text-gray-500">{{ $hierarchy->superior->code }}</div>
+                        <a
+                            href="{{ route('positions.edit', $hierarchy->superior->slug) }}"
+                            class="text-sm font-medium text-gray-900 underline"
+                        >
+                            {{ $hierarchy->position->name }}
+                        </a>
+                        <div class="text-xs text-gray-500">{{ $hierarchy->superior->position_code }}</div>
+                        <p
+                            class="bg-{{ $hierarchy->superior->employee ? 'blue' : 'pink' }}-100 text-{{ $hierarchy->superior->employee ? 'blue' : 'pink' }}-800 mt-1 inline-flex w-fit items-center rounded-md px-2 py-0.5 text-xs font-medium"
+                        >
+                            {{ $hierarchy->superior->employee->name ?? 'Vacant Position' }}
+                        </p>
                     </div>
 
                     <!-- Relation Type -->
@@ -339,8 +359,18 @@
                         <div>
                             <p class="text-xs font-medium text-gray-500 uppercase">Position</p>
                             <div class="mt-2">
-                                <p class="font-medium text-gray-900">{{ $hierarchy->position->name }}</p>
-                                <p class="text-sm text-gray-500">{{ $hierarchy->position->code }}</p>
+                                <a
+                                    href="{{ route('positions.edit', $hierarchy->position->slug) }}"
+                                    class="text-sm font-medium text-gray-900 underline"
+                                >
+                                    {{ $hierarchy->position->name }}
+                                </a>
+                                <p class="text-sm text-gray-500">{{ $hierarchy->position->position_code }}</p>
+                                <p
+                                    class="bg-{{ $hierarchy->position->employee ? 'blue' : 'pink' }}-100 text-{{ $hierarchy->position->employee ? 'blue' : 'pink' }}-800 mt-1 inline-flex w-fit items-center rounded-md px-2 py-0.5 text-xs font-medium"
+                                >
+                                    {{ $hierarchy->position->employee->name ?? 'Vacant Position' }}
+                                </p>
                             </div>
                         </div>
 
@@ -348,8 +378,18 @@
                         <div>
                             <p class="text-xs font-medium text-gray-500 uppercase">Reports To</p>
                             <div class="mt-2">
-                                <p class="font-medium text-gray-900">{{ $hierarchy->superior->name }}</p>
-                                <p class="text-sm text-gray-500">{{ $hierarchy->superior->code }}</p>
+                                <a
+                                    href="{{ route('positions.edit', $hierarchy->superior->slug) }}"
+                                    class="text-sm font-medium text-gray-900 underline"
+                                >
+                                    {{ $hierarchy->position->name }}
+                                </a>
+                                <p class="text-sm text-gray-500">{{ $hierarchy->superior->position_code }}</p>
+                                <p
+                                    class="bg-{{ $hierarchy->superior->employee ? 'blue' : 'pink' }}-100 text-{{ $hierarchy->superior->employee ? 'blue' : 'pink' }}-800 mt-1 inline-flex w-fit items-center rounded-md px-2 py-0.5 text-xs font-medium"
+                                >
+                                    {{ $hierarchy->superior->employee->name ?? 'Vacant Position' }}
+                                </p>
                             </div>
                         </div>
 

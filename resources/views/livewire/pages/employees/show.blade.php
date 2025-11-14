@@ -14,7 +14,7 @@
             <div
                 class="flex h-32 w-28 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gray-300 bg-gray-100 sm:h-44 sm:w-40"
             >
-                @if (! $employee->profile_path)
+                @if ($employee->profile_path)
                     <img
                         src="{{ \Storage::url($employee->profile_path) }}"
                         alt=""
@@ -44,11 +44,11 @@
                         <p class="">{{ $employee->position->name }}</p>
                     </div>
                     <div class="w-full">
-                        <p class="text-primary-text font-semibold">Department/Unit</p>
+                        <p class="text-primary-text font-semibold">Work Unit</p>
                         <p class="">
-                            Lorem ipsum
+                            {{ $employee->position->department }}
                             <br />
-                            Lorem ipsum
+                            {{ $employee->position->work_unit }}
                         </p>
                     </div>
                     <div class="w-full">
@@ -61,7 +61,7 @@
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Contract Type</p>
-                        <p class="">{{ $employee->position->band }}</p>
+                        <p class="">{{ $employee->band }}</p>
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Age</p>
@@ -69,7 +69,7 @@
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Job Grade</p>
-                        <p class="">{{ $employee->position->job_grade }}</p>
+                        <p class="">{{ $employee->position->job_grade ?? '-' }}</p>
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Personal Grade</p>
