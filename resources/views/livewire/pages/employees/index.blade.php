@@ -281,9 +281,7 @@
                     <div class="col-span-3 flex flex-col justify-center">
                         @if ($employee->position)
                             <p class="truncate text-sm font-medium text-gray-900">{{ $employee->position->name }}</p>
-                            @if ($employee->position->workUnit)
-                                <p class="truncate text-xs text-gray-500">{{ $employee->position->workUnit->name }}</p>
-                            @endif
+                            <p class="truncate text-xs text-gray-500">{{ $employee->position->work_unit }}</p>
                         @else
                             <span class="text-sm text-gray-400 italic">No position</span>
                         @endif
@@ -422,9 +420,7 @@
                                     <p class="mt-1 text-sm font-medium text-gray-900">
                                         {{ $employee->position->name }}
                                     </p>
-                                    @if ($employee->position->workUnit)
-                                        <p class="text-xs text-gray-500">{{ $employee->position->workUnit->name }}</p>
-                                    @endif
+                                    <p class="text-xs text-gray-500">{{ $employee->position->work_unit }}</p>
                                 @else
                                     <p class="mt-1 text-sm text-gray-400 italic">No position</p>
                                 @endif

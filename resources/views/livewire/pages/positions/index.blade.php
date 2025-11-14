@@ -269,7 +269,7 @@
 
                     <!-- Employee Unit -->
                     <div class="col-span-2 overflow-hidden">
-                        @if ($position->employee)
+                        @if ($position->employee_id)
                             <p class="truncate text-sm font-medium text-gray-900">{{ $position->employee->name }}</p>
                             @if ($position->employee->employee_number)
                                 <p class="truncate text-xs text-gray-400">
@@ -400,7 +400,7 @@
                         <!-- Employee -->
                         <div>
                             <p class="text-xs font-medium text-gray-500 uppercase">Employee on Duty</p>
-                            @if ($position->employee)
+                            @if ($position->employee_id)
                                 <p class="mt-1 text-sm font-medium text-gray-900">{{ $position->employee->name }}</p>
                                 @if ($position->employee->employee_number)
                                     <p class="text-xs text-gray-500">{{ $position->employee->employee_number }}</p>

@@ -74,8 +74,7 @@ class Create extends Component
             ]);
 
             if ($this->employee_id) {
-                $employee = Employee::find($this->employee_id);
-                $employee->update(['position_id' => $position->id]);
+                $position->update(['employee_id' => $this->employee_id]);
             }
 
             return redirect()->route('positions.index')->success('Position created successfully');

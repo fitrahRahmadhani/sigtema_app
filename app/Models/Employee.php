@@ -53,7 +53,7 @@ class Employee extends Model
      */
     public function position()
     {
-        return $this->belongsTo(Position::class);
+        return $this->hasOne(Position::class, 'employee_id');
     }
 
     /**
