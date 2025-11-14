@@ -102,15 +102,15 @@
 
                             // Node Card
                             $output .= '<div class="node-card-wrapper relative mb-4" id="' . $nodeHtmlId . '">';
-                            $output .= '<div class="' . $cardWidthClass . ' flex cursor-default items-center gap-4 rounded-xl border border-gray-300 bg-white p-4 shadow-lg transition-all duration-200 hover:shadow-xl relative">';
+                            $output .= '<div class="' . $cardWidthClass . ' flex cursor-default items-center gap-4 rounded-xl border  ' . ($node['name'] == 'Vacant Position' ? 'bg-red-50 border-red-300' : 'bg-white border-gray-300') . ' p-4 shadow-lg transition-all duration-200 hover:shadow-xl relative">';
 
                             // === FOTO PROFIL ===
                             $photoUrl = $node['photo'] ? asset('storage/' . $node['photo']) : null;
                             $output .= '<div class="flex-shrink-0">';
                             if ($photoUrl) {
-                                $output .= '<img src="' . e($photoUrl) . '" alt="Profile" class="h-20 w-14 rounded-lg object-cover bg-gray-100">';
+                                $output .= '<img src="' . e($photoUrl) . '" alt="Profile" class="h-20 w-14 rounded-lg object-cover bg-gray-100 border border-gray-200">';
                             } else {
-                                $output .= '<div class="flex h-20 w-14 items-center justify-center rounded-lg bg-gray-100 text-gray-400">';
+                                $output .= '<div class="flex h-20 w-14 items-center justify-center rounded-lg ' . ($node['name'] == 'Vacant Position' ? ' bg-red-100 text-red-500' : 'bg-gray-100 text-gray-400') . '">';
                                 $output .= '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-10 w-10">';
                                 $output .= '<path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />';
                                 $output .= '</svg>';
@@ -120,13 +120,19 @@
 
                             // === INFORMASI NODE ===
                             $output .= '<div class="flex flex-col text-left flex-1 min-w-0">';
-                            $output .= '<div class="' . $textSize . ' font-bold text-gray-800 truncate">' . e($node['name']) . '</div>';
-                            $output .= '<div class="mt-0.5 ' . $subtextSize . ' font-medium text-gray-600 truncate">' . e($node['title']) . '</div>';
-                            $output .= '<div class="text-xs text-gray-500 truncate">' . e($node['department']) . '</div>';
+                            $output .= '<div class="' . $textSize . ' font-bold' . ($node['name'] == 'Vacant Position' ? ' text-red-500 italic' : 'text-gray-800') . ' ">' . e($node['name']) . '</div>';
+                            $output .= '<div class="mt-0.5 ' . $subtextSize . ' font-medium text-gray-600 truncate' . ($node['name'] == 'Vacant Position' ? ' text-red-500' : 'text-gray-600') . '">' . e($node['title']) . '</div>';
+                            $output .= '<div class="text-xs text-gray-500 truncate' . ($node['name'] == 'Vacant Position' ? ' text-red-500' : 'text-gray-600') . '">' . e($node['department']) . '</div>';
 
                             if ($this->hasChildren($nodeId)) {
-                                $output .= '<div wire:click="toggleNode(' . $node['id'] . ')" class="mt-2 cursor-pointer text-xs font-medium text-[#721d21] p-1 px-2 rounded-full hover:bg-[#721d2110] inline-block">';
-                                $output .= $isCollapsed ? '► Show Team (' . $totalChildren . ')' : '▼ Hide Team';
+                                $output .=
+                                    '<div wire:click="toggleNode(' .
+                                    $node['id'] .
+                                    ')"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="mt-2 cursor-pointer text-xs font-medium p-1 px-2 rounded-full inline-block ' .
+                                    ($node['name'] == 'Vacant Position' ? (! $isCollapsed ? 'text-red-500 bg-red-100' : 'text-red-500 hover:bg-red-100') : (! $isCollapsed ? 'text-[#721d21] bg-[#721d2110]' : 'text-[#721d21] hover:bg-[#721d2110]')) .
+                                    '">';
+                                $output .= $isCollapsed ? '► Show (' . $totalChildren . ')' : '▼ Hide';
                                 $output .= '</div>';
                             }
                             $output .= '</div>';
@@ -136,17 +142,26 @@
 
                             // Button 1 - Candidate Comparison
                             $comparisonUrl = route('dashboard');
-                            $output .= '<a href="' . $comparisonUrl . '" target="_blank" class="flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors" title="Candidate Comparison">';
+                            $output .= '<a href="' . $comparisonUrl . '" target="_blank" class="flex h-6 w-6 items-center justify-center rounded-md ' . ($node['name'] == 'Vacant Position' ? ' bg-red-100 text-red-500 hover:bg-red-200' : 'bg-gray-50 text-gray-500 hover:bg-gray-100') . ' transition-colors" title="Candidate Comparison">';
                             $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">';
                             $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />';
                             $output .= '</svg>';
                             $output .= '</a>';
 
-                            // Button 2 - Employee Details
+                            if ($node['employee_id']) {
+                                // Button 2 - Employee Details
+                                $output .= '<div wire:click="showEmployeeDetail(' . $node['employee_id'] . ')" target="_blank" class="flex h-6 w-6 items-center justify-center rounded-md ' . ($node['name'] == 'Vacant Position' ? ' bg-red-100 text-red-500 hover:bg-red-200' : 'bg-gray-50 text-gray-500 hover:bg-gray-100') . ' transition-colors" title="Employee Profile">';
+                                $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">';
+                                $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />';
+                                $output .= '</svg>';
+                                $output .= '</div>';
+                            }
+
+                            // Button 3 - Add Staff
                             $employeeUrl = route('dashboard');
-                            $output .= '<a href="' . $employeeUrl . '" target="_blank" class="flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors" title="Employee Profile">';
+                            $output .= '<a href="' . $employeeUrl . '" target="_blank" class="flex h-6 w-6 items-center justify-center rounded-md ' . ($node['name'] == 'Vacant Position' ? ' bg-red-100 text-red-500 hover:bg-red-200' : 'bg-gray-50 text-gray-500 hover:bg-gray-100') . ' transition-colors" title="Employee Profile">';
                             $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">';
-                            $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />';
+                            $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />';
                             $output .= '</svg>';
                             $output .= '</a>';
 

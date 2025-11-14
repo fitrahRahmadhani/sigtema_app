@@ -2,9 +2,13 @@
 
 namespace App\Livewire\Pages\Employees;
 
-use App\Models\Employee;
 use Livewire\Component;
+use App\Models\Employee;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app')]
+#[Title('Detail Pegawai')]
 class Show extends Component
 {
     public $employee;
