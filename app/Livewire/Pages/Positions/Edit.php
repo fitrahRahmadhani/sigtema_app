@@ -62,6 +62,8 @@ class Edit extends Component
         $this->biro = $position->biro;
         $this->section = $position->section;
         $this->location = $position->location;
+        $this->employees = $position->company->employees ?? [];
+        $this->employee_id = $position->employee_id;
     }
 
     public function updatedCompanyId()
@@ -88,8 +90,7 @@ class Edit extends Component
             ]);
 
             if ($this->employee_id) {
-                $employee = Employee::find($this->employee_id);
-                $employee->update(['position_id' => $this->position->id]);
+                $this->position->update(['employee_id' => $this->employee_id]);
             }
 
             return redirect()->route('positions.index')->success('Position updated successfully');

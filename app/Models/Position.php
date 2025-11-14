@@ -12,4 +12,26 @@ class Position extends Model
     {
         return $this->belongsTo(Company::class);
     }
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
+
+    public function getWorkUnitAttribute()
+    {
+        if (!empty($this->section)) {
+            return $this->section;
+        }
+        if (!empty($this->biro)) {
+            return $this->biro;
+        }
+        if (!empty($this->department)) {
+            return $this->department;
+        }
+        if (!empty($this->directorate)) {
+            return $this->directorate;
+        }
+        return null;
+    }
 }
