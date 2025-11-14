@@ -202,10 +202,7 @@
                     </div>
 
                     <div>
-                        <label for="birth_date" class="mb-2 block text-sm font-medium text-gray-700">
-                            Birth Date
-                            <span class="text-red-600">*</span>
-                        </label>
+                        <label for="birth_date" class="mb-2 block text-sm font-medium text-gray-700">Birth Date</label>
                         <input
                             type="date"
                             id="birth_date"
@@ -287,10 +284,7 @@
                     </div>
 
                     <div>
-                        <label for="hire_date" class="mb-2 block text-sm font-medium text-gray-700">
-                            Hire Date
-                            <span class="text-red-600">*</span>
-                        </label>
+                        <label for="hire_date" class="mb-2 block text-sm font-medium text-gray-700">Hire Date</label>
                         <input
                             type="date"
                             id="hire_date"
@@ -298,6 +292,40 @@
                             class="@error('hire_date') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
                         @error('hire_date')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="band" class="mb-2 block text-sm font-medium text-gray-700">
+                            Band
+                            <span class="text-red-600">*</span>
+                        </label>
+                        <div class="relative">
+                            <select
+                                id="band"
+                                wire:model="band"
+                                class="@error('band') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            >
+                                <option value="">Select band</option>
+                                <option value="band 1">Band 1</option>
+                                <option value="band 2">Band 2</option>
+                                <option value="band 3">Band 3</option>
+                                <option value="band 4">Band 4</option>
+                                <option value="band 5">Band 5</option>
+                            </select>
+                            <svg
+                                class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                        @error('band')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
