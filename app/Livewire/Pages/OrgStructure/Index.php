@@ -85,7 +85,7 @@ class Index extends Component
                 'collapsed' => $childrenCount > 0, // Collapsed if has children
                 'level' => $level,
                 'photo' => $employee ? $employee->profile_path : null,
-                'employee_id' => $employee ? $employee->id : null,
+                'slug' => $employee ? $employee->slug : null,
             ];
 
             // Build children nodes

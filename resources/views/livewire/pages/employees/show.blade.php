@@ -37,35 +37,35 @@
                 <div class="mt-4 grid h-full w-full grid-cols-2 gap-4 sm:mt-6 sm:grid-cols-3 lg:grid-cols-5">
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Employee ID</p>
-                        <p class="">{{ $employee->employee_number }}</p>
+                        <p class="">{{ $employee->employee_number ?? '-' }}</p>
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Position</p>
-                        <p class="">{{ $employee->position->name }}</p>
+                        <p class="">{{ $employee->position->name ?? '-' }}</p>
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Work Unit</p>
                         <p class="">
-                            {{ $employee->position->department }}
+                            {{ $employee->position->department ?? '-' }}
                             <br />
-                            {{ $employee->position->work_unit }}
+                            {{ $employee->position->work_unit ?? '-' }}
                         </p>
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Hire Date</p>
-                        <p class="">{{ $employee->hired }}</p>
+                        <p class="">{{ $employee->hired ?? '-' }}</p>
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Office</p>
-                        <p class="">Tuban, Jawa Timur</p>
+                        <p class="">{{ $employee->position->location ?? '-' }}</p>
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Contract Type</p>
-                        <p class="">{{ $employee->band }}</p>
+                        <p class="">{{ $employee->band ?? '-' }}</p>
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Age</p>
-                        <p class="">{{ $employee->age }} years old</p>
+                        <p class="">{{ $employee->age ?? '-' }} years old</p>
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Job Grade</p>
@@ -73,7 +73,7 @@
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Personal Grade</p>
-                        <p class="">{{ $employee->personal_grade }}</p>
+                        <p class="">{{ $employee->personal_grade ?? '-' }}</p>
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Personality</p>

@@ -87,11 +87,8 @@ class Edit extends Component
                 'biro' => $this->biro,
                 'section' => $this->section,
                 'location' => $this->location,
+                'employee_id' => $this->employee_id ?: null
             ]);
-
-            if ($this->employee_id) {
-                $this->position->update(['employee_id' => $this->employee_id]);
-            }
 
             return redirect()->route('positions.index')->success('Position updated successfully');
         } catch (\Exception $e) {
