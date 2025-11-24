@@ -2,10 +2,12 @@
 
 namespace App\Livewire\Pages\OrgStructure;
 
+use App\Models\Company;
 use Livewire\Component;
 use App\Models\Employee;
 use App\Models\Position;
 use Livewire\Attributes\Title;
+use Masmerise\Toaster\Toaster;
 use App\Models\EmployeeHierarchy;
 
 #[Title('Organization Structure')]
@@ -15,11 +17,28 @@ class Index extends Component
     public $nodes = [];
     public $companyId;
 
+    // Modal properties
+    public $showAddStaffModal = false;
+    public $selectedSuperiorId = null;
+
+    // Form properties
+    public $form = [
+        'company_id' => '',
+        'position_id' => '',
+        'superior_id' => '',
+        'relation_type' => 'direct'
+    ];
+
+    // Data for modal
+    public $companies;
+    public $positions = [];
+    public $superiorPositions = [];
+
     public function mount($companyId = null)
     {
-        // Ambil company_id dari user yang sedang login atau parameter
         $this->companyId = 1;
         $this->initializeChart();
+        $this->loadModalData();
     }
 
     private function initializeChart()
@@ -99,6 +118,94 @@ class Index extends Component
         foreach ($rootPositionIds as $rootId) {
             $buildNode($rootId);
         }
+    }
+
+    private function loadModalData()
+    {
+        $this->companies = Company::where('is_active', true)->get();
+        $this->positions = Position::where('company_id', $this->companyId)->get();
+        $this->superiorPositions = Position::where('company_id', $this->companyId)->get();
+
+        // Set default company
+        if ($this->companies->count() > 0) {
+            $this->form['company_id'] = $this->companyId;
+        }
+    }
+
+    public function openAddStaffModal($superiorPositionId = null)
+    {
+        $this->selectedSuperiorId = $superiorPositionId;
+        $this->form['superior_id'] = $superiorPositionId;
+        $this->showAddStaffModal = true;
+
+        // Load positions based on selected company
+        $this->updatedFormCompanyId();
+    }
+
+    public function closeAddStaffModal()
+    {
+        $this->showAddStaffModal = false;
+        $this->resetForm();
+    }
+
+    public function updatedFormCompanyId()
+    {
+        if ($this->form['company_id']) {
+            $this->positions = Position::where('company_id', $this->form['company_id'])->get();
+            $this->superiorPositions = Position::where('company_id', $this->form['company_id'])->get();
+        } else {
+            $this->positions = [];
+            $this->superiorPositions = [];
+        }
+
+        $this->form['position_id'] = '';
+        $this->form['superior_id'] = $this->selectedSuperiorId;
+    }
+
+    public function saveStaff()
+    {
+        $this->validate([
+            'form.company_id' => 'required|exists:companies,id',
+            'form.position_id' => 'required|exists:positions,id|different:form.superior_id',
+            'form.superior_id' => 'required|exists:positions,id|different:form.position_id',
+            'form.relation_type' => 'required|string|max:255',
+        ]);
+
+        // Check if hierarchy already exists
+        $exists = EmployeeHierarchy::where('company_id', $this->form['company_id'])
+            ->where('position_id', $this->form['position_id'])
+            ->where('superior_id', $this->form['superior_id'])
+            ->exists();
+
+        if ($exists) {
+            Toaster::error('This hierarchy relationship already exists.');
+            return;
+        }
+
+        try {
+            EmployeeHierarchy::create([
+                'company_id' => $this->form['company_id'],
+                'position_id' => $this->form['position_id'],
+                'superior_id' => $this->form['superior_id'],
+                'relation_type' => $this->form['relation_type'],
+            ]);
+
+            Toaster::success('Staff hierarchy created successfully.');
+            $this->closeAddStaffModal();
+            $this->refreshChart();
+        } catch (\Exception $e) {
+            Toaster::error('Failed to create staff hierarchy: ' . $e->getMessage());
+        }
+    }
+
+    private function resetForm()
+    {
+        $this->form = [
+            'company_id' => $this->companyId,
+            'position_id' => '',
+            'superior_id' => $this->selectedSuperiorId,
+            'relation_type' => 'direct'
+        ];
     }
 
     public function toggleNode($nodeId)
@@ -200,12 +307,6 @@ class Index extends Component
         if ($this->zoom > 50) {
             $this->zoom -= 10;
         }
-    }
-
-    public function showEmployeeDetail($id)
-    {
-        $employee = Employee::find($id);
-        return redirect()->route('employees.show', [$employee->slug]);
     }
 
     public function resetZoom()
