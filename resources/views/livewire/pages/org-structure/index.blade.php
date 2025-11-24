@@ -27,27 +27,28 @@
                     </div>
                 </div>
             </div>
-            <a
-                href="{{ route('organization-structure.table') }}"
-                class="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-gradient-to-r px-4 py-2.5 text-sm font-medium shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="h-5 w-5"
+            <div class="flex gap-2">
+                <a
+                    href="{{ route('organization-structure.table') }}"
+                    class="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-gradient-to-r px-4 py-2.5 text-sm font-medium shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
                 >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0 1 12 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.625 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 1.5v-1.5m0 0c0-.621.504-1.125 1.125-1.125m0 0h7.5"
-                    />
-                </svg>
-
-                Table View
-            </a>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0 1 12 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.625 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 1.5v-1.5m0 0c0-.621.504-1.125 1.125-1.125m0 0h7.5"
+                        />
+                    </svg>
+                    Table View
+                </a>
+            </div>
         </div>
 
         <!-- Org Chart Container -->
@@ -75,24 +76,10 @@
                                 ->where('parent_id', $nodeId)
                                 ->count();
 
-                            $cardWidthClass = match ($level) {
-                                0 => 'w-96',
-                                1 => 'w-80',
-                                2 => 'w-72',
-                                default => 'w-64',
-                            };
-
-                            $textSize = match ($level) {
-                                0 => 'text-lg',
-                                1 => 'text-base',
-                                default => 'text-sm',
-                            };
-
-                            $subtextSize = match ($level) {
-                                0 => 'text-sm',
-                                1 => 'text-xs',
-                                default => 'text-xs',
-                            };
+                            // SEMUA LEVEL MENGGUNAKAN UKURAN YANG SAMA
+                            $cardWidthClass = 'w-80'; // Ukuran tetap untuk semua level
+                            $textSize = 'text-base'; // Ukuran teks tetap
+                            $subtextSize = 'text-sm'; // Ukuran subteks tetap
 
                             $nodeHtmlId = 'node-' . $nodeId;
                             $childrenContainerId = 'children-' . $nodeId;
@@ -129,7 +116,7 @@
                                     '<div wire:click="toggleNode(' .
                                     $node['id'] .
                                     ')"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                class="mt-2 cursor-pointer text-xs font-medium p-1 px-2 rounded-full inline-block ' .
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                class="mt-2 cursor-pointer text-xs font-medium p-1 px-2 rounded-full inline-block ' .
                                     ($node['name'] == 'Vacant Position' ? (! $isCollapsed ? 'text-red-500 bg-red-100' : 'text-red-500 hover:bg-red-100') : (! $isCollapsed ? 'text-[#721d21] bg-[#721d2110]' : 'text-[#721d21] hover:bg-[#721d2110]')) .
                                     '">';
                                 $output .= $isCollapsed ? '► Show (' . $totalChildren . ')' : '▼ Hide';
@@ -158,13 +145,20 @@
                                 $output .= '</a>';
                             }
 
-                            // Button 3 - Add Staff
-                            $employeeUrl = route('dashboard');
-                            $output .= '<a href="' . $employeeUrl . '" target="_blank" class="flex h-6 w-6 items-center justify-center rounded-md ' . ($node['name'] == 'Vacant Position' ? ' bg-red-100 text-red-500 hover:bg-red-200' : 'bg-gray-50 text-gray-500 hover:bg-gray-100') . ' transition-colors" title="Employee Profile">';
-                            $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">';
-                            $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />';
-                            $output .= '</svg>';
-                            $output .= '</a>';
+                            // Button 3 - Add Staff (Modal Trigger)
+                            $output .=
+                                '<button
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                wire:click="openAddStaffModal(' .
+                                $node['position_id'] .
+                                ')"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                class="flex h-6 w-6 items-center justify-center rounded-md ' .
+                                ($node['name'] == 'Vacant Position' ? ' bg-red-100 text-red-500 hover:bg-red-200' : 'bg-gray-50 text-gray-500 hover:bg-gray-100') .
+                                ' transition-colors"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                title="Add Staff">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </svg>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </button>';
 
                             $output .= '</div>';
 
@@ -245,12 +239,340 @@
         </div>
     </div>
 
+    <!-- Add Staff Modal -->
+    <div
+        x-data="{
+            show: @entangle('showAddStaffModal'),
+            init() {
+                this.$watch('show', (value) => {
+                    if (value) {
+                        document.body.classList.add('overflow-hidden')
+                    } else {
+                        document.body.classList.remove('overflow-hidden')
+                    }
+                })
+            },
+        }"
+        x-show="show"
+        x-cloak
+        class="relative z-50"
+    >
+        <!-- Background overlay -->
+        <div
+            x-show="show"
+            x-transition:enter="duration-300 ease-out"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="duration-200 ease-in"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm transition-opacity"
+            aria-hidden="true"
+            @click="$wire.closeAddStaffModal()"
+        ></div>
+
+        <!-- Modal panel -->
+        <div class="fixed inset-0 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div
+                    x-show="show"
+                    x-transition:enter="duration-300 ease-out"
+                    x-transition:enter-start="translate-y-4 scale-95 opacity-0"
+                    x-transition:enter-end="translate-y-0 scale-100 opacity-100"
+                    x-transition:leave="duration-200 ease-in"
+                    x-transition:leave-start="translate-y-0 scale-100 opacity-100"
+                    x-transition:leave-end="translate-y-4 scale-95 opacity-0"
+                    class="relative w-full max-w-2xl transform transition-all"
+                    @click.outside="$wire.closeAddStaffModal()"
+                    @keydown.escape.window="$wire.closeAddStaffModal()"
+                >
+                    <div class="overflow-hidden rounded-2xl bg-white shadow-2xl">
+                        <div class="bg-white px-6 pt-6 pb-4">
+                            <div class="flex items-start">
+                                <!-- Icon -->
+                                <div class="flex-shrink-0">
+                                    <div
+                                        class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100"
+                                    >
+                                        <svg
+                                            class="h-6 w-6 text-green-600"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M12 4.5v15m7.5-7.5h-15"
+                                            />
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Content -->
+                                <div class="ml-4 flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="text-xl font-bold text-gray-900">Add Staff to Organization</h3>
+                                        <button
+                                            type="button"
+                                            @click="$wire.closeAddStaffModal()"
+                                            class="rounded-lg p-2 text-gray-400 transition-colors duration-200 hover:bg-gray-100 hover:text-gray-600"
+                                        >
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <div class="mt-4">
+                                        <!-- Form untuk Add Staff -->
+                                        <form wire:submit.prevent="saveStaff">
+                                            <div class="grid grid-cols-1 gap-5">
+                                                <!-- Company -->
+                                                <div>
+                                                    <label
+                                                        for="company_id"
+                                                        class="mb-2 block text-sm font-medium text-gray-700"
+                                                    >
+                                                        Company
+                                                    </label>
+                                                    <div class="relative">
+                                                        <select
+                                                            wire:model="form.company_id"
+                                                            id="company_id"
+                                                            class="focus:ring-opacity-20 w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 shadow-sm transition-all duration-200 focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
+                                                        >
+                                                            <option value="">Select Company</option>
+                                                            @foreach ($companies as $company)
+                                                                <option value="{{ $company->id }}">
+                                                                    {{ $company->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div
+                                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700"
+                                                        >
+                                                            <svg
+                                                                class="h-4 w-4"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                viewBox="0 0 24 24"
+                                                            >
+                                                                <path
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M19 9l-7 7-7-7"
+                                                                />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    @error('form.company_id')
+                                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                    @enderror
+                                                </div>
+
+                                                <!-- Superior Position -->
+                                                <div>
+                                                    <label
+                                                        for="superior_id"
+                                                        class="mb-2 block text-sm font-medium text-gray-700"
+                                                    >
+                                                        Superior Position
+                                                    </label>
+                                                    <div class="relative">
+                                                        <select
+                                                            wire:model="form.superior_id"
+                                                            id="superior_id"
+                                                            class="focus:ring-opacity-20 w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 shadow-sm transition-all duration-200 focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
+                                                        >
+                                                            <option value="">Select Superior Position</option>
+                                                            @foreach ($superiorPositions as $position)
+                                                                <option value="{{ $position->id }}">
+                                                                    {{ $position->name }} -
+                                                                    {{ $position->department->name ?? 'No Department' }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div
+                                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700"
+                                                        >
+                                                            <svg
+                                                                class="h-4 w-4"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                viewBox="0 0 24 24"
+                                                            >
+                                                                <path
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M19 9l-7 7-7-7"
+                                                                />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    @error('form.superior_id')
+                                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                    @enderror
+                                                </div>
+
+                                                <!-- Position -->
+                                                <div>
+                                                    <label
+                                                        for="position_id"
+                                                        class="mb-2 block text-sm font-medium text-gray-700"
+                                                    >
+                                                        Position
+                                                    </label>
+                                                    <div class="relative">
+                                                        <select
+                                                            wire:model="form.position_id"
+                                                            id="position_id"
+                                                            class="focus:ring-opacity-20 w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 shadow-sm transition-all duration-200 focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
+                                                        >
+                                                            <option value="">Select Position</option>
+                                                            @foreach ($positions as $position)
+                                                                <option value="{{ $position->id }}">
+                                                                    {{ $position->name }} -
+                                                                    {{ $position->department->name ?? 'No Department' }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div
+                                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700"
+                                                        >
+                                                            <svg
+                                                                class="h-4 w-4"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                viewBox="0 0 24 24"
+                                                            >
+                                                                <path
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M19 9l-7 7-7-7"
+                                                                />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    @error('form.position_id')
+                                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                    @enderror
+                                                </div>
+
+                                                <!-- Relation Type -->
+                                                <div>
+                                                    <label
+                                                        for="relation_type"
+                                                        class="mb-2 block text-sm font-medium text-gray-700"
+                                                    >
+                                                        Relation Type
+                                                    </label>
+                                                    <div class="relative">
+                                                        <select
+                                                            wire:model="form.relation_type"
+                                                            id="relation_type"
+                                                            class="focus:ring-opacity-20 w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 shadow-sm transition-all duration-200 focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
+                                                        >
+                                                            <option value="direct">Direct Report</option>
+                                                            <option value="indirect">Indirect Report</option>
+                                                            <option value="dotted_line">Dotted Line</option>
+                                                        </select>
+                                                        <div
+                                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700"
+                                                        >
+                                                            <svg
+                                                                class="h-4 w-4"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                viewBox="0 0 24 24"
+                                                            >
+                                                                <path
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M19 9l-7 7-7-7"
+                                                                />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    @error('form.relation_type')
+                                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <!-- Action Buttons -->
+                                            <div class="mt-8 flex justify-end gap-3 border-t border-gray-200 pt-6">
+                                                <button
+                                                    type="button"
+                                                    @click="$wire.closeAddStaffModal()"
+                                                    wire:loading.attr="disabled"
+                                                    class="rounded-xl border border-gray-300 bg-white px-6 py-2.5 font-medium text-gray-700 shadow-sm transition-all duration-200 hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                                                >
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    type="submit"
+                                                    wire:loading.attr="disabled"
+                                                    class="w-fit transform rounded-xl bg-gradient-to-r from-[#721d21] to-[#8b252a] px-6 py-2.5 font-medium text-white shadow-lg transition-all duration-200 hover:scale-[1.02] hover:from-[#5a1619] hover:to-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none active:scale-[0.98] disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50"
+                                                >
+                                                    <!-- Normal State -->
+                                                    <span wire:loading.remove class="inline-flex items-center gap-2">
+                                                        <svg
+                                                            class="h-4 w-4"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M12 4.5v15m7.5-7.5h-15"
+                                                            />
+                                                        </svg>
+                                                        Add Staff
+                                                    </span>
+
+                                                    <!-- Loading State -->
+                                                    <span wire:loading class="inline-flex items-center gap-2">
+                                                        Processing...
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <style>
+        /* Smooth transitions for all elements */
+        * {
+            transition-property: color, background-color, border-color, transform, opacity;
+            transition-duration: 200ms;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         .org-chart-scroll-area {
             overflow: auto;
             position: relative;
             max-height: 80vh;
-            cursor: grab; /* Default cursor for drag */
+            cursor: grab;
         }
 
         .org-chart-scroll-area:active {
@@ -278,33 +600,123 @@
             background-color: #a5a7ac !important;
         }
 
+        /* Modal specific transitions */
+        .modal-backdrop {
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-content {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Hide elements with x-cloak until Alpine initializes */
+        [x-cloak] {
+            display: none !important;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar for modal */
         .overflow-auto::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 6px;
         }
 
         .overflow-auto::-webkit-scrollbar-track {
-            background: #e5e7eb;
-            border-radius: 5px;
+            background: #f1f5f9;
+            border-radius: 3px;
         }
 
         .overflow-auto::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 5px;
+            background: #cbd5e1;
+            border-radius: 3px;
         }
 
         .overflow-auto::-webkit-scrollbar-thumb:hover {
-            background: #9ca3af;
+            background: #94a3b8;
+        }
+
+        /* Ensure consistent node sizes */
+        .node-card-wrapper {
+            min-width: 320px;
+        }
+
+        /* Backdrop blur effect */
+        .backdrop-blur-sm {
+            backdrop-filter: blur(4px);
+        }
+
+        /* Button hover effects */
+        .btn-hover {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-hover:hover {
+            transform: translateY(-1px);
+            box-shadow:
+                0 10px 25px -5px rgba(0, 0, 0, 0.1),
+                0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
         @media (max-width: 1024px) {
             .org-chart-wrapper {
                 transform-origin: top left !important;
             }
+
+            /* Mobile optimizations for modal */
+            .modal-mobile {
+                padding: 1rem;
+            }
+        }
+
+        /* Loading animation */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        /* Focus states */
+        .focus-smooth:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(114, 29, 33, 0.1);
         }
     </style>
 
     <script>
+        // Smooth modal handling
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('modal', () => ({
+                open: false,
+                init() {
+                    // Handle escape key
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && this.open) {
+                            this.close();
+                        }
+                    });
+                },
+                close() {
+                    this.open = false;
+                },
+                openModal() {
+                    this.open = true;
+                    // Prevent body scroll when modal is open
+                    document.body.style.overflow = 'hidden';
+                },
+            }));
+        });
+
         const wrapper = document.getElementById('orgChartWrapper');
         const scrollArea = document.getElementById('orgChartScrollArea');
         const zoomValueDisplay = document.getElementById('zoomValue');
@@ -337,7 +749,7 @@
             e.preventDefault();
             const x = e.pageX - scrollArea.offsetLeft;
             const y = e.pageY - scrollArea.offsetTop;
-            const walkX = (x - startX) * 1; // scroll speed multiplier
+            const walkX = (x - startX) * 1;
             const walkY = (y - startY) * 1;
             scrollArea.scrollLeft = scrollLeft - walkX;
             scrollArea.scrollTop = scrollTop - walkY;
@@ -345,12 +757,11 @@
 
         // ======== ZOOM VIA MOUSE SCROLL ========
         scrollArea.addEventListener('wheel', (e) => {
-            // Zoom hanya jika Ctrl ditekan
             if (!e.ctrlKey) return;
 
-            e.preventDefault(); // cegah scroll default
+            e.preventDefault();
             const delta = e.deltaY > 0 ? -10 : 10;
-            zoomLevel = Math.min(Math.max(50, zoomLevel + delta), 200); // batas zoom 50% - 200%
+            zoomLevel = Math.min(Math.max(50, zoomLevel + delta), 200);
             wrapper.style.transform = `scale(${zoomLevel / 100})`;
             if (zoomValueDisplay) zoomValueDisplay.textContent = zoomLevel;
         });
