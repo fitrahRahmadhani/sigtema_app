@@ -249,7 +249,7 @@
                             href="{{ route('positions.edit', $hierarchy->superior->slug) }}"
                             class="text-sm font-medium text-gray-900 underline"
                         >
-                            {{ $hierarchy->position->name }}
+                            {{ $hierarchy->superior->name }}
                         </a>
                         <div class="text-xs text-gray-500">{{ $hierarchy->superior->position_code }}</div>
                         <p
@@ -382,7 +382,7 @@
                                     href="{{ route('positions.edit', $hierarchy->superior->slug) }}"
                                     class="text-sm font-medium text-gray-900 underline"
                                 >
-                                    {{ $hierarchy->position->name }}
+                                    {{ $hierarchy->superior->name }}
                                 </a>
                                 <p class="text-sm text-gray-500">{{ $hierarchy->superior->position_code }}</p>
                                 <p
