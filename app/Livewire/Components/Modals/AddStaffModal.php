@@ -34,7 +34,7 @@ class AddStaffModal extends Component
         $this->companies = Company::where('is_active', true)->get();
     }
 
-    public function open($superiorPositionId = null)
+    public function open($superiorPositionId = null, $companyId = null)
     {
         $this->selectedSuperiorId = $superiorPositionId;
         $this->form['superior_id'] = $superiorPositionId;

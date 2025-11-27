@@ -16,7 +16,7 @@ class UnassignEmployeeModal extends Component
 
     protected $listeners = ['openUnassignEmployeeModal' => 'open'];
 
-    public function open($positionId)
+    public function open($positionId, $companyId = null)
     {
         $position = Position::with('employee')->find($positionId);
 
