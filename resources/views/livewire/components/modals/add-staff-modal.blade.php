@@ -151,11 +151,11 @@
                                             <input type="hidden" wire:model="form.superior_id" />
 
                                             @if ($selectedSuperiorName)
-                                                <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                                                <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
                                                     <div class="flex items-center">
                                                         <div class="flex-shrink-0">
                                                             <svg
-                                                                class="h-5 w-5 text-blue-400"
+                                                                class="h-5 w-5 text-gray-400"
                                                                 fill="none"
                                                                 stroke="currentColor"
                                                                 viewBox="0 0 24 24"
@@ -169,10 +169,10 @@
                                                             </svg>
                                                         </div>
                                                         <div class="ml-3">
-                                                            <h3 class="text-sm font-medium text-blue-800">
+                                                            <h3 class="text-sm font-medium text-gray-800">
                                                                 Reporting Structure
                                                             </h3>
-                                                            <div class="mt-1 text-sm text-blue-700">
+                                                            <div class="mt-1 text-sm text-gray-700">
                                                                 <p>
                                                                     This staff will report to:
                                                                     <strong>{{ $selectedSuperiorName }}</strong>
