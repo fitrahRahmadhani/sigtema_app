@@ -9,78 +9,133 @@
     </flux:breadcrumbs>
 
     <!-- Content -->
-    <div class="h-full w-full rounded-xl bg-white p-4 md:p-10">
-        <!-- Header -->
-        <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div class="flex items-center gap-4">
-                <div class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        fill="currentColor"
-                        class="bi bi-diagram-2 h-6 w-6 text-white"
-                        viewBox="0 0 16 16"
-                    >
-                        <path
-                            fill-rule="evenodd"
-                            d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H11a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 5 7h2.5V6A1.5 1.5 0 0 1 6 4.5zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5zM3 11.5A1.5 1.5 0 0 1 4.5 10h1A1.5 1.5 0 0 1 7 11.5v1A1.5 1.5 0 0 1 5.5 14h-1A1.5 1.5 0 0 1 3 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1A1.5 1.5 0 0 1 9 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"
-                        />
-                    </svg>
+    <div class="h-full w-full rounded-xl bg-white p-4 md:p-8">
+        <!-- Header Section -->
+        <div class="mb-8">
+            <!-- Title Row -->
+            <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div class="flex items-start gap-4">
+                    <div class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl shadow-sm">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            fill="currentColor"
+                            class="h-6 w-6 text-white"
+                            viewBox="0 0 16 16"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H11a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 5 7h2.5V6A1.5 1.5 0 0 1 6 4.5zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5zM3 11.5A1.5 1.5 0 0 1 4.5 10h1A1.5 1.5 0 0 1 7 11.5v1A1.5 1.5 0 0 1 5.5 14h-1A1.5 1.5 0 0 1 3 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1A1.5 1.5 0 0 1 9 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"
+                            />
+                        </svg>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h1 class="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl">Organization Structure</h1>
+                        <p class="mt-1 text-xs text-gray-500 sm:text-sm">
+                            Manage organizational structure and reporting lines
+                        </p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Organization Structure</h1>
-                    <p class="mt-1 text-sm text-gray-500">Manage organizational structure and reporting lines</p>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <a
+                        href="{{ route('organization-structure.index') }}"
+                        class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-all hover:border-gray-300 hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="h-5 w-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"
+                            />
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"
+                            />
+                        </svg>
+                        <span>Chart View</span>
+                    </a>
+                    <a
+                        href="{{ route('organization-structure.create') }}"
+                        class="color-gradient inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90 focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="h-5 w-5"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        <span>Add Hierarchy</span>
+                    </a>
                 </div>
             </div>
-            <div class="flex gap-4">
-                <a
-                    href="{{ route('organization-structure.index') }}"
-                    class="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-gradient-to-r px-4 py-2.5 text-sm font-medium shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-5 w-5"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"
-                        />
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"
-                        />
-                    </svg>
-                    Chart view
-                </a>
-                <a
-                    href="{{ route('organization-structure.create') }}"
-                    class="color-gradient inline-flex items-center justify-center gap-2 rounded-lg px-6 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-5 w-5"
-                    >
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    Add Hierarchy
-                </a>
-            </div>
+
+            <!-- Company Viewing Info (Superadmin Only) -->
+            @if ($isSuperadmin && $selectedCompanyId)
+                <div class="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                    <div class="flex items-start gap-3">
+                        <svg
+                            class="h-5 w-5 flex-shrink-0 text-blue-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                        </svg>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-medium text-blue-900">
+                                Viewing data for:
+                                <strong>
+                                    {{ \App\Models\Company::find($selectedCompanyId)->name ?? 'Selected Company' }}
+                                </strong>
+                            </p>
+                            @if ($companyFilter != $selectedCompanyId)
+                                <p class="mt-2 flex items-start gap-2 text-xs text-orange-700">
+                                    <svg class="mt-0.5 h-4 w-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                            clip-rule="evenodd"
+                                        />
+                                    </svg>
+                                    <span>
+                                        Currently filtered by different company.
+                                        <button
+                                            wire:click="resetCompanyFilter"
+                                            class="ml-1 font-medium text-blue-700 underline hover:text-blue-800"
+                                        >
+                                            Show data for active session company
+                                        </button>
+                                    </span>
+                                </p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
 
         <!-- Search and Filter Section -->
-        <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-            <!-- Desktop Layout: Search & Filter -->
+        <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4 md:p-6">
             <div class="grid gap-4 md:grid-cols-3">
                 <!-- Search Input -->
                 <div class="md:col-span-1">
@@ -106,7 +161,7 @@
                             type="text"
                             wire:model.live.debounce.300ms="search"
                             placeholder="Search position or relation..."
-                            class="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="w-full rounded-lg border border-gray-300 py-2.5 pr-4 pl-10 text-sm transition-colors focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
                         />
                     </div>
                 </div>
@@ -117,7 +172,7 @@
                     <div class="relative">
                         <select
                             wire:model.live="companyFilter"
-                            class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 transition-colors focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
                         >
                             <option value="">All Companies</option>
                             @foreach ($companies as $company)
@@ -143,7 +198,7 @@
                     <div class="relative">
                         <select
                             wire:model.live="relationTypeFilter"
-                            class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 transition-colors focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
                         >
                             <option value="">All Types</option>
                             @foreach ($relationTypes as $type)
@@ -165,12 +220,22 @@
             </div>
 
             <!-- Results Info -->
-            <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
-                Showing
-                <span class="font-semibold text-gray-900">{{ $hierarchies->count() }}</span>
-                of
-                <span class="font-semibold text-gray-900">{{ $hierarchies->total() }}</span>
-                hierarchies
+            <div class="flex items-center justify-between border-t border-gray-200 pt-4">
+                <div class="text-sm text-gray-600">
+                    Showing
+                    <span class="font-semibold text-gray-900">{{ $hierarchies->count() }}</span>
+                    of
+                    <span class="font-semibold text-gray-900">{{ $hierarchies->total() }}</span>
+                    hierarchies
+                </div>
+                @if ($search || $companyFilter || $relationTypeFilter)
+                    <button
+                        wire:click="resetFilters"
+                        class="text-sm font-medium text-[#721d21] transition-colors hover:text-[#8b252a]"
+                    >
+                        Clear filters
+                    </button>
+                @endif
             </div>
         </div>
 
@@ -191,7 +256,7 @@
             @forelse ($hierarchies as $hierarchy)
                 <!-- Desktop View -->
                 <div
-                    class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
+                    class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-all duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
                 >
                     <!-- Company -->
                     <div class="col-span-3 flex items-center gap-3">
@@ -199,11 +264,11 @@
                             <img
                                 src="{{ \Storage::url($hierarchy->company->logo_path) }}"
                                 alt="{{ $hierarchy->company->name }}"
-                                class="h-10 w-10 rounded-lg border border-gray-200 object-contain p-1"
+                                class="h-10 w-10 flex-shrink-0 rounded-lg border border-gray-200 object-contain p-1"
                             />
                         @else
                             <div
-                                class="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-gray-50"
+                                class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-gray-50"
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -221,42 +286,44 @@
                                 </svg>
                             </div>
                         @endif
-                        <div>
-                            <div class="text-sm font-medium text-gray-900">{{ $hierarchy->company->name }}</div>
+                        <div class="min-w-0">
+                            <div class="truncate text-sm font-medium text-gray-900">
+                                {{ $hierarchy->company->name }}
+                            </div>
                             <div class="text-xs text-gray-500">{{ $hierarchy->company->cocd }}</div>
                         </div>
                     </div>
 
                     <!-- Position -->
-                    <div class="col-span-3 flex flex-col justify-center">
+                    <div class="col-span-3 flex min-w-0 flex-col justify-center">
                         <a
                             href="{{ route('positions.edit', $hierarchy->position->slug) }}"
-                            class="text-sm font-medium text-gray-900 underline"
+                            class="truncate text-sm font-medium text-gray-900 hover:text-[#721d21] hover:underline"
                         >
                             {{ $hierarchy->position->name }}
                         </a>
                         <div class="text-xs text-gray-500">{{ $hierarchy->position->position_code }}</div>
-                        <p
-                            class="bg-{{ $hierarchy->position->employee ? 'blue' : 'pink' }}-100 text-{{ $hierarchy->position->employee ? 'blue' : 'pink' }}-800 mt-1 inline-flex w-fit items-center rounded-md px-2 py-0.5 text-xs font-medium"
+                        <span
+                            class="bg-{{ $hierarchy->position->employee ? 'blue' : 'pink' }}-100 text-{{ $hierarchy->position->employee ? 'blue' : 'pink' }}-800 mt-1 line-clamp-1 inline-flex w-fit items-center rounded-md px-2 py-0.5 text-xs font-medium"
                         >
                             {{ $hierarchy->position->employee->name ?? 'Vacant Position' }}
-                        </p>
+                        </span>
                     </div>
 
                     <!-- Reports To -->
-                    <div class="col-span-3 flex flex-col justify-center">
+                    <div class="col-span-3 flex min-w-0 flex-col justify-center">
                         <a
                             href="{{ route('positions.edit', $hierarchy->superior->slug) }}"
-                            class="text-sm font-medium text-gray-900 underline"
+                            class="truncate text-sm font-medium text-gray-900 hover:text-[#721d21] hover:underline"
                         >
                             {{ $hierarchy->superior->name }}
                         </a>
                         <div class="text-xs text-gray-500">{{ $hierarchy->superior->position_code }}</div>
-                        <p
-                            class="bg-{{ $hierarchy->superior->employee ? 'blue' : 'pink' }}-100 text-{{ $hierarchy->superior->employee ? 'blue' : 'pink' }}-800 mt-1 inline-flex w-fit items-center rounded-md px-2 py-0.5 text-xs font-medium"
+                        <span
+                            class="bg-{{ $hierarchy->superior->employee ? 'blue' : 'pink' }}-100 text-{{ $hierarchy->superior->employee ? 'blue' : 'pink' }}-800 mt-1 line-clamp-1 inline-flex w-fit items-center rounded-md px-2 py-0.5 text-xs font-medium"
                         >
                             {{ $hierarchy->superior->employee->name ?? 'Vacant Position' }}
-                        </p>
+                        </span>
                     </div>
 
                     <!-- Relation Type -->
@@ -315,7 +382,7 @@
 
                 <!-- Mobile View -->
                 <div
-                    class="block rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
+                    class="block rounded-lg border border-gray-200 bg-white p-4 transition-all duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
                 >
                     <div class="space-y-4">
                         <!-- Company Header -->
@@ -324,11 +391,11 @@
                                 <img
                                     src="{{ \Storage::url($hierarchy->company->logo_path) }}"
                                     alt="{{ $hierarchy->company->name }}"
-                                    class="h-12 w-12 rounded-lg border border-gray-200 object-contain p-1"
+                                    class="h-12 w-12 flex-shrink-0 rounded-lg border border-gray-200 object-contain p-1"
                                 />
                             @else
                                 <div
-                                    class="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-200 bg-gray-50"
+                                    class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-gray-50"
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -347,8 +414,10 @@
                                 </div>
                             @endif
                             <div class="min-w-0 flex-1">
-                                <p class="text-xs font-medium text-gray-500 uppercase">Company</p>
-                                <p class="mt-1 font-semibold text-gray-900">{{ $hierarchy->company->name }}</p>
+                                <p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Company</p>
+                                <p class="mt-1 truncate font-semibold text-gray-900">
+                                    {{ $hierarchy->company->name }}
+                                </p>
                                 <span class="mt-1 inline-flex text-xs text-gray-500">
                                     {{ $hierarchy->company->cocd }}
                                 </span>
@@ -357,39 +426,39 @@
 
                         <!-- Position Info -->
                         <div>
-                            <p class="text-xs font-medium text-gray-500 uppercase">Position</p>
+                            <p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Position</p>
                             <div class="mt-2">
                                 <a
                                     href="{{ route('positions.edit', $hierarchy->position->slug) }}"
-                                    class="text-sm font-medium text-gray-900 underline"
+                                    class="text-sm font-medium text-gray-900 hover:text-[#721d21] hover:underline"
                                 >
                                     {{ $hierarchy->position->name }}
                                 </a>
                                 <p class="text-sm text-gray-500">{{ $hierarchy->position->position_code }}</p>
-                                <p
-                                    class="bg-{{ $hierarchy->position->employee ? 'blue' : 'pink' }}-100 text-{{ $hierarchy->position->employee ? 'blue' : 'pink' }}-800 mt-1 inline-flex w-fit items-center rounded-md px-2 py-0.5 text-xs font-medium"
+                                <span
+                                    class="bg-{{ $hierarchy->position->employee ? 'blue' : 'pink' }}-100 text-{{ $hierarchy->position->employee ? 'blue' : 'pink' }}-800 mt-1 line-clamp-1 inline-flex w-fit items-center rounded-md px-2 py-0.5 text-xs font-medium"
                                 >
                                     {{ $hierarchy->position->employee->name ?? 'Vacant Position' }}
-                                </p>
+                                </span>
                             </div>
                         </div>
 
                         <!-- Reports To Info -->
                         <div>
-                            <p class="text-xs font-medium text-gray-500 uppercase">Reports To</p>
+                            <p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Reports To</p>
                             <div class="mt-2">
                                 <a
                                     href="{{ route('positions.edit', $hierarchy->superior->slug) }}"
-                                    class="text-sm font-medium text-gray-900 underline"
+                                    class="text-sm font-medium text-gray-900 hover:text-[#721d21] hover:underline"
                                 >
                                     {{ $hierarchy->superior->name }}
                                 </a>
                                 <p class="text-sm text-gray-500">{{ $hierarchy->superior->position_code }}</p>
-                                <p
-                                    class="bg-{{ $hierarchy->superior->employee ? 'blue' : 'pink' }}-100 text-{{ $hierarchy->superior->employee ? 'blue' : 'pink' }}-800 mt-1 inline-flex w-fit items-center rounded-md px-2 py-0.5 text-xs font-medium"
+                                <span
+                                    class="bg-{{ $hierarchy->superior->employee ? 'blue' : 'pink' }}-100 text-{{ $hierarchy->superior->employee ? 'blue' : 'pink' }}-800 mt-1 line-clamp-1 inline-flex w-fit items-center rounded-md px-2 py-0.5 text-xs font-medium"
                                 >
                                     {{ $hierarchy->superior->employee->name ?? 'Vacant Position' }}
-                                </p>
+                                </span>
                             </div>
                         </div>
 
@@ -446,14 +515,14 @@
                     </div>
                 </div>
             @empty
-                <div class="rounded-lg border border-gray-200 bg-white p-8 text-center">
+                <div class="rounded-lg border border-gray-200 bg-white p-12 text-center">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke-width="1.5"
                         stroke="currentColor"
-                        class="mx-auto h-12 w-12 text-gray-400"
+                        class="mx-auto h-16 w-16 text-gray-400"
                     >
                         <path
                             stroke-linecap="round"
@@ -461,8 +530,24 @@
                             d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"
                         />
                     </svg>
-                    <p class="mt-4 font-medium text-gray-500">No hierarchies found</p>
-                    <p class="mt-1 text-sm text-gray-400">Get started by creating a new hierarchy relationship</p>
+                    <p class="mt-4 text-lg font-medium text-gray-900">No hierarchies found</p>
+                    <p class="mt-2 text-sm text-gray-500">Get started by creating a new hierarchy relationship</p>
+                    <a
+                        href="{{ route('organization-structure.create') }}"
+                        class="color-gradient mt-6 inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="h-5 w-5"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Add First Hierarchy
+                    </a>
                 </div>
             @endforelse
         </div>

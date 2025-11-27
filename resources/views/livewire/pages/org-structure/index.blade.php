@@ -159,7 +159,7 @@
 
                                     // Node Information
                                     $output .= '<div class="flex flex-col text-left flex-1 min-w-0">';
-                                    $output .= '<div class="' . $textSize . ' font-bold' . ($isVacant ? ' text-red-500 italic' : ' text-gray-800') . '">' . e($node['name']) . '</div>';
+                                    $output .= '<div class="' . $textSize . ' font-bold line-clamp-2' . ($isVacant ? ' text-red-500 italic' : ' text-gray-800') . '">' . e($node['name']) . '</div>';
                                     $output .= '<div class="mt-0.5 ' . $subtextSize . ' font-medium ' . ($isVacant ? 'text-red-500' : 'text-gray-600') . ' truncate">' . e($node['title']) . '</div>';
                                     $output .= '<div class="text-xs ' . ($isVacant ? 'text-red-500' : 'text-gray-500') . ' truncate">' . e($node['department']) . '</div>';
 
