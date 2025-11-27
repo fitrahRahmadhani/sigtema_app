@@ -10,6 +10,8 @@ use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
 use App\Models\EmployeeHierarchy;
 use App\Livewire\Traits\WithDeleteConfirmation;
+use App\Livewire\Components\Modals\AddStaffModal;
+use App\Livewire\Components\Modals\UnassignEmployeeModal;
 
 #[Title('Organization Structure')]
 class Index extends Component
@@ -20,28 +22,16 @@ class Index extends Component
     public $nodes = [];
     public $companyId;
 
-    // Modal properties
-    public $showAddStaffModal = false;
-    public $selectedSuperiorId = null;
-    public $selectedSuperiorName = '';
-
-    // Form properties
-    public $form = [
-        'company_id' => '',
-        'position_id' => '',
-        'superior_id' => '',
-        'relation_type' => 'direct'
+    protected $listeners = [
+        'refreshChart' => 'refreshChart',
+        'staffAdded' => 'refreshChart',
+        'employeeUnassigned' => 'refreshChart'
     ];
-
-    // Data for modal
-    public $companies;
-    public $positions = [];
 
     public function mount($companyId = null)
     {
         $this->companyId = 1;
         $this->initializeChart();
-        $this->loadModalData();
     }
 
     private function initializeChart()
@@ -141,130 +131,6 @@ class Index extends Component
     {
         $node = collect($this->nodes)->firstWhere('id', $nodeId);
         return $node ? $node['position_id'] : null;
-    }
-
-    private function loadModalData()
-    {
-        $this->companies = Company::where('is_active', true)->get();
-
-        // Load initial data dengan filter
-        if ($this->form['company_id']) {
-            $this->loadAvailablePositions();
-        } else {
-            $this->positions = [];
-        }
-
-        // Set default company
-        if ($this->companies->count() > 0) {
-            $this->form['company_id'] = $this->companyId;
-        }
-    }
-
-    public function openAddStaffModal($superiorPositionId = null)
-    {
-        $this->selectedSuperiorId = $superiorPositionId;
-        $this->form['superior_id'] = $superiorPositionId;
-
-        // Ambil nama superior untuk display
-        if ($superiorPositionId) {
-            $superior = Position::find($superiorPositionId);
-            $this->selectedSuperiorName = $superior ?
-                $superior->name . ' - ' . ($superior->getWorkUnitAttribute() ?? 'No Department') :
-                'Unknown Position';
-        } else {
-            $this->selectedSuperiorName = 'No Superior Selected';
-        }
-
-        $this->showAddStaffModal = true;
-        $this->loadAvailablePositions();
-    }
-
-    public function closeAddStaffModal()
-    {
-        $this->showAddStaffModal = false;
-        $this->resetForm();
-        $this->selectedSuperiorName = '';
-    }
-
-    private function loadAvailablePositions()
-    {
-        if ($this->form['company_id']) {
-            $existingChildPositionIds = EmployeeHierarchy::where('company_id', $this->form['company_id'])
-                ->pluck('position_id')
-                ->toArray();
-
-            $this->positions = Position::where('company_id', $this->form['company_id'])
-                ->whereNotIn('id', $existingChildPositionIds)
-                ->get();
-        } else {
-            $this->positions = [];
-        }
-
-        $this->form['position_id'] = '';
-    }
-
-    public function updatedFormCompanyId()
-    {
-        $this->loadAvailablePositions();
-    }
-
-    public function saveStaff()
-    {
-        $this->validate([
-            'form.company_id' => 'required|exists:companies,id',
-            'form.position_id' => [
-                'required',
-                'exists:positions,id',
-                'different:form.superior_id',
-                function ($attribute, $value, $fail) {
-                    $exists = EmployeeHierarchy::where('company_id', $this->form['company_id'])
-                        ->where('position_id', $value)
-                        ->exists();
-
-                    if ($exists) {
-                        $fail('This position already has a hierarchy relationship.');
-                    }
-                }
-            ],
-            'form.superior_id' => 'required|exists:positions,id|different:form.position_id',
-            'form.relation_type' => 'required|string|max:255',
-        ]);
-
-        // Check if hierarchy already exists
-        $exists = EmployeeHierarchy::where('company_id', $this->form['company_id'])
-            ->where('position_id', $this->form['position_id'])
-            ->where('superior_id', $this->form['superior_id'])
-            ->exists();
-
-        if ($exists) {
-            Toaster::error('This hierarchy relationship already exists.');
-            return;
-        }
-
-        try {
-            EmployeeHierarchy::create([
-                'company_id' => $this->form['company_id'],
-                'position_id' => $this->form['position_id'],
-                'superior_id' => $this->form['superior_id'],
-                'relation_type' => $this->form['relation_type'],
-            ]);
-
-            Toaster::success('Staff hierarchy created successfully.');
-            $this->closeAddStaffModal();
-            $this->refreshChart();
-        } catch (\Exception $e) {
-            Toaster::error('Failed to create staff hierarchy: ' . $e->getMessage());
-        }
-    }
-
-    private function resetForm()
-    {
-        $this->form = [
-            'company_id' => $this->companyId,
-            'position_id' => '',
-            'superior_id' => $this->selectedSuperiorId,
-            'relation_type' => 'direct'
-        ];
     }
 
     public function toggleNode($nodeId)
@@ -432,6 +298,18 @@ class Index extends Component
 
         // Tambahkan refresh chart
         $this->refreshChart();
+    }
+
+    public function openAddStaffModal($superiorPositionId)
+    {
+        $this->dispatch('openAddStaffModal', superiorPositionId: $superiorPositionId)
+            ->to(AddStaffModal::class);
+    }
+
+    public function openUnassignEmployeeModal($positionId)
+    {
+        $this->dispatch('openUnassignEmployeeModal', positionId: $positionId)
+            ->to(UnassignEmployeeModal::class);
     }
 
     public function render()
