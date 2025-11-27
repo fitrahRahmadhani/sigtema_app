@@ -9,6 +9,7 @@ use App\Models\Position;
 use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
 use App\Models\EmployeeHierarchy;
+use Illuminate\Support\Facades\Auth;
 use App\Livewire\Traits\WithDeleteConfirmation;
 use App\Livewire\Components\Modals\AddStaffModal;
 use App\Livewire\Components\Modals\UnassignEmployeeModal;
@@ -20,7 +21,11 @@ class Index extends Component
 
     public $zoom = 100;
     public $nodes = [];
-    public $companyId;
+    public $selectedCompanyId = null;
+
+    public $companies = [];
+    public $isSuperadmin = false;
+    public $hasSelectedCompany = false;
 
     protected $listeners = [
         'refreshChart' => 'refreshChart',
@@ -28,16 +33,62 @@ class Index extends Component
         'employeeUnassigned' => 'refreshChart'
     ];
 
-    public function mount($companyId = null)
+    public function mount()
     {
-        $this->companyId = 1;
+        $this->initializeUserAccess();
+    }
+
+    private function initializeUserAccess()
+    {
+        $user = Auth::user();
+
+        // Cek jika superadmin (company_id = null)
+        $this->isSuperadmin = is_null($user->company_id);
+
+        if ($this->isSuperadmin) {
+            // Superadmin: load semua companies
+            $this->companies = Company::where('is_active', true)->get();
+
+            // Cek jika ada company yang dipilih (dari session/query parameter)
+            $this->selectedCompanyId = session('selected_company_id') ?? request('company_id');
+
+            if ($this->selectedCompanyId) {
+                $this->hasSelectedCompany = true;
+                $this->initializeChart();
+            }
+        } else {
+            // Admin: pakai company mereka
+            $this->selectedCompanyId = $user->company_id;
+            $this->hasSelectedCompany = true;
+            $this->initializeChart();
+        }
+    }
+
+    public function selectCompany($companyId)
+    {
+        $this->selectedCompanyId = $companyId;
+        $this->hasSelectedCompany = true;
+
+        // Simpan selection di session
+        session(['selected_company_id' => $companyId]);
+
         $this->initializeChart();
+    }
+
+    public function changeCompany()
+    {
+        $this->hasSelectedCompany = false;
+        $this->selectedCompanyId = null;
+        $this->nodes = [];
+        session()->forget('selected_company_id');
     }
 
     private function initializeChart()
     {
+        if (!$this->selectedCompanyId) return;
+
         // Ambil semua hierarki untuk company ini
-        $hierarchies = EmployeeHierarchy::where('company_id', $this->companyId)
+        $hierarchies = EmployeeHierarchy::where('company_id', $this->selectedCompanyId)
             ->with(['position.employee', 'superior'])
             ->get();
 
@@ -48,7 +99,7 @@ class Index extends Component
 
         $positions = Position::whereIn('id', $positionIds)
             ->with(['employee' => function ($query) {
-                $query->where('company_id', $this->companyId)
+                $query->where('company_id', $this->selectedCompanyId)
                     ->latest('created_at');
             }])
             ->get();
@@ -302,14 +353,20 @@ class Index extends Component
 
     public function openAddStaffModal($superiorPositionId)
     {
-        $this->dispatch('openAddStaffModal', superiorPositionId: $superiorPositionId)
-            ->to(AddStaffModal::class);
+        $this->dispatch(
+            'openAddStaffModal',
+            superiorPositionId: $superiorPositionId,
+            companyId: $this->selectedCompanyId
+        )->to(AddStaffModal::class);
     }
 
     public function openUnassignEmployeeModal($positionId)
     {
-        $this->dispatch('openUnassignEmployeeModal', positionId: $positionId)
-            ->to(UnassignEmployeeModal::class);
+        $this->dispatch(
+            'openUnassignEmployeeModal',
+            positionId: $positionId,
+            companyId: $this->selectedCompanyId
+        )->to(UnassignEmployeeModal::class);
     }
 
     public function render()
