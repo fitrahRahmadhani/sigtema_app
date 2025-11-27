@@ -12,6 +12,7 @@ use App\Models\EmployeeHierarchy;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\Traits\WithDeleteConfirmation;
 use App\Livewire\Components\Modals\AddStaffModal;
+use App\Livewire\Components\Modals\AssignEmployeeModal;
 use App\Livewire\Components\Modals\UnassignEmployeeModal;
 
 #[Title('Organization Structure')]
@@ -30,7 +31,8 @@ class Index extends Component
     protected $listeners = [
         'refreshChart' => 'refreshChart',
         'staffAdded' => 'refreshChart',
-        'employeeUnassigned' => 'refreshChart'
+        'employeeUnassigned' => 'refreshChart',
+        'employeeAssigned' => 'refreshChart',
     ];
 
     public function mount()
@@ -368,6 +370,14 @@ class Index extends Component
             companyId: $this->selectedCompanyId
         )->to(UnassignEmployeeModal::class);
     }
+
+    public function openAssignEmployeeModal($positionId)
+{
+    $this->dispatch('openAssignEmployeeModal',
+        positionId: $positionId,
+        companyId: $this->selectedCompanyId
+    )->to(AssignEmployeeModal::class);
+}
 
     public function render()
     {
