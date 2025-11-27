@@ -9,10 +9,13 @@ use App\Models\Position;
 use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
 use App\Models\EmployeeHierarchy;
+use App\Livewire\Traits\WithDeleteConfirmation;
 
 #[Title('Organization Structure')]
 class Index extends Component
 {
+    use WithDeleteConfirmation;
+
     public $zoom = 100;
     public $nodes = [];
     public $companyId;
@@ -20,6 +23,7 @@ class Index extends Component
     // Modal properties
     public $showAddStaffModal = false;
     public $selectedSuperiorId = null;
+    public $selectedSuperiorName = '';
 
     // Form properties
     public $form = [
@@ -32,7 +36,6 @@ class Index extends Component
     // Data for modal
     public $companies;
     public $positions = [];
-    public $superiorPositions = [];
 
     public function mount($companyId = null)
     {
@@ -75,7 +78,7 @@ class Index extends Component
         }
 
         // Function untuk build tree recursively
-        $buildNode = function ($positionId, $parentNodeId = null, $level = 0) use (&$buildNode, &$nodeIdCounter, &$positionToNodeId, $positions, $hierarchies) {
+        $buildNode = function ($positionId, $parentNodeId = null, $level = 0, $hierarchyId = null) use (&$buildNode, &$nodeIdCounter, &$positionToNodeId, $positions, $hierarchies) {
             // Cek apakah position ini sudah dibuat nodenya (prevent duplicate)
             if (isset($positionToNodeId[$positionId])) {
                 return;
@@ -86,6 +89,18 @@ class Index extends Component
 
             // Ambil employee yang menduduki position ini
             $employee = $position->employee;
+
+            // Cari hierarchy_id untuk node ini
+            // Untuk root nodes, hierarchy_id akan null
+            // Untuk child nodes, cari hierarchy yang menghubungkan parent dan child
+            $currentHierarchyId = $hierarchyId;
+            if ($parentNodeId) {
+                $parentPositionId = $this->getPositionIdFromNodeId($parentNodeId);
+                $hierarchy = $hierarchies->firstWhere(function ($item) use ($positionId, $parentPositionId) {
+                    return $item->position_id == $positionId && $item->superior_id == $parentPositionId;
+                });
+                $currentHierarchyId = $hierarchy ? $hierarchy->id : null;
+            }
 
             $nodeId = $nodeIdCounter++;
             $positionToNodeId[$positionId] = $nodeId;
@@ -98,19 +113,20 @@ class Index extends Component
                 'position_id' => $positionId,
                 'name' => $employee ? $employee->name : 'Vacant Position',
                 'title' => $position->name,
-                'department' => $position->department->name ?? '-',
+                'department' => $position->getWorkUnitAttribute(),
                 'parent_id' => $parentNodeId,
                 'visible' => $level === 0 ? true : false, // Only root visible
                 'collapsed' => $childrenCount > 0, // Collapsed if has children
                 'level' => $level,
                 'photo' => $employee ? $employee->profile_path : null,
                 'slug' => $employee ? $employee->slug : null,
+                'hierarchy_id' => $currentHierarchyId, // Tambahkan ini
             ];
 
             // Build children nodes
             $children = $hierarchies->where('superior_id', $positionId);
             foreach ($children as $child) {
-                $buildNode($child->position_id, $nodeId, $level + 1);
+                $buildNode($child->position_id, $nodeId, $level + 1, $child->id);
             }
         };
 
@@ -120,11 +136,23 @@ class Index extends Component
         }
     }
 
+    // Helper method untuk mendapatkan position_id dari node_id
+    private function getPositionIdFromNodeId($nodeId)
+    {
+        $node = collect($this->nodes)->firstWhere('id', $nodeId);
+        return $node ? $node['position_id'] : null;
+    }
+
     private function loadModalData()
     {
         $this->companies = Company::where('is_active', true)->get();
-        $this->positions = Position::where('company_id', $this->companyId)->get();
-        $this->superiorPositions = Position::where('company_id', $this->companyId)->get();
+
+        // Load initial data dengan filter
+        if ($this->form['company_id']) {
+            $this->loadAvailablePositions();
+        } else {
+            $this->positions = [];
+        }
 
         // Set default company
         if ($this->companies->count() > 0) {
@@ -136,37 +164,68 @@ class Index extends Component
     {
         $this->selectedSuperiorId = $superiorPositionId;
         $this->form['superior_id'] = $superiorPositionId;
-        $this->showAddStaffModal = true;
 
-        // Load positions based on selected company
-        $this->updatedFormCompanyId();
+        // Ambil nama superior untuk display
+        if ($superiorPositionId) {
+            $superior = Position::find($superiorPositionId);
+            $this->selectedSuperiorName = $superior ?
+                $superior->name . ' - ' . ($superior->getWorkUnitAttribute() ?? 'No Department') :
+                'Unknown Position';
+        } else {
+            $this->selectedSuperiorName = 'No Superior Selected';
+        }
+
+        $this->showAddStaffModal = true;
+        $this->loadAvailablePositions();
     }
 
     public function closeAddStaffModal()
     {
         $this->showAddStaffModal = false;
         $this->resetForm();
+        $this->selectedSuperiorName = '';
+    }
+
+    private function loadAvailablePositions()
+    {
+        if ($this->form['company_id']) {
+            $existingChildPositionIds = EmployeeHierarchy::where('company_id', $this->form['company_id'])
+                ->pluck('position_id')
+                ->toArray();
+
+            $this->positions = Position::where('company_id', $this->form['company_id'])
+                ->whereNotIn('id', $existingChildPositionIds)
+                ->get();
+        } else {
+            $this->positions = [];
+        }
+
+        $this->form['position_id'] = '';
     }
 
     public function updatedFormCompanyId()
     {
-        if ($this->form['company_id']) {
-            $this->positions = Position::where('company_id', $this->form['company_id'])->get();
-            $this->superiorPositions = Position::where('company_id', $this->form['company_id'])->get();
-        } else {
-            $this->positions = [];
-            $this->superiorPositions = [];
-        }
-
-        $this->form['position_id'] = '';
-        $this->form['superior_id'] = $this->selectedSuperiorId;
+        $this->loadAvailablePositions();
     }
 
     public function saveStaff()
     {
         $this->validate([
             'form.company_id' => 'required|exists:companies,id',
-            'form.position_id' => 'required|exists:positions,id|different:form.superior_id',
+            'form.position_id' => [
+                'required',
+                'exists:positions,id',
+                'different:form.superior_id',
+                function ($attribute, $value, $fail) {
+                    $exists = EmployeeHierarchy::where('company_id', $this->form['company_id'])
+                        ->where('position_id', $value)
+                        ->exists();
+
+                    if ($exists) {
+                        $fail('This position already has a hierarchy relationship.');
+                    }
+                }
+            ],
             'form.superior_id' => 'required|exists:positions,id|different:form.position_id',
             'form.relation_type' => 'required|string|max:255',
         ]);
@@ -316,7 +375,63 @@ class Index extends Component
 
     public function refreshChart()
     {
+        // Simpan state expanded/collapsed sebelum refresh
+        $expandedNodes = collect($this->nodes)
+            ->where('collapsed', false)
+            ->pluck('position_id')
+            ->toArray();
+
+        // Refresh chart
         $this->initializeChart();
+
+        // Restore expanded state
+        foreach ($this->nodes as $index => $node) {
+            if (in_array($node['position_id'], $expandedNodes)) {
+                $this->nodes[$index]['collapsed'] = false;
+                // Juga set children sebagai visible
+                $this->setChildrenVisibility($node['id'], true);
+            }
+        }
+    }
+
+    /**
+     * Helper untuk set visibility children
+     */
+    private function setChildrenVisibility($parentId, $visible)
+    {
+        foreach ($this->nodes as $index => $node) {
+            if ($node['parent_id'] === $parentId) {
+                $this->nodes[$index]['visible'] = $visible;
+                // Recursively set grandchildren visibility jika parent expanded
+                if (!$node['collapsed']) {
+                    $this->setChildrenVisibility($node['id'], $visible);
+                }
+            }
+        }
+    }
+
+    // Implement abstract methods from trait
+    protected function getModelClass(): string
+    {
+        return EmployeeHierarchy::class;
+    }
+
+    protected function getModelDisplayName(): string
+    {
+        return 'Hierarchy';
+    }
+
+    /**
+     * Override performDelete method dari trait
+     * Tambahkan refreshChart() setelah delete
+     */
+    protected function performDelete($item): void
+    {
+        // Jalankan delete logic dari trait
+        $item->delete();
+
+        // Tambahkan refresh chart
+        $this->refreshChart();
     }
 
     public function render()
