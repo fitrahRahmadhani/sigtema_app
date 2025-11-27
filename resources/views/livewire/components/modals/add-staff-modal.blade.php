@@ -10,6 +10,9 @@
                 }
             })
         },
+        closeModal() {
+            @this.close();
+        }
     }"
     x-show="show"
     x-cloak
@@ -19,9 +22,15 @@
     <!-- Background overlay -->
     <div
         x-show="show"
+        x-transition:enter="duration-300 ease-out"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="duration-200 ease-in"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
         class="fixed inset-0 z-[10000] bg-gray-900/70 backdrop-blur-sm transition-opacity"
         aria-hidden="true"
-        @click="close()"
+        @click="closeModal()"
     ></div>
 
     <!-- Modal panel -->
@@ -29,9 +38,15 @@
         <div class="flex min-h-full items-center justify-center p-4">
             <div
                 x-show="show"
+                x-transition:enter="duration-300 ease-out"
+                x-transition:enter-start="translate-y-4 scale-95 opacity-0"
+                x-transition:enter-end="translate-y-0 scale-100 opacity-100"
+                x-transition:leave="duration-200 ease-in"
+                x-transition:leave-start="translate-y-0 scale-100 opacity-100"
+                x-transition:leave-end="translate-y-4 scale-95 opacity-0"
                 class="relative z-[10002] w-full max-w-2xl transform transition-all"
-                @click.outside="close()"
-                @keydown.escape.window="close()"
+                @click.outside="closeModal()"
+                @keydown.escape.window="closeModal()"
             >
                 <div class="overflow-hidden rounded-2xl bg-white shadow-2xl">
                     <div class="bg-white px-6 pt-6 pb-4">

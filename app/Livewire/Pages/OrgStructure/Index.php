@@ -11,6 +11,7 @@ use Masmerise\Toaster\Toaster;
 use App\Models\EmployeeHierarchy;
 use App\Livewire\Traits\WithDeleteConfirmation;
 use App\Livewire\Components\Modals\AddStaffModal;
+use App\Livewire\Components\Modals\UnassignEmployeeModal;
 
 #[Title('Organization Structure')]
 class Index extends Component
@@ -23,7 +24,8 @@ class Index extends Component
 
     protected $listeners = [
         'refreshChart' => 'refreshChart',
-        'staffAdded' => 'refreshChart' // Listen untuk event dari modal
+        'staffAdded' => 'refreshChart',
+        'employeeUnassigned' => 'refreshChart'
     ];
 
     public function mount($companyId = null)
@@ -302,6 +304,12 @@ class Index extends Component
     {
         $this->dispatch('openAddStaffModal', superiorPositionId: $superiorPositionId)
             ->to(AddStaffModal::class);
+    }
+
+    public function openUnassignEmployeeModal($positionId)
+    {
+        $this->dispatch('openUnassignEmployeeModal', positionId: $positionId)
+            ->to(UnassignEmployeeModal::class);
     }
 
     public function render()

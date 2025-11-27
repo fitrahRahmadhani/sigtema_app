@@ -3,6 +3,7 @@
         <div wire:key="org-chart-main">
             <x-ui.modals.delete-confirmation />
              <livewire:components.modals.add-staff-modal />
+             <livewire:components.modals.unassign-employee-modal />
             <!-- Header Controls -->
             <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -165,7 +166,7 @@
                                 $output .= '</button>';
 
                                 // Unassign employee
-                                $output .= '<button class="w-full flex items-center gap-3 px-3 py-2 rounded-md ' . ($isVacant ? 'text-red-700 hover:bg-red-100' : 'text-gray-700 hover:bg-gray-100') . ' transition-colors">';
+                                $output .= '<button wire:click="openUnassignEmployeeModal(' . $node['position_id'] . ')" class="w-full flex items-center gap-3 px-3 py-2 rounded-md ' . ($isVacant ? 'text-red-700 hover:bg-red-100' : 'text-gray-700 hover:bg-gray-100') . ' transition-colors">';
                                 $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">';
                                 $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />';
                                 $output .= '</svg>';
