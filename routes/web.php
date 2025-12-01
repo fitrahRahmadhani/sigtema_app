@@ -6,6 +6,8 @@ use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\TwoFactor;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
+use App\Exports\EmployeeTemplateExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 Route::redirect('/', '/login');
 
@@ -79,6 +81,10 @@ Route::middleware(['auth'])->group(function () {
             ),
         )
         ->name('two-factor.show');
+});
+
+Route::get('/test-template', function () {
+    return Excel::download(new EmployeeTemplateExport, 'employee-template.xlsx');
 });
 
 Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
