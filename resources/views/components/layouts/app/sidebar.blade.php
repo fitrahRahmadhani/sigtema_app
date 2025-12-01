@@ -183,8 +183,9 @@
             <p>Org. Structure</p>
         </a>
 
+        {{-- Master Data --}}
         <div class="mt-8 space-y-2">
-            <p class="ml-4 text-sm font-semibold text-gray-400 uppercase">master</p>
+            <p class="ml-4 text-sm font-semibold text-gray-400 uppercase">master data</p>
 
             {{-- Companies --}}
             <a
@@ -301,6 +302,93 @@
                 </svg>
                 <p>Role & Permission</p>
             </a>
+        </div>
+
+        {{-- Action --}}
+        <div class="mt-8 space-y-2">
+            <p class="ml-4 text-sm font-semibold text-gray-400 uppercase">actions</p>
+
+            {{-- Bulk Upload with Dropdown --}}
+            <div
+                x-data="{
+                    open: {{ request()->routeIs('career-path', 'vacant-positions.*', 'candidates-comparison.*', 'employees-profile.*') ? 'true' : 'false' }},
+                }"
+            >
+                <button
+                    @click="open = !open"
+                    class="{{ request()->routeIs('career-path', 'vacant-positions.*', 'candidates-comparison.*', 'employees-profile.*') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
+                    wire:navigate
+                >
+                    <div class="flex flex-1 items-center gap-2">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="size-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
+                            />
+                        </svg>
+
+                        <p>Bulk Upload</p>
+                    </div>
+                    <div
+                        class="rounded-md p-1 transition-transform duration-200 hover:bg-gray-300"
+                        :class="{ 'rotate-180 bg-gray-300 ': open }"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="size-4"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </div>
+                </button>
+
+                {{-- Submenu Dropdown --}}
+                <div
+                    x-show="open"
+                    x-transition:enter="transition duration-200 ease-out"
+                    x-transition:enter-start="-translate-y-2 opacity-0"
+                    x-transition:enter-end="translate-y-0 opacity-100"
+                    x-transition:leave="transition duration-150 ease-in"
+                    x-transition:leave-start="translate-y-0 opacity-100"
+                    x-transition:leave-end="-translate-y-2 opacity-0"
+                    class="ml-6 space-y-1 border-l border-gray-200 pl-2"
+                    style="display: none"
+                >
+                    <a
+                        href="{{ route('bulk-upload.employees') }}"
+                        wire:navigate
+                        class="{{ request()->routeIs('bulk-upload.employees') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="size-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"
+                            />
+                        </svg>
+                        <p>Employees</p>
+                    </a>
+                </div>
+            </div>
         </div>
 
         {{-- Spacer untuk mendorong copyright ke bawah --}}
