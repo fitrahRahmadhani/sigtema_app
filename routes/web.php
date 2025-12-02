@@ -66,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Bulk Upload
     Route::get('bulk-upload/employees', App\Livewire\Pages\BulkUploads\Employees::class)->name('bulk-upload.employees');
+    Route::get('/bulk-upload/positions', \App\Livewire\Pages\BulkUploads\Positions::class)->name('bulk-upload.positions');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
@@ -86,6 +87,8 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/test-template', function () {
     return Excel::download(new EmployeeTemplateExport, 'employee-template.xlsx');
 });
+
+
 
 Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 
