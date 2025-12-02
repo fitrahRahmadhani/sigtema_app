@@ -68,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('bulk-upload/employees', App\Livewire\Pages\BulkUploads\Employees::class)->name('bulk-upload.employees');
     Route::get('bulk-upload/positions', \App\Livewire\Pages\BulkUploads\Positions::class)->name('bulk-upload.positions');
     Route::get('bulk-upload/educations', \App\Livewire\Pages\BulkUploads\Educations::class)->name('bulk-upload.educations');
+    Route::get('bulk-upload/mcus', \App\Livewire\Pages\BulkUploads\Mcus::class)->name('bulk-upload.mcus');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
