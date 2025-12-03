@@ -80,12 +80,12 @@
         </tr>
         <tr>
             <td colspan="3" style="background-color: #dbeafe; color: #1e40af; padding: 8px">
-                1. employee_number: Nomor karyawan yang sudah terdaftar (WAJIB SESUAI dengan daftar di atas)
+                1. employee_number: Nomor karyawan yang sudah terdaftar
             </td>
         </tr>
         <tr>
             <td colspan="3" style="background-color: #dbeafe; color: #1e40af; padding: 8px">
-                2. result: Hasil MCU (contoh: Fit, Fit with Notes, Unfit, Pending, dll)
+                2. result: Hasil MCU (contoh: K1, K2, K3, K4, K5)
             </td>
         </tr>
         <tr>
