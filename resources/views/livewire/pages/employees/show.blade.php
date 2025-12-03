@@ -1,6 +1,5 @@
 <div class="space-y-4 p-2">
     <!-- Breadcrumbs -->
-    <!-- Breadcrumbs -->
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('employees.index') }}">Employees</flux:breadcrumbs.item>
@@ -89,9 +88,10 @@
 
         {{-- Content --}}
         <div class="w-full space-y-6 md:space-y-8">
-            <div class="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
+            <!-- Three Column Section: Soft Competencies, Technical Competencies, MCU Result -->
+            <div class="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-3">
                 <!-- Soft Competencies -->
-                <div class="w-full">
+                <div class="w-full lg:col-span-1">
                     <div class="color-gradient w-full rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">Soft Competencies</p>
                     </div>
@@ -152,7 +152,7 @@
                 </div>
 
                 <!-- Technical Competencies -->
-                <div class="w-full">
+                <div class="w-full lg:col-span-1">
                     <div class="color-gradient w-full rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">Technical Competencies</p>
                     </div>
@@ -170,59 +170,106 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                    <td
-                                        class="w-1/6 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
+                                @forelse ($employee->technicalCompetencies as $techCompetency)
+                                    <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                        <td
+                                            class="w-1/6 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
+                                        >
+                                            {{ $techCompetency->year }}
+                                        </td>
+                                        <td class="w-2/6 border-r px-3 py-2 text-gray-600 sm:px-4">
+                                            {{ $techCompetency->issued_by }}
+                                        </td>
+                                        <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                            {{ $techCompetency->name }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="px-3 py-8 text-center text-gray-500 sm:px-4">
+                                            <div class="flex flex-col items-center justify-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-12 w-12 text-gray-300"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="1.5"
+                                                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                                                    />
+                                                </svg>
+                                                <p class="mt-2 text-sm font-medium text-gray-400">
+                                                    No technical competencies found
+                                                </p>
+                                                <p class="text-xs text-gray-300">
+                                                    Add certifications or technical skills
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- MCU Result -->
+                <div class="w-full lg:col-span-1">
+                    <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                        <p class="text-base font-semibold text-white sm:text-lg">MCU Result</p>
+                    </div>
+                    <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-300 bg-gray-100 text-center">
+                                    <th
+                                        class="w-1/3 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
                                     >
-                                        2025
-                                    </td>
-                                    <td class="w-2/6 border-r px-3 py-2 text-gray-600 sm:px-4">BNSP</td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
-                                        Ability to break down complex problems
-                                    </td>
+                                        Year
+                                    </th>
+                                    <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Result</th>
                                 </tr>
-                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                    <td
-                                        class="w-1/6 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
-                                    >
-                                        2024
-                                    </td>
-                                    <td class="w-2/6 border-r px-3 py-2 text-gray-600 sm:px-4">BNSP</td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
-                                        Clear and effective expression of ideas
-                                    </td>
-                                </tr>
-                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                    <td
-                                        class="w-1/6 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
-                                    >
-                                        2023
-                                    </td>
-                                    <td class="w-2/6 border-r px-3 py-2 text-gray-600 sm:px-4">BNSP</td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">Ability to guide and inspire teams</td>
-                                </tr>
-                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                    <td
-                                        class="w-1/6 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
-                                    >
-                                        2022
-                                    </td>
-                                    <td class="w-2/6 border-r px-3 py-2 text-gray-600 sm:px-4">BNSP</td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
-                                        Finding effective solutions to challenges
-                                    </td>
-                                </tr>
-                                <tr class="transition-colors hover:bg-gray-50">
-                                    <td
-                                        class="w-1/6 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
-                                    >
-                                        2021
-                                    </td>
-                                    <td class="w-2/6 border-r px-3 py-2 text-gray-600 sm:px-4">BNSP</td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
-                                        Collaborating effectively with others
-                                    </td>
-                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($employee->mcuResults as $mcu)
+                                    <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                        <td
+                                            class="w-1/3 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
+                                        >
+                                            {{ $mcu->year }}
+                                        </td>
+                                        <td class="px-3 py-2 text-gray-600 sm:px-4">{{ $mcu->result }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="2" class="px-3 py-8 text-center text-gray-500 sm:px-4">
+                                            <div class="flex flex-col items-center justify-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-12 w-12 text-gray-300"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="1.5"
+                                                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                    />
+                                                </svg>
+                                                <p class="mt-2 text-sm font-medium text-gray-400">
+                                                    No MCU data available
+                                                </p>
+                                                <p class="text-xs text-gray-300">Add MCU results to display here</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -251,28 +298,51 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
-                                    2021 - 2024
-                                </td>
-                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">S1</td>
-                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
-                                    Teknik Informatika
-                                </td>
-                                <td class="px-3 py-3 text-gray-600 sm:px-4">Universitas Brawijaya</td>
-                            </tr>
-                            <tr class="transition-colors hover:bg-gray-50">
-                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
-                                    2019 - 2021
-                                </td>
-                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
-                                    SMA
-                                </td>
-                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
-                                    IPA
-                                </td>
-                                <td class="px-3 py-3 text-gray-600 sm:px-4">SMAN 1 Banyuwangi</td>
-                            </tr>
+                            @forelse ($employee->educations as $education)
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                        {{ $education->formatted_period }}
+                                    </td>
+                                    <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                        {{ $education->degree ?? '-' }}
+                                    </td>
+                                    <td class="border-r border-gray-300 px-3 py-3 text-start text-gray-800 sm:px-4">
+                                        {{ $education->major ?? '-' }}
+                                    </td>
+                                    <td class="px-3 py-3 text-gray-600 sm:px-4">
+                                        {{ $education->institution_name ?? '-' }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-3 py-8 text-center text-gray-500 sm:px-4">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                class="h-12 w-12 text-gray-300"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                                                <path
+                                                    d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
+                                                />
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="1.5"
+                                                    d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
+                                                />
+                                            </svg>
+                                            <p class="mt-2 text-sm font-medium text-gray-400">
+                                                No education records found
+                                            </p>
+                                            <p class="text-xs text-gray-300">Add educational background information</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -427,35 +497,6 @@
                                     HC Optimization
                                 </td>
                                 <td class="w-1/12 px-3 py-2 text-center text-gray-600 sm:px-4">Peserta</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            {{-- MCU --}}
-            <div class="w-full">
-                <div class="color-gradient w-full rounded-t-lg px-4 py-3">
-                    <p class="text-base font-semibold text-white sm:text-lg">MCU History</p>
-                </div>
-                <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
-                    <table class="w-full border-collapse">
-                        <thead>
-                            <tr class="border-b border-gray-300 bg-gray-100 text-center">
-                                <th
-                                    class="w-1/12 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
-                                >
-                                    Year
-                                </th>
-                                <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Result</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                <td class="w-1/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
-                                    2025
-                                </td>
-                                <td class="px-3 py-2 text-gray-600 sm:px-4">K1</td>
                             </tr>
                         </tbody>
                     </table>
