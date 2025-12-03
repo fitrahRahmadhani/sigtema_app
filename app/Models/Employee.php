@@ -57,6 +57,43 @@ class Employee extends Model
     }
 
     /**
+     * Get the education that the employee holds.
+     */
+    public function educations()
+    {
+        return $this->hasMany(Education::class);
+    }
+
+    // Jika perlu data yang sudah diformat
+    public function getFormattedEducationsAttribute()
+    {
+        return $this->educations->map(function ($education) {
+            return [
+                'period' => $education->formatted_period,
+                'degree' => $education->degree,
+                'major' => $education->major,
+                'institution' => $education->institution_name,
+            ];
+        });
+    }
+
+    /**
+     * Get the technical skills that the employee holds.
+     */
+    public function technicalCompetencies()
+    {
+        return $this->hasMany(TechnicalCompetency::class);
+    }
+
+    /**
+     * Get the mcu results that the employee holds.
+     */
+    public function mcuResults()
+    {
+        return $this->hasMany(Mcu::class);
+    }
+
+    /**
      * Get the employee's profile photo URL
      */
     public function getProfilePhotoUrlAttribute(): ?string
