@@ -85,30 +85,6 @@
             <td colspan="10" style="height: 10px"></td>
         </tr>
 
-        @if (! $isSuperadmin && $employees->count() > 0)
-            <tr>
-                <td colspan="10" style="background-color: #e0e7ff; color: #3730a3; font-weight: bold; padding: 8px">
-                    📋 DAFTAR EMPLOYEE NUMBER
-                </td>
-            </tr>
-            <tr>
-                <td colspan="10" style="background-color: #e0e7ff; color: #3730a3; padding: 8px">
-                    Berikut employee_number yang tersedia di company Anda (boleh dikosongkan):
-                </td>
-            </tr>
-            @foreach ($employees as $employee)
-                <tr>
-                    <td colspan="10" style="background-color: #e0e7ff; color: #3730a3; padding: 4px 8px">
-                        • {{ $employee->employee_number }} = {{ $employee->name }}
-                    </td>
-                </tr>
-            @endforeach
-        @endif
-
-        <tr>
-            <td colspan="10" style="height: 10px"></td>
-        </tr>
-
         <tr>
             <td colspan="10" style="background-color: #fee2e2; color: #991b1b; font-weight: bold; padding: 8px">
                 ❗ PENTING - HAPUS BARIS CONTOH

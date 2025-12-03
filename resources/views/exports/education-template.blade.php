@@ -66,10 +66,6 @@
         </tr>
 
         <tr>
-            <td colspan="6" style="height: 10px"></td>
-        </tr>
-
-        <tr>
             <td colspan="6" style="background-color: #fee2e2; color: #991b1b; font-weight: bold; padding: 8px">
                 ❗ PENTING - HAPUS BARIS CONTOH
             </td>
@@ -91,7 +87,7 @@
         </tr>
         <tr>
             <td colspan="6" style="background-color: #dbeafe; color: #1e40af; padding: 8px">
-                1. employee_number: Nomor karyawan yang sudah terdaftar (WAJIB SESUAI dengan daftar di atas)
+                1. employee_number: Nomor karyawan yang sudah terdaftar
             </td>
         </tr>
         <tr>
