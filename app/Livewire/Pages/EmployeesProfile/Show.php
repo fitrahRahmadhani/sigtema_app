@@ -3,13 +3,21 @@
 namespace App\Livewire\Pages\EmployeesProfile;
 
 use Livewire\Component;
+use App\Models\Employee;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
 
+#[Title('Employee Profile')]
 #[Layout('components.layouts.app')]
 class Show extends Component
 {
-    #[Title('Employee Profile')]
+
+    public $employee;
+
+    public function mount(Employee $employee)
+    {
+        $this->employee = $employee;
+    }
 
     public function render()
     {

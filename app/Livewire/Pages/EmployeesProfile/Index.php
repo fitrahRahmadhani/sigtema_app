@@ -7,14 +7,16 @@ use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
+use App\Models\Employee;
+use App\Models\Company;
+use App\Models\Position;
+use Illuminate\Support\Facades\Auth;
 
 #[Layout('components.layouts.app')]
+#[Title('Employees Profile')]
 class Index extends Component
 {
     use WithPagination;
-
-    #[Title('Employees Profile')]
-
 
     #[Url(as: 'q')]
     public $search = '';
@@ -25,7 +27,49 @@ class Index extends Component
     #[Url(as: 'unit')]
     public $filterUnit = '';
 
-    // Reset pagination saat filter berubah
+    #[Url]
+    public $selectedCompanyId = null;
+
+    public $companies = [];
+    public $isSuperadmin = false;
+    public $selectedCompany = null;
+
+    public function mount()
+    {
+        $user = Auth::user();
+
+        $this->isSuperadmin = is_null($user->company_id);
+
+        if ($this->isSuperadmin) {
+            $this->companies = Company::where('is_active', true)->get();
+            $this->selectedCompanyId = session('employees_profile_company_id') ?? request('company_id');
+
+            if ($this->selectedCompanyId) {
+                $this->selectedCompany = Company::find($this->selectedCompanyId);
+            }
+        } else {
+            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompany = Company::find($this->selectedCompanyId);
+            $this->companies = Company::where('id', $user->company_id)->get();
+        }
+    }
+
+    public function selectCompany($companyId)
+    {
+        $this->selectedCompanyId = $companyId;
+        $this->selectedCompany = Company::find($companyId);
+        session(['employees_profile_company_id' => $companyId]);
+        $this->resetPage();
+    }
+
+    public function changeCompany()
+    {
+        $this->selectedCompanyId = null;
+        $this->selectedCompany = null;
+        session()->forget('employees_profile_company_id');
+        $this->resetPage();
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -43,143 +87,79 @@ class Index extends Component
 
     public function render()
     {
-        // Dummy data untuk contoh - ganti dengan query database Anda
-        $allEmployees = collect([
-            [
-                'id' => 1,
-                'name' => 'M. Habib Sulaiman',
-                'employee_id' => '113231001',
-                'gender' => 'Male',
-                'jg_pg' => '13/13',
-                'position' => 'Talent Acquisition & Mobility',
-                'unit' => 'Human Capital'
-            ],
-            [
-                'id' => 2,
-                'name' => 'Siti Nurhaliza',
-                'employee_id' => '113231002',
-                'gender' => 'Female',
-                'jg_pg' => '12/12',
-                'position' => 'HR Business Partner',
-                'unit' => 'Human Capital'
-            ],
-            [
-                'id' => 3,
-                'name' => 'Ahmad Zaki',
-                'employee_id' => '113231003',
-                'gender' => 'Male',
-                'jg_pg' => '14/14',
-                'position' => 'Senior Software Engineer',
-                'unit' => 'Information Technology'
-            ],
-            [
-                'id' => 4,
-                'name' => 'Dewi Kusuma',
-                'employee_id' => '113231004',
-                'gender' => 'Female',
-                'jg_pg' => '11/11',
-                'position' => 'Financial Analyst',
-                'unit' => 'Finance'
-            ],
-            [
-                'id' => 5,
-                'name' => 'Budi Santoso',
-                'employee_id' => '113231005',
-                'gender' => 'Male',
-                'jg_pg' => '15/15',
-                'position' => 'Product Manager',
-                'unit' => 'Product Development'
-            ],
-            [
-                'id' => 6,
-                'name' => 'Rina Wijaya',
-                'employee_id' => '113231006',
-                'gender' => 'Female',
-                'jg_pg' => '13/13',
-                'position' => 'Marketing Manager',
-                'unit' => 'Marketing'
-            ],
-            [
-                'id' => 7,
-                'name' => 'Agus Setiawan',
-                'employee_id' => '113231007',
-                'gender' => 'Male',
-                'jg_pg' => '12/12',
-                'position' => 'Sales Executive',
-                'unit' => 'Sales'
-            ],
-            [
-                'id' => 8,
-                'name' => 'Maya Sari',
-                'employee_id' => '113231008',
-                'gender' => 'Female',
-                'jg_pg' => '14/14',
-                'position' => 'Operations Manager',
-                'unit' => 'Operations'
-            ],
-            [
-                'id' => 9,
-                'name' => 'Rudi Hartono',
-                'employee_id' => '113231009',
-                'gender' => 'Male',
-                'jg_pg' => '11/11',
-                'position' => 'Quality Assurance',
-                'unit' => 'Information Technology'
-            ],
-            [
-                'id' => 10,
-                'name' => 'Lina Oktavia',
-                'employee_id' => '113231010',
-                'gender' => 'Female',
-                'jg_pg' => '15/15',
-                'position' => 'Senior Accountant',
-                'unit' => 'Finance'
-            ],
-            [
-                'id' => 11,
-                'name' => 'Hendra Wijaya',
-                'employee_id' => '113231011',
-                'gender' => 'Male',
-                'jg_pg' => '13/13',
-                'position' => 'Business Analyst',
-                'unit' => 'Product Development'
-            ],
-            [
-                'id' => 12,
-                'name' => 'Putri Handayani',
-                'employee_id' => '113231012',
-                'gender' => 'Female',
-                'jg_pg' => '12/12',
-                'position' => 'Content Specialist',
-                'unit' => 'Marketing'
-            ],
-        ]);
+        // Jika superadmin belum pilih company
+        if ($this->isSuperadmin && !$this->selectedCompanyId) {
+            return view('livewire.pages.employees-profile.index', [
+                'showCompanySelection' => true,
+                'companies' => $this->companies,
+                'isSuperadmin' => $this->isSuperadmin,
+                'selectedCompany' => null,
+                'employees' => collect(),
+                'units' => collect(),
+                'total' => 0
+            ]);
+        }
 
-        // Total sebelum filter
-        $total = $allEmployees->count();
+        // Tentukan company ID
+        $companyId = $this->selectedCompanyId ?? Auth::user()->company_id;
+        $selectedCompany = Company::find($companyId);
 
-        // Filter berdasarkan search, gender, dan unit
-        $filteredEmployees = $allEmployees->filter(function ($employee) {
-            $matchSearch = empty($this->search) ||
-                stripos($employee['name'], $this->search) !== false ||
-                stripos($employee['employee_id'], $this->search) !== false;
+        // Query employees dengan position
+        $query = Employee::with(['position'])
+            ->where('company_id', $companyId);
 
-            $matchGender = empty($this->filterGender) ||
-                $employee['gender'] === $this->filterGender;
+        // Filter search
+        if (!empty($this->search)) {
+            $query->where(function ($q) {
+                $q->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('employee_number', 'like', '%' . $this->search . '%');
+            });
+        }
 
-            $matchUnit = empty($this->filterUnit) ||
-                $employee['unit'] === $this->filterUnit;
+        // Filter gender
+        if (!empty($this->filterGender)) {
+            $query->where('gender', $this->filterGender);
+        }
 
-            return $matchSearch && $matchGender && $matchUnit;
-        });
+        // Filter unit menggunakan work_unit
+        if (!empty($this->filterUnit)) {
+            $query->whereHas('position', function ($q) {
+                // Filter berdasarkan semua level: section, biro, department, directorate
+                $q->where('section', $this->filterUnit)
+                    ->orWhere('biro', $this->filterUnit)
+                    ->orWhere('department', $this->filterUnit)
+                    ->orWhere('directorate', $this->filterUnit);
+            });
+        }
 
-        // Get unique units untuk dropdown
-        $units = $allEmployees->pluck('unit')->unique()->sort()->values();
+        // Paginate
+        $employees = $query->paginate(10);
+
+        // Get unique units untuk dropdown (menggunakan work_unit logic)
+        $units = Position::where('company_id', $companyId)
+            ->where(function ($query) {
+                $query->whereNotNull('section')
+                    ->orWhereNotNull('biro')
+                    ->orWhereNotNull('department')
+                    ->orWhereNotNull('directorate');
+            })
+            ->get()
+            ->map(function ($position) {
+                return $position->work_unit; // Pakai accessor work_unit dari model
+            })
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
 
         return view('livewire.pages.employees-profile.index', [
-            'employees' => $filteredEmployees->values(),
-            'total' => $total,
+            'showCompanySelection' => false,
+            'employees' => $employees,
+            'total' => $employees->total(),
             'units' => $units,
+            'selectedCompany' => $selectedCompany,
+            'isSuperadmin' => $this->isSuperadmin,
+            'companies' => $this->companies
         ]);
     }
 }

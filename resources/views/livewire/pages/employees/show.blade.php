@@ -6,7 +6,6 @@
         <flux:breadcrumbs.item>Create Employee</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-4 md:p-6 lg:p-10">
         <!-- Header -->
         <div class="mb-8 flex flex-col items-start gap-6 lg:flex-row lg:gap-8">
@@ -15,8 +14,8 @@
             >
                 @if ($employee->profile_path)
                     <img
-                        src="{{ \Storage::url($employee->profile_path) }}"
-                        alt=""
+                        src="{{ asset('storage/' . $employee->profile_path) }}"
+                        alt="Foto Profile {{ $employee->name }}"
                         class="h-full w-full object-cover"
                     />
                 @else
@@ -77,9 +76,14 @@
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Personality</p>
                         <p class="">
-                            ESFJ DISC
+                            MBTI:
+                            <span class="text-red-500 italic">placeholder</span>
                             <br />
-                            PAPI KOSTICK
+                            DISC:
+                            <span class="text-red-500 italic">placeholder</span>
+                            <br />
+                            PAPI:
+                            <span class="text-red-500 italic">placeholder</span>
                         </p>
                     </div>
                 </div>
@@ -88,8 +92,8 @@
 
         {{-- Content --}}
         <div class="w-full space-y-6 md:space-y-8">
-            <!-- Three Column Section: Soft Competencies, Technical Competencies, MCU Result -->
-            <div class="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-3">
+            <!-- Two Column Section: Soft Competencies, Technical Competencies -->
+            <div class="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
                 <!-- Soft Competencies -->
                 <div class="w-full lg:col-span-1">
                     <div class="color-gradient w-full rounded-t-lg px-4 py-3">
@@ -216,64 +220,6 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- MCU Result -->
-                <div class="w-full lg:col-span-1">
-                    <div class="color-gradient w-full rounded-t-lg px-4 py-3">
-                        <p class="text-base font-semibold text-white sm:text-lg">MCU Result</p>
-                    </div>
-                    <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
-                        <table class="w-full border-collapse">
-                            <thead>
-                                <tr class="border-b border-gray-300 bg-gray-100 text-center">
-                                    <th
-                                        class="w-1/3 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
-                                    >
-                                        Year
-                                    </th>
-                                    <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Result</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($employee->mcuResults as $mcu)
-                                    <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                        <td
-                                            class="w-1/3 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
-                                        >
-                                            {{ $mcu->year }}
-                                        </td>
-                                        <td class="px-3 py-2 text-gray-600 sm:px-4">{{ $mcu->result }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="2" class="px-3 py-8 text-center text-gray-500 sm:px-4">
-                                            <div class="flex flex-col items-center justify-center">
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    class="h-12 w-12 text-gray-300"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                >
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        stroke-width="1.5"
-                                                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                                    />
-                                                </svg>
-                                                <p class="mt-2 text-sm font-medium text-gray-400">
-                                                    No MCU data available
-                                                </p>
-                                                <p class="text-xs text-gray-300">Add MCU results to display here</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
 
             {{-- Educations --}}
@@ -364,70 +310,53 @@
                                     Position
                                 </th>
                                 <th class="border-r border-gray-300 px-3 py-2 font-semibold text-gray-600 sm:px-4">
-                                    Section
+                                    Work Unit
                                 </th>
                                 <th class="px-3 py-2 font-semibold text-gray-800 sm:px-4">Company</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
-                                    01-01-2018 - 31-12-2020
-                                </td>
-                                <td class="border-r border-gray-300 px-3 py-3 text-gray-800 sm:px-4">
-                                    Sales Representative
-                                </td>
-                                <td class="border-r px-3 py-3 text-gray-600 sm:px-4">
-                                    Section of East Java Sales 31-Sby Barat
-                                </td>
-                                <td class="px-3 py-3 text-center text-gray-800 sm:px-4">PT. SEMEN INDONESIA</td>
-                            </tr>
-                            <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
-                                    10-10-2021 - 10-10-2024
-                                </td>
-                                <td class="border-r border-gray-300 px-3 py-3 text-gray-800 sm:px-4">
-                                    Manager of Area Sales
-                                </td>
-                                <td class="border-r px-3 py-3 text-gray-600 sm:px-4">
-                                    Section of Area Sales 51 52-Sby Madura
-                                </td>
-                                <td class="px-3 py-3 text-center text-gray-800 sm:px-4">PT. SEMEN INDONESIA</td>
-                            </tr>
-                            <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
-                                    01-01-2016 - 31-12-2017
-                                </td>
-                                <td class="border-r border-gray-300 px-3 py-3 text-gray-800 sm:px-4">
-                                    Marketing Analyst
-                                </td>
-                                <td class="border-r px-3 py-3 text-gray-600 sm:px-4">
-                                    Section of Strategic Marketing Planning
-                                </td>
-                                <td class="px-3 py-3 text-center text-gray-800 sm:px-4">PT. SEMEN INDONESIA</td>
-                            </tr>
-                            <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
-                                    01-02-2014 - 31-12-2015
-                                </td>
-                                <td class="border-r border-gray-300 px-3 py-3 text-gray-800 sm:px-4">
-                                    Assistant Sales Supervisor
-                                </td>
-                                <td class="border-r px-3 py-3 text-gray-600 sm:px-4">
-                                    Section of Sales Support Jawa Timur
-                                </td>
-                                <td class="px-3 py-3 text-center text-gray-800 sm:px-4">PT. SEMEN INDONESIA</td>
-                            </tr>
-                            <tr class="transition-colors hover:bg-gray-50">
-                                <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
-                                    01-06-2010 - 31-01-2014
-                                </td>
-                                <td class="border-r border-gray-300 px-3 py-3 text-gray-800 sm:px-4">Sales Officer</td>
-                                <td class="border-r px-3 py-3 text-gray-600 sm:px-4">
-                                    Section of Regional Sales Madura
-                                </td>
-                                <td class="px-3 py-3 text-center text-gray-800 sm:px-4">PT. SEMEN INDONESIA</td>
-                            </tr>
+                            @forelse ($employee->positionHistories as $positionHistory)
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                        {{ $positionHistory->start_date }} - {{ $positionHistory->end_date }}
+                                    </td>
+                                    <td class="border-r border-gray-300 px-3 py-3 text-gray-800 sm:px-4">
+                                        {{ $positionHistory->position_name }}
+                                    </td>
+                                    <td class="border-r border-gray-300 px-3 py-3 text-gray-600 sm:px-4">
+                                        {{ $positionHistory->work_unit }}
+                                    </td>
+                                    <td class="px-3 py-3 text-center text-gray-800 sm:px-4">
+                                        {{ $positionHistory->company }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-3 py-8 text-center text-gray-500 sm:px-4">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                class="h-12 w-12 text-gray-300"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="1.5"
+                                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                                                />
+                                            </svg>
+                                            <p class="mt-2 text-sm font-medium text-gray-400">
+                                                No position history records found
+                                            </p>
+                                            <p class="text-xs text-gray-300">Add position history information</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -500,6 +429,116 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- Two Column Section: MCU Result, Burnout -->
+            <div class="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
+                <!-- MCU Result -->
+                <div class="w-full lg:col-span-1">
+                    <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                        <p class="text-base font-semibold text-white sm:text-lg">MCU Result</p>
+                    </div>
+                    <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-300 bg-gray-100 text-center">
+                                    <th
+                                        class="w-1/3 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
+                                    >
+                                        Year
+                                    </th>
+                                    <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Result</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($employee->mcuResults as $mcu)
+                                    <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                        <td
+                                            class="w-1/3 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
+                                        >
+                                            {{ $mcu->year }}
+                                        </td>
+                                        <td class="px-3 py-2 text-gray-600 sm:px-4">{{ $mcu->result }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="2" class="px-3 py-8 text-center text-gray-500 sm:px-4">
+                                            <div class="flex flex-col items-center justify-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-12 w-12 text-gray-300"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="1.5"
+                                                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                    />
+                                                </svg>
+                                                <p class="mt-2 text-sm font-medium text-gray-400">
+                                                    No MCU data available
+                                                </p>
+                                                <p class="text-xs text-gray-300">Add MCU results to display here</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Burnout -->
+                <div class="w-full lg:col-span-1">
+                    <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                        <p class="text-base font-semibold text-white sm:text-lg">Burnout Test Result</p>
+                    </div>
+                    <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-300 bg-gray-100 text-center">
+                                    <th
+                                        class="w-2/3 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
+                                    >
+                                        Aspek
+                                    </th>
+                                    <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Skor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td class="w-2/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
+                                        Kelelahan Emosional
+                                    </td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">50</td>
+                                </tr>
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td class="w-2/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
+                                        Depersonalisasi
+                                    </td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">50</td>
+                                </tr>
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td class="w-2/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
+                                        Penurunan Prestasi
+                                    </td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">50</td>
+                                </tr>
+                                <tr class="transition-colors hover:bg-gray-50">
+                                    <td
+                                        class="w-2/3 border-r border-gray-300 px-3 py-2 font-bold text-gray-800 sm:px-4"
+                                    >
+                                        Total Skor
+                                    </td>
+                                    <td class="px-3 py-2 font-bold text-gray-600 sm:px-4">200</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
