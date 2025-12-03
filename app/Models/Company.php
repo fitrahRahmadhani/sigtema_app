@@ -21,4 +21,9 @@ class Company extends Model
     {
         return $this->hasMany(Employee::class);
     }
+
+    public function getEmployeesCountAttribute(): int
+    {
+        return $this->employees()->count();
+    }
 }

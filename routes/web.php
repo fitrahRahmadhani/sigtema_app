@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Employees Profile
     Route::get('career-path/employees-profile', App\Livewire\Pages\EmployeesProfile\Index::class)->name('employees-profile.index');
-    Route::get('career-path/employees-profile/show', App\Livewire\Pages\EmployeesProfile\Show::class)->name('employees-profile.show');
+    Route::get('career-path/employees-profile/{employee:slug}/show', App\Livewire\Pages\EmployeesProfile\Show::class)->name('employees-profile.show');
 
     // Organization Structure
     Route::get('organization-structure', App\Livewire\Pages\OrgStructure\Index::class)->name('organization-structure.index');

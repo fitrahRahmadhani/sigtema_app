@@ -94,6 +94,14 @@ class Employee extends Model
     }
 
     /**
+     * Get the position history that the employee holds.
+     */
+    public function positionHistories()
+    {
+        return $this->hasMany(PositionHistory::class);
+    }
+
+    /**
      * Get the employee's profile photo URL
      */
     public function getProfilePhotoUrlAttribute(): ?string
