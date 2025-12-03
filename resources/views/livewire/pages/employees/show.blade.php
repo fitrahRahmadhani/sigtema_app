@@ -437,7 +437,7 @@
                 <!-- MCU Result -->
                 <div class="w-full lg:col-span-1">
                     <div class="color-gradient w-full rounded-t-lg px-4 py-3">
-                        <p class="text-base font-semibold text-white sm:text-lg">MCU Result</p>
+                        <p class="text-base font-semibold text-white sm:text-lg">MCU Results</p>
                     </div>
                     <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
                         <table class="w-full border-collapse">

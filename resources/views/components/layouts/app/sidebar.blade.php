@@ -311,13 +311,14 @@
             {{-- Bulk Upload with Dropdown --}}
             <div
                 x-data="{
-                    open: {{ request()->routeIs('career-path', 'vacant-positions.*', 'candidates-comparison.*', 'employees-profile.*') ? 'true' : 'false' }},
+                    openBulkUploadDropdown:
+                        {{ request()->routeIs('bulk-upload.*') ? 'true' : 'false' }},
                 }"
             >
                 <button
-                    @click="open = !open"
-                    class="{{ request()->routeIs('career-path', 'vacant-positions.*', 'candidates-comparison.*', 'employees-profile.*') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
-                    wire:navigate
+                    @click="openBulkUploadDropdown = !openBulkUploadDropdown"
+                    class="flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200 hover:bg-gray-100"
+                    :class="{ 'bg-gray-200': openBulkUploadDropdown || {{ request()->routeIs('bulk-upload.*') ? 'true' : 'false' }} }"
                 >
                     <div class="flex flex-1 items-center gap-2">
                         <svg
@@ -339,7 +340,7 @@
                     </div>
                     <div
                         class="rounded-md p-1 transition-transform duration-200 hover:bg-gray-300"
-                        :class="{ 'rotate-180 bg-gray-300 ': open }"
+                        :class="{ 'rotate-180 bg-gray-300 ': openBulkUploadDropdown || {{ request()->routeIs('bulk-upload.*') ? 'true' : 'false' }} }"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -356,7 +357,7 @@
 
                 {{-- Submenu Dropdown --}}
                 <div
-                    x-show="open"
+                    x-show="openBulkUploadDropdown"
                     x-transition:enter="transition duration-200 ease-out"
                     x-transition:enter-start="-translate-y-2 opacity-0"
                     x-transition:enter-end="translate-y-0 opacity-100"
@@ -369,7 +370,7 @@
                     <a
                         href="{{ route('bulk-upload.employees') }}"
                         wire:navigate
-                        class="{{ request()->routeIs('bulk-upload.employees') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
+                        class="{{ request()->routeIs('bulk-upload.employees') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -391,7 +392,7 @@
                     <a
                         href="{{ route('bulk-upload.positions') }}"
                         wire:navigate
-                        class="{{ request()->routeIs('bulk-upload.positions') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
+                        class="{{ request()->routeIs('bulk-upload.positions') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -413,7 +414,7 @@
                     <a
                         href="{{ route('bulk-upload.educations') }}"
                         wire:navigate
-                        class="{{ request()->routeIs('bulk-upload.educations') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
+                        class="{{ request()->routeIs('bulk-upload.educations') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -435,7 +436,7 @@
                     <a
                         href="{{ route('bulk-upload.mcus') }}"
                         wire:navigate
-                        class="{{ request()->routeIs('bulk-upload.mcus') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
+                        class="{{ request()->routeIs('bulk-upload.mcus') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -458,7 +459,7 @@
                     <a
                         href="{{ route('bulk-upload.technical-competencies') }}"
                         wire:navigate
-                        class="{{ request()->routeIs('bulk-upload.technical-competencies') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
+                        class="{{ request()->routeIs('bulk-upload.technical-competencies') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -481,6 +482,28 @@
                         </svg>
 
                         <p>Technical Competencies</p>
+                    </a>
+                    <a
+                        href="{{ route('bulk-upload.position-histories') }}"
+                        wire:navigate
+                        class="{{ request()->routeIs('bulk-upload.position-histories') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="size-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+                            />
+                        </svg>
+
+                        <p>Position Histories</p>
                     </a>
                 </div>
             </div>
