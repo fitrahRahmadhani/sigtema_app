@@ -318,7 +318,7 @@
                 <button
                     @click="openBulkUploadDropdown = !openBulkUploadDropdown"
                     class="flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200 hover:bg-gray-100"
-                    :class="{ 'bg-gray-200': openBulkUploadDropdown || {{ request()->routeIs('bulk-upload.*') ? 'true' : 'false' }} }"
+                    :class="{ 'bg-gray-200 ': openBulkUploadDropdown || {{ request()->routeIs('bulk-upload.*') ? 'true' : 'false' }} }"
                 >
                     <div class="flex flex-1 items-center gap-2">
                         <svg
@@ -340,7 +340,7 @@
                     </div>
                     <div
                         class="rounded-md p-1 transition-transform duration-200 hover:bg-gray-300"
-                        :class="{ 'rotate-180 bg-gray-300 ': openBulkUploadDropdown || {{ request()->routeIs('bulk-upload.*') ? 'true' : 'false' }} }"
+                        :class="{ 'rotate-180 bg-gray-300 ': openBulkUploadDropdown }"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
