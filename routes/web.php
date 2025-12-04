@@ -69,6 +69,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('educations/create', App\Livewire\Pages\Educations\Create::class)->name('educations.create');
     Route::get('educations/{education}/edit', App\Livewire\Pages\Educations\Edit::class)->name('educations.edit');
 
+    // MCUs
+    Route::get('mcus', App\Livewire\Pages\Mcus\Index::class)->name('mcus.index');
+    Route::get('mcus/create', App\Livewire\Pages\Mcus\Create::class)->name('mcus.create');
+    Route::get('mcus/{mcu}/edit', App\Livewire\Pages\Mcus\Edit::class)->name('mcus.edit');
+
     // Bulk Upload
     Route::get('bulk-upload/employees', App\Livewire\Pages\BulkUploads\Employees::class)->name('bulk-upload.employees');
     Route::get('bulk-upload/positions', \App\Livewire\Pages\BulkUploads\Positions::class)->name('bulk-upload.positions');
