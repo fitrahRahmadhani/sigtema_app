@@ -14,6 +14,11 @@ class Education extends Model
         'end_date' => 'date',
     ];
 
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
+
     // Accessor untuk format tanggal
     public function getFormattedPeriodAttribute()
     {
