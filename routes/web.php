@@ -64,6 +64,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('employees/{employee:slug}/show', App\Livewire\Pages\Employees\Show::class)->name('employees.show');
     Route::get('employees/{employee:slug}/edit', App\Livewire\Pages\Employees\Edit::class)->name('employees.edit');
 
+    // Educations
+    Route::get('educations', App\Livewire\Pages\Educations\Index::class)->name('educations.index');
+    Route::get('educations/create', App\Livewire\Pages\Educations\Create::class)->name('educations.create');
+    Route::get('educations/{education}/edit', App\Livewire\Pages\Educations\Edit::class)->name('educations.edit');
+
     // Bulk Upload
     Route::get('bulk-upload/employees', App\Livewire\Pages\BulkUploads\Employees::class)->name('bulk-upload.employees');
     Route::get('bulk-upload/positions', \App\Livewire\Pages\BulkUploads\Positions::class)->name('bulk-upload.positions');
