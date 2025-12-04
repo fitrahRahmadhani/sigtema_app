@@ -79,6 +79,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('technical-competencies/create', App\Livewire\Pages\TechnicalCompetencies\Create::class)->name('technical-competencies.create');
     Route::get('technical-competencies/{technical_competency}/edit', App\Livewire\Pages\TechnicalCompetencies\Edit::class)->name('technical-competencies.edit');
 
+    // Position Histories
+    Route::get('position-histories', App\Livewire\Pages\PositionHistories\Index::class)->name('position-histories.index');
+    Route::get('position-histories/create', App\Livewire\Pages\PositionHistories\Create::class)->name('position-histories.create');
+    Route::get('position-histories/{position_history}/edit', App\Livewire\Pages\PositionHistories\Edit::class)->name('position-histories.edit');
+
     // Bulk Upload
     Route::get('bulk-upload/employees', App\Livewire\Pages\BulkUploads\Employees::class)->name('bulk-upload.employees');
     Route::get('bulk-upload/positions', \App\Livewire\Pages\BulkUploads\Positions::class)->name('bulk-upload.positions');

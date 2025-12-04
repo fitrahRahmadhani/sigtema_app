@@ -331,6 +331,34 @@
 
             {{-- Users --}}
             <a
+                href="{{ route('position-histories.index') }}"
+                wire:navigate
+                class="{{ request()->routeIs('position-histories.*') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+                    />
+                </svg>
+                <p>Position Histories</p>
+            </a>
+        </div>
+
+        {{-- Authentication --}}
+        <div class="mt-8 space-y-2">
+            <p class="ml-4 text-sm font-semibold text-gray-400 uppercase">authentication</p>
+
+            {{-- Users --}}
+            <a
                 href="{{ route('users.index') }}"
                 wire:navigate
                 class="{{ request()->routeIs('users*') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
@@ -581,9 +609,6 @@
                 </div>
             </div>
         </div>
-
-        {{-- Spacer untuk mendorong copyright ke bawah --}}
-        <div class="flex-1"></div>
 
         {{-- Copyright --}}
         <p class="pb-4 text-center text-xs text-gray-400 italic">
