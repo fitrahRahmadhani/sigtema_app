@@ -319,7 +319,7 @@
                             @forelse ($employee->positionHistories as $positionHistory)
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
-                                        {{ $positionHistory->start_date }} - {{ $positionHistory->end_date }}
+                                        {{ $positionHistory->formatted_period }}
                                     </td>
                                     <td class="border-r border-gray-300 px-3 py-3 text-gray-800 sm:px-4">
                                         {{ $positionHistory->position_name }}

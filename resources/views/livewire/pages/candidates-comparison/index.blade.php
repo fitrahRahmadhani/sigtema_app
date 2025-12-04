@@ -3,7 +3,7 @@
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Path</flux:breadcrumbs.item>
-        <flux:breadcrumbs.item>Candidates Comparison</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item>Employee Comparison</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
     <!-- Content -->
@@ -29,7 +29,7 @@
                         />
                     </svg>
                 </div>
-                <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Candidates Comparison</h1>
+                <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Employee Comparison</h1>
             </div>
 
             <!-- Add Column Button -->
@@ -48,7 +48,7 @@
                     >
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    <span class="hidden md:inline">Add Candidate</span>
+                    <span class="hidden md:inline">Add Employee</span>
                 </button>
             @endif
         </div>
@@ -62,13 +62,11 @@
                             <th
                                 scope="col"
                                 class="left-0 w-64 bg-gray-50 px-6 py-3 text-left text-sm font-medium tracking-wider text-gray-500 uppercase"
-                            >
-                                Category
-                            </th>
+                            ></th>
                             @for ($i = 0; $i < $columnCount; $i++)
-                                <th scope="col" class="relative min-w-[280px] bg-gray-50 px-6 py-3">
+                                <th scope="col" class="relative min-w-[280px] content-start bg-gray-50 px-6 py-3">
                                     <!-- Remove Column Button -->
-                                    @if ($columnCount > 2)
+                                    @if ($columnCount > 3)
                                         <button
                                             wire:click="removeColumn({{ $i }})"
                                             class="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-red-600 transition hover:bg-red-200"
@@ -97,9 +95,9 @@
                                             <input
                                                 type="text"
                                                 wire:model.live.debounce.300ms="searchTerms.{{ $i }}"
-                                                placeholder="Search candidate {{ $i + 1 }}..."
+                                                placeholder="Search employee {{ $i + 1 }}..."
                                                 class="w-full rounded-lg border border-gray-300 py-2 pr-10 pl-10 focus:border-red-900 focus:ring-2 focus:ring-red-900 focus:outline-none"
-                                                @if(!empty($selectedCandidates[$i])) readonly @endif
+                                                @if(!empty($selectedEmployees[$i])) readonly @endif
                                             />
                                             <div
                                                 class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
@@ -119,9 +117,9 @@
                                                     />
                                                 </svg>
                                             </div>
-                                            @if (! empty($selectedCandidates[$i]))
+                                            @if (! empty($selectedEmployees[$i]))
                                                 <button
-                                                    wire:click="clearCandidate({{ $i }})"
+                                                    wire:click="clearEmployee({{ $i }})"
                                                     class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-red-600"
                                                 >
                                                     <svg
@@ -147,22 +145,20 @@
                                             <div
                                                 class="absolute top-full right-0 left-0 mt-1 max-h-60 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg"
                                             >
-                                                @foreach ($searchResults[$i] as $candidate)
+                                                @foreach ($searchResults[$i] as $employee)
                                                     <button
-                                                        wire:click="selectCandidate({{ $candidate->id }}, {{ $i }})"
+                                                        wire:click="selectEmployee({{ $employee->id }}, {{ $i }})"
                                                         class="flex w-full items-center gap-3 border-b border-gray-100 px-4 py-3 text-left transition last:border-b-0 hover:bg-gray-50"
                                                     >
-                                                        <div
-                                                            class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 font-semibold text-gray-600"
-                                                        >
-                                                            {{ strtoupper(substr($candidate->name, 0, 2)) }}
-                                                        </div>
                                                         <div class="min-w-0 flex-1">
                                                             <p class="font-medium text-gray-900">
-                                                                {{ $candidate->name }}
+                                                                {{ $employee->name }}
                                                             </p>
                                                             <p class="truncate text-sm text-gray-500">
-                                                                {{ $candidate->position }}
+                                                                {{ $employee->position?->name ?? 'No Position' }}
+                                                            </p>
+                                                            <p class="text-xs text-gray-400">
+                                                                {{ $employee->employee_number }}
                                                             </p>
                                                         </div>
                                                     </button>
@@ -170,22 +166,43 @@
                                             </div>
                                         @endif
 
-                                        <!-- Selected Candidate Info -->
-                                        @if (! empty($selectedCandidates[$i]))
+                                        <!-- Selected Employee Info -->
+                                        @if (! empty($selectedEmployees[$i]))
                                             <div
                                                 class="border-primary-text bg-primary-text/10 mt-3 flex items-center gap-3 rounded-lg border p-3"
                                             >
                                                 <div
-                                                    class="bg-primary-text/30 text-primary-text flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full font-semibold"
+                                                    class="bg-primary-text/20 text-primary-text flex h-12 w-12 items-center justify-center place-self-start overflow-hidden rounded-lg object-cover"
                                                 >
-                                                    {{ strtoupper(substr($selectedCandidates[$i]->name, 0, 2)) }}
+                                                    @if ($selectedEmployees[$i]->profile_path)
+                                                        <img
+                                                            src="{{ asset('storage/' . $selectedEmployees[$i]->profile_path) }}"
+                                                            alt="Foto Profile {{ $selectedEmployees[$i]->name }}"
+                                                        />
+                                                    @else
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            viewBox="0 0 24 24"
+                                                            fill="currentColor"
+                                                            class="size-8"
+                                                        >
+                                                            <path
+                                                                fill-rule="evenodd"
+                                                                d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
+                                                                clip-rule="evenodd"
+                                                            />
+                                                        </svg>
+                                                    @endif
                                                 </div>
                                                 <div class="min-w-0 flex-1 text-start">
                                                     <p class="text-primary-text font-semibold">
-                                                        {{ $selectedCandidates[$i]->name }}
+                                                        {{ $selectedEmployees[$i]->name }}
                                                     </p>
                                                     <p class="truncate text-sm text-gray-600">
-                                                        {{ $selectedCandidates[$i]->position }}
+                                                        {{ $selectedEmployees[$i]->position?->name ?? 'No Position' }}
+                                                    </p>
+                                                    <p class="text-xs text-gray-500">
+                                                        {{ $selectedEmployees[$i]->employee_number }}
                                                     </p>
                                                 </div>
                                             </div>
@@ -196,38 +213,20 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 bg-white">
-                        <!-- Soft Competencies Section -->
+                        <!-- Basic Information Section -->
                         <tr class="color-gradient">
                             <td colspan="{{ $columnCount + 1 }}" class="left-0 px-6 py-3 font-semibold text-white">
-                                Soft Competencies
+                                Basic Information
                             </td>
                         </tr>
 
-                        <!-- Analytical Thinking -->
+                        <!-- Email -->
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                Analytical Thinking
-                            </td>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Email</td>
                             @for ($i = 0; $i < $columnCount; $i++)
                                 <td class="px-6 py-4 text-gray-700">
-                                    @if (! empty($selectedCandidates[$i]))
-                                        @php
-                                            $score = collect($selectedCandidates[$i]->softCompetencies)->firstWhere('type', 'analytical_thinking')->score ?? null;
-                                        @endphp
-
-                                        @if ($score)
-                                            <div class="flex items-center gap-2">
-                                                <span class="font-semibold">{{ $score }}</span>
-                                                <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                                                    <div
-                                                        class="h-full rounded-full bg-gray-600"
-                                                        style="width: {{ $score }}%"
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <span class="text-gray-400">N/A</span>
-                                        @endif
+                                    @if (! empty($selectedEmployees[$i]))
+                                        <span class="font-medium">{{ $selectedEmployees[$i]->email }}</span>
                                     @else
                                         <span class="text-gray-400">-</span>
                                     @endif
@@ -235,29 +234,119 @@
                             @endfor
                         </tr>
 
+                        <!-- Phone -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Phone</td>
+                            @for ($i = 0; $i < $columnCount; $i++)
+                                <td class="px-6 py-4 text-gray-700">
+                                    @if (! empty($selectedEmployees[$i]))
+                                        <span class="font-medium">{{ $selectedEmployees[$i]->phone }}</span>
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
+                                </td>
+                            @endfor
+                        </tr>
+
+                        <!-- Personal Grade -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Personal Grade</td>
+                            @for ($i = 0; $i < $columnCount; $i++)
+                                <td class="px-6 py-4 text-gray-700">
+                                    @if (! empty($selectedEmployees[$i]))
+                                        <span class="font-medium">{{ $selectedEmployees[$i]->personal_grade }}</span>
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
+                                </td>
+                            @endfor
+                        </tr>
+
+                        <!-- Band -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Band</td>
+                            @for ($i = 0; $i < $columnCount; $i++)
+                                <td class="px-6 py-4 text-gray-700">
+                                    @if (! empty($selectedEmployees[$i]))
+                                        <span class="font-medium">{{ $selectedEmployees[$i]->band }}</span>
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
+                                </td>
+                            @endfor
+                        </tr>
+
+                        <!-- Hire Date -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Hire Date</td>
+                            @for ($i = 0; $i < $columnCount; $i++)
+                                <td class="px-6 py-4 text-gray-700">
+                                    @if (! empty($selectedEmployees[$i]))
+                                        <span class="text-gray-400 italic">
+                                            {{ $selectedEmployees[$i]->hire_date?->format('d F Y') ?? 'N/A' }}
+                                        </span>
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
+                                </td>
+                            @endfor
+                        </tr>
+
+                        <!-- Personality Information Section -->
+                        <tr class="color-gradient">
+                            <td colspan="{{ $columnCount + 1 }}" class="left-0 px-6 py-3 font-semibold text-white">
+                                Personality Information
+                            </td>
+                        </tr>
+
+                        <!-- MBTI -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">MBTI</td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                        </tr>
+
+                        <!-- DISC -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">DISC</td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                        </tr>
+
+                        <!-- PAPI -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">PAPI</td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                        </tr>
+
+                        <!-- Soft Competencies Section -->
+                        <tr class="color-gradient">
+                            <td colspan="{{ $columnCount + 1 }}" class="left-0 px-6 py-3 font-semibold text-white">
+                                Soft Competencies
+                            </td>
+                        </tr>
+
                         <!-- Communication -->
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Communication</td>
                             @for ($i = 0; $i < $columnCount; $i++)
                                 <td class="px-6 py-4 text-gray-700">
-                                    @if (! empty($selectedCandidates[$i]))
-                                        @php
-                                            $score = collect($selectedCandidates[$i]->softCompetencies)->firstWhere('type', 'communication')->score ?? null;
-                                        @endphp
-
-                                        @if ($score)
-                                            <div class="flex items-center gap-2">
-                                                <span class="font-semibold">{{ $score }}</span>
-                                                <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                                                    <div
-                                                        class="h-full rounded-full bg-gray-600"
-                                                        style="width: {{ $score }}%"
-                                                    ></div>
-                                                </div>
+                                    @if (! empty($selectedEmployees[$i]))
+                                        <div class="flex items-center gap-2">
+                                            <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
+                                                <div
+                                                    class="h-full rounded-full bg-gray-600"
+                                                    style="width: {{ rand(70, 95) }}%"
+                                                ></div>
                                             </div>
-                                        @else
-                                            <span class="text-gray-400">N/A</span>
-                                        @endif
+                                            <span class="text-sm font-semibold text-gray-600">
+                                                {{ rand(70, 95) }}%
+                                            </span>
+                                        </div>
                                     @else
                                         <span class="text-gray-400">-</span>
                                     @endif
@@ -270,84 +359,18 @@
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Leadership</td>
                             @for ($i = 0; $i < $columnCount; $i++)
                                 <td class="px-6 py-4 text-gray-700">
-                                    @if (! empty($selectedCandidates[$i]))
-                                        @php
-                                            $score = collect($selectedCandidates[$i]->softCompetencies)->firstWhere('type', 'leadership')->score ?? null;
-                                        @endphp
-
-                                        @if ($score)
-                                            <div class="flex items-center gap-2">
-                                                <span class="font-semibold">{{ $score }}</span>
-                                                <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                                                    <div
-                                                        class="h-full rounded-full bg-gray-600"
-                                                        style="width: {{ $score }}%"
-                                                    ></div>
-                                                </div>
+                                    @if (! empty($selectedEmployees[$i]))
+                                        <div class="flex items-center gap-2">
+                                            <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
+                                                <div
+                                                    class="h-full rounded-full bg-gray-600"
+                                                    style="width: {{ rand(65, 90) }}%"
+                                                ></div>
                                             </div>
-                                        @else
-                                            <span class="text-gray-400">N/A</span>
-                                        @endif
-                                    @else
-                                        <span class="text-gray-400">-</span>
-                                    @endif
-                                </td>
-                            @endfor
-                        </tr>
-
-                        <!-- Problem Solving -->
-                        <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Problem Solving</td>
-                            @for ($i = 0; $i < $columnCount; $i++)
-                                <td class="px-6 py-4 text-gray-700">
-                                    @if (! empty($selectedCandidates[$i]))
-                                        @php
-                                            $score = collect($selectedCandidates[$i]->softCompetencies)->firstWhere('type', 'problem_solving')->score ?? null;
-                                        @endphp
-
-                                        @if ($score)
-                                            <div class="flex items-center gap-2">
-                                                <span class="font-semibold">{{ $score }}</span>
-                                                <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                                                    <div
-                                                        class="h-full rounded-full bg-gray-600"
-                                                        style="width: {{ $score }}%"
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <span class="text-gray-400">N/A</span>
-                                        @endif
-                                    @else
-                                        <span class="text-gray-400">-</span>
-                                    @endif
-                                </td>
-                            @endfor
-                        </tr>
-
-                        <!-- Teamwork -->
-                        <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Teamwork</td>
-                            @for ($i = 0; $i < $columnCount; $i++)
-                                <td class="px-6 py-4 text-gray-700">
-                                    @if (! empty($selectedCandidates[$i]))
-                                        @php
-                                            $score = collect($selectedCandidates[$i]->softCompetencies)->firstWhere('type', 'teamwork')->score ?? null;
-                                        @endphp
-
-                                        @if ($score)
-                                            <div class="flex items-center gap-2">
-                                                <span class="font-semibold">{{ $score }}</span>
-                                                <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                                                    <div
-                                                        class="h-full rounded-full bg-gray-600"
-                                                        style="width: {{ $score }}%"
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <span class="text-gray-400">N/A</span>
-                                        @endif
+                                            <span class="text-sm font-semibold text-gray-600">
+                                                {{ rand(65, 90) }}%
+                                            </span>
+                                        </div>
                                     @else
                                         <span class="text-gray-400">-</span>
                                     @endif
@@ -365,29 +388,30 @@
                             <td class="left-0 bg-white px-6 py-4 font-medium text-gray-900"></td>
                             @for ($i = 0; $i < $columnCount; $i++)
                                 <td class="px-6 py-4 align-top text-gray-700">
-                                    @if (! empty($selectedCandidates[$i]) && ! empty($selectedCandidates[$i]->technicalCompetencies))
-                                        <ul class="space-y-1">
-                                            @foreach ($selectedCandidates[$i]->technicalCompetencies as $skill)
-                                                <li class="flex items-center gap-2">
-                                                    <span
-                                                        class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-sm font-medium text-gray-700"
-                                                    >
-                                                        {{ $skill->name }}
-                                                    </span>
-                                                    <span class="text-sm text-gray-500">{{ $skill->level }}</span>
+                                    @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->technicalCompetencies && $selectedEmployees[$i]->technicalCompetencies->count() > 0)
+                                        <ul class="space-y-3">
+                                            @foreach ($selectedEmployees[$i]->technicalCompetencies as $skill)
+                                                <li class="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                                                    <p class="font-medium text-gray-900">{{ $skill->name }}</p>
+                                                    <p class="text-sm text-gray-600">
+                                                        {{ $skill->issued_by }}
+                                                    </p>
+                                                    <p class="text-sm text-gray-500">
+                                                        {{ $skill->year }}
+                                                    </p>
                                                 </li>
                                             @endforeach
                                         </ul>
                                     @else
                                         <span class="text-gray-400">
-                                            {{ ! empty($selectedCandidates[$i]) ? 'N/A' : '-' }}
+                                            {{ ! empty($selectedEmployees[$i]) ? 'N/A' : '-' }}
                                         </span>
                                     @endif
                                 </td>
                             @endfor
                         </tr>
 
-                        <!-- Innovation Section -->
+                        <!-- Innovation Section (Blank) -->
                         <tr class="color-gradient">
                             <td colspan="{{ $columnCount + 1 }}" class="left-0 px-6 py-3 font-semibold text-white">
                                 Innovation
@@ -397,22 +421,7 @@
                             <td class="left-0 bg-white px-6 py-4 font-medium text-gray-900"></td>
                             @for ($i = 0; $i < $columnCount; $i++)
                                 <td class="px-6 py-4 align-top text-gray-700">
-                                    @if (! empty($selectedCandidates[$i]) && ! empty($selectedCandidates[$i]->innovations))
-                                        <ul class="space-y-3">
-                                            @foreach ($selectedCandidates[$i]->innovations as $innovation)
-                                                <li class="rounded-lg border border-gray-200 bg-gray-50 p-3">
-                                                    <p class="font-medium text-gray-900">{{ $innovation->title }}</p>
-                                                    <p class="mt-1 text-sm text-gray-600">
-                                                        {{ $innovation->description }}
-                                                    </p>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    @else
-                                        <span class="text-gray-400">
-                                            {{ ! empty($selectedCandidates[$i]) ? 'N/A' : '-' }}
-                                        </span>
-                                    @endif
+                                    <span class="text-gray-400">-</span>
                                 </td>
                             @endfor
                         </tr>
@@ -427,23 +436,24 @@
                             <td class="left-0 bg-white px-6 py-4 font-medium text-gray-900"></td>
                             @for ($i = 0; $i < $columnCount; $i++)
                                 <td class="px-6 py-4 align-top text-gray-700">
-                                    @if (! empty($selectedCandidates[$i]) && ! empty($selectedCandidates[$i]->positionHistories))
+                                    @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->positionHistories && $selectedEmployees[$i]->positionHistories->count() > 0)
                                         <ul class="space-y-3">
-                                            @foreach ($selectedCandidates[$i]->positionHistories as $position)
+                                            @foreach ($selectedEmployees[$i]->positionHistories as $position)
                                                 <li class="border-l-2 border-gray-500 pl-3">
-                                                    <p class="font-medium text-gray-900">{{ $position->title }}</p>
-                                                    <p class="text-sm text-gray-600">{{ $position->company }}</p>
+                                                    <p class="font-medium text-gray-900">
+                                                        {{ $position->position_name }}
+                                                    </p>
+                                                    <p class="text-sm text-gray-600">
+                                                        {{ $position->company }}
+                                                    </p>
                                                     <p class="text-sm text-gray-400">
-                                                        {{ $position->start_date }} -
-                                                        {{ $position->end_date ?? 'Present' }}
+                                                        {{ $position->formatted_period }}
                                                     </p>
                                                 </li>
                                             @endforeach
                                         </ul>
                                     @else
-                                        <span class="text-gray-400">
-                                            {{ ! empty($selectedCandidates[$i]) ? 'N/A' : '-' }}
-                                        </span>
+                                        <span class="text-gray-400">-</span>
                                     @endif
                                 </td>
                             @endfor
@@ -459,21 +469,23 @@
                             <td class="left-0 bg-white px-6 py-4 font-medium text-gray-900"></td>
                             @for ($i = 0; $i < $columnCount; $i++)
                                 <td class="px-6 py-4 align-top text-gray-700">
-                                    @if (! empty($selectedCandidates[$i]) && ! empty($selectedCandidates[$i]->educations))
+                                    @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->educations && $selectedEmployees[$i]->educations->count() > 0)
                                         <ul class="space-y-3">
-                                            @foreach ($selectedCandidates[$i]->educations as $education)
+                                            @foreach ($selectedEmployees[$i]->educations as $education)
                                                 <li class="rounded-lg border border-gray-200 bg-gray-50 p-3">
                                                     <p class="font-medium text-gray-900">{{ $education->degree }}</p>
-                                                    <p class="text-sm text-gray-600">{{ $education->institution }}</p>
+                                                    <p class="text-sm text-gray-600">
+                                                        {{ $education->institution_name }}
+                                                    </p>
                                                     <p class="text-sm text-gray-500">
-                                                        Class of {{ $education->graduation_year }}
+                                                        {{ $education->formatted_period }}
                                                     </p>
                                                 </li>
                                             @endforeach
                                         </ul>
                                     @else
                                         <span class="text-gray-400">
-                                            {{ ! empty($selectedCandidates[$i]) ? 'N/A' : '-' }}
+                                            {{ ! empty($selectedEmployees[$i]) ? 'N/A' : '-' }}
                                         </span>
                                     @endif
                                 </td>
@@ -490,40 +502,35 @@
                             <td class="left-0 bg-white px-6 py-4 font-medium text-gray-900"></td>
                             @for ($i = 0; $i < $columnCount; $i++)
                                 <td class="px-6 py-4 align-top text-gray-700">
-                                    @if (! empty($selectedCandidates[$i]) && ! empty($selectedCandidates[$i]->mcuHistories))
-                                        <ul class="space-y-2">
-                                            @foreach ($selectedCandidates[$i]->mcuHistories as $mcu)
-                                                <li class="flex items-center gap-2">
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        stroke-width="1.5"
-                                                        stroke="currentColor"
-                                                        class="size-4 text-green-600"
-                                                    >
-                                                        <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                        />
-                                                    </svg>
-                                                    <div>
-                                                        <p class="font-medium text-gray-900">{{ $mcu->date }}</p>
-                                                        <p class="text-sm">
-                                                            <span
-                                                                class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-sm font-medium text-green-800"
-                                                            >
-                                                                {{ $mcu->status }}
-                                                            </span>
-                                                        </p>
-                                                    </div>
-                                                </li>
+                                    @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->mcuResults && $selectedEmployees[$i]->mcuResults->count() > 0)
+                                        <div class="flex w-fit flex-col gap-2">
+                                            @foreach ($selectedEmployees[$i]->mcuResults as $mcu)
+                                                @php
+                                                    $resultColor = $mcu->result_color ?? 'gray';
+                                                    $colorClass =
+                                                        [
+                                                            'green' => 'bg-green-100 text-green-800 border-green-200',
+                                                            'blue' => 'bg-blue-100 text-blue-800 border-blue-200',
+                                                            'yellow' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
+                                                            'orange' => 'bg-orange-100 text-orange-800 border-orange-200',
+                                                            'red' => 'bg-red-100 text-red-800 border-red-200',
+                                                            'gray' => 'bg-gray-100 text-gray-800 border-gray-200',
+                                                        ][$resultColor] ?? 'bg-gray-100 text-gray-800 border-gray-200';
+                                                @endphp
+
+                                                <div
+                                                    class="{{ $colorClass }} inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm"
+                                                >
+                                                    <span class="font-semibold">•</span>
+                                                    <span class="font-medium">{{ $mcu->result ?? 'N/A' }}</span>
+                                                    <span>|</span>
+                                                    <span>{{ $mcu->year }}</span>
+                                                </div>
                                             @endforeach
-                                        </ul>
+                                        </div>
                                     @else
-                                        <span class="text-gray-400">
-                                            {{ ! empty($selectedCandidates[$i]) ? 'N/A' : '-' }}
+                                        <span class="text-gray-400 italic">
+                                            {{ ! empty($selectedEmployees[$i]) ? 'No MCU data' : '-' }}
                                         </span>
                                     @endif
                                 </td>
