@@ -118,39 +118,43 @@
                                     <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
                                         Analytical Thinking
                                     </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
-                                        Ability to break down complex problems
-                                    </td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Communication
+                                        Decision Making
                                     </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
-                                        Clear and effective expression of ideas
-                                    </td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Leadership
+                                        Result & Quality Orientation
                                     </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">Ability to guide and inspire teams</td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
                                         Problem Solving
                                     </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
-                                        Finding effective solutions to challenges
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
+                                </tr>
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
+                                        Collaboration
                                     </td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
+                                </tr>
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
+                                        Efisiensi Pengelolaan Pekerjaan
+                                    </td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
                                 </tr>
                                 <tr class="transition-colors hover:bg-gray-50">
                                     <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Teamwork
+                                        Perencanaan dan Pengorganisasian
                                     </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
-                                        Collaborating effectively with others
-                                    </td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -536,7 +540,19 @@
                                     >
                                         Total Skor
                                     </td>
-                                    <td class="px-3 py-2 font-bold text-gray-600 sm:px-4">200</td>
+                                    <td class="px-3 py-2 font-bold text-gray-600 sm:px-4">150</td>
+                                </tr>
+                                <!-- Baris Penafsiran -->
+                                <tr class="border-t border-gray-300 transition-colors">
+                                    <td colspan="2" class="px-3 py-3 sm:px-4">
+                                        <div class="mb-1 font-semibold text-gray-800">Penafsiran Hasil:</div>
+                                        <div class="text-sm text-gray-700">
+                                            Berdasarkan skor total 150, Anda berada dalam kategori burnout tinggi.
+                                            Disarankan untuk berkonsultasi dengan profesional kesehatan mental dan
+                                            mempertimbangkan langkah-langkah pengurangan stres serta penyeimbangan
+                                            kehidupan kerja.
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
