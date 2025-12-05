@@ -330,9 +330,9 @@
                             </td>
                         </tr>
 
-                        <!-- Communication -->
+                        <!-- Analytical Thinking -->
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Communication</td>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Analytical Thinking</td>
                             @for ($i = 0; $i < $columnCount; $i++)
                                 <td class="px-6 py-4 text-gray-700">
                                     @if (! empty($selectedEmployees[$i]))
@@ -354,9 +354,105 @@
                             @endfor
                         </tr>
 
-                        <!-- Leadership -->
+                        <!-- Decision Making -->
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Leadership</td>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Decision Making</td>
+                            @for ($i = 0; $i < $columnCount; $i++)
+                                <td class="px-6 py-4 text-gray-700">
+                                    @if (! empty($selectedEmployees[$i]))
+                                        <div class="flex items-center gap-2">
+                                            <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
+                                                <div
+                                                    class="h-full rounded-full bg-gray-600"
+                                                    style="width: {{ rand(65, 90) }}%"
+                                                ></div>
+                                            </div>
+                                            <span class="text-sm font-semibold text-gray-600">
+                                                {{ rand(65, 90) }}%
+                                            </span>
+                                        </div>
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
+                                </td>
+                            @endfor
+                        </tr>
+
+                        <!-- Result & Quality Orientation -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Result & Quality Orientation</td>
+                            @for ($i = 0; $i < $columnCount; $i++)
+                                <td class="px-6 py-4 text-gray-700">
+                                    @if (! empty($selectedEmployees[$i]))
+                                        <div class="flex items-center gap-2">
+                                            <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
+                                                <div
+                                                    class="h-full rounded-full bg-gray-600"
+                                                    style="width: {{ rand(70, 95) }}%"
+                                                ></div>
+                                            </div>
+                                            <span class="text-sm font-semibold text-gray-600">
+                                                {{ rand(70, 95) }}%
+                                            </span>
+                                        </div>
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
+                                </td>
+                            @endfor
+                        </tr>
+
+                        <!-- Problem Solving -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Problem Solving</td>
+                            @for ($i = 0; $i < $columnCount; $i++)
+                                <td class="px-6 py-4 text-gray-700">
+                                    @if (! empty($selectedEmployees[$i]))
+                                        <div class="flex items-center gap-2">
+                                            <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
+                                                <div
+                                                    class="h-full rounded-full bg-gray-600"
+                                                    style="width: {{ rand(65, 90) }}%"
+                                                ></div>
+                                            </div>
+                                            <span class="text-sm font-semibold text-gray-600">
+                                                {{ rand(65, 90) }}%
+                                            </span>
+                                        </div>
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
+                                </td>
+                            @endfor
+                        </tr>
+
+                        <!-- Efisiensi Pengelolaan Pekerjaan -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Efisiensi Pengelolaan Pekerjaan</td>
+                            @for ($i = 0; $i < $columnCount; $i++)
+                                <td class="px-6 py-4 text-gray-700">
+                                    @if (! empty($selectedEmployees[$i]))
+                                        <div class="flex items-center gap-2">
+                                            <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
+                                                <div
+                                                    class="h-full rounded-full bg-gray-600"
+                                                    style="width: {{ rand(70, 95) }}%"
+                                                ></div>
+                                            </div>
+                                            <span class="text-sm font-semibold text-gray-600">
+                                                {{ rand(70, 95) }}%
+                                            </span>
+                                        </div>
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
+                                </td>
+                            @endfor
+                        </tr>
+
+                        <!-- Perencanaan dan Pengorganisasian -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Perencanaan dan Pengorganisasian</td>
                             @for ($i = 0; $i < $columnCount; $i++)
                                 <td class="px-6 py-4 text-gray-700">
                                     @if (! empty($selectedEmployees[$i]))
@@ -535,6 +631,49 @@
                                     @endif
                                 </td>
                             @endfor
+                        </tr>
+
+                        <!-- Burnout Section -->
+                        <tr class="color-gradient">
+                            <td colspan="{{ $columnCount + 1 }}" class="left-0 px-6 py-3 font-semibold text-white">
+                                Burnout Test Results
+                            </td>
+                        </tr>
+
+                        <!-- Kelalahan Emosional -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                Kelalahan Emosional
+                            </td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                        </tr>
+
+                        <!-- Depersonalisasi -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Depersonalisasi</td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                        </tr>
+
+                        <!-- Penurunan Prestasi -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                Penurunan Prestasi
+                            </td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                        </tr>
+
+                        <!-- Penafsiran -->
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Penafsiran</td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                            <td><span class="px-6 py-4 text-gray-700">-</span></td>
                         </tr>
                     </tbody>
                 </table>
