@@ -84,6 +84,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('position-histories/create', App\Livewire\Pages\PositionHistories\Create::class)->name('position-histories.create');
     Route::get('position-histories/{position_history}/edit', App\Livewire\Pages\PositionHistories\Edit::class)->name('position-histories.edit');
 
+    // Innovations
+    Route::get('innovations', App\Livewire\Pages\Innovations\Index::class)->name('innovations.index');
+
     // Bulk Upload
     Route::get('bulk-upload/employees', App\Livewire\Pages\BulkUploads\Employees::class)->name('bulk-upload.employees');
     Route::get('bulk-upload/positions', \App\Livewire\Pages\BulkUploads\Positions::class)->name('bulk-upload.positions');
