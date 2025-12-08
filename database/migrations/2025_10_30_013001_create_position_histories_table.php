@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('position_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained('employees');
-            $table->string('position_name');
-            $table->string('work_unit');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->string('company');
+            $table->string('position_name')->nullable();
+            $table->string('work_unit')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->string('company')->nullable();
             $table->timestamps();
         });
     }
