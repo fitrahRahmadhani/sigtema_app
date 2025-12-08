@@ -87,6 +87,9 @@ Route::middleware(['auth'])->group(function () {
     // Innovations
     Route::get('innovations', App\Livewire\Pages\Innovations\Index::class)->name('innovations.index');
 
+    // Burnouts
+    Route::get('burnouts', App\Livewire\Pages\Burnouts\Index::class)->name('burnouts.index');
+
     // Bulk Upload
     Route::get('bulk-upload/employees', App\Livewire\Pages\BulkUploads\Employees::class)->name('bulk-upload.employees');
     Route::get('bulk-upload/positions', \App\Livewire\Pages\BulkUploads\Positions::class)->name('bulk-upload.positions');
