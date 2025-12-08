@@ -8,9 +8,7 @@
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
-                <div
-                    class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
-                >
+                <div class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -36,7 +34,7 @@
                 wire:click="syncFromApi"
                 wire:loading.attr="disabled"
                 wire:loading.class="opacity-50 cursor-not-allowed"
-                class="color-gradient inline-flex items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
+                class="color-gradient inline-flex items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
             >
                 <svg
                     wire:loading.remove
@@ -283,6 +281,7 @@
         <!-- Filters -->
         <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
             <div class="grid gap-4 md:grid-cols-4">
+                <!-- Search Input -->
                 <div class="md:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Search</label>
                     <div class="relative">
@@ -306,73 +305,147 @@
                             type="text"
                             wire:model.live.debounce.300ms="search"
                             placeholder="Search by employee, MBTI, DISC, or PAPI..."
-                            class="block w-full rounded-lg border border-gray-300 bg-white py-2 pr-3 pl-10 text-sm placeholder-gray-500 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="focus:ring-opacity-50 block w-full rounded-lg border border-gray-300 bg-white py-2.5 pr-3 pl-10 text-sm placeholder-gray-500 focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
                         />
                     </div>
                 </div>
 
+                <!-- Sort By Dropdown -->
                 <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700">Sort By</label>
-                    <select
-                        wire:model.live="sortBy"
-                        class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                    >
-                        <option value="newest">Most Recent</option>
-                        <option value="oldest">Oldest</option>
-                        <option value="mbti_asc">MBTI (A-Z)</option>
-                        <option value="mbti_desc">MBTI (Z-A)</option>
-                    </select>
+                    <div class="relative">
+                        <select
+                            wire:model.live="sortBy"
+                            class="focus:ring-opacity-50 block w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
+                        >
+                            <option value="newest">Most Recent</option>
+                            <option value="oldest">Oldest</option>
+                            <option value="mbti_asc">MBTI (A-Z)</option>
+                            <option value="mbti_desc">MBTI (Z-A)</option>
+                            <option value="disc_asc">DISC (A-Z)</option>
+                            <option value="disc_desc">DISC (Z-A)</option>
+                            <option value="papi_asc">PAPI (A-Z)</option>
+                            <option value="papi_desc">PAPI (Z-A)</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                            <svg
+                                class="h-4 w-4 text-gray-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- Source Dropdown -->
                 <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700">Source</label>
-                    <select
-                        disabled
-                        class="block w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-sm text-gray-500"
-                    >
-                        <option>Eksternal</option>
-                    </select>
+                    <div class="relative">
+                        <select
+                            disabled
+                            class="block w-full appearance-none rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 pr-10 text-sm text-gray-500"
+                        >
+                            <option>Eksternal</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                            <svg
+                                class="h-4 w-4 text-gray-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="grid gap-4 md:grid-cols-3">
+                <!-- MBTI Filter Dropdown -->
                 <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700">MBTI Type</label>
-                    <select
-                        wire:model.live="mbtiFilter"
-                        class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                    >
-                        <option value="">All MBTI Types</option>
-                        @foreach ($mbtiTypes as $mbti)
-                            <option value="{{ $mbti }}">{{ $mbti }}</option>
-                        @endforeach
-                    </select>
+                    <div class="relative">
+                        <select
+                            wire:model.live="mbtiFilter"
+                            class="focus:ring-opacity-50 block w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
+                        >
+                            <option value="">All MBTI Types</option>
+                            @foreach ($mbtiTypes as $mbti)
+                                <option value="{{ $mbti }}">{{ $mbti }}</option>
+                            @endforeach
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                            <svg
+                                class="h-4 w-4 text-gray-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- DISC Filter Dropdown -->
                 <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700">DISC Type</label>
-                    <select
-                        wire:model.live="discFilter"
-                        class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                    >
-                        <option value="">All DISC Types</option>
-                        @foreach ($discTypes as $disc)
-                            <option value="{{ $disc }}">{{ $disc }}</option>
-                        @endforeach
-                    </select>
+                    <div class="relative">
+                        <select
+                            wire:model.live="discFilter"
+                            class="focus:ring-opacity-50 block w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
+                        >
+                            <option value="">All DISC Types</option>
+                            @foreach ($discTypes as $disc)
+                                <option value="{{ $disc }}">{{ $disc }}</option>
+                            @endforeach
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                            <svg
+                                class="h-4 w-4 text-gray-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- PAPI Filter Dropdown -->
                 <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700">PAPI Type</label>
-                    <select
-                        wire:model.live="papiFilter"
-                        class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                    >
-                        <option value="">All PAPI Types</option>
-                        @foreach ($papiTypes as $papi)
-                            <option value="{{ $papi }}">{{ $papi }}</option>
-                        @endforeach
-                    </select>
+                    <div class="relative">
+                        <select
+                            wire:model.live="papiFilter"
+                            class="focus:ring-opacity-50 block w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
+                        >
+                            <option value="">All PAPI Types</option>
+                            @foreach ($papiTypes as $papi)
+                                <option value="{{ $papi }}">{{ $papi }}</option>
+                            @endforeach
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                            <svg
+                                class="h-4 w-4 text-gray-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

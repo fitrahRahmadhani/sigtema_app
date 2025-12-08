@@ -6,6 +6,7 @@
     </flux:breadcrumbs>
 
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
+        <!-- Header -->
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -173,7 +174,8 @@
 
         <!-- Filters -->
         <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-            <div class="grid gap-4 md:grid-cols-2">
+            <div class="grid gap-4 md:grid-cols-3">
+                <!-- Search Input -->
                 <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700">Search Employee</label>
                     <div class="relative">
@@ -196,28 +198,61 @@
                         <input
                             type="text"
                             wire:model.live.debounce.300ms="search"
-                            placeholder="Search by employee name or number..."
-                            class="block w-full rounded-lg border border-gray-300 bg-white py-2 pr-3 pl-10 text-sm placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                            placeholder="Search by employee name, number, or result..."
+                            class="focus:ring-opacity-50 block w-full rounded-lg border border-gray-300 bg-white py-2.5 pr-3 pl-10 text-sm placeholder-gray-500 shadow-sm focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
                         />
                     </div>
                 </div>
 
+                <!-- Result Filter Dropdown -->
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-gray-700">Result</label>
+                    <div class="relative">
+                        <select
+                            wire:model.live="resultFilter"
+                            class="focus:ring-opacity-50 block w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 shadow-sm focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
+                        >
+                            <option value="">All Results</option>
+                            @foreach ($results as $result)
+                                <option value="{{ $result }}">{{ $result }}</option>
+                            @endforeach
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                            <svg
+                                class="h-4 w-4 text-gray-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sort By Dropdown -->
                 <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700">Sort By</label>
                     <div class="relative">
                         <select
                             wire:model.live="sortBy"
-                            class="block w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                            class="focus:ring-opacity-50 block w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 shadow-sm focus:border-[#721d21] focus:ring-2 focus:ring-[#721d21] focus:outline-none"
                         >
                             <option value="newest">Most Recent</option>
                             <option value="oldest">Oldest</option>
                             <option value="ee_high">EE Score (High to Low)</option>
                             <option value="ee_low">EE Score (Low to High)</option>
+                            <option value="dp_high">DP Score (High to Low)</option>
+                            <option value="dp_low">DP Score (Low to High)</option>
+                            <option value="ad_high">AD Score (High to Low)</option>
+                            <option value="ad_low">AD Score (Low to High)</option>
+                            <option value="result_asc">Result (A-Z)</option>
+                            <option value="result_desc">Result (Z-A)</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                             <svg
                                 class="h-4 w-4 text-gray-400"
-                                xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -233,22 +268,26 @@
 
         <!-- Burnouts Table -->
         <div class="space-y-3 overflow-x-auto">
-            <!-- Desktop View -->
-            <div class="hidden grid-cols-12 gap-4 rounded-lg bg-gray-100 px-4 py-3 md:grid">
-                <div class="col-span-3 text-sm font-semibold text-gray-700">Employee</div>
-                <div class="col-span-2 text-sm font-semibold text-gray-700">Emotional Exhaustion</div>
-                <div class="col-span-2 text-sm font-semibold text-gray-700">Depersonalization</div>
-                <div class="col-span-2 text-sm font-semibold text-gray-700">Achievement Decline</div>
-                <div class="col-span-2 text-sm font-semibold text-gray-700">Source</div>
-                <div class="col-span-1 text-center text-sm font-semibold text-gray-700">Updated</div>
+            <!-- Column Headers -->
+            <div
+                class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
+            >
+                <div class="col-span-2 text-sm font-semibold">Employee</div>
+                <div class="col-span-1 text-sm font-semibold">EE</div>
+                <div class="col-span-1 text-sm font-semibold">DP</div>
+                <div class="col-span-1 text-sm font-semibold">AD</div>
+                <div class="col-span-2 text-sm font-semibold">Result</div>
+                <div class="col-span-2 text-sm font-semibold">Source</div>
+                <div class="col-span-2 text-sm font-semibold">Updated</div>
             </div>
 
             @forelse ($burnouts as $burnout)
                 <!-- Desktop Row -->
                 <div
-                    class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 md:grid"
+                    class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 hover:shadow-md md:grid"
                 >
-                    <div class="col-span-3">
+                    <!-- Employee -->
+                    <div class="col-span-2">
                         @if ($burnout->employee)
                             <p class="font-medium text-gray-900">{{ $burnout->employee->name }}</p>
                             <p class="text-sm text-gray-500">{{ $burnout->employee_number }}</p>
@@ -258,18 +297,35 @@
                         @endif
                     </div>
 
-                    <div class="col-span-2">
+                    <!-- Emotional Exhaustion -->
+                    <div class="col-span-1">
                         <span class="font-medium">{{ $burnout->emotional_exhaustion ?? 'N/A' }}</span>
                     </div>
 
-                    <div class="col-span-2">
+                    <!-- Depersonalization -->
+                    <div class="col-span-1">
                         <span class="font-medium">{{ $burnout->depersonalization ?? 'N/A' }}</span>
                     </div>
 
-                    <div class="col-span-2">
+                    <!-- Achievement Decline -->
+                    <div class="col-span-1">
                         <span class="font-medium">{{ $burnout->achievement_decline ?? 'N/A' }}</span>
                     </div>
 
+                    <!-- Result -->
+                    <div class="col-span-2">
+                        @if ($burnout->result)
+                            <span
+                                class="inline-flex items-center rounded-md bg-gray-100 px-3 py-1 text-xs font-medium text-gray-800"
+                            >
+                                {{ $burnout->result }}
+                            </span>
+                        @else
+                            <span class="text-gray-400">-</span>
+                        @endif
+                    </div>
+
+                    <!-- Source -->
                     <div class="col-span-2">
                         <span
                             class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-800"
@@ -278,7 +334,8 @@
                         </span>
                     </div>
 
-                    <div class="col-span-1 text-center text-sm text-gray-500">
+                    <!-- Updated -->
+                    <div class="col-span-2 text-sm text-gray-500">
                         {{ $burnout->updated_at->diffForHumans() }}
                     </div>
                 </div>
@@ -286,6 +343,7 @@
                 <!-- Mobile Row -->
                 <div class="block rounded-lg border border-gray-200 bg-white p-4 md:hidden">
                     <div class="space-y-3">
+                        <!-- Employee -->
                         <div class="border-b border-gray-100 pb-3">
                             @if ($burnout->employee)
                                 <h3 class="font-semibold text-gray-900">{{ $burnout->employee->name }}</h3>
@@ -295,6 +353,7 @@
                             @endif
                         </div>
 
+                        <!-- Scores Grid -->
                         <div class="grid grid-cols-3 gap-4">
                             <div class="text-center">
                                 <p class="text-xs font-medium text-gray-500">EE</p>
@@ -310,6 +369,21 @@
                             </div>
                         </div>
 
+                        <!-- Result -->
+                        <div class="border-t border-gray-100 pt-3">
+                            <p class="mb-1 text-xs font-medium text-gray-500">Result</p>
+                            @if ($burnout->result)
+                                <span
+                                    class="inline-flex items-center rounded-md bg-gray-100 px-3 py-1 text-xs font-medium text-gray-800"
+                                >
+                                    {{ $burnout->result }}
+                                </span>
+                            @else
+                                <p class="text-sm text-gray-400">-</p>
+                            @endif
+                        </div>
+
+                        <!-- Updated -->
                         <div class="border-t border-gray-100 pt-3 text-center">
                             <p class="text-xs text-gray-500">Updated: {{ $burnout->updated_at->diffForHumans() }}</p>
                         </div>
@@ -332,7 +406,7 @@
                         />
                     </svg>
                     <p class="mt-4 font-medium text-gray-500">No burnout data found</p>
-                    <p class="mt-1 text-sm text-gray-400">Click "Sync Data" to load burnout assessment data</p>
+                    <p class="mt-1 text-sm text-gray-400">Click "Sync from API" to load burnout assessment data</p>
                 </div>
             @endforelse
         </div>
