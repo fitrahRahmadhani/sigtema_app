@@ -99,6 +99,7 @@ class SyncBurnoutsJob implements ShouldQueue
                         'emotional_exhaustion' => $data['emotional_exhaustion'] ?? null,
                         'depersonalization' => $data['depersonalization'] ?? null,
                         'achievement_decline' => $data['achievement_decline'] ?? null,
+                        'result' => $data['result'] ?? null,
                         'updated_at' => now()
                     ]
                 );
@@ -132,14 +133,16 @@ class SyncBurnoutsJob implements ShouldQueue
                 'employee_number' => '00007106',
                 'emotional_exhaustion' => 25,
                 'depersonalization' => 18,
-                'achievement_decline' => 12
+                'achievement_decline' => 12,
+                'result' => 'Low'
             ],
             [
                 'id' => 'BURNOUT-2024-002',
                 'employee_number' => '00007107',
                 'emotional_exhaustion' => 35,
                 'depersonalization' => 28,
-                'achievement_decline' => 22
+                'achievement_decline' => 22,
+                'result' => 'Moderate'
             ]
         ];
     }

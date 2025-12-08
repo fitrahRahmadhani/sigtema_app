@@ -26,13 +26,16 @@ class Index extends Component
     #[Url]
     public $sortBy = 'newest';
 
+    #[Url]
+    public $resultFilter = '';
+
     public $syncStatus = 'idle';
     public $lastSyncResult = null;
     public $polling = false;
 
     public function updating($property, $value)
     {
-        if (in_array($property, ['search', 'sortBy'])) {
+        if (in_array($property, ['search', 'sortBy', 'resultFilter'])) {
             $this->resetPage();
         }
     }
@@ -133,17 +136,27 @@ class Index extends Component
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('employee_number', 'like', '%' . $this->search . '%')
+                        ->orWhere('result', 'like', '%' . $this->search . '%')
                         ->orWhereHas('employee', function ($employeeQuery) {
                             $employeeQuery->where('name', 'like', '%' . $this->search . '%');
                         });
                 });
             })
+            ->when($this->resultFilter, fn($q) => $q->where('result', $this->resultFilter))
             ->when($this->sortBy === 'newest', fn($q) => $q->latest('created_at'))
             ->when($this->sortBy === 'oldest', fn($q) => $q->oldest('created_at'))
             ->when($this->sortBy === 'ee_high', fn($q) => $q->orderBy('emotional_exhaustion', 'desc'))
             ->when($this->sortBy === 'ee_low', fn($q) => $q->orderBy('emotional_exhaustion', 'asc'))
+            ->when($this->sortBy === 'dp_high', fn($q) => $q->orderBy('depersonalization', 'desc'))
+            ->when($this->sortBy === 'dp_low', fn($q) => $q->orderBy('depersonalization', 'asc'))
+            ->when($this->sortBy === 'ad_high', fn($q) => $q->orderBy('achievement_decline', 'desc'))
+            ->when($this->sortBy === 'ad_low', fn($q) => $q->orderBy('achievement_decline', 'asc'))
+            ->when($this->sortBy === 'result_asc', fn($q) => $q->orderBy('result', 'asc'))
+            ->when($this->sortBy === 'result_desc', fn($q) => $q->orderBy('result', 'desc'))
             ->paginate(10);
 
-        return view('livewire.pages.burnouts.index', compact('burnouts'));
+        $results = Burnout::whereNotNull('result')->distinct()->pluck('result')->sort();
+
+        return view('livewire.pages.burnouts.index', compact('burnouts', 'results'));
     }
 }
