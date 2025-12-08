@@ -112,7 +112,7 @@
                 @enderror
 
                 <a
-                    href=""
+                    href="{{ route('password.request') }}"
                     class="w-full text-right text-sm text-gray-500 underline transition duration-300 hover:font-semibold"
                 >
                     Lupa Password?
