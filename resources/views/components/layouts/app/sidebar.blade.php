@@ -431,9 +431,9 @@
 
             {{-- Burnout --}}
             <a
-                href="{{ route('users.index') }}"
+                href="{{ route('burnouts.index') }}"
                 wire:navigate
-                class="{{ request()->routeIs('users*') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
+                class="{{ request()->routeIs('burnouts*') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
