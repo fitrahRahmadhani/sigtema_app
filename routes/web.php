@@ -87,9 +87,6 @@ Route::middleware(['auth'])->group(function () {
     // Innovations
     Route::get('innovations', App\Livewire\Pages\Innovations\Index::class)->name('innovations.index');
 
-    // Personalities
-    Route::get('personalities', App\Livewire\Pages\Personalities\Index::class)->name('personalities.index');
-
     // Burnouts
     Route::get('burnouts', App\Livewire\Pages\Burnouts\Index::class)->name('burnouts.index');
 
