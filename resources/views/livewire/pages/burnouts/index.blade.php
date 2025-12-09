@@ -272,12 +272,12 @@
             <div
                 class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
             >
-                <div class="col-span-2 text-sm font-semibold">Employee</div>
+                <div class="col-span-3 text-sm font-semibold">Employee</div>
                 <div class="col-span-1 text-sm font-semibold">EE</div>
                 <div class="col-span-1 text-sm font-semibold">DP</div>
                 <div class="col-span-1 text-sm font-semibold">AD</div>
-                <div class="col-span-2 text-sm font-semibold">Result</div>
-                <div class="col-span-2 text-sm font-semibold">Source</div>
+                <div class="col-span-3 text-sm font-semibold">Result</div>
+                <div class="col-span-1 text-sm font-semibold">Source</div>
                 <div class="col-span-2 text-sm font-semibold">Updated</div>
             </div>
 
@@ -287,7 +287,7 @@
                     class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 hover:shadow-md md:grid"
                 >
                     <!-- Employee -->
-                    <div class="col-span-2">
+                    <div class="col-span-3">
                         @if ($burnout->employee)
                             <p class="font-medium text-gray-900">{{ $burnout->employee->name }}</p>
                             <p class="text-sm text-gray-500">{{ $burnout->employee_number }}</p>
@@ -313,11 +313,9 @@
                     </div>
 
                     <!-- Result -->
-                    <div class="col-span-2">
+                    <div class="col-span-3">
                         @if ($burnout->result)
-                            <span
-                                class="inline-flex items-center rounded-md bg-gray-100 px-3 py-1 text-xs font-medium text-gray-800"
-                            >
+                            <span class="text-sm text-gray-800">
                                 {{ $burnout->result }}
                             </span>
                         @else
@@ -326,7 +324,7 @@
                     </div>
 
                     <!-- Source -->
-                    <div class="col-span-2">
+                    <div class="col-span-1">
                         <span
                             class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-800"
                         >
@@ -374,7 +372,7 @@
                             <p class="mb-1 text-xs font-medium text-gray-500">Result</p>
                             @if ($burnout->result)
                                 <span
-                                    class="inline-flex items-center rounded-md bg-gray-100 px-3 py-1 text-xs font-medium text-gray-800"
+                                    class="text-sm font-medium text-gray-800"
                                 >
                                     {{ $burnout->result }}
                                 </span>
