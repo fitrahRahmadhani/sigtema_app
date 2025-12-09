@@ -405,30 +405,6 @@
                 <p>Innovations</p>
             </a>
 
-            {{-- Personality --}}
-            <a
-                href="{{ route('personalities.index') }}"
-                wire:navigate
-                class="{{ request()->routeIs('personalities.*') ? 'active-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="size-5"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M15 9h.01M8.99 9H9m12 3a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM6.6 13a5.5 5.5 0 0 0 10.81 0H6.6Z"
-                    />
-                </svg>
-
-                <p>Personality</p>
-            </a>
-
             {{-- Burnout --}}
             <a
                 href="{{ route('burnouts.index') }}"
@@ -452,6 +428,91 @@
 
                 <p>Burnout</p>
             </a>
+
+            {{-- Personality with Dropdown --}}
+            <div
+                x-data="{
+                    openPersonalityDropdown:
+                        {{ request()->routeIs('bulk-upload.*') ? 'true' : 'false' }},
+                }"
+            >
+                <button
+                    @click="openPersonalityDropdown = !openPersonalityDropdown"
+                    class="flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200 hover:bg-gray-100"
+                    :class="{ 'bg-gray-200 ': openPersonalityDropdown || {{ request()->routeIs('bulk-upload.*') ? 'true' : 'false' }} }"
+                >
+                    <div class="flex flex-1 items-center gap-2">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="size-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M15 9h.01M8.99 9H9m12 3a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM6.6 13a5.5 5.5 0 0 0 10.81 0H6.6Z"
+                            />
+                        </svg>
+
+                        <p>Personality</p>
+                    </div>
+                    <div
+                        class="rounded-md p-1 transition-transform duration-200 hover:bg-gray-300"
+                        :class="{ 'rotate-180 bg-gray-300 ': openPersonalityDropdown }"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="size-4"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </div>
+                </button>
+
+                {{-- Submenu Dropdown --}}
+                <div
+                    x-show="openPersonalityDropdown"
+                    x-transition:enter="transition duration-200 ease-out"
+                    x-transition:enter-start="-translate-y-2 opacity-0"
+                    x-transition:enter-end="translate-y-0 opacity-100"
+                    x-transition:leave="transition duration-150 ease-in"
+                    x-transition:leave-start="translate-y-0 opacity-100"
+                    x-transition:leave-end="-translate-y-2 opacity-0"
+                    class="ml-6 space-y-1 border-l border-gray-200 pl-2"
+                    style="display: none"
+                >
+                    <a
+                        href="{{ route('bulk-upload.positions') }}"
+                        wire:navigate
+                        class="{{ request()->routeIs('bulk-upload.positions') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
+                    >
+                        <p>MBTI</p>
+                    </a>
+
+                    <a
+                        href="{{ route('bulk-upload.employees') }}"
+                        wire:navigate
+                        class="{{ request()->routeIs('bulk-upload.employees') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
+                    >
+                        <p>DISC</p>
+                    </a>
+
+                    <a
+                        href="{{ route('bulk-upload.educations') }}"
+                        wire:navigate
+                        class="{{ request()->routeIs('bulk-upload.educations') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
+                    >
+                        <p>PAPI</p>
+                    </a>
+                </div>
+            </div>
         </div>
 
         {{-- Authentication --}}
