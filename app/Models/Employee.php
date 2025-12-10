@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\PsychogramResult;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
@@ -99,6 +100,11 @@ class Employee extends Model
     public function positionHistories()
     {
         return $this->hasMany(PositionHistory::class);
+    }
+
+    public function psychogramResults()
+    {
+        return $this->hasMany(PsychogramResult::class);
     }
 
     /**
