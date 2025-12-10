@@ -112,6 +112,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('bulk-upload/mcus', \App\Livewire\Pages\BulkUploads\Mcus::class)->name('bulk-upload.mcus');
     Route::get('bulk-upload/technical-competencies', \App\Livewire\Pages\BulkUploads\TechnicalCompetencies::class)->name('bulk-upload.technical-competencies');
     Route::get('bulk-upload/position-histories', \App\Livewire\Pages\BulkUploads\PositionHistories::class)->name('bulk-upload.position-histories');
+    Route::get('bulk-upload/psychogram-results', \App\Livewire\Pages\BulkUploads\PsychogramResults::class)->name('bulk-upload.psychogram-results');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
