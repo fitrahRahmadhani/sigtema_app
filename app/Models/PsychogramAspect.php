@@ -25,10 +25,10 @@ class PsychogramAspect extends Model
         return $this->belongsTo(Company::class);
     }
 
-    // public function results()
-    // {
-    //     return $this->hasMany(PsychogramResult::class);
-    // }
+    public function results()
+    {
+        return $this->hasMany(PsychogramResult::class);
+    }
 
     public function scopeForCompany($query, $companyId = null)
     {
