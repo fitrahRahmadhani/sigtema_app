@@ -492,9 +492,9 @@
                         style="display: none"
                     >
                         <a
-                            href="{{ route('bulk-upload.positions') }}"
+                            href="{{ route('mbtis.index') }}"
                             wire:navigate
-                            class="{{ request()->routeIs('bulk-upload.positions') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
+                            class="{{ request()->routeIs('mbtis.*') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
                         >
                             <p>MBTI</p>
                         </a>

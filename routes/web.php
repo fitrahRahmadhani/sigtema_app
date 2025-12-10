@@ -90,6 +90,10 @@ Route::middleware(['auth'])->group(function () {
     // Burnouts
     Route::get('burnouts', App\Livewire\Pages\Burnouts\Index::class)->name('burnouts.index');
 
+    // Personalities
+    // MBTI
+    Route::get('mbtis', App\Livewire\Pages\Mbtis\Index::class)->name('mbtis.index');
+
     // Bulk Upload
     Route::get('bulk-upload/employees', App\Livewire\Pages\BulkUploads\Employees::class)->name('bulk-upload.employees');
     Route::get('bulk-upload/positions', \App\Livewire\Pages\BulkUploads\Positions::class)->name('bulk-upload.positions');
