@@ -508,9 +508,9 @@
                         </a>
 
                         <a
-                            href="{{ route('bulk-upload.educations') }}"
+                            href="{{ route('papis.index') }}"
                             wire:navigate
-                            class="{{ request()->routeIs('bulk-upload.educations') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
+                            class="{{ request()->routeIs('papis.*') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
                         >
                             <p>PAPI</p>
                         </a>
