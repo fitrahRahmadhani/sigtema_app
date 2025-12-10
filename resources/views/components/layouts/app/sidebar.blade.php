@@ -500,9 +500,9 @@
                         </a>
 
                         <a
-                            href="{{ route('bulk-upload.employees') }}"
+                            href="{{ route('discs.index') }}"
                             wire:navigate
-                            class="{{ request()->routeIs('bulk-upload.employees') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
+                            class="{{ request()->routeIs('discs.*') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
                         >
                             <p>DISC</p>
                         </a>
