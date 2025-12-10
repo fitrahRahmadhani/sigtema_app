@@ -94,6 +94,9 @@ Route::middleware(['auth'])->group(function () {
     // MBTI
     Route::get('mbtis', App\Livewire\Pages\Mbtis\Index::class)->name('mbtis.index');
 
+    // DISC
+    Route::get('discs', App\Livewire\Pages\Discs\Index::class)->name('discs.index');
+
     // Bulk Upload
     Route::get('bulk-upload/employees', App\Livewire\Pages\BulkUploads\Employees::class)->name('bulk-upload.employees');
     Route::get('bulk-upload/positions', \App\Livewire\Pages\BulkUploads\Positions::class)->name('bulk-upload.positions');
