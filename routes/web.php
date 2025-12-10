@@ -89,6 +89,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('psychogram-aspects/create', App\Livewire\Pages\PsychogramAspects\Create::class)->name('psychogram-aspects.create');
     Route::get('psychogram-aspects/{psychogram_aspect}/edit', App\Livewire\Pages\PsychogramAspects\Edit::class)->name('psychogram-aspects.edit');
 
+    // Psychogram
+    Route::get('psychogram-results', App\Livewire\Pages\PsychogramResults\Index::class)->name('psychogram-results.index');
+    Route::get('psychogram-results/create', App\Livewire\Pages\PsychogramResults\Create::class)->name('psychogram-results.create');
+    Route::get('psychogram-results/{psychogram_result}/edit', App\Livewire\Pages\PsychogramResults\Edit::class)->name('psychogram-results.edit');
+
     // Innovations
     Route::get('innovations', App\Livewire\Pages\Innovations\Index::class)->name('innovations.index');
 
