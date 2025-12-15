@@ -16,13 +16,14 @@ class Show extends Component
 
     public $softCompetencies = [];
     public $workDirectionData = [];
-
+    public $discData = [];
 
     public function mount(Employee $employee)
     {
         $this->employee = $employee;
         $this->softCompetencies = $employee->getScores();
         $this->workDirectionData = $this->getWorkDirectionData();
+        $this->discData = $this->getDISCData();
     }
 
     private function getWorkDirectionData()
@@ -49,6 +50,32 @@ class Show extends Component
             ['code' => 'K',  'score' => 3],
             ['code' => 'F',  'score' => 5],
             ['code' => 'W',  'score' => 6],
+        ];
+    }
+
+    private function getDISCData()
+    {
+        return [
+            // DISC 1 - Dominance oriented
+            'D1' => 75,
+            'I1' => 45,
+            'S1' => 30,
+            'C1' => 50,
+            'interpretation1' => 'High Dominance - Direct, results-oriented, decisive',
+
+            // DISC 2 - Influence oriented
+            'D2' => 40,
+            'I2' => 80,
+            'S2' => 60,
+            'C2' => 35,
+            'interpretation2' => 'High Influence - Enthusiastic, persuasive, social',
+
+            // DISC 3 - Steadiness oriented
+            'D3' => 30,
+            'I3' => 45,
+            'S3' => 85,
+            'C3' => 55,
+            'interpretation3' => 'High Steadiness - Patient, reliable, supportive',
         ];
     }
 

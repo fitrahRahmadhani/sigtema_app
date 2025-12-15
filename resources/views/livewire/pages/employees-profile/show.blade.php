@@ -88,23 +88,139 @@
 
         {{-- Content --}}
         <div class="w-full space-y-6 md:space-y-8">
-            <!-- Two Column Section: Soft Competencies, Technical Competencies -->
+            <!-- Two Column Section: PAPI Kostick & DISC -->
             <div class="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
                 {{-- PAPI Kostick --}}
-                <div class="w-full">
+                <div class="flex w-full flex-col">
                     <div class="color-gradient w-full rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">PAPI Kostick</p>
                     </div>
 
-                    <div class="rounded-b-lg border border-t-0 border-gray-300 bg-white p-2 md:p-4">
-                        {{-- ================= CANVAS ================= --}}
-                        <div class="flex items-center justify-center p-2" wire:ignore>
-                            <div
-                                class="relative aspect-square w-full max-w-[650px] rounded-full border-2 border-dashed"
-                            >
-                                <canvas id="workDirectionCanvas" class="h-full w-full"></canvas>
+                    <div
+                        class="flex grow items-center justify-center rounded-b-lg border border-t-0 border-gray-300 bg-white p-2 md:p-4"
+                    >
+                        @if ($workDirectionData)
+                            {{-- ================= CANVAS ================= --}}
+                            <div class="flex w-full items-center justify-center p-2" wire:ignore>
+                                <div
+                                    class="relative aspect-square w-full max-w-[650px] rounded-full border-2 border-dashed"
+                                >
+                                    <canvas id="workDirectionCanvas" class="h-full w-full"></canvas>
+                                </div>
                             </div>
-                        </div>
+                        @else
+                            <div class="flex flex-col items-center justify-center">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-12 w-12 text-gray-300"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"
+                                    />
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"
+                                    />
+                                </svg>
+                                <p class="mt-2 text-sm text-gray-300">No PAPI Kostick data found</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- DISC --}}
+                <div class="flex w-full flex-col">
+                    <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                        <p class="text-base font-semibold text-white sm:text-lg">DISC</p>
+                    </div>
+
+                    <div class="flex grow flex-col rounded-b-lg border border-t-0 border-gray-300 bg-white p-2 md:p-4">
+                        @if ($discData)
+                            <div class="grid h-full grid-cols-1 gap-4 sm:grid-cols-3" wire:ignore>
+                                <!-- DISC 1 -->
+                                <div class="flex h-full flex-col">
+                                    <div class="rounded-t-md bg-red-500 px-3 py-2 text-center">
+                                        <p class="text-sm font-semibold text-white">DISC 1</p>
+                                    </div>
+                                    <div
+                                        class="relative flex min-h-[250px] grow items-center justify-center border-x border-gray-300 bg-white p-2 sm:min-h-[300px] md:min-h-[350px]"
+                                    >
+                                        <canvas
+                                            id="disc1Canvas"
+                                            style="width: 100% !important; height: 100% !important"
+                                        ></canvas>
+                                    </div>
+                                    <div class="rounded-b-md border-x border-b border-gray-300 bg-gray-50 px-2 py-3">
+                                        <p class="text-center text-sm leading-relaxed text-gray-700">
+                                            {{ $discData['interpretation1'] ?? 'No interpretation' }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- DISC 2 -->
+                                <div class="flex h-full flex-col">
+                                    <div class="rounded-t-md bg-yellow-500 px-3 py-2 text-center">
+                                        <p class="text-sm font-semibold text-white">DISC 2</p>
+                                    </div>
+                                    <div
+                                        class="relative flex min-h-[250px] grow items-center justify-center border-x border-gray-300 bg-white p-2 sm:min-h-[300px] md:min-h-[350px]"
+                                    >
+                                        <canvas
+                                            id="disc2Canvas"
+                                            style="width: 100% !important; height: 100% !important"
+                                        ></canvas>
+                                    </div>
+                                    <div class="rounded-b-md border-x border-b border-gray-300 bg-gray-50 px-2 py-3">
+                                        <p class="text-center text-sm leading-relaxed text-gray-700">
+                                            {{ $discData['interpretation2'] ?? 'No interpretation' }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- DISC 3 -->
+                                <div class="flex h-full flex-col">
+                                    <div class="rounded-t-md bg-green-500 px-3 py-2 text-center">
+                                        <p class="text-sm font-semibold text-white">DISC 3</p>
+                                    </div>
+                                    <div
+                                        class="relative flex min-h-[250px] grow items-center justify-center border-x border-gray-300 bg-white p-2 sm:min-h-[300px] md:min-h-[350px]"
+                                    >
+                                        <canvas
+                                            id="disc3Canvas"
+                                            style="width: 100% !important; height: 100% !important"
+                                        ></canvas>
+                                    </div>
+                                    <div class="rounded-b-md border-x border-b border-gray-300 bg-gray-50 px-2 py-3">
+                                        <p class="text-center text-sm leading-relaxed text-gray-700">
+                                            {{ $discData['interpretation3'] ?? 'No interpretation' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <div class="flex flex-col items-center justify-center">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-12 w-12 text-gray-300"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"
+                                    />
+                                </svg>
+                                <p class="mt-2 text-sm text-gray-300">No DISC data found</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -210,11 +326,8 @@
                                                         d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
                                                     />
                                                 </svg>
-                                                <p class="mt-2 text-sm font-medium text-gray-400">
+                                                <p class="mt-2 text-sm text-gray-300">
                                                     No technical competencies found
-                                                </p>
-                                                <p class="text-xs text-gray-300">
-                                                    Add certifications or technical skills
                                                 </p>
                                             </div>
                                         </td>
@@ -285,10 +398,7 @@
                                                     d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
                                                 />
                                             </svg>
-                                            <p class="mt-2 text-sm font-medium text-gray-400">
-                                                No education records found
-                                            </p>
-                                            <p class="text-xs text-gray-300">Add educational background information</p>
+                                            <p class="mt-2 text-sm text-gray-300">No education records found</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -353,10 +463,7 @@
                                                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
                                                 />
                                             </svg>
-                                            <p class="mt-2 text-sm font-medium text-gray-400">
-                                                No position history records found
-                                            </p>
-                                            <p class="text-xs text-gray-300">Add position history information</p>
+                                            <p class="mt-2 text-sm text-gray-300">No position history records found</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -483,10 +590,7 @@
                                                         d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                                     />
                                                 </svg>
-                                                <p class="mt-2 text-sm font-medium text-gray-400">
-                                                    No MCU data available
-                                                </p>
-                                                <p class="text-xs text-gray-300">Add MCU results to display here</p>
+                                                <p class="mt-2 text-sm text-gray-300">No MCU data available</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -540,7 +644,6 @@
                                     </td>
                                     <td class="px-3 py-2 font-bold text-gray-600 sm:px-4">150</td>
                                 </tr>
-                                <!-- Baris Penafsiran -->
                                 <tr class="border-t border-gray-300 transition-colors">
                                     <td colspan="2" class="px-3 py-3 sm:px-4">
                                         <div class="mb-1 font-semibold text-gray-800">Penafsiran Hasil:</div>
@@ -559,10 +662,13 @@
             </div>
         </div>
     </div>
-    <script>
-        /* ================= DATA ================= */
 
+    <script>
+        /* ================= PAPI DATA ================= */
         const workData = @json($workDirectionData);
+
+        /* ================= DISC DATA ================= */
+        const discData = @json($discData);
 
         const segments = [
             {
@@ -717,7 +823,6 @@
         };
 
         /* ================= ARC TEXT ================= */
-
         function drawArcText(ctx, text, cx, cy, radius, centerDeg, letterSpacing = 0.6) {
             ctx.save();
             ctx.font = 'bold 15px Arial';
@@ -749,9 +854,8 @@
             ctx.restore();
         }
 
-        /* ================= DRAW ================= */
-
-        function drawChart() {
+        /* ================= DRAW PAPI CHART ================= */
+        function drawPAPIChart() {
             const canvas = document.getElementById('workDirectionCanvas');
             const ctx = canvas.getContext('2d');
             const size = canvas.parentElement.offsetWidth;
@@ -764,50 +868,36 @@
 
             const outerR = size * 0.48;
             const innerR = size * 0.4;
-
             const boxOuter = size * 0.39;
             const boxInner = size * 0.31;
-
             const descR = size * 0.35;
-
             const subDescOuter = size * 0.3;
             const subDescInner = size * 0.24;
-
             const radarR = size * 0.24;
 
             ctx.clearRect(0, 0, size, size);
 
             function getCategoryCenter(start, end) {
-                if (start <= end) {
-                    return (start + end) / 2;
-                }
-
+                if (start <= end) return (start + end) / 2;
                 const span = 360 - start + end;
                 let center = start + span / 2;
-
                 if (center >= 360) center -= 360;
                 return center;
             }
 
             function getCategoryAverage(categoryName) {
                 const segs = segments.filter((s) => s.cat === categoryName);
-
                 if (!segs.length) return 0;
-
                 const scores = segs
                     .map((s) => {
                         const d = workData.find((w) => w.code === s.code);
                         return d ? d.score : null;
                     })
                     .filter((v) => v !== null);
-
                 if (!scores.length) return 0;
-
-                const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-                return avg.toFixed(1); // 1 angka desimal
+                return (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
             }
 
-            /* ===== OUTER CATEGORY RING ===== */
             function arc(start, end, color) {
                 ctx.beginPath();
                 ctx.arc(cx, cy, outerR, ((start - 90) * Math.PI) / 180, ((end - 90) * Math.PI) / 180);
@@ -824,26 +914,21 @@
                 } else arc(c.start, c.end, c.color);
             });
 
-            /* ===== CATEGORY TEXT (CURVED) ===== */
             Object.entries(categories).forEach(([name, c]) => {
                 const r = (outerR + innerR) / 2;
                 const center = getCategoryCenter(c.start, c.end);
-
                 const avg = getCategoryAverage(name);
                 const label = `${name} | ${avg}`;
-
                 drawArcText(ctx, label, cx, cy, r, center, 0.6);
             });
 
             segments.forEach((s) => {
                 const sa = ((s.angle - 9 - 90) * Math.PI) / 180;
                 const ea = ((s.angle + 9 - 90) * Math.PI) / 180;
-
                 ctx.beginPath();
                 ctx.arc(cx, cy, subDescOuter, sa, ea);
                 ctx.arc(cx, cy, subDescInner, ea, sa, true);
                 ctx.closePath();
-
                 ctx.fillStyle = s.colorSolid;
                 ctx.fill();
                 ctx.strokeStyle = '#fff';
@@ -854,29 +939,21 @@
             segments.forEach((s) => {
                 const rad = ((s.angle - 90) * Math.PI) / 180;
                 const r = (subDescOuter + subDescInner) / 2;
-
                 const x = cx + r * Math.cos(rad);
                 const y = cy + r * Math.sin(rad);
-
                 ctx.save();
                 ctx.translate(x, y);
-
                 let rotate = rad + Math.PI / 2;
                 if (s.angle > 90 && s.angle < 270) rotate += Math.PI;
-
                 ctx.rotate(rotate);
-
                 ctx.font = 'bold 12px Arial';
                 ctx.fillStyle = '#fff';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-
                 ctx.fillText(s.code, 0, 0);
-
                 ctx.restore();
             });
 
-            /* ===== LETTER SEGMENTS ===== */
             segments.forEach((s) => {
                 const sa = ((s.angle - 9 - 90) * Math.PI) / 180;
                 const ea = ((s.angle + 9 - 90) * Math.PI) / 180;
@@ -891,41 +968,29 @@
                 ctx.stroke();
             });
 
-            /* ===== DESCRIPTION ===== */
             segments.forEach((s) => {
                 const rad = ((s.angle - 90) * Math.PI) / 180;
-
                 const x = cx + descR * Math.cos(rad);
                 const y = cy + descR * Math.sin(rad);
-
                 ctx.save();
                 ctx.translate(x, y);
-
                 let rotate = rad + Math.PI / 2;
-
-                if (s.angle > 90 && s.angle < 270) {
-                    rotate += Math.PI;
-                }
-
+                if (s.angle > 90 && s.angle < 270) rotate += Math.PI;
                 ctx.rotate(rotate);
-
                 ctx.font = '10px Arial';
                 ctx.fillStyle = '#000';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-
                 const lines = s.desc.split('\n');
                 lines.forEach((line, i) => {
                     ctx.fillText(line, 0, (i - (lines.length - 1) / 2) * 10);
                 });
-
                 ctx.restore();
             });
 
             drawRadar(cx, cy, radarR);
         }
 
-        /* ===== RADAR ===== */
         function drawRadar(cx, cy, r) {
             const div = document.createElement('div');
             div.style.position = 'absolute';
@@ -967,12 +1032,10 @@
                                 },
                                 label(ctx) {
                                     const s = segments[ctx.dataIndex];
-
                                     const cleanDesc = s.desc
                                         .replace(/\\n/g, ' ')
                                         .replace(/\n/g, ' ')
                                         .replace(/\s+/g, ' ');
-
                                     return [cleanDesc, `Skor : ${ctx.raw}`];
                                 },
                             },
@@ -981,10 +1044,7 @@
                             color: '#111',
                             backgroundColor: '#ffffff.9',
                             borderRadius: 4,
-                            font: {
-                                size: 12,
-                                weight: 'bold',
-                            },
+                            font: { size: 12, weight: 'bold' },
                             align: 'top',
                             offset: 6,
                             formatter: (value) => value,
@@ -1002,13 +1062,142 @@
             });
         }
 
-        /* ===== INIT ===== */
+        /* ================= DRAW DISC CHARTS ================= */
+        function drawDISCCharts() {
+            const canvasIds = ['disc1Canvas', 'disc2Canvas', 'disc3Canvas'];
+            const datasets = [
+                { D: discData.D1, I: discData.I1, S: discData.S1, C: discData.C1 },
+                { D: discData.D2, I: discData.I2, S: discData.S2, C: discData.C2 },
+                { D: discData.D3, I: discData.I3, S: discData.S3, C: discData.C3 },
+            ];
+
+            canvasIds.forEach((canvasId, index) => {
+                const canvas = document.getElementById(canvasId);
+                const data = datasets[index];
+
+                // Set canvas to fill parent container
+                const parent = canvas.parentElement;
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+
+                new Chart(canvas, {
+                    type: 'line',
+                    plugins: [ChartDataLabels],
+                    data: {
+                        labels: ['D', 'I', 'S', 'C'],
+                        datasets: [
+                            {
+                                label: `DISC ${index + 1}`,
+                                data: [data.D, data.I, data.S, data.C],
+                                borderColor: index === 0 ? '#ef4444' : index === 1 ? '#eab308' : '#22c55e',
+                                backgroundColor:
+                                    index === 0
+                                        ? 'rgba(239, 68, 68, 0.1)'
+                                        : index === 1
+                                          ? 'rgba(234, 179, 8, 0.1)'
+                                          : 'rgba(34, 197, 94, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.4,
+                                fill: true,
+                                pointRadius: 6,
+                                pointHoverRadius: 8,
+                                pointBackgroundColor: '#fff',
+                                pointBorderWidth: 3,
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                top: 10,
+                                bottom: 10,
+                                left: 5,
+                                right: 5,
+                            },
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                padding: 12,
+                                titleFont: { size: 14, weight: 'bold' },
+                                bodyFont: { size: 13 },
+                                callbacks: {
+                                    label: function (context) {
+                                        return `Score: ${context.parsed.y}`;
+                                    },
+                                },
+                            },
+                            datalabels: {
+                                color: '#111',
+                                backgroundColor:
+                                    index === 0
+                                        ? 'rgba(239, 68, 68, 0.2)'
+                                        : index === 1
+                                          ? 'rgba(234, 179, 8, 0.2)'
+                                          : 'rgba(34, 197, 94, 0.2)',
+                                borderRadius: 4,
+                                font: { size: 12, weight: 'bold' },
+                                align: 'top',
+                                offset: 6,
+                                formatter: (value) => value,
+                            },
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    stepSize: 20,
+                                    font: { size: 11 },
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    drawBorder: true,
+                                },
+                            },
+                            x: {
+                                ticks: {
+                                    font: { size: 13, weight: 'bold' },
+                                    color: '#374151',
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    drawBorder: true,
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+        }
+
+        /* ================= INIT ================= */
+        function initCharts() {
+            drawPAPIChart();
+            drawDISCCharts();
+        }
+
         if (typeof Chart === 'undefined') {
             const s = document.createElement('script');
             s.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-            s.onload = drawChart;
+            s.onload = () => {
+                const s2 = document.createElement('script');
+                s2.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2';
+                s2.onload = initCharts;
+                document.head.appendChild(s2);
+            };
             document.head.appendChild(s);
-        } else drawChart();
+        } else if (typeof ChartDataLabels === 'undefined') {
+            const s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2';
+            s.onload = initCharts;
+            document.head.appendChild(s);
+        } else {
+            initCharts();
+        }
 
         window.addEventListener('resize', () => location.reload());
     </script>
