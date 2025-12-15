@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Livewire\Pages\BulkUploads\PsychogramResults;
 use Illuminate\Database\Eloquent\Model;
 
 class PsychogramAspect extends Model
@@ -43,6 +44,12 @@ class PsychogramAspect extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    public function scores()
+    {
+        // Pastikan ada model PsychogramResult jika digunakan
+        return $this->hasMany(PsychogramResult::class, 'aspect_id');
     }
 
     /**

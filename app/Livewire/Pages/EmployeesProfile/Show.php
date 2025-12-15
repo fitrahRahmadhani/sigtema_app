@@ -14,9 +14,13 @@ class Show extends Component
 
     public $employee;
 
+    public $softCompetencies = [];
+
+
     public function mount(Employee $employee)
     {
         $this->employee = $employee;
+        $this->softCompetencies = $employee->getScores();
     }
 
     public function render()

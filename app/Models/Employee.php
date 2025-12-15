@@ -251,6 +251,11 @@ class Employee extends Model
         return $this->hire_date ? $this->hire_date->format('d F Y') : "-";
     }
 
+    public function getScores()
+    {
+        return PsychogramResult::getEmployeeScores($this->employee_number);
+    }
+
     /**
      * Cek apakah employee adalah CEO/Top Level
      */

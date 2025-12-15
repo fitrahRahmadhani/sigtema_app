@@ -108,51 +108,37 @@
                                     >
                                         Competency
                                     </th>
-                                    <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Description</th>
+                                    <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Aspects</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Analytical Thinking
+                                        Strengths
                                     </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        <ol class="ml-4 list-disc">
+                                            @forelse ($softCompetencies['strengths'] as $strength)
+                                                <li>{{ $strength->aspect->aspect_name }}</li>
+                                            @empty
+                                                <li>-</li>
+                                            @endforelse
+                                        </ol>
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Decision Making
+                                        Weaknesses
                                     </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
-                                </tr>
-                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Result & Quality Orientation
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        <ol class="ml-4 list-disc">
+                                            @forelse ($softCompetencies['weaknesses'] as $weaknesses)
+                                                <li>{{ $weaknesses->aspect->aspect_name }}</li>
+                                            @empty
+                                                <li>-</li>
+                                            @endforelse
+                                        </ol>
                                     </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
-                                </tr>
-                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Problem Solving
-                                    </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
-                                </tr>
-                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Collaboration
-                                    </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
-                                </tr>
-                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Efisiensi Pengelolaan Pekerjaan
-                                    </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
-                                </tr>
-                                <tr class="transition-colors hover:bg-gray-50">
-                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Perencanaan dan Pengorganisasian
-                                    </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
                                 </tr>
                             </tbody>
                         </table>
