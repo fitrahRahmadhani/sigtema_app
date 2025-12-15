@@ -372,7 +372,7 @@
                             <p class="mb-1 text-xs font-medium text-gray-500">Result</p>
                             @if ($burnout->result)
                                 <span
-                                    class="text-sm font-medium text-gray-800"
+                                    class="text-sm text-gray-800"
                                 >
                                     {{ $burnout->result }}
                                 </span>

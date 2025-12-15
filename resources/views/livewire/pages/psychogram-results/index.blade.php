@@ -271,9 +271,11 @@
             <div
                 class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
             >
-                <div class="col-span-4 text-sm font-semibold">Employee & Aspect</div>
-                <div class="col-span-2 text-sm font-semibold">Score</div>
-                <div class="col-span-4 text-sm font-semibold">Details</div>
+                <div class="col-span-3 text-sm font-semibold">Employee</div>
+                <div class="col-span-2 text-sm font-semibold">Aspect</div>
+                <div class="col-span-1 text-sm font-semibold">Score</div>
+                <div class="col-span-3 text-sm font-semibold">Details</div>
+                <div class="col-span-1 text-sm font-semibold">Last Updated</div>
                 <div class="col-span-2 text-center text-sm font-semibold">Actions</div>
             </div>
 
@@ -284,7 +286,7 @@
                     class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
                 >
                     <!-- Employee & Aspect Info -->
-                    <div class="col-span-4">
+                    <div class="col-span-3">
                         <div class="flex flex-col gap-2">
                             <!-- Employee -->
                             <div class="flex items-center gap-2">
@@ -306,36 +308,24 @@
                                     <p class="text-xs text-gray-500">{{ $result->employee->employee_number }}</p>
                                 </div>
                             </div>
-                            <!-- Aspect -->
-                            <div class="ml-10">
-                                <p class="text-sm font-medium text-gray-700">{{ $result->aspect->aspect_name }}</p>
-                                <p class="text-xs text-gray-500">{{ $result->aspect->aspect_code }}</p>
-                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aspect -->
+                    <div class="col-span-2">
+                        <div class="text-start">
+                            <p class="text-sm font-medium text-gray-700">{{ $result->aspect->aspect_name }}</p>
+                            <p class="text-xs text-gray-500">{{ $result->aspect->aspect_code }}</p>
                         </div>
                     </div>
 
                     <!-- Score -->
-                    <div class="col-span-2">
-                        <div class="flex items-center gap-2">
-                            <div class="flex-1">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xl font-bold text-gray-900">{{ $result->score }}</span>
-                                </div>
-                                <p class="mt-1 text-xs text-gray-500">
-                                    @if ($result->score >= 80)
-                                        <span class="text-green-600">Excellent</span>
-                                    @elseif ($result->score >= 60)
-                                        <span class="text-yellow-600">Good</span>
-                                    @else
-                                        <span class="text-red-600">Needs Improvement</span>
-                                    @endif
-                                </p>
-                            </div>
-                        </div>
+                    <div class="col-span-1">
+                        <p class="text-xl font-bold text-gray-900">{{ $result->score }}</p>
                     </div>
 
                     <!-- Details -->
-                    <div class="col-span-4">
+                    <div class="col-span-3">
                         <div class="flex flex-col gap-1">
                             @if ($result->employee->company)
                                 <div class="flex items-center gap-1 text-sm">
@@ -376,23 +366,27 @@
                                     Recorded: {{ $result->created_at->format('M d, Y') }}
                                 </span>
                             </div>
-                            <div class="flex items-center gap-1 text-sm">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.5"
-                                    stroke="currentColor"
-                                    class="h-4 w-4 text-gray-400"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                    />
-                                </svg>
-                                <span class="text-gray-600">Updated: {{ $result->updated_at->diffForHumans() }}</span>
-                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Last Updated -->
+                    <div class="col-span-1">
+                        <div class="flex items-center gap-1 text-sm">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="h-4 w-4 text-gray-400"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                />
+                            </svg>
+                            <span class="text-gray-600">{{ $result->updated_at->diffForHumans() }}</span>
                         </div>
                     </div>
 
@@ -469,15 +463,6 @@
                             </div>
                             <div class="text-right">
                                 <span class="text-2xl font-bold text-gray-900">{{ $result->score }}</span>
-                                <p class="text-xs text-gray-500">
-                                    @if ($result->score >= 80)
-                                        <span class="text-green-600">Excellent</span>
-                                    @elseif ($result->score >= 60)
-                                        <span class="text-yellow-600">Good</span>
-                                    @else
-                                        <span class="text-red-600">Needs Improvement</span>
-                                    @endif
-                                </p>
                             </div>
                         </div>
 

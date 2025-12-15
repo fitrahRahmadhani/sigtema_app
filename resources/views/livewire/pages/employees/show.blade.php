@@ -3,9 +3,10 @@
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('employees.index') }}">Employees</flux:breadcrumbs.item>
-        <flux:breadcrumbs.item>Create Employee</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item>{{ $employee->name }}'s Profile</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-4 md:p-6 lg:p-10">
         <!-- Header -->
         <div class="mb-8 flex flex-col items-start gap-6 lg:flex-row lg:gap-8">
@@ -78,12 +79,6 @@
                         <p class="">
                             MBTI:
                             <span class="text-red-500 italic">placeholder</span>
-                            <br />
-                            DISC:
-                            <span class="text-red-500 italic">placeholder</span>
-                            <br />
-                            PAPI:
-                            <span class="text-red-500 italic">placeholder</span>
                         </p>
                     </div>
                 </div>
@@ -94,6 +89,24 @@
         <div class="w-full space-y-6 md:space-y-8">
             <!-- Two Column Section: Soft Competencies, Technical Competencies -->
             <div class="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
+                {{-- PAPI Kostick --}}
+                <div class="w-full">
+                    <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                        <p class="text-base font-semibold text-white sm:text-lg">PAPI Kostick</p>
+                    </div>
+
+                    <div class="rounded-b-lg border border-t-0 border-gray-300 bg-white p-2 md:p-4">
+                        {{-- ================= CANVAS ================= --}}
+                        <div class="flex items-center justify-center p-2" wire:ignore>
+                            <div
+                                class="relative aspect-square w-full max-w-[650px] rounded-full border-2 border-dashed"
+                            >
+                                <canvas id="workDirectionCanvas" class="h-full w-full"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Soft Competencies -->
                 <div class="w-full lg:col-span-1">
                     <div class="color-gradient w-full rounded-t-lg px-4 py-3">
@@ -108,51 +121,37 @@
                                     >
                                         Competency
                                     </th>
-                                    <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Description</th>
+                                    <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Aspects</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Analytical Thinking
+                                        Strengths
                                     </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        <ol class="ml-4 list-disc">
+                                            @forelse ($softCompetencies['strengths'] as $strength)
+                                                <li>{{ $strength->aspect->aspect_name }}</li>
+                                            @empty
+                                                <li>-</li>
+                                            @endforelse
+                                        </ol>
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Decision Making
+                                        Weaknesses
                                     </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
-                                </tr>
-                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Result & Quality Orientation
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        <ol class="ml-4 list-disc">
+                                            @forelse ($softCompetencies['weaknesses'] as $weaknesses)
+                                                <li>{{ $weaknesses->aspect->aspect_name }}</li>
+                                            @empty
+                                                <li>-</li>
+                                            @endforelse
+                                        </ol>
                                     </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
-                                </tr>
-                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Problem Solving
-                                    </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
-                                </tr>
-                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Collaboration
-                                    </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
-                                </tr>
-                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Efisiensi Pengelolaan Pekerjaan
-                                    </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
-                                </tr>
-                                <tr class="transition-colors hover:bg-gray-50">
-                                    <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Perencanaan dan Pengorganisasian
-                                    </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">-</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -559,4 +558,457 @@
             </div>
         </div>
     </div>
+    <script>
+        /* ================= DATA ================= */
+
+        const workData = @json($workDirectionData);
+
+        const segments = [
+            {
+                code: 'N',
+                angle: 0,
+                cat: 'ARAH KERJA',
+                desc: 'Menyelesaikan\nTugas\nPribadi',
+                color: '#FFB7B7',
+                colorSolid: '#ef4444',
+            },
+            {
+                code: 'G',
+                angle: 18,
+                cat: 'ARAH KERJA',
+                desc: 'Peranan sbg\nPekerja\nKeras',
+                color: '#FFB7B7',
+                colorSolid: '#ef4444',
+            },
+            {
+                code: 'A',
+                angle: 36,
+                cat: 'ARAH KERJA',
+                desc: 'Hasrat utk\nBerprestasi',
+                color: '#FFB7B7',
+                colorSolid: '#ef4444',
+            },
+            {
+                code: 'L',
+                angle: 54,
+                cat: 'KEPEMIMPINAN',
+                desc: 'Peranan\nSbg\nPemim',
+                color: '#d1d5db',
+                colorSolid: '#6b7280',
+            },
+            {
+                code: 'P',
+                angle: 72,
+                cat: 'KEPEMIMPINAN',
+                desc: 'Mengendalikan\nOrang\nLain',
+                color: '#d1d5db',
+                colorSolid: '#6b7280',
+            },
+            {
+                code: 'I',
+                angle: 90,
+                cat: 'KEPEMIMPINAN',
+                desc: 'Mudah\nMembuat\nMemutuskan',
+                color: '#d1d5db',
+                colorSolid: '#6b7280',
+            },
+            { code: 'T', angle: 108, cat: 'AKTIVITAS', desc: 'Tempo Kerja', color: '#bfdbfe', colorSolid: '#3b82f6' },
+            { code: 'V', angle: 126, cat: 'AKTIVITAS', desc: 'Stamina', color: '#bfdbfe', colorSolid: '#3b82f6' },
+            {
+                code: 'S',
+                angle: 180,
+                cat: 'PERGAULAN',
+                desc: 'Pergaulan\nSosial',
+                color: '#cffafe',
+                colorSolid: '#06b6d4',
+            },
+            {
+                code: 'B',
+                angle: 162,
+                cat: 'PERGAULAN',
+                desc: 'Kebutuhan\nTerhadap\nKelompok',
+                color: '#cffafe',
+                colorSolid: '#06b6d4',
+            },
+            {
+                code: 'O',
+                angle: 144,
+                cat: 'PERGAULAN',
+                desc: 'Kebutuhan\nutk mendekati\n& menyayangi',
+                color: '#cffafe',
+                colorSolid: '#06b6d4',
+            },
+            {
+                code: 'X',
+                angle: 198,
+                cat: 'PERGAULAN',
+                desc: 'Mendapatkan\nPerhatian',
+                color: '#cffafe',
+                colorSolid: '#06b6d4',
+            },
+            {
+                code: 'C',
+                angle: 216,
+                cat: 'GAYA KERJA',
+                desc: 'Suka\nPekerjaan\nyg Teratur',
+                color: '#f0fdf4',
+                colorSolid: '#16A34A',
+            },
+            {
+                code: 'D',
+                angle: 234,
+                cat: 'GAYA KERJA',
+                desc: 'Suka\nPekerjaan\nyg Terperinci',
+                color: '#f0fdf4',
+                colorSolid: '#16A34A',
+            },
+            {
+                code: 'R',
+                angle: 252,
+                cat: 'GAYA KERJA',
+                desc: 'Tipe\nTeoritis',
+                color: '#f0fdf4',
+                colorSolid: '#16A34A',
+            },
+            {
+                code: 'Z',
+                angle: 270,
+                cat: 'SIFAT',
+                desc: 'Hasrat utk\nBerubah',
+                color: '#fefce8',
+                colorSolid: '#f59e0b',
+            },
+            {
+                code: 'E',
+                angle: 288,
+                cat: 'SIFAT',
+                desc: 'Pengendalian\nEmosi',
+                color: '#fefce8',
+                colorSolid: '#f59e0b',
+            },
+            { code: 'K', angle: 306, cat: 'SIFAT', desc: 'Agresivitas', color: '#fefce8', colorSolid: '#f59e0b' },
+            {
+                code: 'F',
+                angle: 324,
+                cat: 'KETAATAN',
+                desc: 'Dukungan\nutk\nArahan',
+                color: '#ffedd5',
+                colorSolid: '#f97316',
+            },
+            {
+                code: 'W',
+                angle: 342,
+                cat: 'KETAATAN',
+                desc: 'Kebutuhan utk\nTaat Aturan\nArahan',
+                color: '#ffedd5',
+                colorSolid: '#f97316',
+            },
+        ];
+
+        const categories = {
+            KETAATAN: { start: 315, end: 351, color: '#f97316' },
+            'ARAH KERJA': { start: 351, end: 45, color: '#ef4444' },
+            KEPEMIMPINAN: { start: 45, end: 99, color: '#6b7280' },
+            AKTIVITAS: { start: 99, end: 135, color: '#3b82f6' },
+            PERGAULAN: { start: 135, end: 207, color: '#06b6d4' },
+            'GAYA KERJA': { start: 207, end: 261, color: '#16A34A' },
+            SIFAT: { start: 261, end: 315, color: '#FACC15' },
+        };
+
+        /* ================= ARC TEXT ================= */
+
+        function drawArcText(ctx, text, cx, cy, radius, centerDeg, letterSpacing = 0.6) {
+            ctx.save();
+            ctx.font = 'bold 15px Arial';
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const left = centerDeg > 90 && centerDeg < 270;
+            const chars = left ? [...text].reverse() : [...text];
+            const widths = chars.map((c) => ctx.measureText(c).width);
+            const totalWidth = widths.reduce((a, b) => a + b, 0) + letterSpacing * (chars.length - 1);
+            let angle = ((centerDeg - 90) * Math.PI) / 180 - totalWidth / (2 * radius);
+
+            chars.forEach((ch, i) => {
+                const w = widths[i] / radius;
+                const mid = angle + w / 2;
+                const x = cx + radius * Math.cos(mid);
+                const y = cy + radius * Math.sin(mid);
+
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(mid + Math.PI / 2 + (left ? Math.PI : 0));
+                ctx.fillText(ch, 0, 0);
+                ctx.restore();
+
+                angle += w + letterSpacing / radius;
+            });
+
+            ctx.restore();
+        }
+
+        /* ================= DRAW ================= */
+
+        function drawChart() {
+            const canvas = document.getElementById('workDirectionCanvas');
+            const ctx = canvas.getContext('2d');
+            const size = canvas.parentElement.offsetWidth;
+
+            canvas.width = size;
+            canvas.height = size;
+
+            const cx = size / 2;
+            const cy = size / 2;
+
+            const outerR = size * 0.48;
+            const innerR = size * 0.4;
+
+            const boxOuter = size * 0.39;
+            const boxInner = size * 0.31;
+
+            const descR = size * 0.35;
+
+            const subDescOuter = size * 0.3;
+            const subDescInner = size * 0.24;
+
+            const radarR = size * 0.24;
+
+            ctx.clearRect(0, 0, size, size);
+
+            function getCategoryCenter(start, end) {
+                if (start <= end) {
+                    return (start + end) / 2;
+                }
+
+                const span = 360 - start + end;
+                let center = start + span / 2;
+
+                if (center >= 360) center -= 360;
+                return center;
+            }
+
+            function getCategoryAverage(categoryName) {
+                const segs = segments.filter((s) => s.cat === categoryName);
+
+                if (!segs.length) return 0;
+
+                const scores = segs
+                    .map((s) => {
+                        const d = workData.find((w) => w.code === s.code);
+                        return d ? d.score : null;
+                    })
+                    .filter((v) => v !== null);
+
+                if (!scores.length) return 0;
+
+                const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+                return avg.toFixed(1); // 1 angka desimal
+            }
+
+            /* ===== OUTER CATEGORY RING ===== */
+            function arc(start, end, color) {
+                ctx.beginPath();
+                ctx.arc(cx, cy, outerR, ((start - 90) * Math.PI) / 180, ((end - 90) * Math.PI) / 180);
+                ctx.arc(cx, cy, innerR, ((end - 90) * Math.PI) / 180, ((start - 90) * Math.PI) / 180, true);
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+
+            Object.entries(categories).forEach(([n, c]) => {
+                if (n === 'KETAATAN') {
+                    arc(315, 360, c.color);
+                    arc(0, 45, c.color);
+                } else arc(c.start, c.end, c.color);
+            });
+
+            /* ===== CATEGORY TEXT (CURVED) ===== */
+            Object.entries(categories).forEach(([name, c]) => {
+                const r = (outerR + innerR) / 2;
+                const center = getCategoryCenter(c.start, c.end);
+
+                const avg = getCategoryAverage(name);
+                const label = `${name} | ${avg}`;
+
+                drawArcText(ctx, label, cx, cy, r, center, 0.6);
+            });
+
+            segments.forEach((s) => {
+                const sa = ((s.angle - 9 - 90) * Math.PI) / 180;
+                const ea = ((s.angle + 9 - 90) * Math.PI) / 180;
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, subDescOuter, sa, ea);
+                ctx.arc(cx, cy, subDescInner, ea, sa, true);
+                ctx.closePath();
+
+                ctx.fillStyle = s.colorSolid;
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            });
+
+            segments.forEach((s) => {
+                const rad = ((s.angle - 90) * Math.PI) / 180;
+                const r = (subDescOuter + subDescInner) / 2;
+
+                const x = cx + r * Math.cos(rad);
+                const y = cy + r * Math.sin(rad);
+
+                ctx.save();
+                ctx.translate(x, y);
+
+                let rotate = rad + Math.PI / 2;
+                if (s.angle > 90 && s.angle < 270) rotate += Math.PI;
+
+                ctx.rotate(rotate);
+
+                ctx.font = 'bold 12px Arial';
+                ctx.fillStyle = '#fff';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                ctx.fillText(s.code, 0, 0);
+
+                ctx.restore();
+            });
+
+            /* ===== LETTER SEGMENTS ===== */
+            segments.forEach((s) => {
+                const sa = ((s.angle - 9 - 90) * Math.PI) / 180;
+                const ea = ((s.angle + 9 - 90) * Math.PI) / 180;
+                ctx.beginPath();
+                ctx.arc(cx, cy, boxOuter, sa, ea);
+                ctx.arc(cx, cy, boxInner, ea, sa, true);
+                ctx.closePath();
+                ctx.fillStyle = s.color;
+                ctx.fill();
+                ctx.strokeStyle = s.colorSolid;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            });
+
+            /* ===== DESCRIPTION ===== */
+            segments.forEach((s) => {
+                const rad = ((s.angle - 90) * Math.PI) / 180;
+
+                const x = cx + descR * Math.cos(rad);
+                const y = cy + descR * Math.sin(rad);
+
+                ctx.save();
+                ctx.translate(x, y);
+
+                let rotate = rad + Math.PI / 2;
+
+                if (s.angle > 90 && s.angle < 270) {
+                    rotate += Math.PI;
+                }
+
+                ctx.rotate(rotate);
+
+                ctx.font = '10px Arial';
+                ctx.fillStyle = '#000';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                const lines = s.desc.split('\n');
+                lines.forEach((line, i) => {
+                    ctx.fillText(line, 0, (i - (lines.length - 1) / 2) * 10);
+                });
+
+                ctx.restore();
+            });
+
+            drawRadar(cx, cy, radarR);
+        }
+
+        /* ===== RADAR ===== */
+        function drawRadar(cx, cy, r) {
+            const div = document.createElement('div');
+            div.style.position = 'absolute';
+            div.style.left = cx - r + 'px';
+            div.style.top = cy - r + 'px';
+            div.style.width = r * 2 + 'px';
+            div.style.height = r * 2 + 'px';
+
+            const c = document.createElement('canvas');
+            div.appendChild(c);
+            document.getElementById('workDirectionCanvas').parentElement.appendChild(div);
+
+            new Chart(c, {
+                type: 'radar',
+                plugins: [ChartDataLabels],
+                data: {
+                    labels: segments.map((s) => s.code),
+                    datasets: [
+                        {
+                            data: segments.map((s) => {
+                                const f = workData.find((d) => d.code === s.code);
+                                return f ? f.score : 0;
+                            }),
+                            backgroundColor: 'rgba(59,130,246,.2)',
+                            borderColor: '#2563EB',
+                            borderWidth: 2,
+                            pointRadius: 3,
+                        },
+                    ],
+                },
+                options: {
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title(ctx) {
+                                    const s = segments[ctx[0].dataIndex];
+                                    return `${s.code} — ${s.cat}`;
+                                },
+                                label(ctx) {
+                                    const s = segments[ctx.dataIndex];
+
+                                    const cleanDesc = s.desc
+                                        .replace(/\\n/g, ' ')
+                                        .replace(/\n/g, ' ')
+                                        .replace(/\s+/g, ' ');
+
+                                    return [cleanDesc, `Skor : ${ctx.raw}`];
+                                },
+                            },
+                        },
+                        datalabels: {
+                            color: '#111',
+                            backgroundColor: '#ffffff.9',
+                            borderRadius: 4,
+                            font: {
+                                size: 12,
+                                weight: 'bold',
+                            },
+                            align: 'top',
+                            offset: 6,
+                            formatter: (value) => value,
+                        },
+                    },
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 9,
+                            pointLabels: { display: false },
+                            ticks: { stepSize: 1 },
+                        },
+                    },
+                },
+            });
+        }
+
+        /* ===== INIT ===== */
+        if (typeof Chart === 'undefined') {
+            const s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+            s.onload = drawChart;
+            document.head.appendChild(s);
+        } else drawChart();
+
+        window.addEventListener('resize', () => location.reload());
+    </script>
 </div>

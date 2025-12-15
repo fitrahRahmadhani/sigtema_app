@@ -83,8 +83,9 @@ class Index extends Component
         if ($aspect->scores()->exists()) {
             Toaster::error('Cannot delete aspect because it is being used in psychogram scores.');
             return;
+        } else {
+            $aspect->delete();
         }
-        $aspect->delete();
     }
 
     public function render()
