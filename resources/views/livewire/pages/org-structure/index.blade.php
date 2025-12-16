@@ -103,7 +103,7 @@
             </div>
 
             <!-- Org Chart Container -->
-            @if($hasSelectedCompany)
+            @if($hasSelectedCompany )
                 <div class="relative rounded-xl border border-gray-200 bg-white shadow-sm">
                     <!-- Scrollable Area -->
                     <div id="orgChartScrollArea" class="org-chart-scroll-area relative overflow-auto p-8">
@@ -204,40 +204,44 @@
                                         $output .= '<span class="text-sm font-medium">Employee Profile</span>';
                                         $output .= '</a>';
                                     }
+                                    $user = auth()->user();
+                                    $isAdmin = $user && ($user->hasRole('superadmin') || $user->hasRole('admin'));
 
-                                    if($isVacant) {
-                                        // Assign employee
-                                        $output .= '<button wire:click="openAssignEmployeeModal(' . $node['position_id'] . ')" class="w-full flex items-center gap-3 px-3 py-2 rounded-md ' . ($isVacant ? 'text-red-700 hover:bg-red-100' : 'text-gray-700 hover:bg-gray-100') . ' transition-colors">';
+                                    if ($isAdmin) {
+                                        // Assign employee (only for vacant)
+                                        if ($isVacant) {
+                                            $output .= '<button wire:click="openAssignEmployeeModal(' . $node['position_id'] . ')" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-red-700 hover:bg-red-100 transition-colors">';
+                                            $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">';
+                                            $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />';
+                                            $output .= '</svg>';
+                                            $output .= '<span class="text-sm font-medium">Assign Employee</span>';
+                                            $output .= '</button>';
+                                        }
+
+                                        // Unassign employee
+                                        $output .= '<button wire:click="openUnassignEmployeeModal(' . $node['position_id'] . ')" class="w-full flex items-center gap-3 px-3 py-2 rounded-md ' . ($isVacant ? 'text-red-700 hover:bg-red-100' : 'text-gray-700 hover:bg-gray-100') . ' transition-colors">';
                                         $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">';
-                                        $output .= '<path strokeLinecap="round" strokeLinejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />';
+                                        $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />';
                                         $output .= '</svg>';
-                                        $output .= '<span class="text-sm font-medium">Assign Employee</span>';
+                                        $output .= '<span class="text-sm font-medium">Unassign Employee</span>';
+                                        $output .= '</button>';
+
+                                        // Add Staff
+                                        $output .= '<button wire:click="openAddStaffModal(' . $node['position_id'] . ')" class="w-full flex items-center gap-3 px-3 py-2 rounded-md ' . ($isVacant ? 'text-red-700 hover:bg-red-100' : 'text-gray-700 hover:bg-gray-100') . ' transition-colors">';
+                                        $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">';
+                                        $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />';
+                                        $output .= '</svg>';
+                                        $output .= '<span class="text-sm font-medium">Add Staff</span>';
+                                        $output .= '</button>';
+
+                                        // Remove hierarchy
+                                        $output .= '<button wire:click="confirmDelete(' . $node['hierarchy_id'] . ', \'' . addslashes($node['title']) . '\')" class="w-full flex items-center gap-3 px-3 py-2 rounded-md ' . ($isVacant ? 'text-red-700 hover:bg-red-100' : 'text-gray-700 hover:bg-gray-100') . ' transition-colors">';
+                                        $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">';
+                                        $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />';
+                                        $output .= '</svg>';
+                                        $output .= '<span class="text-sm font-medium">Remove Hierarchy</span>';
                                         $output .= '</button>';
                                     }
-
-                                    // Unassign employee
-                                    $output .= '<button wire:click="openUnassignEmployeeModal(' . $node['position_id'] . ')" class="w-full flex items-center gap-3 px-3 py-2 rounded-md ' . ($isVacant ? 'text-red-700 hover:bg-red-100' : 'text-gray-700 hover:bg-gray-100') . ' transition-colors">';
-                                    $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">';
-                                    $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />';
-                                    $output .= '</svg>';
-                                    $output .= '<span class="text-sm font-medium">Unassign Employee</span>';
-                                    $output .= '</button>';
-
-                                    // Add Staff
-                                    $output .= '<button wire:click="openAddStaffModal(' . $node['position_id'] . ')" class="w-full flex items-center gap-3 px-3 py-2 rounded-md ' . ($isVacant ? 'text-red-700 hover:bg-red-100' : 'text-gray-700 hover:bg-gray-100') . ' transition-colors">';
-                                    $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">';
-                                    $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />';
-                                    $output .= '</svg>';
-                                    $output .= '<span class="text-sm font-medium">Add Staff</span>';
-                                    $output .= '</button>';
-
-                                    // Remove hierarchy
-                                    $output .= '<button wire:click="confirmDelete(' . $node['hierarchy_id'] . ', \'' . addslashes($node['title']) . '\')" class="w-full flex items-center gap-3 px-3 py-2 rounded-md ' . ($isVacant ? 'text-red-700 hover:bg-red-100' : 'text-gray-700 hover:bg-gray-100') . ' transition-colors">';
-                                    $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">';
-                                    $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />';
-                                    $output .= '</svg>';
-                                    $output .= '<span class="text-sm font-medium">Remove Hierarchy</span>';
-                                    $output .= '</button>';
 
                                     $output .= '</div>';
                                     $output .= '</div>';

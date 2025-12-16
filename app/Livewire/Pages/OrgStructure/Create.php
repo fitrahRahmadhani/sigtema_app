@@ -10,6 +10,7 @@ use Masmerise\Toaster\Toaster;
 use Livewire\Attributes\Layout;
 use App\Models\EmployeeHierarchy;
 use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\Auth;
 
 #[Layout('components.layouts.app')]
 #[Title('Create Employee Hierarchy')]
@@ -29,6 +30,18 @@ class Create extends Component
 
     public $positions = [];
     public $superiors = [];
+
+    public $company;
+
+    public function mount()
+    {
+        if (!Auth::user()->hasRole('superadmin')) {
+            $this->company_id = Auth::user()->company_id;
+            $this->company = Company::find($this->company_id);
+        } else {
+            $this->company_id = session('selected_company_id');
+        }
+    }
 
     public function updatedCompanyId()
     {

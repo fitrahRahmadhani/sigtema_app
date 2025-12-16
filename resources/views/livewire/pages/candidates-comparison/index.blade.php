@@ -48,7 +48,7 @@
                     >
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    <span class="hidden md:inline">Add Employee</span>
+                    <span class="hidden md:inline">Add Column</span>
                 </button>
             @endif
         </div>
@@ -330,22 +330,20 @@
                             </td>
                         </tr>
 
-                        <!-- Analytical Thinking -->
+                        <!-- Strengths -->
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Analytical Thinking</td>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Strengths</td>
                             @for ($i = 0; $i < $columnCount; $i++)
                                 <td class="px-6 py-4 text-gray-700">
                                     @if (! empty($selectedEmployees[$i]))
                                         <div class="flex items-center gap-2">
-                                            <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                                                <div
-                                                    class="h-full rounded-full bg-gray-600"
-                                                    style="width: {{ rand(70, 95) }}%"
-                                                ></div>
-                                            </div>
-                                            <span class="text-sm font-semibold text-gray-600">
-                                                {{ rand(70, 95) }}%
-                                            </span>
+                                            <ol class="ml-4 list-disc">
+                                                @forelse ($selectedEmployees[$i]->soft_competencies['strengths'] as $strength)
+                                                    <li>{{ $strength->aspect->aspect_name }}</li>
+                                                @empty
+                                                    <li>-</li>
+                                                @endforelse
+                                            </ol>
                                         </div>
                                     @else
                                         <span class="text-gray-400">-</span>
@@ -354,118 +352,20 @@
                             @endfor
                         </tr>
 
-                        <!-- Decision Making -->
+                        <!-- Weaknesses -->
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Decision Making</td>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Weaknesses</td>
                             @for ($i = 0; $i < $columnCount; $i++)
                                 <td class="px-6 py-4 text-gray-700">
                                     @if (! empty($selectedEmployees[$i]))
                                         <div class="flex items-center gap-2">
-                                            <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                                                <div
-                                                    class="h-full rounded-full bg-gray-600"
-                                                    style="width: {{ rand(65, 90) }}%"
-                                                ></div>
-                                            </div>
-                                            <span class="text-sm font-semibold text-gray-600">
-                                                {{ rand(65, 90) }}%
-                                            </span>
-                                        </div>
-                                    @else
-                                        <span class="text-gray-400">-</span>
-                                    @endif
-                                </td>
-                            @endfor
-                        </tr>
-
-                        <!-- Result & Quality Orientation -->
-                        <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Result & Quality Orientation</td>
-                            @for ($i = 0; $i < $columnCount; $i++)
-                                <td class="px-6 py-4 text-gray-700">
-                                    @if (! empty($selectedEmployees[$i]))
-                                        <div class="flex items-center gap-2">
-                                            <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                                                <div
-                                                    class="h-full rounded-full bg-gray-600"
-                                                    style="width: {{ rand(70, 95) }}%"
-                                                ></div>
-                                            </div>
-                                            <span class="text-sm font-semibold text-gray-600">
-                                                {{ rand(70, 95) }}%
-                                            </span>
-                                        </div>
-                                    @else
-                                        <span class="text-gray-400">-</span>
-                                    @endif
-                                </td>
-                            @endfor
-                        </tr>
-
-                        <!-- Problem Solving -->
-                        <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Problem Solving</td>
-                            @for ($i = 0; $i < $columnCount; $i++)
-                                <td class="px-6 py-4 text-gray-700">
-                                    @if (! empty($selectedEmployees[$i]))
-                                        <div class="flex items-center gap-2">
-                                            <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                                                <div
-                                                    class="h-full rounded-full bg-gray-600"
-                                                    style="width: {{ rand(65, 90) }}%"
-                                                ></div>
-                                            </div>
-                                            <span class="text-sm font-semibold text-gray-600">
-                                                {{ rand(65, 90) }}%
-                                            </span>
-                                        </div>
-                                    @else
-                                        <span class="text-gray-400">-</span>
-                                    @endif
-                                </td>
-                            @endfor
-                        </tr>
-
-                        <!-- Efisiensi Pengelolaan Pekerjaan -->
-                        <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Efisiensi Pengelolaan Pekerjaan</td>
-                            @for ($i = 0; $i < $columnCount; $i++)
-                                <td class="px-6 py-4 text-gray-700">
-                                    @if (! empty($selectedEmployees[$i]))
-                                        <div class="flex items-center gap-2">
-                                            <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                                                <div
-                                                    class="h-full rounded-full bg-gray-600"
-                                                    style="width: {{ rand(70, 95) }}%"
-                                                ></div>
-                                            </div>
-                                            <span class="text-sm font-semibold text-gray-600">
-                                                {{ rand(70, 95) }}%
-                                            </span>
-                                        </div>
-                                    @else
-                                        <span class="text-gray-400">-</span>
-                                    @endif
-                                </td>
-                            @endfor
-                        </tr>
-
-                        <!-- Perencanaan dan Pengorganisasian -->
-                        <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Perencanaan dan Pengorganisasian</td>
-                            @for ($i = 0; $i < $columnCount; $i++)
-                                <td class="px-6 py-4 text-gray-700">
-                                    @if (! empty($selectedEmployees[$i]))
-                                        <div class="flex items-center gap-2">
-                                            <div class="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                                                <div
-                                                    class="h-full rounded-full bg-gray-600"
-                                                    style="width: {{ rand(65, 90) }}%"
-                                                ></div>
-                                            </div>
-                                            <span class="text-sm font-semibold text-gray-600">
-                                                {{ rand(65, 90) }}%
-                                            </span>
+                                            <ol class="ml-4 list-disc">
+                                                @forelse ($selectedEmployees[$i]->soft_competencies['weaknesses'] as $strength)
+                                                    <li>{{ $strength->aspect->aspect_name }}</li>
+                                                @empty
+                                                    <li>-</li>
+                                                @endforelse
+                                            </ol>
                                         </div>
                                     @else
                                         <span class="text-gray-400">-</span>
@@ -507,7 +407,7 @@
                             @endfor
                         </tr>
 
-                        <!-- Innovation Section (Blank) -->
+                        <!-- Innovation Section -->
                         <tr class="color-gradient">
                             <td colspan="{{ $columnCount + 1 }}" class="left-0 px-6 py-3 font-semibold text-white">
                                 Innovation
@@ -517,7 +417,47 @@
                             <td class="left-0 bg-white px-6 py-4 font-medium text-gray-900"></td>
                             @for ($i = 0; $i < $columnCount; $i++)
                                 <td class="px-6 py-4 align-top text-gray-700">
-                                    <span class="text-gray-400">-</span>
+                                    @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->innovations && $selectedEmployees[$i]->innovations->count() > 0)
+                                        <ul class="space-y-3">
+                                            @foreach ($selectedEmployees[$i]->innovations as $innovation)
+                                                <li class="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                                                    <div class="mb-1 flex items-start justify-between gap-2">
+                                                        <p class="flex-1 font-medium text-gray-900">
+                                                            {{ $innovation->title }}
+                                                        </p>
+                                                        @if ($innovation->status)
+                                                            <span
+                                                                class="{{ $innovation->status === 'inisiator' ? 'bg-green-100 text-green-800' : '' }} {{ $innovation->status === 'peserta' ? 'bg-blue-100 text-blue-800' : '' }}  inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                                                            >
+                                                                {{ ucfirst($innovation->status) }}
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    @if ($innovation->event)
+                                                        <p class="text-sm text-gray-600">{{ $innovation->event }}</p>
+                                                    @endif
+
+                                                    @if ($innovation->achievement)
+                                                        <p class="mt-1 text-sm font-medium text-amber-700">
+                                                            🏆 {{ $innovation->achievement }}
+                                                        </p>
+                                                    @endif
+
+                                                    @if ($innovation->category || $innovation->theme)
+                                                        <p class="mt-1 text-sm text-gray-500">
+                                                            {{ $innovation->category ? $innovation->category : '' }}
+                                                            {{ $innovation->category && $innovation->theme ? ' • ' : '' }}
+                                                            {{ $innovation->theme ? $innovation->theme : '' }}
+                                                        </p>
+                                                    @endif
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        <span class="text-gray-400">
+                                            {{ ! empty($selectedEmployees[$i]) ? 'N/A' : '-' }}
+                                        </span>
+                                    @endif
                                 </td>
                             @endfor
                         </tr>

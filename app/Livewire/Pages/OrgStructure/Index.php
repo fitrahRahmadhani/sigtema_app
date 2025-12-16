@@ -44,8 +44,8 @@ class Index extends Component
     {
         $user = Auth::user();
 
-        // Cek jika superadmin (company_id = null)
-        $this->isSuperadmin = is_null($user->company_id);
+        // Cek jika superadmin
+        $this->isSuperadmin = $user->hasRole('superadmin');
 
         if ($this->isSuperadmin) {
             // Superadmin: load semua companies
@@ -117,7 +117,7 @@ class Index extends Component
 
         // Jika tidak ada root yang jelas, ambil position dengan level tertinggi
         if ($rootPositionIds->isEmpty()) {
-            $rootPositionIds = collect([$hierarchies->first()->superior_id]);
+            $rootPositionIds = collect([$hierarchies->first()?->superior_id]);
         }
 
         // Function untuk build tree recursively
@@ -372,12 +372,13 @@ class Index extends Component
     }
 
     public function openAssignEmployeeModal($positionId)
-{
-    $this->dispatch('openAssignEmployeeModal',
-        positionId: $positionId,
-        companyId: $this->selectedCompanyId
-    )->to(AssignEmployeeModal::class);
-}
+    {
+        $this->dispatch(
+            'openAssignEmployeeModal',
+            positionId: $positionId,
+            companyId: $this->selectedCompanyId
+        )->to(AssignEmployeeModal::class);
+    }
 
     public function render()
     {

@@ -24,6 +24,7 @@ class Table extends Component
 
     public $isSuperadmin = false;
     public $selectedCompanyId = null;
+    public $company;
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -41,7 +42,7 @@ class Table extends Component
         $user = Auth::user();
 
         // Cek jika superadmin (company_id = null)
-        $this->isSuperadmin = is_null($user->company_id);
+        $this->isSuperadmin = $user->hasRole('superadmin');
 
         if ($this->isSuperadmin) {
             // Superadmin: ambil company yang dipilih dari session
@@ -55,6 +56,7 @@ class Table extends Component
             // Admin: pakai company mereka
             $this->selectedCompanyId = $user->company_id;
             $this->companyFilter = $this->selectedCompanyId;
+            $this->company = $user->company->name;
         }
     }
 
