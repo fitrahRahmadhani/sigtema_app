@@ -1,7 +1,10 @@
 <div class="space-y-4 p-2">
     <!-- Breadcrumbs -->
     <flux:breadcrumbs>
-        <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
+        @hasanyrole('superadmin|admin')
+            <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
+        @endhasanyrole
+
         <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Path</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('employees-profile.index') }}">Employees Profile</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>{{ $employee->name }}'s Profile</flux:breadcrumbs.item>

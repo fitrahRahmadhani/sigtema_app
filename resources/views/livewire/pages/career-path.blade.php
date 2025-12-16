@@ -1,6 +1,8 @@
 <div class="space-y-4">
     <flux:breadcrumbs>
+        @hasanyrole('superadmin|admin')
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
+        @endhasanyrole
         <flux:breadcrumbs.item>Career Path</flux:breadcrumbs.item>
     </flux:breadcrumbs>
     <div class="h-full w-full rounded-xl bg-white p-10">

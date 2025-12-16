@@ -1,52 +1,19 @@
 <?php
 
-use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\TwoFactor;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
-use App\Exports\EmployeeTemplateExport;
-use Maatwebsite\Excel\Facades\Excel;
 
 Route::redirect('/', '/login');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
-
-Route::middleware(['auth'])->group(function () {
-    // Career Path
-    Route::get('career-path', App\Livewire\Pages\CareerPath::class)->name('career-path');
-
-    // Vacant Positions
-    Route::get('career-path/vacant-positions', App\Livewire\Pages\VacantPositions\Index::class)->name('vacant-positions.index');
-    Route::get('career-path/vacant-positions/show', App\Livewire\Pages\VacantPositions\Show::class)->name('vacant-positions.show');
-
-    // Candidates Comparison
-    Route::get('career-path/candidates-comparison/index', App\Livewire\Pages\CandidatesComparison\Index::class)->name('candidates-comparison.index');
-    Route::redirect('settings', 'settings/profile');
-
-    // Employees Profile
-    Route::get('career-path/employees-profile', App\Livewire\Pages\EmployeesProfile\Index::class)->name('employees-profile.index');
-    Route::get('career-path/employees-profile/{employee:slug}/show', App\Livewire\Pages\EmployeesProfile\Show::class)->name('employees-profile.show');
-
-    // Organization Structure
-    Route::get('organization-structure', App\Livewire\Pages\OrgStructure\Index::class)->name('organization-structure.index');
-    Route::get('organization-structure/table', App\Livewire\Pages\OrgStructure\Table::class)->name('organization-structure.table');
-    Route::get('organization-structure/create', App\Livewire\Pages\OrgStructure\Create::class)->name('organization-structure.create');
-    Route::get('organization-structure/{hierarchy}/edit', App\Livewire\Pages\OrgStructure\Edit::class)->name('organization-structure.edit');
-
+Route::group(['middleware' => ['role:superadmin', 'auth', 'verified']], function () {
     // Companies
     Route::get('companies', App\Livewire\Pages\Companies\Index::class)->name('companies.index');
     Route::get('companies/show', App\Livewire\Pages\Companies\Show::class)->name('companies.show');
     Route::get('companies/create', App\Livewire\Pages\Companies\Create::class)->name('companies.create');
     Route::get('companies/{company:slug}/edit', App\Livewire\Pages\Companies\Edit::class)->name('companies.edit');
-
-    // Positions
-    Route::get('positions', App\Livewire\Pages\Positions\Index::class)->name('positions.index');
-    Route::get('positions/create', App\Livewire\Pages\Positions\Create::class)->name('positions.create');
-    Route::get('positions/{position:slug}/edit', App\Livewire\Pages\Positions\Edit::class)->name('positions.edit');
 
     // Users
     Route::get('users', App\Livewire\Pages\Users\Index::class)->name('users.index');
@@ -57,6 +24,25 @@ Route::middleware(['auth'])->group(function () {
     Route::get('role-permissions', App\Livewire\Pages\RolePermission\Index::class)->name('role-permissions.index');
     Route::get('role-permissions/create', App\Livewire\Pages\RolePermission\Create::class)->name('role-permissions.create');
     Route::get('role-permissions/{id}/edit', App\Livewire\Pages\RolePermission\Edit::class)->name('role-permissions.edit');
+
+    // Logs
+    Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index'])->name('logs.index');
+});
+
+Route::group(['middleware' => ['role:superadmin|admin', 'auth', 'verified']], function () {
+    // Dashboard
+    Route::view('dashboard', 'dashboard')->name('dashboard');
+
+    // Organization Structure
+    Route::get('organization-structure', App\Livewire\Pages\OrgStructure\Index::class)->name('organization-structure.index');
+    Route::get('organization-structure/table', App\Livewire\Pages\OrgStructure\Table::class)->name('organization-structure.table');
+    Route::get('organization-structure/create', App\Livewire\Pages\OrgStructure\Create::class)->name('organization-structure.create');
+    Route::get('organization-structure/{hierarchy}/edit', App\Livewire\Pages\OrgStructure\Edit::class)->name('organization-structure.edit');
+
+    // Positions
+    Route::get('positions', App\Livewire\Pages\Positions\Index::class)->name('positions.index');
+    Route::get('positions/create', App\Livewire\Pages\Positions\Create::class)->name('positions.create');
+    Route::get('positions/{position:slug}/edit', App\Livewire\Pages\Positions\Edit::class)->name('positions.edit');
 
     // Employees
     Route::get('employees', App\Livewire\Pages\Employees\Index::class)->name('employees.index');
@@ -118,7 +104,29 @@ Route::middleware(['auth'])->group(function () {
     Route::get('bulk-upload/technical-competencies', \App\Livewire\Pages\BulkUploads\TechnicalCompetencies::class)->name('bulk-upload.technical-competencies');
     Route::get('bulk-upload/position-histories', \App\Livewire\Pages\BulkUploads\PositionHistories::class)->name('bulk-upload.position-histories');
     Route::get('bulk-upload/psychogram-results', \App\Livewire\Pages\BulkUploads\PsychogramResults::class)->name('bulk-upload.psychogram-results');
+});
 
+Route::group(['middleware' => ['role:superadmin|admin|head-of-unit', 'auth', 'verified']], function () {
+    // Career Path
+    Route::get('career-path', App\Livewire\Pages\CareerPath::class)->name('career-path');
+
+    // Vacant Positions
+    Route::get('career-path/vacant-positions', App\Livewire\Pages\VacantPositions\Index::class)->name('vacant-positions.index');
+    Route::get('career-path/vacant-positions/show', App\Livewire\Pages\VacantPositions\Show::class)->name('vacant-positions.show');
+
+    // Candidates Comparison
+    Route::get('career-path/candidates-comparison/index', App\Livewire\Pages\CandidatesComparison\Index::class)->name('candidates-comparison.index');
+    Route::redirect('settings', 'settings/profile');
+
+    // Employees Profile
+    Route::get('career-path/employees-profile', App\Livewire\Pages\EmployeesProfile\Index::class)->name('employees-profile.index');
+    Route::get('career-path/employees-profile/{employee:slug}/show', App\Livewire\Pages\EmployeesProfile\Show::class)->name('employees-profile.show');
+
+    // Organization Structure
+    Route::get('organization-structure', App\Livewire\Pages\OrgStructure\Index::class)->name('organization-structure.index');
+    Route::get('organization-structure/table', App\Livewire\Pages\OrgStructure\Table::class)->name('organization-structure.table');
+
+    // Settings
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
 
@@ -133,8 +141,5 @@ Route::middleware(['auth'])->group(function () {
         )
         ->name('two-factor.show');
 });
-
-
-Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 
 require __DIR__ . '/auth.php';
