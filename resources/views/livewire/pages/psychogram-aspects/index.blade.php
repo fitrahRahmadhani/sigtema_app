@@ -205,7 +205,7 @@
                 >
                     <!-- Aspect Info -->
                     <div class="col-span-3 flex flex-col justify-center">
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
                             <p class="text-sm font-semibold text-gray-900">{{ $aspect->aspect_name }}</p>
                             <span
                                 class="inline-flex items-center rounded-md bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800"

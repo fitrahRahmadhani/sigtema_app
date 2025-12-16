@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class EmployeesImport implements ToCollection, WithHeadingRow
 {
@@ -24,11 +25,19 @@ class EmployeesImport implements ToCollection, WithHeadingRow
         'failed' => 0
     ];
     private $errors = [];
+    private $existingEmployees = [];
+    private $activeCompanyIds = [];
 
     public function collection(Collection $rows)
     {
         $user = Auth::user();
+
+        // OPTIMASI 1: Load semua data yang dibutuhkan di awal (eager loading)
+        $this->preloadData($user);
+
         $processedData = [];
+        $toInsert = [];
+        $toUpdate = [];
 
         foreach ($rows as $index => $row) {
             try {
@@ -50,13 +59,19 @@ class EmployeesImport implements ToCollection, WithHeadingRow
                     continue;
                 }
 
-                // Get company ID
+                // Get company ID (now uses cached data)
                 $companyId = $this->getCompanyId($row, $user);
                 if (!$companyId) {
                     if ($this->isImportMode()) {
                         $this->results['failed']++;
                     }
                     continue;
+                }
+
+                // OPTIMASI 2: Hanya hash password saat import mode, tidak saat preview
+                $passwordHash = null;
+                if ($this->isImportMode()) {
+                    $passwordHash = $this->getPasswordHash($this->cleanValue($row['password'] ?? null));
                 }
 
                 // Prepare employee data
@@ -69,15 +84,18 @@ class EmployeesImport implements ToCollection, WithHeadingRow
                     'phone' => $this->cleanValue($row['phone'] ?? null),
                     'birth_date' => $this->parseDate($this->cleanValue($row['birth_date'] ?? null)),
                     'gender' => $this->validateGender($this->cleanValue($row['gender'] ?? null)),
-                    'password' => $this->getPassword($this->cleanValue($row['password'] ?? null)),
                     'personal_grade' => $this->cleanValue($row['personal_grade'] ?? ''),
                     'band' => $this->cleanValue($row['band'] ?? ''),
                     'hire_date' => $this->parseDate($this->cleanValue($row['hire_date'] ?? null)),
                     'profile_path' => $this->cleanValue($row['profile_path'] ?? null),
                 ];
 
+                if ($this->isImportMode()) {
+                    $employeeData['password'] = $passwordHash;
+                }
+
                 // Validate data
-                $validator = Validator::make($employeeData, [
+                $rules = [
                     'company_id' => 'required|exists:companies,id',
                     'employee_number' => 'required|string|max:255',
                     'name' => 'required|string|max:255',
@@ -89,7 +107,9 @@ class EmployeesImport implements ToCollection, WithHeadingRow
                     'band' => 'required|string|max:255',
                     'hire_date' => 'nullable|date',
                     'profile_path' => 'nullable|string|max:255',
-                ]);
+                ];
+
+                $validator = Validator::make($employeeData, $rules);
 
                 if ($validator->fails()) {
                     if ($this->isImportMode()) {
@@ -98,30 +118,31 @@ class EmployeesImport implements ToCollection, WithHeadingRow
                     continue;
                 }
 
-                // Check for duplicate
-                $existingEmployee = Employee::where('employee_number', $employeeData['employee_number'])
-                    ->where('company_id', $employeeData['company_id'])
-                    ->first();
+                // OPTIMASI 3: Check duplicate menggunakan cached data, bukan query
+                $duplicateKey = $companyId . '_' . $employeeNumber;
+                $isDuplicate = isset($this->existingEmployees[$duplicateKey]);
 
-                $isDuplicate = !is_null($existingEmployee);
-
-                if ($isDuplicate && !in_array($employeeData['employee_number'], $this->duplicates)) {
-                    $this->duplicates[] = $employeeData['employee_number'];
+                if ($isDuplicate && !in_array($employeeNumber, $this->duplicates)) {
+                    $this->duplicates[] = $employeeNumber;
                 }
 
-                // Handle import mode
+                // Handle import mode dengan batch operations
                 if ($this->isImportMode()) {
                     if ($isDuplicate) {
                         if ($this->duplicateAction === 'update') {
                             $updateData = $employeeData;
                             unset($updateData['slug'], $updateData['password']);
-                            $existingEmployee->update($updateData);
+                            $updateData['id'] = $this->existingEmployees[$duplicateKey];
+                            $toUpdate[] = $updateData;
                             $this->results['updated']++;
                         } else {
                             $this->results['skipped']++;
                         }
                     } else {
-                        Employee::create($employeeData);
+                        // Tambahkan timestamps
+                        $employeeData['created_at'] = now();
+                        $employeeData['updated_at'] = now();
+                        $toInsert[] = $employeeData;
                         $this->results['success']++;
                     }
                 }
@@ -140,8 +161,56 @@ class EmployeesImport implements ToCollection, WithHeadingRow
             }
         }
 
+        // OPTIMASI 4: Batch insert dan update
+        if ($this->isImportMode()) {
+            if (!empty($toInsert)) {
+                // Insert dalam chunks untuk menghindari query terlalu besar
+                foreach (array_chunk($toInsert, 500) as $chunk) {
+                    Employee::insert($chunk);
+                }
+            }
+
+            if (!empty($toUpdate)) {
+                // Batch update menggunakan DB transaction
+                DB::transaction(function () use ($toUpdate) {
+                    foreach ($toUpdate as $updateData) {
+                        Employee::where('id', $updateData['id'])->update(
+                            collect($updateData)->except('id')->toArray()
+                        );
+                    }
+                });
+            }
+        }
+
         if (!$this->isImportMode()) {
             $this->data = $processedData;
+        }
+    }
+
+    /**
+     * OPTIMASI: Preload semua data yang dibutuhkan di awal
+     */
+    private function preloadData($user)
+    {
+        // Load active company IDs
+        $this->activeCompanyIds = Company::where('is_active', true)
+            ->pluck('id')
+            ->toArray();
+
+        // Load existing employees untuk check duplicate
+        $query = Employee::select('id', 'employee_number', 'company_id');
+
+        // Jika bukan superadmin, hanya load dari company user
+        if (!is_null($user->company_id)) {
+            $query->where('company_id', $user->company_id);
+        }
+
+        $employees = $query->get();
+
+        // Buat lookup table untuk O(1) duplicate check
+        foreach ($employees as $emp) {
+            $key = $emp->company_id . '_' . $emp->employee_number;
+            $this->existingEmployees[$key] = $emp->id;
         }
     }
 
@@ -207,11 +276,8 @@ class EmployeesImport implements ToCollection, WithHeadingRow
             return null;
         }
 
-        if (Company::where('id', $companyId)->where('is_active', true)->exists()) {
-            return $companyId;
-        }
-
-        return null;
+        // OPTIMASI: Gunakan cached data, bukan query
+        return in_array($companyId, $this->activeCompanyIds) ? $companyId : null;
     }
 
     private function parseDate($date)
@@ -242,7 +308,10 @@ class EmployeesImport implements ToCollection, WithHeadingRow
         return in_array($gender, ['Male', 'Female']) ? $gender : 'Male';
     }
 
-    private function getPassword($password)
+    /**
+     * OPTIMASI: Hanya hash saat import mode
+     */
+    private function getPasswordHash($password)
     {
         if (empty($password)) {
             return Hash::make('password123');
