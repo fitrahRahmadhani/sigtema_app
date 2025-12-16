@@ -65,22 +65,24 @@
                         </svg>
                         <span>Chart View</span>
                     </a>
-                    <a
-                        href="{{ route('organization-structure.create') }}"
-                        class="color-gradient inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90 focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="h-5 w-5"
+                    @hasanyrole('superadmin|admin')
+                        <a
+                            href="{{ route('organization-structure.create') }}"
+                            class="color-gradient inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90 focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
                         >
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                        <span>Add Hierarchy</span>
-                    </a>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="h-5 w-5"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            <span>Add Hierarchy</span>
+                        </a>
+                    @endhasanyrole
                 </div>
             </div>
 
@@ -545,22 +547,24 @@
                     </svg>
                     <p class="mt-4 text-lg font-medium text-gray-900">No hierarchies found</p>
                     <p class="mt-2 text-sm text-gray-500">Get started by creating a new hierarchy relationship</p>
-                    <a
-                        href="{{ route('organization-structure.create') }}"
-                        class="color-gradient mt-6 inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="h-5 w-5"
+                    @hasanyrole('superadmin|admin')
+                        <a
+                            href="{{ route('organization-structure.create') }}"
+                            class="color-gradient mt-6 inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
                         >
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                        Add First Hierarchy
-                    </a>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="h-5 w-5"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            Add First Hierarchy
+                        </a>
+                    @endhasanyrole
                 </div>
             @endforelse
         </div>
