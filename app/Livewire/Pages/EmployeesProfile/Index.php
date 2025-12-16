@@ -38,7 +38,7 @@ class Index extends Component
     {
         $user = Auth::user();
 
-        $this->isSuperadmin = is_null($user->company_id);
+        $this->isSuperadmin = $user->hasRole('superadmin');
 
         if ($this->isSuperadmin) {
             $this->companies = Company::where('is_active', true)->get();

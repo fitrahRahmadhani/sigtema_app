@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\CandidatesComparison;
 
+use App\Models\Company;
 use Livewire\Component;
 use App\Models\Employee;
 use Livewire\Attributes\Title;
@@ -9,20 +10,65 @@ use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
 
 #[Layout('components.layouts.app')]
+#[Title('Employee Comparison')]
 class Index extends Component
 {
-    #[Title('Employee Comparison')]
-
-    public $companyId;
+    public $selectedCompanyId = null;
+    public $selectedCompany = null;
+    public $companies = [];
     public $selectedEmployees = [];
     public $searchTerms = ['', '', ''];
     public $searchResults = [[], [], []];
     public $showSearchDropdown = [false, false, false];
     public $columnCount = 3;
+    public $isSuperadmin = false;
 
     public function mount()
     {
-        $this->companyId = Auth::user()->company_id;
+        $user = Auth::user();
+
+        $this->isSuperadmin = $user->hasRole('superadmin');
+
+        if ($this->isSuperadmin) {
+            $this->companies = Company::where('is_active', true)->get();
+            $this->selectedCompanyId = session('candidates_comparison_company_id') ?? request('company_id');
+
+            if ($this->selectedCompanyId) {
+                $this->selectedCompany = Company::find($this->selectedCompanyId);
+            }
+        } else {
+            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompany = Company::find($this->selectedCompanyId);
+            $this->companies = Company::where('id', $user->company_id)->get();
+        }
+    }
+
+    public function selectCompany($companyId)
+    {
+        $this->selectedCompanyId = $companyId;
+        $this->selectedCompany = Company::find($companyId);
+        session(['candidates_comparison_company_id' => $companyId]);
+
+        // Reset employee selections when changing company
+        $this->resetEmployeeData();
+    }
+
+    public function changeCompany()
+    {
+        $this->selectedCompanyId = null;
+        $this->selectedCompany = null;
+        session()->forget('candidates_comparison_company_id');
+
+        // Reset employee selections
+        $this->resetEmployeeData();
+    }
+
+    private function resetEmployeeData()
+    {
+        $this->selectedEmployees = array_fill(0, $this->columnCount, null);
+        $this->searchTerms = array_fill(0, $this->columnCount, '');
+        $this->searchResults = array_fill(0, $this->columnCount, []);
+        $this->showSearchDropdown = array_fill(0, $this->columnCount, false);
     }
 
     public function addColumn()
@@ -49,7 +95,12 @@ class Index extends Component
 
     public function updatedSearchTerms($value, $index)
     {
-        if (strlen($value) >= 4) {
+        // Don't search if no company selected
+        if (!$this->selectedCompanyId) {
+            return;
+        }
+
+        if (strlen($value) >= 3) {
             $selectedIds = collect($this->selectedEmployees)
                 ->filter()
                 ->pluck('id')
@@ -61,9 +112,10 @@ class Index extends Component
                 'technicalCompetencies',
                 'mcuResults',
                 'positionHistories',
+                'innovations',
                 'company'
             ])
-                ->where('company_id', $this->companyId)
+                ->where('company_id', $this->selectedCompanyId)
                 ->where(function ($query) use ($value) {
                     $query->where('name', 'like', "%{$value}%")
                         ->orWhere('email', 'like', "%{$value}%")
@@ -91,6 +143,7 @@ class Index extends Component
             'technicalCompetencies',
             'mcuResults',
             'positionHistories',
+            'innovations',
             'company'
         ])->find($employeeId);
 
@@ -112,6 +165,13 @@ class Index extends Component
 
     public function render()
     {
-        return view('livewire.pages.candidates-comparison.index');
+        $showCompanySelection = $this->isSuperadmin && !$this->selectedCompanyId;
+
+        return view('livewire.pages.candidates-comparison.index', [
+            'showCompanySelection' => $showCompanySelection,
+            'companies' => $this->companies,
+            'isSuperadmin' => $this->isSuperadmin,
+            'selectedCompany' => $this->selectedCompany
+        ]);
     }
 }
