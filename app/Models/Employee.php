@@ -86,6 +86,11 @@ class Employee extends Model
         return $this->hasMany(TechnicalCompetency::class);
     }
 
+    public function innovations()
+    {
+        return $this->hasMany(Innovation::class);
+    }
+
     /**
      * Get the mcu results that the employee holds.
      */
@@ -290,5 +295,10 @@ class Employee extends Model
     public function scopeInPosition($query, $positionId)
     {
         return $query->where('position_id', $positionId);
+    }
+
+    public function getSoftCompetenciesAttribute()
+    {
+        return PsychogramResult::getEmployeeScores($this->employee_number);
     }
 }

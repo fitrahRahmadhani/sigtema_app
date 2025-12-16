@@ -2,23 +2,28 @@
 
 namespace App\Livewire\Pages\CandidatesComparison;
 
-use App\Models\Employee;
 use Livewire\Component;
+use App\Models\Employee;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Auth;
 
 #[Layout('components.layouts.app')]
 class Index extends Component
 {
     #[Title('Employee Comparison')]
 
+    public $companyId;
     public $selectedEmployees = [];
     public $searchTerms = ['', '', ''];
     public $searchResults = [[], [], []];
     public $showSearchDropdown = [false, false, false];
     public $columnCount = 3;
 
-    public function mount() {}
+    public function mount()
+    {
+        $this->companyId = Auth::user()->company_id;
+    }
 
     public function addColumn()
     {
@@ -58,6 +63,7 @@ class Index extends Component
                 'positionHistories',
                 'company'
             ])
+                ->where('company_id', $this->companyId)
                 ->where(function ($query) use ($value) {
                     $query->where('name', 'like', "%{$value}%")
                         ->orWhere('email', 'like', "%{$value}%")

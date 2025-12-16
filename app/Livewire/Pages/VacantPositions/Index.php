@@ -3,9 +3,11 @@
 namespace App\Livewire\Pages\VacantPositions;
 
 use Livewire\Component;
+use App\Models\Position;
+use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
-use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 #[Layout('components.layouts.app')]
 class Index extends Component
@@ -24,21 +26,10 @@ class Index extends Component
 
     public function mount(): void
     {
-        $this->allPositions = [
-            ['id' => 1, 'name' => 'SM of WHRPG & Utility', 'code' => '50049503', 'unit' => 'Unit of WHRPG & Utility', 'department' => 'Department of Mining & Raw Material', 'candidates' => 5],
-            ['id' => 2, 'name' => 'Senior Manager Operations', 'code' => '50049504', 'unit' => 'Unit of Operations', 'department' => 'Department of Operations', 'candidates' => 0],
-            ['id' => 3, 'name' => 'HR Manager', 'code' => '50049505', 'unit' => 'Unit of Human Resources', 'department' => 'Department of Human Resources', 'candidates' => 4],
-            ['id' => 4, 'name' => 'Finance Director', 'code' => '50049506', 'unit' => 'Unit of Finance', 'department' => 'Department of Finance & Administration', 'candidates' => 2],
-            ['id' => 5, 'name' => 'IT Systems Administrator', 'code' => '50049507', 'unit' => 'Unit of Information Technology', 'department' => 'Department of Information Technology', 'candidates' => 6],
-            ['id' => 6, 'name' => 'Safety Manager', 'code' => '50049508', 'unit' => 'Unit of Safety & Health', 'department' => 'Department of Mining & Raw Material', 'candidates' => 0],
-            ['id' => 7, 'name' => 'Production Supervisor', 'code' => '50049509', 'unit' => 'Unit of Production', 'department' => 'Department of Production', 'candidates' => 4],
-            ['id' => 8, 'name' => 'Quality Assurance Lead', 'code' => '50049510', 'unit' => 'Unit of Quality Control', 'department' => 'Department of Quality & Compliance', 'candidates' => 5],
-            ['id' => 9, 'name' => 'Maintenance Engineer', 'code' => '50049511', 'unit' => 'Unit of Maintenance', 'department' => 'Department of Operations', 'candidates' => 3],
-            ['id' => 10, 'name' => 'Project Manager', 'code' => '50049512', 'unit' => 'Unit of Projects', 'department' => 'Department of Projects', 'candidates' => 2],
-            ['id' => 11, 'name' => 'HR Manager', 'code' => '50049513', 'unit' => 'Unit of Human Resources', 'department' => 'Department of Human Resources', 'candidates' => 4],
-            ['id' => 12, 'name' => 'Finance Director', 'code' => '50049514', 'unit' => 'Unit of Finance', 'department' => 'Department of Finance & Administration', 'candidates' => 2],
-            ['id' => 13, 'name' => 'IT Systems Administrator', 'code' => '50049515', 'unit' => 'Unit of Information Technology', 'department' => 'Department of Information Technology', 'candidates' => 6],
-        ];
+        $this->allPositions = Position::where('company_id', Auth::user()->company_id)->where('employee_id', null)->get()->toArray();
+        if (Auth::user()->isSuperadmin) {
+            $this->allPositions = Position::where('employee_id', null)->get()->toArray();
+        }
     }
 
     public function updatedSearch(): void

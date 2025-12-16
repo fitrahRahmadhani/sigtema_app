@@ -47,28 +47,41 @@
                     Company
                     <span class="text-red-600">*</span>
                 </label>
-                <div class="relative">
-                    <select
-                        id="company_id"
-                        wire:model.live.live="company_id"
-                        class="@error('company_id') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                @role('superadmin')
+                    <div class="relative">
+                        <select
+                            id="company_id"
+                            wire:model.live.live="company_id"
+                            class="@error('company_id') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                        >
+                            <option value="">Select a company</option>
+                            @foreach ($companies as $company)
+                                <option value="{{ $company->id }}">
+                                    {{ $company->name }} ({{ $company->cocd }})
+                                </option>
+                            @endforeach
+                        </select>
+                        <svg
+                            class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                @endrole
+
+                @role('admin')
+                    <div
+                        class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 pr-10 text-sm text-gray-700"
                     >
-                        <option value="">Select a company</option>
-                        @foreach ($companies as $company)
-                            <option value="{{ $company->id }}">{{ $company->name }} ({{ $company->cocd }})</option>
-                        @endforeach
-                    </select>
-                    <svg
-                        class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    >
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </div>
+                        <p>{{ $company->name }}</p>
+                    </div>
+                @endrole
+
                 @error('company_id')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
