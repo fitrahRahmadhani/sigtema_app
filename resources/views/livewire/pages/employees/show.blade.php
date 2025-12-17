@@ -32,7 +32,42 @@
                 @endif
             </div>
             <div class="h-fit w-full flex-1">
-                <h6 class="text-xl font-bold text-gray-900 sm:text-2xl md:text-3xl">{{ $employee->name }}</h6>
+                <h6 class="flex items-center gap-2 text-xl font-bold text-gray-900 sm:text-2xl md:text-3xl">
+                    {{ $employee->name }}
+
+                    {{-- ICON GENDER --}}
+                    @if ($employee->gender === 'Male')
+                        <span class="inline-flex items-center text-blue-500">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                class="size-7"
+                                fill="currentColor"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M15 3C15 2.44772 15.4477 2 16 2H20C21.1046 2 22 2.89543 22 4V8C22 8.55229 21.5523 9 21 9C20.4477 9 20 8.55228 20 8V5.41288L15.4671 9.94579C15.4171 9.99582 15.363 10.0394 15.3061 10.0767C16.3674 11.4342 17 13.1432 17 15C17 19.4183 13.4183 23 9 23C4.58172 23 1 19.4183 1 15C1 10.5817 4.58172 7 9 7C10.8559 7 12.5642 7.63197 13.9214 8.69246C13.9587 8.63539 14.0024 8.58128 14.0525 8.53118L18.5836 4H16C15.4477 4 15 3.55228 15 3ZM9 20.9963C5.68831 20.9963 3.00365 18.3117 3.00365 15C3.00365 11.6883 5.68831 9.00365 9 9.00365C12.3117 9.00365 14.9963 11.6883 14.9963 15C14.9963 18.3117 12.3117 20.9963 9 20.9963Z"
+                                />
+                            </svg>
+                        </span>
+                    @elseif ($employee->gender === 'Female')
+                        <span class="inline-flex items-center text-pink-500">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                class="size-7"
+                                fill="currentColor"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M20 9C20 13.0803 16.9453 16.4471 12.9981 16.9383C12.9994 16.9587 13 16.9793 13 17V19H14C14.5523 19 15 19.4477 15 20C15 20.5523 14.5523 21 14 21H13V22C13 22.5523 12.5523 23 12 23C11.4477 23 11 22.5523 11 22V21H10C9.44772 21 9 20.5523 9 20C9 19.4477 9.44772 19 10 19H11V17C11 16.9793 11.0006 16.9587 11.0019 16.9383C7.05466 16.4471 4 13.0803 4 9C4 4.58172 7.58172 1 12 1C16.4183 1 20 4.58172 20 9ZM6.00365 9C6.00365 12.3117 8.68831 14.9963 12 14.9963C15.3117 14.9963 17.9963 12.3117 17.9963 9C17.9963 5.68831 15.3117 3.00365 12 3.00365C8.68831 3.00365 6.00365 5.68831 6.00365 9Z"
+                                />
+                            </svg>
+                        </span>
+                    @endif
+                </h6>
                 <div class="mt-4 grid h-full w-full grid-cols-2 gap-4 sm:mt-6 sm:grid-cols-3 lg:grid-cols-5">
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Employee ID</p>
@@ -487,56 +522,74 @@
                                     Rank
                                 </th>
                                 <th
-                                    class="w-6/12 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
+                                    class="w-5/12 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
                                 >
                                     Innovation Title
                                 </th>
                                 <th
                                     class="w-2/12 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
                                 >
-                                    Award
+                                    Team
                                 </th>
                                 <th
                                     class="w-2/12 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
                                 >
-                                    Category
+                                    Award
                                 </th>
-                                <th class="w-1/12 px-3 py-2 font-semibold text-gray-600 sm:px-4">Role</th>
+                                <th class="w-2/12 px-3 py-2 font-semibold text-gray-600 sm:px-4">Category</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                <td class="w-1/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
-                                    Juara 1
-                                </td>
-                                <td class="w-6/12 border-r border-gray-300 px-3 py-2 text-start text-gray-800 sm:px-4">
-                                    Pengembangan Aset Inovasi Perusahaan Yang Menghasilkan Multiplier Effect Dari
-                                    Replikasi Inovasi Melalui Program ReportaSIG
-                                </td>
-                                <td class="w-2/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
-                                    SIG Innovation Award Tahun 2025
-                                </td>
-                                <td class="w-2/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
-                                    HC Optimization
-                                </td>
-                                <td class="w-1/12 px-3 py-2 text-center text-gray-600 sm:px-4">Inisiator</td>
-                            </tr>
-                            <tr class="transition-colors hover:bg-gray-50">
-                                <td class="w-1/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
-                                    Juara 2
-                                </td>
-                                <td class="w-6/12 border-r border-gray-300 px-3 py-2 text-start text-gray-800 sm:px-4">
-                                    Optimizing Data Warehouse Event Di Unit of Knowledge Management & Innovation Untuk
-                                    Executive Dashboard Learning Menggunakan Fitur Office 365
-                                </td>
-                                <td class="w-2/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
-                                    SIG Innovation Award Tahun 2024
-                                </td>
-                                <td class="w-2/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
-                                    HC Optimization
-                                </td>
-                                <td class="w-1/12 px-3 py-2 text-center text-gray-600 sm:px-4">Peserta</td>
-                            </tr>
+                            @forelse ($employee->innovations as $innovation)
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td
+                                        class="w-1/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
+                                    >
+                                        {{ $innovation->status }}
+                                        <br />
+                                        {{ $innovation->achievement }}
+                                    </td>
+                                    <td
+                                        class="w-5/12 border-r border-gray-300 px-3 py-2 text-start text-gray-800 sm:px-4"
+                                    >
+                                        {{ $innovation->title }}
+                                    </td>
+                                    <td
+                                        class="w-2/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
+                                    >
+                                        {{ $innovation->team }}
+                                    </td>
+                                    <td
+                                        class="w-2/12 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
+                                    >
+                                        {{ $innovation->event }}
+                                    </td>
+                                    <td class="w-2/12 px-3 py-2 text-center text-gray-600 sm:px-4">
+                                        {{ $innovation->category }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="12" class="px-3 py-8 text-center text-gray-500 sm:px-4">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                class="h-12 w-12 text-gray-300"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0"
+                                                />
+                                            </svg>
+                                            <p class="mt-2 text-sm text-gray-300">No position history records found</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
