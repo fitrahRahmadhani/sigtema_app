@@ -11,6 +11,7 @@ use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
 use Livewire\Attributes\Layout;
 use App\Jobs\SyncInnovationsJob;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -38,9 +39,8 @@ class Index extends Component
     #[Url]
     public $statusFilter = '';
 
-    public $syncStatus = 'idle'; // idle, queued, processing, completed, failed
+    public $syncStatus = 'idle';
     public $lastSyncResult = null;
-    public $polling = false;
 
     // Reset pagination on filter changes
     public function updating($property, $value)
@@ -57,125 +57,74 @@ class Index extends Component
     {
         try {
             // Cek apakah sudah ada job yang sedang berjalan
-            if ($this->getSyncStatus() === 'processing') {
+            $currentStatus = Cache::get("sync_status_" . Auth::id(), 'idle');
+
+            if ($currentStatus === 'processing') {
                 Toaster::warning('Sync is already in progress. Please wait.');
                 return;
             }
 
-            // Dispatch job
+            // Dispatch job ke queue (akan berjalan di background)
             SyncInnovationsJob::dispatch(Auth::id())
-                ->onQueue('default'); // Gunakan queue default
+                ->onQueue('default');
 
-            // Update status
-            $this->syncStatus = 'queued';
+            // Set status queued
             Cache::put("sync_status_" . Auth::id(), 'queued', 3600);
+            $this->syncStatus = 'queued';
 
-            // Mulai polling untuk cek status
-            $this->startPolling();
-
-            Toaster::success('Sync has been queued. Processing in background...');
+            Toaster::success('Sync has been queued and will run in background. You can close this page.');
         } catch (\Exception $e) {
             Toaster::error('Failed to queue sync: ' . $e->getMessage());
+            Log::error('Sync dispatch failed', ['error' => $e->getMessage()]);
         }
     }
 
     /**
-     * Get current sync status
-     */
-    private function getSyncStatus(): string
-    {
-        // Cek dari cache
-        $status = Cache::get("sync_status_" . Auth::id(), 'idle');
-
-        // Jika ada last result, update status
-        $lastResult = Cache::get("last_sync_result_" . Auth::id());
-        if ($lastResult) {
-            $status = $lastResult['status'] ?? 'completed';
-        }
-
-        return $status;
-    }
-
-    /**
-     * Start polling untuk cek status job
-     */
-    private function startPolling(): void
-    {
-        $this->polling = true;
-
-        // Simpan timestamp polling
-        Cache::put("polling_start_" . Auth::id(), now()->timestamp, 3600);
-    }
-
-    /**
-     * Check sync status (dipanggil dari frontend via polling)
+     * Check sync status (otomatis dipanggil dari frontend)
      */
     public function checkSyncStatus()
     {
-        if (!$this->polling) {
-            return;
-        }
-
-        // Cek apakah polling sudah timeout (5 menit)
-        $startTime = Cache::get("polling_start_" . Auth::id());
-        if ($startTime && (now()->timestamp - $startTime) > 300) {
-            $this->polling = false;
-            Cache::forget("polling_start_" . Auth::id());
-            return;
-        }
-
-        // Ambil status terbaru
-        $this->syncStatus = $this->getSyncStatus();
-
-        // Ambil hasil terakhir
+        $this->syncStatus = Cache::get("sync_status_" . Auth::id(), 'idle');
         $this->lastSyncResult = Cache::get("last_sync_result_" . Auth::id());
 
-        // Jika sync selesai, berhenti polling
-        if (in_array($this->syncStatus, ['completed', 'failed'])) {
-            $this->polling = false;
-            Cache::forget("polling_start_" . Auth::id());
-
-            // Show appropriate message
-            if ($this->syncStatus === 'completed' && $this->lastSyncResult) {
-                Toaster::success(sprintf(
-                    'Sync completed! Created: %d, Updated: %d',
-                    $this->lastSyncResult['created'] ?? 0,
-                    $this->lastSyncResult['updated'] ?? 0
-                ));
-
-                // Refresh data
-                $this->dispatch('refresh-data');
-            }
+        // Jika selesai, tampilkan notifikasi
+        if ($this->syncStatus === 'completed' && $this->lastSyncResult) {
+            Toaster::success(sprintf(
+                'Sync completed! Created: %d, Updated: %d, Skipped: %d',
+                $this->lastSyncResult['created'] ?? 0,
+                $this->lastSyncResult['updated'] ?? 0,
+                $this->lastSyncResult['skipped'] ?? 0
+            ));
+        } elseif ($this->syncStatus === 'failed' && $this->lastSyncResult) {
+            Toaster::error('Sync failed: ' . ($this->lastSyncResult['error'] ?? 'Unknown error'));
         }
     }
 
     /**
-     * Clear sync status (manual reset)
+     * Clear sync status
      */
     public function clearSyncStatus()
     {
         Cache::forget("sync_status_" . Auth::id());
         Cache::forget("last_sync_result_" . Auth::id());
-        Cache::forget("polling_start_" . Auth::id());
 
         $this->syncStatus = 'idle';
         $this->lastSyncResult = null;
-        $this->polling = false;
 
         Toaster::info('Sync status cleared');
     }
 
+    /**
+     * Mount - load initial status
+     */
+    public function mount()
+    {
+        $this->syncStatus = Cache::get("sync_status_" . Auth::id(), 'idle');
+        $this->lastSyncResult = Cache::get("last_sync_result_" . Auth::id());
+    }
+
     public function render()
     {
-        // Auto-check status jika sedang polling
-        if ($this->polling) {
-            $this->checkSyncStatus();
-        } else {
-            // Update status awal
-            $this->syncStatus = $this->getSyncStatus();
-            $this->lastSyncResult = Cache::get("last_sync_result_" . Auth::id());
-        }
-
         $innovations = Innovation::query()
             ->with(['employee'])
             ->when($this->search, function ($query) {

@@ -40,7 +40,8 @@
                 wire:click="syncFromApi"
                 wire:loading.attr="disabled"
                 wire:loading.class="opacity-50 cursor-not-allowed"
-                class="color-gradient inline-flex items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
+                @if($syncStatus === 'processing' || $syncStatus === 'queued') disabled @endif
+                class="color-gradient inline-flex cursor-pointer items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
             >
                 <svg
                     wire:loading.remove
@@ -73,8 +74,14 @@
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                 </svg>
-                <span wire:loading.remove wire:target="syncFromApi">Sync from API</span>
-                <span wire:loading wire:target="syncFromApi">Syncing...</span>
+                <span wire:loading.remove wire:target="syncFromApi">
+                    @if ($syncStatus === 'processing' || $syncStatus === 'queued')
+                        Syncing...
+                    @else
+                        Sync from API
+                    @endif
+                </span>
+                <span wire:loading wire:target="syncFromApi">Queueing...</span>
             </button>
         </div>
 
@@ -94,7 +101,7 @@
                             <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"
+                                d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0"
                             />
                         </svg>
                     </div>
@@ -124,7 +131,7 @@
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-500">Matched Employees</p>
+                        <p class="text-sm font-medium text-gray-500">Matched Innovations with Employees</p>
                         <p class="text-2xl font-semibold text-gray-900">
                             {{ \App\Models\Innovation::whereNotNull('employee_id')->count() }}
                         </p>
@@ -164,25 +171,22 @@
         </div>
 
         <!-- Sync Status Panel -->
-        <div class="mb-6 space-y-4">
-            <!-- Status Badge -->
-            @if ($syncStatus !== 'idle')
+        @if ($syncStatus !== 'idle')
+            <div class="mb-6">
                 <div
                     class="{{
-                        $syncStatus === 'processing'
+                        $syncStatus === 'processing' || $syncStatus === 'queued'
                             ? 'border-blue-200 bg-blue-50'
                             : ($syncStatus === 'completed'
                                 ? 'border-green-200 bg-green-50'
-                                : ($syncStatus === 'failed'
-                                    ? 'border-red-200 bg-red-50'
-                                    : 'border-yellow-200 bg-yellow-50'))
+                                : 'border-red-200 bg-red-50')
                     }} rounded-lg border p-4"
                 >
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
                             @if ($syncStatus === 'queued')
                                 <svg
-                                    class="h-5 w-5 text-yellow-600"
+                                    class="h-5 w-5 text-blue-600"
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
                                     viewBox="0 0 24 24"
@@ -195,7 +199,7 @@
                                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                                     />
                                 </svg>
-                                <span class="ml-2 font-medium text-yellow-800">Sync Queued</span>
+                                <span class="ml-2 font-medium text-blue-800">Sync Queued - Running in Background</span>
                             @elseif ($syncStatus === 'processing')
                                 <svg
                                     class="h-5 w-5 animate-spin text-blue-600"
@@ -217,7 +221,7 @@
                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                     ></path>
                                 </svg>
-                                <span class="ml-2 font-medium text-blue-800">Processing...</span>
+                                <span class="ml-2 font-medium text-blue-800">Processing in Background...</span>
                             @elseif ($syncStatus === 'completed')
                                 <svg
                                     class="h-5 w-5 text-green-600"
@@ -233,7 +237,7 @@
                                         d="M5 13l4 4L19 7"
                                     />
                                 </svg>
-                                <span class="ml-2 font-medium text-green-800">Sync Completed</span>
+                                <span class="ml-2 font-medium text-green-800">Sync Completed Successfully</span>
                             @else
                                 <svg
                                     class="h-5 w-5 text-red-600"
@@ -254,29 +258,36 @@
                         </div>
 
                         @if ($syncStatus === 'completed' || $syncStatus === 'failed')
-                            <button wire:click="clearSyncStatus" class="text-sm text-gray-500 hover:text-gray-700">
+                            <button
+                                wire:click="clearSyncStatus"
+                                class="text-sm text-gray-500 underline hover:text-gray-700"
+                            >
                                 Dismiss
                             </button>
                         @endif
                     </div>
 
-                    <!-- Progress Bar (for processing) -->
-                    @if ($syncStatus === 'processing')
-                        <div class="mt-2">
-                            <div class="h-1 w-full rounded-full bg-blue-200">
-                                <div class="h-1 animate-pulse rounded-full bg-blue-600" style="width: 60%"></div>
+                    <!-- Progress Info -->
+                    @if ($syncStatus === 'processing' || $syncStatus === 'queued')
+                        <div class="mt-3">
+                            <div class="h-1.5 w-full rounded-full bg-blue-200">
+                                <div
+                                    class="h-1.5 rounded-full bg-blue-600 transition-all duration-500"
+                                    style="width: {{ $syncStatus === 'processing' ? '60%' : '30%' }}"
+                                ></div>
                             </div>
-                            <p class="mt-1 text-xs text-blue-600">
-                                Processing in background... This page will auto-refresh
+                            <p class="mt-2 text-xs text-blue-600">
+                                Job is running in background. You can close this page safely.
+                                <button wire:click="checkSyncStatus" class="ml-2 underline">Check Status</button>
                             </p>
                         </div>
                     @endif
 
                     <!-- Result Details -->
                     @if ($lastSyncResult && ($syncStatus === 'completed' || $syncStatus === 'failed'))
-                        <div class="mt-3 border-t pt-3">
+                        <div class="mt-3 border-t border-gray-200 pt-3">
                             @if ($syncStatus === 'completed')
-                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div class="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
                                     <div>
                                         <span class="text-gray-600">Created:</span>
                                         <span class="ml-2 font-medium text-green-700">
@@ -290,38 +301,58 @@
                                         </span>
                                     </div>
                                     <div>
+                                        <span class="text-gray-600">Skipped:</span>
+                                        <span class="ml-2 font-medium text-yellow-700">
+                                            {{ $lastSyncResult['skipped'] ?? 0 }}
+                                        </span>
+                                    </div>
+                                    <div>
                                         <span class="text-gray-600">Total:</span>
                                         <span class="ml-2 font-medium">{{ $lastSyncResult['total'] ?? 0 }}</span>
                                     </div>
-                                    <div>
-                                        <span class="text-gray-600">Duration:</span>
-                                        <span class="ml-2">
-                                            @if (isset($lastSyncResult['started_at']) && isset($lastSyncResult['completed_at']))
-                                                {{ \Carbon\Carbon::parse($lastSyncResult['started_at'])->diffForHumans(\Carbon\Carbon::parse($lastSyncResult['completed_at']), true) }}
-                                            @endif
-                                        </span>
-                                    </div>
                                 </div>
+                                @if (isset($lastSyncResult['started_at']) && isset($lastSyncResult['completed_at']))
+                                    <p class="mt-2 text-xs text-gray-600">
+                                        Duration:
+                                        {{ \Carbon\Carbon::parse($lastSyncResult['started_at'])->diffForHumans(\Carbon\Carbon::parse($lastSyncResult['completed_at']), true) }}
+                                    </p>
+                                @endif
                             @else
                                 <p class="text-sm text-red-600">
-                                    Error: {{ $lastSyncResult['error'] ?? 'Unknown error' }}
+                                    <span class="font-medium">Error:</span>
+                                    {{ $lastSyncResult['error'] ?? 'Unknown error' }}
                                 </p>
                             @endif
                         </div>
                     @endif
                 </div>
-            @endif
+            </div>
+        @endif
 
-            <!-- Auto-refresh script -->
-            @if ($polling)
-                <script>
-                    // Auto-refresh setiap 5 detik saat polling aktif
-                    setInterval(() => {
-                        @this.checkSyncStatus();
-                    }, 5000);
-                </script>
-            @endif
-        </div>
+        <!-- Auto-refresh script - Only when processing or queued -->
+        @if (in_array($syncStatus, ['processing', 'queued']))
+            <script>
+                // Auto-refresh setiap 5 detik untuk cek status
+                const syncInterval = setInterval(() => {
+                    @this.checkSyncStatus();
+
+                    // Stop polling jika status sudah completed atau failed
+                    const status = @js($syncStatus);
+                    if (status === 'completed' || status === 'failed') {
+                        clearInterval(syncInterval);
+                        // Reload page untuk refresh data
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    }
+                }, 5000);
+
+                // Cleanup saat component di-unmount
+                document.addEventListener('livewire:navigating', () => {
+                    clearInterval(syncInterval);
+                });
+            </script>
+        @endif
 
         <!-- Filters -->
         <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
@@ -368,8 +399,6 @@
                             <option value="oldest">Oldest Added</option>
                             <option value="title_asc">Title (A-Z)</option>
                             <option value="title_desc">Title (Z-A)</option>
-                            <option value="team_asc">Team (A-Z)</option>
-                            <option value="team_desc">Team (Z-A)</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                             <svg
@@ -508,177 +537,94 @@
             </div>
         </div>
 
-        <!-- Innovations Table TABLE -->
-        <div class="space-y-3 overflow-x-auto">
-            <!-- Column Headers - Desktop -->
-            <div
-                class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
-            >
-                <div class="col-span-3 text-sm font-semibold">Innovation & Employee</div>
+        <!-- Innovations Table -->
+        <div class="overflow-hidden rounded-lg border border-gray-200 bg-white">
+            <!-- Table Header - Desktop -->
+            <div class="color-gradient hidden grid-cols-12 gap-4 bg-gradient-to-r px-6 py-3 text-white md:grid">
+                <div class="col-span-4 text-sm font-semibold">Innovation & Employee</div>
                 <div class="col-span-2 text-sm font-semibold">Team & Category</div>
                 <div class="col-span-2 text-sm font-semibold">Theme & Event</div>
-                <div class="col-span-2 text-sm font-semibold">Status & Replication</div>
-                <div class="col-span-2 text-sm font-semibold">Achievement & Source</div>
+                <div class="col-span-2 text-sm font-semibold">Status & Achievement</div>
+                <div class="col-span-1 text-sm font-semibold">Replication</div>
                 <div class="col-span-1 text-center text-sm font-semibold">Updated</div>
             </div>
 
-            <!-- List Items -->
-            @forelse ($innovations as $innovation)
-                <!-- Desktop View -->
-                <div
-                    class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
-                >
-                    <!-- Innovation & Employee -->
-                    <div class="col-span-3">
-                        <p class="line-clamp-2 text-sm font-semibold text-gray-900">{{ $innovation->title }}</p>
-                        <div class="mt-1">
-                            @if ($innovation->employee)
-                                <p class="truncate text-sm text-gray-700">{{ $innovation->employee->name }}</p>
-                                <span
-                                    class="mt-1 inline-flex items-center rounded-md bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800"
-                                >
-                                    {{ $innovation->employee_number }}
-                                </span>
-                            @elseif ($innovation->employee_number)
-                                <p class="text-sm text-gray-500">External Employee</p>
-                                <span
-                                    class="mt-1 inline-flex items-center rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800"
-                                >
-                                    {{ $innovation->employee_number }}
-                                </span>
-                            @else
-                                <p class="text-sm text-gray-400 italic">No employee data</p>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Team & Category -->
-                    <div class="col-span-2">
-                        <p class="text-sm text-gray-900">
-                            <span class="font-medium">Team:</span>
-                            {{ $innovation->team ?? '-' }}
-                        </p>
-                        <p class="text-sm text-gray-900">
-                            <span class="font-medium">Category:</span>
-                            {{ $innovation->category ?? '-' }}
-                        </p>
-                    </div>
-
-                    <!-- Theme & Event -->
-                    <div class="col-span-2">
-                        <p class="text-sm text-gray-900">
-                            <span class="font-medium">Theme:</span>
-                            {{ $innovation->theme ?? '-' }}
-                        </p>
-                        <p class="text-sm text-gray-900">
-                            <span class="font-medium">Event:</span>
-                            {{ $innovation->event ?? '-' }}
-                        </p>
-                    </div>
-
-                    <!-- Status & Replication -->
-                    <div class="col-span-2">
-                        @if ($innovation->status)
-                            <div class="mb-1">
-                                <span
-                                    class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700"
-                                >
-                                    Status: {{ ucfirst($innovation->status) }}
-                                </span>
-                            </div>
-                        @endif
-
-                        @if ($innovation->replication)
-                            <div>
-                                <span
-                                    class="{{
-                                        str_contains(strtolower($innovation->replication), 'bisa')
-                                            ? 'bg-green-50 text-green-700'
-                                            : (str_contains(strtolower($innovation->replication), 'tidak')
-                                                ? 'bg-red-50 text-red-700'
-                                                : 'bg-yellow-50 text-yellow-700')
-                                    }} inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium"
-                                >
-                                    Replication: {{ ucfirst($innovation->replication) }}
-                                </span>
-                            </div>
-                        @endif
-                    </div>
-
-                    <!-- Achievement & Source -->
-                    <div class="col-span-2">
-                        <p class="text-sm font-medium text-gray-900">
-                            {{ $innovation->achievement ?? 'None' }}
-                        </p>
-                    </div>
-
-                    <!-- Updated -->
-                    <div class="col-span-1">
-                        <p class="text-center text-xs text-gray-500">
-                            {{ $innovation->updated_at->diffForHumans() }}
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Mobile View -->
-                <div
-                    class="block rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
-                >
-                    <div class="space-y-3">
-                        <!-- Header -->
-                        <div class="border-b border-gray-100 pb-3">
-                            <h3 class="font-semibold text-gray-900">{{ $innovation->title }}</h3>
-                            <div class="mt-2">
+            <!-- Table Body -->
+            <div class="divide-y divide-gray-200">
+                @forelse ($innovations as $innovation)
+                    <!-- Desktop View -->
+                    <div
+                        class="hidden grid-cols-12 items-center gap-4 px-6 py-4 transition-colors duration-150 hover:bg-gray-50 md:grid"
+                    >
+                        <!-- Innovation & Employee -->
+                        <div class="col-span-4">
+                            <p class="line-clamp-2 text-sm font-semibold text-gray-900">{{ $innovation->title }}</p>
+                            <div class="mt-1">
                                 @if ($innovation->employee)
-                                    <p class="text-sm text-gray-700">{{ $innovation->employee->name }}</p>
+                                    <p class="truncate text-sm text-gray-700">{{ $innovation->employee->name }}</p>
                                     <span
                                         class="mt-1 inline-flex items-center rounded-md bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800"
                                     >
                                         {{ $innovation->employee_number }}
                                     </span>
                                 @elseif ($innovation->employee_number)
-                                    <p class="text-sm text-gray-500">External: {{ $innovation->employee_number }}</p>
+                                    <p class="text-sm text-gray-500">External Employee</p>
+                                    <span
+                                        class="mt-1 inline-flex items-center rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800"
+                                    >
+                                        {{ $innovation->employee_number }}
+                                    </span>
+                                @else
+                                    <p class="text-sm text-gray-400 italic">No employee data</p>
                                 @endif
                             </div>
                         </div>
 
-                        <!-- Details Grid -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="space-y-1">
-                                <p class="text-xs font-medium text-gray-500">Team</p>
-                                <p class="text-sm text-gray-900">{{ $innovation->team ?? '-' }}</p>
-                            </div>
-                            <div class="space-y-1">
-                                <p class="text-xs font-medium text-gray-500">Category</p>
-                                <p class="text-sm text-gray-900">{{ $innovation->category ?? '-' }}</p>
-                            </div>
-                            <div class="space-y-1">
-                                <p class="text-xs font-medium text-gray-500">Theme</p>
-                                <p class="text-sm text-gray-900">{{ $innovation->theme ?? '-' }}</p>
-                            </div>
-                            <div class="space-y-1">
-                                <p class="text-xs font-medium text-gray-500">Event</p>
-                                <p class="text-sm text-gray-900">{{ $innovation->event ?? '-' }}</p>
-                            </div>
+                        <!-- Team & Category -->
+                        <div class="col-span-2">
+                            <p class="text-sm text-gray-900">
+                                <span class="font-medium">Team:</span>
+                                {{ $innovation->team ?? '-' }}
+                            </p>
+                            <p class="text-sm text-gray-900">
+                                <span class="font-medium">Category:</span>
+                                {{ $innovation->category ?? '-' }}
+                            </p>
                         </div>
 
-                        <!-- Status & Replication -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="space-y-1">
-                                <p class="text-xs font-medium text-gray-500">Status</p>
-                                @if ($innovation->status)
+                        <!-- Theme & Event -->
+                        <div class="col-span-2">
+                            <p class="text-sm text-gray-900">
+                                <span class="font-medium">Theme:</span>
+                                {{ $innovation->theme ?? '-' }}
+                            </p>
+                            <p class="text-sm text-gray-900">
+                                <span class="font-medium">Event:</span>
+                                {{ $innovation->event ?? '-' }}
+                            </p>
+                        </div>
+
+                        <!-- Achievement -->
+                        <div class="col-span-2">
+                            @if ($innovation->status)
+                                <div class="mb-1">
                                     <span
                                         class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700"
                                     >
                                         {{ ucfirst($innovation->status) }}
                                     </span>
-                                @else
-                                    <p class="text-sm text-gray-400 italic">-</p>
-                                @endif
-                            </div>
-                            <div class="space-y-1">
-                                <p class="text-xs font-medium text-gray-500">Replication</p>
-                                @if ($innovation->replication)
+                                </div>
+                            @endif
+
+                            <p class="text-sm font-medium text-gray-900">
+                                {{ $innovation->achievement ?? '' }}
+                            </p>
+                        </div>
+
+                        <!-- Status & Replication -->
+                        <div class="col-span-1">
+                            @if ($innovation->replication)
+                                <div>
                                     <span
                                         class="{{
                                             str_contains(strtolower($innovation->replication), 'bisa')
@@ -690,53 +636,131 @@
                                     >
                                         {{ ucfirst($innovation->replication) }}
                                     </span>
-                                @else
-                                    <p class="text-sm text-gray-400 italic">-</p>
-                                @endif
-                            </div>
-                        </div>
-
-                        <!-- Achievement & Source -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="space-y-1">
-                                <p class="text-xs font-medium text-gray-500">Achievement</p>
-                                <p class="text-sm text-gray-900">{{ $innovation->achievement ?? 'None' }}</p>
-                            </div>
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Updated -->
-                        <div class="border-t border-gray-100 pt-3 text-center">
-                            <p class="text-xs text-gray-500">
-                                Updated: {{ $innovation->updated_at->diffForHumans() }}
+                        <div class="col-span-1">
+                            <p class="text-center text-xs text-gray-500">
+                                {{ $innovation->updated_at->diffForHumans() }}
                             </p>
                         </div>
                     </div>
-                </div>
-            @empty
-                <div class="rounded-lg border border-gray-200 bg-white p-8 text-center">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="mx-auto h-12 w-12 text-gray-400"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
-                        />
-                    </svg>
-                    <p class="mt-4 font-medium text-gray-500">No innovations found</p>
-                    <p class="mt-1 text-sm text-gray-400">
-                        @if ($search || $teamFilter || $categoryFilter)
-                            Try adjusting your filters or
-                        @endif
-                        Click "Sync from API" to load data
-                    </p>
-                </div>
-            @endforelse
+
+                    <!-- Mobile View -->
+                    <div class="block p-4 md:hidden">
+                        <div class="space-y-3">
+                            <!-- Header -->
+                            <div class="border-b border-gray-100 pb-3">
+                                <h3 class="font-semibold text-gray-900">{{ $innovation->title }}</h3>
+                                <div class="mt-2">
+                                    @if ($innovation->employee)
+                                        <p class="text-sm text-gray-700">{{ $innovation->employee->name }}</p>
+                                        <span
+                                            class="mt-1 inline-flex items-center rounded-md bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800"
+                                        >
+                                            {{ $innovation->employee_number }}
+                                        </span>
+                                    @elseif ($innovation->employee_number)
+                                        <p class="text-sm text-gray-500">
+                                            External: {{ $innovation->employee_number }}
+                                        </p>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Details Grid -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1">
+                                    <p class="text-xs font-medium text-gray-500">Team</p>
+                                    <p class="text-sm text-gray-900">{{ $innovation->team ?? '-' }}</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <p class="text-xs font-medium text-gray-500">Category</p>
+                                    <p class="text-sm text-gray-900">{{ $innovation->category ?? '-' }}</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <p class="text-xs font-medium text-gray-500">Theme</p>
+                                    <p class="text-sm text-gray-900">{{ $innovation->theme ?? '-' }}</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <p class="text-xs font-medium text-gray-500">Event</p>
+                                    <p class="text-sm text-gray-900">{{ $innovation->event ?? '-' }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Status & Replication -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1">
+                                    <p class="text-xs font-medium text-gray-500">Status & Achievement</p>
+                                    @if ($innovation->status)
+                                        <span
+                                            class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700"
+                                        >
+                                            {{ ucfirst($innovation->status) }}
+                                        </span>
+                                    @else
+                                        <p class="text-sm text-gray-400 italic">-</p>
+                                    @endif
+                                    <!-- Achievement -->
+                                    <p class="text-sm text-gray-900">{{ $innovation->achievement ?? '' }}</p>
+                                </div>
+
+                                <div class="space-y-1">
+                                    <p class="text-xs font-medium text-gray-500">Replication</p>
+                                    @if ($innovation->replication)
+                                        <span
+                                            class="{{
+                                                str_contains(strtolower($innovation->replication), 'bisa')
+                                                    ? 'bg-green-50 text-green-700'
+                                                    : (str_contains(strtolower($innovation->replication), 'tidak')
+                                                        ? 'bg-red-50 text-red-700'
+                                                        : 'bg-yellow-50 text-yellow-700')
+                                            }} inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium"
+                                        >
+                                            {{ ucfirst($innovation->replication) }}
+                                        </span>
+                                    @else
+                                        <p class="text-sm text-gray-400 italic">-</p>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Updated -->
+                            <div class="border-t border-gray-100 pt-3 text-center">
+                                <p class="text-xs text-gray-500">
+                                    Updated: {{ $innovation->updated_at->diffForHumans() }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-8 text-center">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="mx-auto h-12 w-12 text-gray-400"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0"
+                            />
+                        </svg>
+                        <p class="mt-4 font-medium text-gray-500">No innovations found</p>
+                        <p class="mt-1 text-sm text-gray-400">
+                            @if ($search || $teamFilter || $categoryFilter || $replicationFilter || $statusFilter)
+                                Try adjusting your filters or
+                            @endif
+                            Click "Sync from API" to load data
+                        </p>
+                    </div>
+                @endforelse
+            </div>
         </div>
 
         <!-- Pagination -->

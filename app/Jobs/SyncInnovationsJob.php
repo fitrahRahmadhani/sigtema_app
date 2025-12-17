@@ -18,14 +18,12 @@ class SyncInnovationsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    // Simpan user ID untuk notifikasi
     public $userId;
-
-    // Tambahkan retry logic sederhana
     public $tries = 3;
-
-    // Timeout setelah 10 menit
     public $timeout = 600;
+
+    // Tambahkan ini agar job berjalan di background meskipun user close page
+    public $deleteWhenMissingModels = true;
 
     public function __construct($userId = null)
     {
@@ -36,16 +34,14 @@ class SyncInnovationsJob implements ShouldQueue
     {
         Log::info('Starting innovation sync job', ['user_id' => $this->userId]);
 
-        try {
-            // Fetch data dari API
-            $apiData = $this->fetchApiData();
+        // Set status processing
+        Cache::put("sync_status_{$this->userId}", 'processing', 3600);
 
-            // Process data
+        try {
+            $apiData = $this->fetchApiData();
             $stats = $this->processData($apiData);
 
             Log::info('Sync job completed', $stats);
-
-            // Simpan hasil untuk ditampilkan ke user
             $this->saveSyncResult($stats);
         } catch (\Exception $e) {
             Log::error('Sync job failed', [
@@ -53,39 +49,51 @@ class SyncInnovationsJob implements ShouldQueue
                 'trace' => $e->getTraceAsString()
             ]);
 
-            // Simpan error result
             $this->saveSyncResult([
                 'status' => 'failed',
                 'error' => $e->getMessage(),
                 'completed_at' => now()
             ]);
 
-            throw $e; // Biarkan queue handle retry
+            throw $e;
         }
     }
 
     /**
-     * Fetch data dari API
+     * Fetch data dari API dengan authentication
      */
     private function fetchApiData(): array
     {
-        // Untuk development, gunakan mock data
-        if (app()->environment('local', 'testing')) {
-            return $this->getMockData();
-        }
+        $apiUrl = config('services.innovation_api.url');
+        $apiKey = config('services.innovation_api.key');
 
-        // TODO: Ganti dengan API sebenarnya
-        $response = Http::get('https://api.example.com/innovations');
+        $response = Http::withHeaders([
+            'x-api-key' => $apiKey,
+            'Accept' => 'application/json',
+        ])->timeout(120)->get($apiUrl);
 
         if (!$response->successful()) {
-            throw new \Exception('API request failed: ' . $response->status());
+            $errorMessage = 'API request failed: ' . $response->status();
+
+            // Log detail error untuk debugging
+            Log::error('API request failed', [
+                'status' => $response->status(),
+                'url' => $apiUrl,
+                'response' => $response->body(),
+                'headers' => $response->headers()
+            ]);
+
+            throw new \Exception($errorMessage);
         }
 
-        return $response->json();
+        $data = $response->json();
+
+        // Ambil data dari key 'data' jika ada
+        return $data['data'] ?? $data;
     }
 
     /**
-     * Process data ke database
+     * Process data dengan strategi upsert untuk menghindari duplikasi
      */
     private function processData(array $apiData): array
     {
@@ -99,54 +107,77 @@ class SyncInnovationsJob implements ShouldQueue
             'status' => 'completed'
         ];
 
-        foreach ($apiData as $data) {
-            try {
-                // Skip jika data tidak valid
-                if (empty($data['id']) || empty($data['judul'])) {
+        // Group data by unique key untuk menghindari duplikasi
+        $groupedData = collect($apiData)->groupBy(function ($item) {
+            // Buat unique key dari kombinasi employee_id + judul + event
+            return $this->padEmployeeId($item['employee_id']) . '|' .
+                trim($item['judul_inovasi']) . '|' .
+                ($item['event'] ?? '');
+        });
+
+        DB::transaction(function () use ($groupedData, &$stats) {
+            foreach ($groupedData as $uniqueKey => $items) {
+                try {
+                    // Ambil item pertama dari group (untuk menghindari duplikasi)
+                    $data = $items->first();
+
+                    // Validasi data wajib
+                    if (empty($data['employee_id']) || empty($data['judul_inovasi'])) {
+                        $stats['skipped']++;
+                        continue;
+                    }
+
+                    // Format employee_id menjadi 8 digit dengan leading zero
+                    $employeeNumber = $this->padEmployeeId($data['employee_id']);
+
+                    // Cari employee berdasarkan employee_number
+                    $employee = Employee::where('employee_number', $employeeNumber)->first();
+
+                    // Buat unique identifier untuk innovation
+                    $uniqueIdentifier = md5($employeeNumber . $data['judul_inovasi'] . ($data['event'] ?? ''));
+
+                    // Update atau create innovation dengan unique constraint
+                    $innovation = Innovation::updateOrCreate(
+                        [
+                            'source' => 'eksternal',
+                            'external_id' => $uniqueIdentifier, // Gunakan hash sebagai ID unik
+                        ],
+                        [
+                            'employee_id' => $employee?->id,
+                            'employee_number' => $employeeNumber,
+                            'title' => trim($data['judul_inovasi']),
+                            'team' => $data['team'] ?? null,
+                            'theme' => $data['tema'] ?? null,
+                            'event' => $data['event'] ?? null,
+                            'category' => $data['kategori'] ?? null,
+                            'replication' => $data['potensi_replikasi'] ?? null,
+                            'status' => $data['status'] ?? null,
+                            'achievement' => $data['penghargaan'] ?? null,
+                            'updated_at' => now()
+                        ]
+                    );
+
+                    $innovation->wasRecentlyCreated ? $stats['created']++ : $stats['updated']++;
+                } catch (\Exception $e) {
                     $stats['skipped']++;
-                    continue;
+                    Log::warning('Failed to process innovation', [
+                        'unique_key' => $uniqueKey,
+                        'error' => $e->getMessage()
+                    ]);
                 }
-
-                // Cari employee
-                $employee = null;
-                if (!empty($data['no_karyawan'])) {
-                    $employee = Employee::where('employee_number', $data['no_karyawan'])->first();
-                }
-
-                // Update atau create innovation
-                $innovation = Innovation::updateOrCreate(
-                    [
-                        'source' => 'eksternal',
-                        'external_id' => $data['id'],
-                    ],
-                    [
-                        'employee_id' => $employee?->id,
-                        'employee_number' => $data['no_karyawan'] ?? null,
-                        'title' => trim($data['judul']),
-                        'team' => $data['team'] ?? null,
-                        'theme' => $data['tema'] ?? null,
-                        'event' => $data['event'] ?? null,
-                        'category' => $data['kategori'] ?? null,
-                        'replication' => $data['repliksi'] ?? null,
-                        'status' => $data['status'] ?? null,
-                        'achievement' => $data['pencapaian'] ?? null,
-                        'updated_at' => now()
-                    ]
-                );
-
-                $innovation->wasRecentlyCreated ? $stats['created']++ : $stats['updated']++;
-            } catch (\Exception $e) {
-                $stats['skipped']++;
-                Log::warning('Failed to process innovation', [
-                    'data' => $data,
-                    'error' => $e->getMessage()
-                ]);
             }
-        }
+        });
 
         $stats['completed_at'] = now();
-
         return $stats;
+    }
+
+    /**
+     * Format employee_id menjadi 8 digit dengan leading zero
+     */
+    private function padEmployeeId($employeeId): string
+    {
+        return str_pad((string)$employeeId, 8, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -154,47 +185,13 @@ class SyncInnovationsJob implements ShouldQueue
      */
     private function saveSyncResult(array $stats): void
     {
-        $cacheKey = "sync_result_{$this->userId}_" . now()->format('YmdHis');
+        // Simpan sebagai last result
+        Cache::put("last_sync_result_{$this->userId}", $stats, 86400); // 24 jam
 
-        // Simpan di cache selama 1 jam
-        Cache::put($cacheKey, $stats, 3600);
-
-        // Juga simpan sebagai last result
-        Cache::put("last_sync_result_{$this->userId}", $stats, 3600);
+        // Update status
+        Cache::put("sync_status_{$this->userId}", $stats['status'], 86400);
     }
 
-    /**
-     * Mock data untuk development
-     */
-    private function getMockData(): array
-    {
-        return [
-            [
-                'id' => 'INNO-2024-001',
-                'no_karyawan' => '00007106',
-                'judul' => 'AI-Powered Customer Service Chatbot',
-                'team' => 'Digital Innovation',
-                'tema' => 'Artificial Intelligence',
-                'event' => 'Innovation Award 2024',
-                'kategori' => 'Technology',
-                'repliksi' => 'bisa direplikasi',
-                'status' => 'innovator',
-                'pencapaian' => 'Juara 1 Nasional'
-            ],
-            [
-                'id' => 'INNO-2024-002',
-                'no_karyawan' => '00007106',
-                'judul' => 'Sustainable Office Energy Management',
-                'team' => 'Green Initiative',
-                'tema' => 'Environment',
-                'event' => 'Green Innovation 2024',
-                'kategori' => 'Environment',
-                'repliksi' => 'sebagian',
-                'status' => 'peserta',
-                'pencapaian' => 'Finalis'
-            ]
-        ];
-    }
 
     /**
      * Handle job failure
@@ -207,7 +204,6 @@ class SyncInnovationsJob implements ShouldQueue
             'trace' => $exception->getTraceAsString()
         ]);
 
-        // Simpan status failed
         $this->saveSyncResult([
             'status' => 'failed',
             'error' => $exception->getMessage(),
