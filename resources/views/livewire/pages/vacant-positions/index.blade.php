@@ -1,9 +1,10 @@
 <div class="space-y-4 p-2">
     <!-- Breadcrumbs -->
     <flux:breadcrumbs>
-                        @hasanyrole('superadmin|admin')
-        <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
+        @hasanyrole('superadmin|admin')
+            <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         @endhasanyrole
+
         <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Path</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Vacant Positions</flux:breadcrumbs.item>
     </flux:breadcrumbs>
@@ -300,7 +301,9 @@
                                 <p class="line-clamp-2 text-sm font-semibold text-gray-900">{{ $position->name }}</p>
                             </div>
                             <div class="col-span-1 flex flex-col justify-center">
-                                <p class="line-clamp-1 text-sm font-semibold text-gray-900">{{ $position->code }}</p>
+                                <p class="line-clamp-1 text-sm font-semibold text-gray-900">
+                                    {{ $position->position_code }}
+                                </p>
                             </div>
                             <div class="col-span-3 flex flex-col justify-center">
                                 <p class="line-clamp-1 text-sm font-semibold text-gray-900">

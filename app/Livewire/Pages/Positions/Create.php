@@ -4,13 +4,13 @@ namespace App\Livewire\Pages\Positions;
 
 use App\Models\Company;
 use Livewire\Component;
-use App\Models\Employee;
 use App\Models\Position;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\Auth;
 
 #[Layout('components.layouts.app')]
 #[Title('Create Position')]
@@ -28,7 +28,6 @@ class Create extends Component
     #[Validate('required|exists:companies,id')]
     public $company_id = '';
 
-    // Field baru berdasarkan skema database
     #[Validate('nullable|string|max:255')]
     public $directorate = '';
 
@@ -47,7 +46,11 @@ class Create extends Component
     public $employees = [];
     public $employee_id;
 
-    public function mount() {}
+    public function mount()
+    {
+        $user = Auth::user();
+        $this->company_id = $user->hasRole('admin') ? $user->company_id : null;
+    }
 
     public function updatedCompanyId()
     {
