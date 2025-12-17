@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'innovation_api' => [
+        'url' => env('INNOVATION_API_URL'),
+        'key' => env('INNOVATION_API_KEY'),
+        'timeout' => env('INNOVATION_API_TIMEOUT', 120),
+    ],
+
 ];
