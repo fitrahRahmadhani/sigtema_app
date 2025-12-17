@@ -4,12 +4,12 @@ namespace App\Livewire\Pages\Employees;
 
 use App\Models\Employee;
 use App\Models\Company;
-use App\Models\Position;
 use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Livewire\Traits\WithDeleteConfirmation;
 
@@ -19,43 +19,51 @@ class Index extends Component
 {
     use WithPagination, WithDeleteConfirmation;
 
+    public $selectedCompanyId = null;
+    public $selectedCompany = null;
+    public $companies = [];
+    public $isSuperadmin = false;
+
     #[Url(as: 'q')]
     public $search = '';
 
-    #[Url(as: 'sort')]
-    public $sortBy = 'name_asc';
+    public function mount(): void
+    {
+        $user = Auth::user();
 
-    #[Url(as: 'company')]
-    public $companyFilter = '';
+        $this->isSuperadmin = $user->hasRole('superadmin');
 
-    #[Url(as: 'position')]
-    public $positionFilter = '';
+        if ($this->isSuperadmin) {
+            $this->companies = Company::where('is_active', true)->get();
+            $this->selectedCompanyId = session('employees_company_id') ?? request('company_id');
 
-    #[Url(as: 'gender')]
-    public $genderFilter = '';
+            if ($this->selectedCompanyId) {
+                $this->selectedCompany = Company::find($this->selectedCompanyId);
+            }
+        } else {
+            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompany = Company::find($this->selectedCompanyId);
+            $this->companies = Company::where('id', $user->company_id)->get();
+        }
+    }
+
+    public function selectCompany($companyId)
+    {
+        $this->selectedCompanyId = $companyId;
+        $this->selectedCompany = Company::find($companyId);
+        session(['employees_company_id' => $companyId]);
+        $this->resetPage();
+    }
+
+    public function changeCompany()
+    {
+        $this->selectedCompanyId = null;
+        $this->selectedCompany = null;
+        session()->forget('employees_company_id');
+        $this->resetPage();
+    }
 
     public function updatingSearch()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingSortBy()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingCompanyFilter()
-    {
-        $this->resetPage();
-        $this->positionFilter = '';
-    }
-
-    public function updatingPositionFilter()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingGenderFilter()
     {
         $this->resetPage();
     }
@@ -93,42 +101,37 @@ class Index extends Component
 
     public function render()
     {
+        // Jika superadmin belum pilih company
+        if ($this->isSuperadmin && !$this->selectedCompanyId) {
+            return view('livewire.pages.employees.index', [
+                'showCompanySelection' => true,
+                'companies' => $this->companies,
+                'isSuperadmin' => $this->isSuperadmin,
+                'selectedCompany' => null,
+                'employees' => collect(),
+            ]);
+        }
+
         $employees = Employee::query()
-            ->with(['company'])
+            ->with(['company', 'position'])
+            ->where('company_id', $this->selectedCompanyId)
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
                         ->orWhere('employee_number', 'like', '%' . $this->search . '%')
                         ->orWhere('email', 'like', '%' . $this->search . '%')
-                        ->orWhere('phone', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('company', function ($companyQuery) {
-                            $companyQuery->where('name', 'like', '%' . $this->search . '%');
-                        });
+                        ->orWhere('phone', 'like', '%' . $this->search . '%');
                 });
             })
-            ->when($this->companyFilter, fn($query) => $query->where('company_id', $this->companyFilter))
-            ->when($this->positionFilter, fn($query) => $query->where('position_id', $this->positionFilter))
-            ->when($this->genderFilter, fn($query) => $query->where('gender', $this->genderFilter))
-            ->when($this->sortBy === 'name_asc', fn($query) => $query->orderBy('name', 'asc'))
-            ->when($this->sortBy === 'name_desc', fn($query) => $query->orderBy('name', 'desc'))
-            ->when($this->sortBy === 'employee_number_asc', fn($query) => $query->orderBy('employee_number', 'asc'))
-            ->when($this->sortBy === 'employee_number_desc', fn($query) => $query->orderBy('employee_number', 'desc'))
-            ->when($this->sortBy === 'hire_date_newest', fn($query) => $query->orderBy('hire_date', 'desc'))
-            ->when($this->sortBy === 'hire_date_oldest', fn($query) => $query->orderBy('hire_date', 'asc'))
-            ->when($this->sortBy === 'newest', fn($query) => $query->latest('created_at'))
-            ->when($this->sortBy === 'oldest', fn($query) => $query->oldest('created_at'))
+            ->orderBy('name', 'asc')
             ->paginate(10);
 
-        $companies = Company::orderBy('name')->get();
-
-        $positions = $this->companyFilter
-            ? Position::where('company_id', $this->companyFilter)->orderBy('name')->get()
-            : Position::orderBy('name')->get();
-
         return view('livewire.pages.employees.index', [
+            'showCompanySelection' => false,
             'employees' => $employees,
-            'companies' => $companies,
-            'positions' => $positions,
+            'selectedCompany' => $this->selectedCompany,
+            'isSuperadmin' => $this->isSuperadmin,
+            'companies' => $this->companies,
         ]);
     }
 }

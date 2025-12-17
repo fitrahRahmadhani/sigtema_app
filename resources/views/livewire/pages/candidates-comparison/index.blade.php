@@ -1,9 +1,10 @@
 <div class="space-y-4 p-2">
     <!-- Breadcrumbs -->
     <flux:breadcrumbs>
-                        @hasanyrole('superadmin|admin')
-        <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
+        @hasanyrole('superadmin|admin')
+            <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         @endhasanyrole
+
         <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Path</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Employee Comparison</flux:breadcrumbs.item>
     </flux:breadcrumbs>
@@ -550,7 +551,7 @@
                                                                 </p>
                                                                 @if ($innovation->status)
                                                                     <span
-                                                                        class="{{ $innovation->status === 'inisiator' ? 'bg-green-100 text-green-800' : '' }} {{ $innovation->status === 'peserta' ? 'bg-blue-100 text-blue-800' : '' }} inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                                                                        class="{{ $innovation->status === 'Peserta' ? 'bg-gray-200 text-gray-800' : '' }} {{ preg_match('/^Juara\s.+/i', $innovation->status) ? 'bg-yellow-100 text-yellow-800' : '' }} inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-xs font-medium"
                                                                     >
                                                                         {{ ucfirst($innovation->status) }}
                                                                     </span>
