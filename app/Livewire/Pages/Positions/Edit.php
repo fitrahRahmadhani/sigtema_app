@@ -52,7 +52,6 @@ class Edit extends Component
     {
         $this->position = $position;
 
-        // Set nilai form dari model
         $this->name = $position->name;
         $this->position_code = $position->position_code;
         $this->job_grade = $position->job_grade;
@@ -62,14 +61,21 @@ class Edit extends Component
         $this->biro = $position->biro;
         $this->section = $position->section;
         $this->location = $position->location;
-        $this->employees = $position->company->employees ?? [];
-        $this->employee_id = $position->employee_id;
+        if ($position->employee) {
+            $this->employees = $position->company->employees ?? [];
+            $this->employee_id = $position->employee_id;
+        } else {
+            $this->employees = Employee::where('company_id', $this->company_id)
+                ->whereDoesntHave('position')
+                ->get();
+        }
     }
 
     public function updatedCompanyId()
     {
-        $company = Company::find($this->company_id);
-        $this->employees = $company->employees ?? [];
+        $this->employees = Employee::where('company_id', $this->company_id)
+            ->whereDoesntHave('position')
+            ->get();
     }
 
     public function save()

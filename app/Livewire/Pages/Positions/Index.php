@@ -9,6 +9,7 @@ use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Auth;
 use App\Livewire\Traits\WithDeleteConfirmation;
 
 #[Layout('components.layouts.app')]
@@ -17,14 +18,16 @@ class Index extends Component
 {
     use WithPagination, WithDeleteConfirmation;
 
+    public $selectedCompanyId = null;
+    public $selectedCompany = null;
+    public $companies = [];
+    public $isSuperadmin = false;
+
     #[Url(as: 'q')]
     public $search = '';
 
     #[Url(as: 'sort')]
     public $sortBy = 'name_asc';
-
-    #[Url(as: 'company')]
-    public $companyFilter = '';
 
     #[Url(as: 'grade')]
     public $gradeFilter = '';
@@ -35,17 +38,59 @@ class Index extends Component
     #[Url(as: 'location')]
     public $locationFilter = '';
 
+    public function mount(): void
+    {
+        $user = Auth::user();
+
+        $this->isSuperadmin = $user->hasRole('superadmin');
+
+        if ($this->isSuperadmin) {
+            $this->companies = Company::where('is_active', true)->get();
+            $this->selectedCompanyId = session('positions_company_id') ?? request('company_id');
+
+            if ($this->selectedCompanyId) {
+                $this->selectedCompany = Company::find($this->selectedCompanyId);
+            }
+        } else {
+            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompany = Company::find($this->selectedCompanyId);
+            $this->companies = Company::where('id', $user->company_id)->get();
+        }
+    }
+
+    public function selectCompany($companyId)
+    {
+        $this->selectedCompanyId = $companyId;
+        $this->selectedCompany = Company::find($companyId);
+        session(['positions_company_id' => $companyId]);
+        $this->resetPage();
+        $this->resetFilters();
+    }
+
+    public function changeCompany()
+    {
+        $this->selectedCompanyId = null;
+        $this->selectedCompany = null;
+        session()->forget('positions_company_id');
+        $this->resetPage();
+        $this->resetFilters();
+    }
+
+    private function resetFilters()
+    {
+        $this->search = '';
+        $this->sortBy = 'name_asc';
+        $this->gradeFilter = '';
+        $this->departmentFilter = '';
+        $this->locationFilter = '';
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
     }
 
     public function updatingSortBy()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingCompanyFilter()
     {
         $this->resetPage();
     }
@@ -88,24 +133,36 @@ class Index extends Component
 
     public function render()
     {
+        // Jika superadmin belum pilih company
+        if ($this->isSuperadmin && !$this->selectedCompanyId) {
+            return view('livewire.pages.positions.index', [
+                'showCompanySelection' => true,
+                'companies' => $this->companies,
+                'isSuperadmin' => $this->isSuperadmin,
+                'selectedCompany' => null,
+                'positions' => collect(),
+                'grades' => [],
+                'departments' => [],
+                'locations' => [],
+            ]);
+        }
+
         $positions = Position::query()
-            ->with(['company'])
+            ->with(['company', 'employee'])
+            ->where('company_id', $this->selectedCompanyId)
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
                         ->orWhere('position_code', 'like', '%' . $this->search . '%')
+                        ->orWhere('code', 'like', '%' . $this->search . '%')
                         ->orWhere('job_grade', 'like', '%' . $this->search . '%')
                         ->orWhere('directorate', 'like', '%' . $this->search . '%')
                         ->orWhere('department', 'like', '%' . $this->search . '%')
                         ->orWhere('biro', 'like', '%' . $this->search . '%')
                         ->orWhere('section', 'like', '%' . $this->search . '%')
-                        ->orWhere('location', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('company', function ($companyQuery) {
-                            $companyQuery->where('name', 'like', '%' . $this->search . '%');
-                        });
+                        ->orWhere('location', 'like', '%' . $this->search . '%');
                 });
             })
-            ->when($this->companyFilter, fn($query) => $query->where('company_id', $this->companyFilter))
             ->when($this->gradeFilter, fn($query) => $query->where('job_grade', $this->gradeFilter))
             ->when($this->departmentFilter, fn($query) => $query->where('department', $this->departmentFilter))
             ->when($this->locationFilter, fn($query) => $query->where('location', $this->locationFilter))
@@ -119,33 +176,37 @@ class Index extends Component
             ->when($this->sortBy === 'oldest', fn($query) => $query->oldest('created_at'))
             ->paginate(10);
 
-        $companies = Company::orderBy('name')->get();
-
-        // Get unique values for filters
-        $grades = Position::distinct()
+        // Get unique values for filters from selected company only
+        $grades = Position::where('company_id', $this->selectedCompanyId)
+            ->distinct()
             ->whereNotNull('job_grade')
             ->orderBy('job_grade')
             ->pluck('job_grade')
             ->toArray();
 
-        $departments = Position::distinct()
+        $departments = Position::where('company_id', $this->selectedCompanyId)
+            ->distinct()
             ->whereNotNull('department')
             ->orderBy('department')
             ->pluck('department')
             ->toArray();
 
-        $locations = Position::distinct()
+        $locations = Position::where('company_id', $this->selectedCompanyId)
+            ->distinct()
             ->whereNotNull('location')
             ->orderBy('location')
             ->pluck('location')
             ->toArray();
 
         return view('livewire.pages.positions.index', [
+            'showCompanySelection' => false,
             'positions' => $positions,
-            'companies' => $companies,
             'grades' => $grades,
             'departments' => $departments,
             'locations' => $locations,
+            'selectedCompany' => $this->selectedCompany,
+            'isSuperadmin' => $this->isSuperadmin,
+            'companies' => $this->companies,
         ]);
     }
 }
