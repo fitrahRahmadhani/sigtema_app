@@ -2,16 +2,17 @@
 
 namespace App\Livewire\Pages\Employees;
 
-use App\Models\Employee;
 use App\Models\Company;
 use Livewire\Component;
+use App\Models\Employee;
+use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Title;
+use Masmerise\Toaster\Toaster;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
 #[Title('Create Employee')]
@@ -56,6 +57,12 @@ class Create extends Component
 
     #[Validate('nullable|image|max:2048')]
     public $profile_photo;
+
+    public function mount()
+    {
+        $user = Auth::user();
+        $this->company_id = $user->hasRole('Admin') ? $user->company_id : null;
+    }
 
     public function save()
     {
