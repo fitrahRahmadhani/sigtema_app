@@ -10,6 +10,7 @@ use Livewire\Component;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\Auth;
 use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
@@ -25,11 +26,52 @@ class Create extends Component
     public $aspects = [];
     public $availableAspects = [];
 
+    public $selectedCompanyId = null;
+    public $selectedCompany = null;
+    public $companies;
+    public $employees = [];
+    public $isSuperadmin = false;
+    public $showCompanySelection = false;
+
     public function mount()
     {
+        $user = Auth::user();
+        $this->isSuperadmin = $user->hasRole('superadmin');
+
+        if ($this->isSuperadmin) {
+            $this->companies = Company::where('is_active', true)->get();
+            $this->selectedCompanyId = session('psychogram_results_company_id');
+
+            if ($this->selectedCompanyId) {
+                $this->selectedCompany = Company::find($this->selectedCompanyId);
+                $this->company_id = $this->selectedCompanyId;
+                $this->loadEmployees();
+            } else {
+                $this->showCompanySelection = true;
+            }
+        } else {
+            // Admin biasa hanya bisa akses perusahaan mereka sendiri
+            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompany = Company::find($this->selectedCompanyId);
+            $this->company_id = $this->selectedCompanyId;
+            $this->companies = Company::where('id', $user->company_id)->get();
+            $this->loadEmployees();
+        }
+
         $this->aspects = [
             ['aspect_id' => '', 'score' => 3] // Default satu row dengan score 3
         ];
+    }
+
+    private function loadEmployees()
+    {
+        if ($this->selectedCompanyId) {
+            $this->employees = Employee::where('company_id', $this->selectedCompanyId)
+                ->orderBy('name')
+                ->get();
+        } else {
+            $this->employees = collect();
+        }
     }
 
     public function save()
@@ -120,6 +162,14 @@ class Create extends Component
         $this->employee_id = '';
         $this->aspects = [['aspect_id' => '', 'score' => 3]];
         $this->availableAspects = [];
+
+        if ($value) {
+            $this->employees = Employee::where('company_id', $value)
+                ->orderBy('name')
+                ->get();
+        } else {
+            $this->employees = collect();
+        }
     }
 
     public function updatedEmployeeId($value)
@@ -149,17 +199,36 @@ class Create extends Component
 
     public function render()
     {
-        $companies = Company::orderBy('name')->get();
+        // Jika superadmin belum pilih company
+        if ($this->showCompanySelection) {
+            // Hitung jumlah data psychogram per perusahaan
+            $companiesWithCount = $this->companies->map(function ($company) {
+                $count = PsychogramResult::whereHas('employee', function ($query) use ($company) {
+                    $query->where('company_id', $company->id);
+                })->count();
 
-        $employees = $this->company_id
-            ? Employee::where('company_id', $this->company_id)->orderBy('name')->get()
-            : [];
+                return [
+                    'company' => $company,
+                    'count' => $count
+                ];
+            });
+
+            return view('livewire.pages.psychogram-results.create', [
+                'showCompanySelection' => true,
+                'companiesWithCount' => $companiesWithCount,
+                'isSuperadmin' => $this->isSuperadmin,
+                'selectedCompany' => null,
+            ]);
+        }
 
         $selectedEmployee = $this->employee_id ? Employee::find($this->employee_id) : null;
 
         return view('livewire.pages.psychogram-results.create', [
-            'companies' => $companies,
-            'employees' => $employees,
+            'showCompanySelection' => false,
+            'selectedCompany' => $this->selectedCompany,
+            'isSuperadmin' => $this->isSuperadmin,
+            'companies' => $this->companies,
+            'employees' => $this->employees,
             'selectedEmployee' => $selectedEmployee,
         ]);
     }
