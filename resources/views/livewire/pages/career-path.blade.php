@@ -1,8 +1,9 @@
 <div class="space-y-4">
     <flux:breadcrumbs>
         @hasanyrole('superadmin|admin')
-        <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         @endhasanyrole
+
         <flux:breadcrumbs.item>Career Path</flux:breadcrumbs.item>
     </flux:breadcrumbs>
     <div class="h-full w-full rounded-xl bg-white p-10">
@@ -10,11 +11,17 @@
             {{-- Card --}}
             <div class="col-span-3 h-full w-full space-y-4 md:col-span-1">
                 <div class="color-gradient flex h-[90%] w-full flex-col rounded-lg p-4">
-                    <h6 class="border-b border-white pb-4 text-3xl font-bold text-white lg:text-5xl">
-                        Vacant
-                        <br />
-                        Positions
-                    </h6>
+                    <div
+                        class="flex items-start justify-between border-b border-white pb-4 text-3xl font-bold text-white lg:text-5xl"
+                    >
+                        <h6>
+                            Vacant
+                            <br />
+                            Positions
+                        </h6>
+                        <img src="{{ asset('assets/icon/logo-ai-white.svg') }}" class="h-12 lg:h-18" alt="Logo AI" />
+                    </div>
+
                     <div class="flex h-full w-full items-center justify-center p-4 lg:p-10">
                         <img src="{{ asset('assets/hero/hero_vacant_position.png') }}" class="rounded-full" alt="" />
                     </div>
