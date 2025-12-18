@@ -126,8 +126,14 @@
             <div class="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
                 {{-- PAPI Kostick --}}
                 <div class="flex w-full flex-col">
-                    <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                    <div class="color-gradient flex w-full items-baseline rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">PAPI Kostick</p>
+                        <p class="ml-2 text-sm text-white italic">data powered by</p>
+                        <img
+                            src="{{ asset('assets/logo/logo-sigmatic-white.png') }}"
+                            class="mb-1 ml-2 h-5 self-end"
+                            alt="Logo SIGMATIC"
+                        />
                     </div>
 
                     <div
@@ -170,8 +176,14 @@
 
                 {{-- DISC --}}
                 <div class="flex w-full flex-col">
-                    <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                    <div class="color-gradient flex w-full items-baseline rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">DISC</p>
+                        <p class="ml-2 text-sm text-white italic">data powered by</p>
+                        <img
+                            src="{{ asset('assets/logo/logo-sigmatic-white.png') }}"
+                            class="mb-1 ml-2 h-5 self-end"
+                            alt="Logo SIGMATIC"
+                        />
                     </div>
 
                     <div class="flex grow flex-col rounded-b-lg border border-t-0 border-gray-300 bg-white p-2 md:p-4">
@@ -311,8 +323,12 @@
 
                 <!-- Technical Competencies -->
                 <div class="w-full lg:col-span-1">
-                    <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                    <div class="color-gradient flex w-full items-baseline rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">Technical Competencies</p>
+                        <p class="ml-2 text-sm text-white italic">
+                            data powered by
+                            <span class="font-bold">LSP SIG</span>
+                        </p>
                     </div>
                     <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
                         <table class="w-full border-collapse">
@@ -509,8 +525,14 @@
 
             {{-- Innovation --}}
             <div class="w-full">
-                <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                <div class="color-gradient flex w-full items-baseline rounded-t-lg px-4 py-3">
                     <p class="text-base font-semibold text-white sm:text-lg">Innovations</p>
+                    <p class="ml-2 text-sm text-white italic">data powered by</p>
+                    <img
+                        src="{{ asset('assets/logo/logo-portal-inovasi.png') }}"
+                        class="ml-2 h-5"
+                        alt="Logo Portal Inovasi"
+                    />
                 </div>
                 <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
                     <table class="w-full border-collapse">
@@ -654,8 +676,14 @@
 
                 <!-- Burnout -->
                 <div class="w-full lg:col-span-1">
-                    <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                    <div class="color-gradient flex w-full items-baseline rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">Burnout Test Result</p>
+                        <p class="ml-2 text-sm text-white italic">data powered by</p>
+                        <img
+                            src="{{ asset('assets/logo/logo-sighap-white.png') }}"
+                            class="mb-1 ml-2 h-4 self-end"
+                            alt="Logo SIGMATIC"
+                        />
                     </div>
                     <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
                         <table class="w-full border-collapse">

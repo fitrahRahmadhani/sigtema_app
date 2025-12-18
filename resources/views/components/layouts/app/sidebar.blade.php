@@ -1,4 +1,4 @@
-<flux:sidebar sticky stashable class="h-full w-[300px] border-e border-zinc-200 bg-zinc-50">
+<flux:sidebar sticky stashable class="h-full w-[305px] border-e border-zinc-200 bg-zinc-50">
     <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
     <a href="{{ route('dashboard') }}" class="flex items-center" wire:navigate>
@@ -115,6 +115,7 @@
                         </svg>
 
                         <p>Vacant Positions</p>
+                        <img src="{{ asset('assets/icon/logo-ai.svg') }}" class="h-5" alt="Logo AI" />
                     </a>
 
                     <a
