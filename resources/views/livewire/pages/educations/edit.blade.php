@@ -2,7 +2,7 @@
     <!-- Breadcrumbs -->
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
-        <flux:breadcrumbs.item href="{{ route('educations.index') }}">Education</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item href="{{ route('educations.index') }}">Educations</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Edit Education</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
@@ -65,11 +65,11 @@
             </div>
 
             <!-- Education Details -->
-            <div class="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
-                <h2 class="text-lg font-semibold text-gray-900">Education Details</h2>
-                <div class="grid gap-4 md:grid-cols-2">
+            <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
+                <h3 class="mb-4 text-lg font-semibold text-gray-900">Education Details</h3>
+                <div class="grid gap-6 md:grid-cols-3">
                     <!-- Institution Name -->
-                    <div class="md:col-span-2">
+                    <div>
                         <label for="institution_name" class="mb-2 block text-sm font-medium text-gray-700">
                             Institution Name
                             <span class="text-red-600">*</span>
@@ -78,8 +78,8 @@
                             type="text"
                             id="institution_name"
                             wire:model="institution_name"
-                            class="@error('institution_name') @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                            placeholder="Enter institution/university name"
+                            placeholder="e.g., Universitas Indonesia"
+                            class="@error('institution_name') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
                         @error('institution_name')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -87,7 +87,7 @@
                     </div>
 
                     <!-- Major -->
-                    <div class="md:col-span-2">
+                    <div>
                         <label for="major" class="mb-2 block text-sm font-medium text-gray-700">
                             Major / Field of Study
                             <span class="text-red-600">*</span>
@@ -96,8 +96,8 @@
                             type="text"
                             id="major"
                             wire:model="major"
-                            class="@error('major') @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                            placeholder="Enter major or field of study"
+                            placeholder="e.g., Computer Science"
+                            class="@error('major') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
                         @error('major')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -116,13 +116,16 @@
                                 wire:model="degree"
                                 class="@error('degree') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                             >
-                                <option value="">Select Degree</option>
-                                <option value="SMA/K" {{ $degree == 'SMA/K' ? 'selected' : '' }}>SMA/K</option>
-                                <option value="D3" {{ $degree == 'D3' ? 'selected' : '' }}>D3</option>
-                                <option value="D4" {{ $degree == 'D4' ? 'selected' : '' }}>D4</option>
-                                <option value="S1" {{ $degree == 'S1' ? 'selected' : '' }}>S1</option>
-                                <option value="S2" {{ $degree == 'S2' ? 'selected' : '' }}>S2</option>
-                                <option value="S3" {{ $degree == 'S3' ? 'selected' : '' }}>S3</option>
+                                <option value="">Select degree level</option>
+                                <option value="SMA/SMK">SMA/SMK</option>
+                                <option value="D1">Diploma 1 (D1)</option>
+                                <option value="D2">Diploma 2 (D2)</option>
+                                <option value="D3">Diploma 3 (D3)</option>
+                                <option value="D4">Diploma 4 (D4)</option>
+                                <option value="S1">Bachelor (S1)</option>
+                                <option value="S2">Master (S2)</option>
+                                <option value="S3">Doctorate (S3)</option>
+                                <option value="Profesi">Profesi</option>
                             </select>
                             <svg
                                 class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
@@ -150,8 +153,7 @@
                             type="date"
                             id="start_date"
                             wire:model="start_date"
-                            max="{{ date('Y-m-d') }}"
-                            class="@error('start_date') @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="@error('start_date') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
                         @error('start_date')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -165,9 +167,7 @@
                             type="date"
                             id="end_date"
                             wire:model="end_date"
-                            min="{{ $start_date ? date('Y-m-d', strtotime($start_date)) : '' }}"
-                            max="{{ date('Y-m-d') }}"
-                            class="@error('end_date') @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none disabled:bg-gray-100 disabled:text-gray-500"
+                            class="@error('end_date') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
                         @error('end_date')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
