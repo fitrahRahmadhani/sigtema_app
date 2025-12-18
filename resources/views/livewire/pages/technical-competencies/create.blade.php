@@ -2,7 +2,9 @@
     <!-- Breadcrumbs -->
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
-        <flux:breadcrumbs.item href="{{ route('technical-competencies.index') }}">
+        <flux:breadcrumbs.item
+            href="{{ route('technical-competencies.index', ['company_id' => $selectedCompanyId]) }}"
+        >
             Technical Competencies
         </flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Add Technical Competency</flux:breadcrumbs.item>
@@ -14,7 +16,7 @@
         <div class="mb-8">
             <div class="flex items-center gap-4">
                 <div
-                    class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
+                    class="color-gradient self-start flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -27,211 +29,323 @@
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M9 12.75L11.25 15 15 9.75m-3.713-4.013a4.5 4.5 0 011.482-.943 4.5 4.5 0 013.74 0 4.5 4.5 0 011.482.943m-7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                            d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
                         />
                     </svg>
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Add Technical Competency</h1>
                     <p class="mt-1 text-sm text-gray-500">Add new technical competency or certification for employee</p>
+
+                    @if ($selectedCompany)
+                        <div class="mt-1 flex items-center gap-2">
+                            <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
 
-        <!-- Form -->
-        <form wire:submit="save" class="space-y-6">
-            <!-- Employee Selection -->
-            <div class="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
-                <h2 class="text-lg font-semibold text-gray-900">Employee Information</h2>
-                <div class="grid gap-4 md:grid-cols-2">
-                    <!-- Company Selection -->
-                    <div>
-                        <label for="company_id" class="mb-2 block text-sm font-medium text-gray-700">
-                            Company
-                            <span class="text-red-600">*</span>
-                        </label>
-                        <div class="relative">
-                            <select
-                                id="company_id"
-                                wire:model.live="company_id"
-                                class="@error('company_id') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                            >
-                                <option value="">Select a company</option>
-                                @foreach ($companies as $company)
-                                    <option value="{{ $company->id }}">{{ $company->name }}</option>
-                                @endforeach
-                            </select>
-                            <svg
-                                class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
-                        @error('company_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+        @if ($isSuperadmin && ! $selectedCompanyId)
+            <!-- COMPANY SELECTION SECTION -->
+            <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="mx-auto h-16 w-16 text-gray-400"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"
+                    />
+                </svg>
+                <h3 class="mt-4 text-xl font-semibold text-gray-700">Pilih Perusahaan</h3>
+                <p class="mt-2 text-gray-500">
+                    Silakan pilih perusahaan terlebih dahulu untuk menambah data Technical Competency
+                </p>
 
+                <!-- Company List -->
+                <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    @foreach ($companies as $company)
+                        <a
+                            href="{{ route('technical-competencies.index', ['company_id' => $company->id]) }}"
+                            class="rounded-lg border border-gray-200 bg-white p-4 text-left transition-all hover:border-[#721d21] hover:shadow-md"
+                        >
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center justify-center rounded-lg bg-gray-100">
+                                    @if ($company->logo_path)
+                                        <img
+                                            class="h-14 w-14 object-cover"
+                                            src="{{ asset('storage/' . $company->logo_path) }}"
+                                            alt="{{ 'Logo ' . $company->name }}"
+                                        />
+                                    @else
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="h-6 w-6 text-gray-600"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"
+                                            />
+                                        </svg>
+                                    @endif
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900">{{ $company->name }}</h4>
+                                    <p class="text-sm text-gray-500">
+                                        {{
+                                            \App\Models\TechnicalCompetency::whereHas('employee', function ($query) use ($company) {
+                                                $query->where('company_id', $company->id);
+                                            })->count()
+                                        }}
+                                        data Competencies
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        @else
+            <!-- MAIN CONTENT SECTION -->
+            @if ($selectedCompany)
+                <!-- Form -->
+                <form wire:submit="save" class="space-y-6">
                     <!-- Employee Selection -->
-                    <div>
-                        <label for="employee_id" class="mb-2 block text-sm font-medium text-gray-700">
-                            Employee
-                            <span class="text-red-600">*</span>
-                        </label>
-                        <div class="relative">
-                            <select
-                                id="employee_id"
-                                wire:model="employee_id"
-                                @if(!$company_id) disabled @endif
-                                class="@error('employee_id') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none disabled:bg-gray-100 disabled:text-gray-500"
-                            >
-                                <option value="">Select an employee</option>
-                                @foreach ($employees as $employee)
-                                    <option value="{{ $employee->id }}">
-                                        {{ $employee->name }} ({{ $employee->employee_number }})
-                                    </option>
-                                @endforeach
-                            </select>
+                    <div class="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
+                        <h2 class="text-lg font-semibold text-gray-900">Employee Information</h2>
+                        <div class="grid gap-4 md:grid-cols-2">
+                            <!-- Company Selection (only for superadmin without session) -->
+                            @if ($isSuperadmin)
+                                <div>
+                                    <label for="company_id" class="mb-2 block text-sm font-medium text-gray-700">
+                                        Company
+                                        <span class="text-red-600">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <select
+                                            id="company_id"
+                                            wire:model.live="company_id"
+                                            class="@error('company_id') @enderror {{ $selectedCompanyId ? 'cursor-not-allowed bg-gray-100' : '' }} w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                            @if($selectedCompanyId) disabled @endif
+                                        >
+                                            @if ($selectedCompanyId)
+                                                <option value="{{ $selectedCompanyId }}">
+                                                    {{ $selectedCompany->name }}
+                                                </option>
+                                            @else
+                                                <option value="">Select a company</option>
+                                                @foreach ($companies as $company)
+                                                    <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                        <svg
+                                            class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+                                    @error('company_id')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+
+                                    @if ($selectedCompanyId)
+                                        <p class="mt-1 text-sm text-gray-500">
+                                            Company is selected from your previous session
+                                        </p>
+                                    @endif
+                                </div>
+                            @else
+                                <!-- For non-superadmin, show company name (readonly) -->
+                                <div>
+                                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                                        Company
+                                        <span class="text-red-600">*</span>
+                                    </label>
+                                    <div
+                                        class="w-full cursor-not-allowed rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-sm text-gray-700"
+                                    >
+                                        <p>{{ $selectedCompany->name }}</p>
+                                    </div>
+                                    <p class="mt-1 text-sm text-gray-500">Your assigned company</p>
+                                </div>
+                            @endif
+
+                            <!-- Employee Selection -->
+                            <div>
+                                <label for="employee_id" class="mb-2 block text-sm font-medium text-gray-700">
+                                    Employee
+                                    <span class="text-red-600">*</span>
+                                </label>
+                                <div class="relative">
+                                    <select
+                                        id="employee_id"
+                                        wire:model="employee_id"
+                                        class="@error('employee_id') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                        @if(!$company_id) disabled @endif
+                                    >
+                                        <option value="">Select an employee</option>
+                                        @foreach ($employees as $employee)
+                                            <option value="{{ $employee->id }}">
+                                                {{ $employee->name }} ({{ $employee->employee_number }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <svg
+                                        class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                                @error('employee_id')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+
+                                @if (! $company_id)
+                                    <p class="mt-1 text-sm text-gray-500">Please select a company first</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Competency Details -->
+                    <div class="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
+                        <h2 class="text-lg font-semibold text-gray-900">Competency Details</h2>
+                        <div class="grid gap-4 md:grid-cols-2">
+                            <!-- Competency Name -->
+                            <div class="md:col-span-2">
+                                <label for="name" class="mb-2 block text-sm font-medium text-gray-700">
+                                    Competency/Certification Name
+                                    <span class="text-red-600">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    wire:model="name"
+                                    class="@error('name') @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                    placeholder="Enter competency or certification name"
+                                />
+                                @error('name')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Issued By -->
+                            <div class="md:col-span-2">
+                                <label for="issued_by" class="mb-2 block text-sm font-medium text-gray-700">
+                                    Issued By
+                                    <span class="text-red-600">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="issued_by"
+                                    wire:model="issued_by"
+                                    class="@error('issued_by') @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                    placeholder="Enter issuing organization"
+                                />
+                                @error('issued_by')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Year -->
+                            <div>
+                                <label for="year" class="mb-2 block text-sm font-medium text-gray-700">
+                                    Year
+                                    <span class="text-red-600">*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    id="year"
+                                    wire:model="year"
+                                    min="2000"
+                                    max="{{ date('Y') + 1 }}"
+                                    class="@error('year') @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                    placeholder="Enter year (e.g., 2024)"
+                                />
+                                @error('year')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-6">
+                        <button
+                            type="button"
+                            wire:click="cancel"
+                            class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-50 focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            wire:loading.attr="disabled"
+                            wire:target="save"
+                            class="color-gradient inline-flex items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none disabled:opacity-70"
+                        >
                             <svg
-                                class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                wire:loading
+                                wire:target="save"
+                                class="h-5 w-5 animate-spin"
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
                             >
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                <circle
+                                    class="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    stroke-width="4"
+                                ></circle>
+                                <path
+                                    class="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                ></path>
                             </svg>
-                        </div>
-                        @error('employee_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-
-                        @if (! $company_id)
-                            <p class="mt-1 text-sm text-gray-500">Please select a company first</p>
-                        @endif
+                            <svg
+                                wire:loading.remove
+                                wire:target="save"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="h-5 w-5"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            <span wire:loading.remove wire:target="save">Add Competency</span>
+                            <span wire:loading wire:target="save">Processing...</span>
+                        </button>
                     </div>
-                </div>
-            </div>
-
-            <!-- Competency Details -->
-            <div class="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
-                <h2 class="text-lg font-semibold text-gray-900">Competency Details</h2>
-                <div class="grid gap-4 md:grid-cols-2">
-                    <!-- Competency Name -->
-                    <div class="md:col-span-2">
-                        <label for="name" class="mb-2 block text-sm font-medium text-gray-700">
-                            Competency/Certification Name
-                            <span class="text-red-600">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="name"
-                            wire:model="name"
-                            class="@error('name') @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                            placeholder="Enter competency or certification name"
-                        />
-                        @error('name')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Issued By -->
-                    <div class="md:col-span-2">
-                        <label for="issued_by" class="mb-2 block text-sm font-medium text-gray-700">
-                            Issued By
-                            <span class="text-red-600">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="issued_by"
-                            wire:model="issued_by"
-                            class="@error('issued_by') @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                            placeholder="Enter issuing organization"
-                        />
-                        @error('issued_by')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Year -->
-                    <div>
-                        <label for="year" class="mb-2 block text-sm font-medium text-gray-700">
-                            Year
-                            <span class="text-red-600">*</span>
-                        </label>
-                        <input
-                            type="number"
-                            id="year"
-                            wire:model="year"
-                            min="2000"
-                            max="{{ date('Y') + 1 }}"
-                            class="@error('year') @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                            placeholder="Enter year (e.g., 2024)"
-                        />
-                        @error('year')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-            </div>
-
-            <!-- Form Actions -->
-            <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-6">
-                <a
-                    href="{{ route('technical-competencies.index') }}"
-                    class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-50 focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
-                >
-                    Cancel
-                </a>
-                <button
-                    type="submit"
-                    wire:loading.attr="disabled"
-                    class="color-gradient inline-flex items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none disabled:opacity-70"
-                >
-                    <svg
-                        wire:loading
-                        wire:target="save"
-                        class="h-5 w-5 animate-spin"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                    >
-                        <circle
-                            class="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            stroke-width="4"
-                        ></circle>
-                        <path
-                            class="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                    </svg>
-                    <svg
-                        wire:loading.remove
-                        wire:target="save"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-5 w-5"
-                    >
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    <span wire:loading.remove wire:target="save">Add Competency</span>
-                    <span wire:loading wire:target="save">Processing...</span>
-                </button>
-            </div>
-        </form>
+                </form>
+            @endif
+        @endif
     </div>
 </div>
