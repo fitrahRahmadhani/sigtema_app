@@ -8,6 +8,7 @@ use App\Models\Company;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Illuminate\Support\Facades\Auth;
 use Masmerise\Toaster\Toaster;
 use Exception;
 
@@ -20,20 +21,51 @@ class Create extends Component
     public $year;
 
     public $company_id = '';
-
+    public $selectedCompanyId = null;
+    public $selectedCompany = null;
     public $companies = [];
     public $employees = [];
+    public $isSuperadmin = false;
 
     public function mount()
     {
-        $this->companies = Company::orderBy('name')->get();
-        $this->employees = collect();
+        $user = Auth::user();
+        $this->isSuperadmin = $user->hasRole('superadmin');
+
+        if ($this->isSuperadmin) {
+            $this->companies = Company::where('is_active', true)->get();
+            $this->selectedCompanyId = session('mcus_company_id');
+
+            if ($this->selectedCompanyId) {
+                $this->selectedCompany = Company::find($this->selectedCompanyId);
+                $this->company_id = $this->selectedCompanyId;
+                $this->loadEmployees();
+            }
+        } else {
+            // Admin biasa hanya bisa akses perusahaan mereka sendiri
+            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompany = Company::find($this->selectedCompanyId);
+            $this->company_id = $this->selectedCompanyId;
+            $this->loadEmployees();
+        }
+
         $this->year = date('Y');
+    }
+
+    private function loadEmployees()
+    {
+        if ($this->selectedCompanyId) {
+            $this->employees = Employee::where('company_id', $this->selectedCompanyId)
+                ->orderBy('name')
+                ->get();
+        } else {
+            $this->employees = collect();
+        }
     }
 
     public function updatedCompanyId($companyId)
     {
-        if ($companyId) {
+        if ($companyId && $this->isSuperadmin) {
             $this->employees = Employee::where('company_id', $companyId)
                 ->orderBy('name')
                 ->get();
@@ -82,6 +114,11 @@ class Create extends Component
         } catch (Exception $e) {
             Toaster::error('Failed to add MCU record. Please try again.');
         }
+    }
+
+    public function cancel()
+    {
+        return redirect()->route('mcus.index');
     }
 
     public function render()

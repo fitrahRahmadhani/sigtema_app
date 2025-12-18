@@ -6,6 +6,7 @@ use App\Models\Mcu;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Illuminate\Support\Facades\Auth;
 use Masmerise\Toaster\Toaster;
 use Exception;
 
@@ -14,9 +15,13 @@ use Exception;
 class Edit extends Component
 {
     public Mcu $mcu;
-
     public $result;
     public $year;
+
+    // Tambahkan property untuk superadmin
+    public $selectedCompanyId = null;
+    public $selectedCompany = null;
+    public $isSuperadmin = false;
 
     public function mount(Mcu $mcu)
     {
@@ -25,6 +30,15 @@ class Edit extends Component
         // Set nilai dari mcu yang akan diedit
         $this->result = $mcu->result;
         $this->year = $mcu->year;
+
+        // Cek role user
+        $user = Auth::user();
+        $this->isSuperadmin = $user->hasRole('superadmin');
+
+        if ($this->mcu->employee && $this->mcu->employee->company) {
+            $this->selectedCompanyId = $this->mcu->employee->company_id;
+            $this->selectedCompany = $this->mcu->employee->company;
+        }
     }
 
     public function rules()
@@ -57,16 +71,20 @@ class Edit extends Component
                 'year' => $this->year,
             ]);
 
-            return redirect()->route('mcus.index')->success('MCU record has been updated successfully.');
+            return redirect()->route('mcus.index', ['company_id' => $this->selectedCompanyId])
+                ->success('MCU record has been updated successfully.');
         } catch (Exception $e) {
             Toaster::error('Failed to update MCU record. Please try again.');
         }
     }
 
+    public function cancel()
+    {
+        return redirect()->route('mcus.index', ['company_id' => $this->selectedCompanyId]);
+    }
+
     public function render()
     {
-        return view('livewire.pages.mcus.edit', [
-            'mcu' => $this->mcu,
-        ]);
+        return view('livewire.pages.mcus.edit');
     }
 }
