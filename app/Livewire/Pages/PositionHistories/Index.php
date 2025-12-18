@@ -3,13 +3,13 @@
 namespace App\Livewire\Pages\PositionHistories;
 
 use App\Models\PositionHistory;
-use App\Models\Employee;
-use App\Models\Company as CompanyModel;
+use App\Models\Company;
 use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Auth;
 use App\Livewire\Traits\WithDeleteConfirmation;
 
 #[Layout('components.layouts.app')]
@@ -18,43 +18,58 @@ class Index extends Component
 {
     use WithPagination, WithDeleteConfirmation;
 
+    public $selectedCompanyId = null;
+    public $selectedCompany = null;
+    public $companies = [];
+    public $isSuperadmin = false;
+
     #[Url(as: 'q')]
     public $search = '';
 
-    #[Url(as: 'sort')]
-    public $sortBy = 'start_date_desc';
+    public function mount(): void
+    {
+        $user = Auth::user();
 
-    #[Url(as: 'company')]
-    public $companyFilter = '';
+        $this->isSuperadmin = $user->hasRole('superadmin');
 
-    #[Url(as: 'employee')]
-    public $employeeFilter = '';
+        if ($this->isSuperadmin) {
+            $this->companies = Company::where('is_active', true)->get();
+            $this->selectedCompanyId = session('position_histories_company_id') ?? request('company_id');
 
-    #[Url(as: 'work_unit')]
-    public $workUnitFilter = '';
+            if ($this->selectedCompanyId) {
+                $this->selectedCompany = Company::find($this->selectedCompanyId);
+            }
+        } else {
+            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompany = Company::find($this->selectedCompanyId);
+            $this->companies = Company::where('id', $user->company_id)->get();
+        }
+    }
+
+    public function selectCompany($companyId)
+    {
+        $this->selectedCompanyId = $companyId;
+        $this->selectedCompany = Company::find($companyId);
+        session(['position_histories_company_id' => $companyId]);
+        $this->resetPage();
+        $this->resetFilters();
+    }
+
+    public function changeCompany()
+    {
+        $this->selectedCompanyId = null;
+        $this->selectedCompany = null;
+        session()->forget('position_histories_company_id');
+        $this->resetPage();
+        $this->resetFilters();
+    }
+
+    private function resetFilters()
+    {
+        $this->search = '';
+    }
 
     public function updatingSearch()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingSortBy()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingCompanyFilter()
-    {
-        $this->resetPage();
-        $this->employeeFilter = '';
-    }
-
-    public function updatingEmployeeFilter()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingWorkUnitFilter()
     {
         $this->resetPage();
     }
@@ -82,63 +97,38 @@ class Index extends Component
 
     public function render()
     {
+        // Jika superadmin belum pilih company
+        if ($this->isSuperadmin && !$this->selectedCompanyId) {
+            return view('livewire.pages.position-histories.index', [
+                'showCompanySelection' => true,
+                'companies' => $this->companies,
+                'isSuperadmin' => $this->isSuperadmin,
+                'selectedCompany' => null,
+                'histories' => collect(),
+            ]);
+        }
+
+        // Query position histories berdasarkan company yang dipilih
         $histories = PositionHistory::query()
             ->with(['employee'])
+            ->whereHas('employee', function ($query) {
+                $query->where('company_id', $this->selectedCompanyId);
+            })
             ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('position_name', 'like', '%' . $this->search . '%')
-                        ->orWhere('work_unit', 'like', '%' . $this->search . '%')
-                        ->orWhere('company', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('employee', function ($employeeQuery) {
-                            $employeeQuery->where('name', 'like', '%' . $this->search . '%')
-                                ->orWhere('employee_number', 'like', '%' . $this->search . '%');
-                        });
+                $query->whereHas('employee', function ($employeeQuery) {
+                    $employeeQuery->where('name', 'like', '%' . $this->search . '%')
+                        ->orWhere('employee_number', 'like', '%' . $this->search . '%');
                 });
             })
-            ->when($this->companyFilter, fn($query) => $query->where('company', 'like', '%' . $this->companyFilter . '%'))
-            ->when($this->employeeFilter, fn($query) => $query->where('employee_id', $this->employeeFilter))
-            ->when($this->workUnitFilter, fn($query) => $query->where('work_unit', 'like', '%' . $this->workUnitFilter . '%'))
-            ->when($this->sortBy === 'employee_name_asc', fn($query) => $query->join('employees', 'position_histories.employee_id', '=', 'employees.id')
-                ->orderBy('employees.name', 'asc')
-                ->select('position_histories.*'))
-            ->when($this->sortBy === 'employee_name_desc', fn($query) => $query->join('employees', 'position_histories.employee_id', '=', 'employees.id')
-                ->orderBy('employees.name', 'desc')
-                ->select('position_histories.*'))
-            ->when($this->sortBy === 'start_date_desc', fn($query) => $query->orderBy('start_date', 'desc'))
-            ->when($this->sortBy === 'start_date_asc', fn($query) => $query->orderBy('start_date', 'asc'))
-            ->when($this->sortBy === 'end_date_desc', fn($query) => $query->orderBy('end_date', 'desc'))
-            ->when($this->sortBy === 'end_date_asc', fn($query) => $query->orderBy('end_date', 'asc'))
-            ->when($this->sortBy === 'newest', fn($query) => $query->latest('created_at'))
-            ->when($this->sortBy === 'oldest', fn($query) => $query->oldest('created_at'))
+            ->orderBy('start_date', 'desc')
             ->paginate(10);
 
-        $companies = PositionHistory::select('company')
-            ->distinct()
-            ->orderBy('company')
-            ->get()
-            ->pluck('company')
-            ->filter();
-
-        $allCompanies = CompanyModel::orderBy('name')->get();
-
-        $employees = $this->companyFilter
-            ? Employee::orderBy('name')->get() // Note: company di sini adalah field string, bukan relation
-            : Employee::orderBy('name')->get();
-
-        // Get unique work units for filter
-        $workUnits = PositionHistory::select('work_unit')
-            ->distinct()
-            ->orderBy('work_unit')
-            ->get()
-            ->pluck('work_unit')
-            ->filter();
-
         return view('livewire.pages.position-histories.index', [
+            'showCompanySelection' => false,
             'histories' => $histories,
-            'companies' => $companies,
-            'allCompanies' => $allCompanies,
-            'employees' => $employees,
-            'workUnits' => $workUnits,
+            'selectedCompany' => $this->selectedCompany,
+            'isSuperadmin' => $this->isSuperadmin,
+            'companies' => $this->companies,
         ]);
     }
 }
