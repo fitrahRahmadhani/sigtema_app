@@ -33,6 +33,12 @@
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Edit Psychogram Result</h1>
                 <p class="mt-1 text-sm text-gray-500">Update evaluation score for this result</p>
+
+                @if ($selectedCompany)
+                    <div class="mt-1 flex items-center gap-2">
+                        <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -51,6 +57,11 @@
                         <span class="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800">
                             Score: {{ $result->score }}
                         </span>
+                        @if ($selectedCompany)
+                            <span class="rounded-md bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                                {{ $selectedCompany->name }}
+                            </span>
+                        @endif
                     </div>
                 </div>
                 <div class="text-sm text-gray-600">
@@ -68,6 +79,45 @@
             <!-- Employee & Aspect Info -->
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Result Information</h3>
+
+                <!-- Company Info -->
+                @if ($isSuperadmin && $selectedCompany)
+                    <div class="mb-6">
+                        <p class="mb-2 text-sm font-medium text-gray-700">Company</p>
+                        <div class="rounded-lg border border-gray-200 bg-white p-4">
+                            <div class="flex items-center gap-3">
+                                @if ($selectedCompany->logo_path)
+                                    <img
+                                        class="h-10 w-10 rounded-lg object-cover"
+                                        src="{{ asset('storage/' . $selectedCompany->logo_path) }}"
+                                        alt="{{ 'Logo ' . $selectedCompany->name }}"
+                                    />
+                                @else
+                                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="h-6 w-6 text-gray-600"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"
+                                            />
+                                        </svg>
+                                    </div>
+                                @endif
+                                <div>
+                                    <p class="font-semibold text-gray-900">{{ $selectedCompany->name }}</p>
+                                    <p class="text-sm text-gray-500">{{ $selectedCompany->cocd ?? 'No COCD' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- Employee Information -->
                 <div class="mb-6">
@@ -106,6 +156,14 @@
                                             class="rounded-md bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-800"
                                         >
                                             {{ $result->employee->position->name }}
+                                        </span>
+                                    @endif
+
+                                    @if ($result->employee->personal_grade)
+                                        <span
+                                            class="rounded-md bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800"
+                                        >
+                                            Grade: {{ $result->employee->personal_grade }}
                                         </span>
                                     @endif
                                 </div>
