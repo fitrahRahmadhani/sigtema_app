@@ -642,7 +642,7 @@
                                                     @foreach ($selectedEmployees[$i]->educations as $education)
                                                         <li class="rounded-lg border border-gray-200 bg-gray-50 p-3">
                                                             <p class="font-medium text-gray-900">
-                                                                {{ $education->degree }}
+                                                                {{ $education->degree }} - {{ $education->major }}
                                                             </p>
                                                             <p class="text-sm text-gray-600">
                                                                 {{ $education->institution_name }}
