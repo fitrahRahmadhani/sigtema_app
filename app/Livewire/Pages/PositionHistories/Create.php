@@ -4,10 +4,11 @@ namespace App\Livewire\Pages\PositionHistories;
 
 use App\Models\PositionHistory;
 use App\Models\Employee;
-use App\Models\Company as CompanyModel;
+use App\Models\Company;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Illuminate\Support\Facades\Auth;
 use Masmerise\Toaster\Toaster;
 use Exception;
 
@@ -23,22 +24,65 @@ class Create extends Component
     public $company;
 
     public $company_id = '';
-
+    public $selectedCompanyId = null;
+    public $selectedCompany = null;
     public $companies = [];
     public $employees = [];
+    public $isSuperadmin = false;
 
     public function mount()
     {
-        $this->companies = CompanyModel::orderBy('name')->get();
-        $this->employees = collect();
+        $user = Auth::user();
+        $this->isSuperadmin = $user->hasRole('superadmin');
+
+        if ($this->isSuperadmin) {
+            $this->companies = Company::where('is_active', true)->get();
+            $this->selectedCompanyId = session('position_histories_company_id');
+
+            if ($this->selectedCompanyId) {
+                $this->selectedCompany = Company::find($this->selectedCompanyId);
+                $this->company_id = $this->selectedCompanyId;
+                $this->loadEmployees();
+                // Auto-fill company name from selected company
+                if ($this->selectedCompany) {
+                    $this->company = $this->selectedCompany->name;
+                }
+            }
+        } else {
+            // Admin biasa hanya bisa akses perusahaan mereka sendiri
+            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompany = Company::find($this->selectedCompanyId);
+            $this->company_id = $this->selectedCompanyId;
+            $this->loadEmployees();
+            // Auto-fill company name from user's company
+            if ($this->selectedCompany) {
+                $this->company = $this->selectedCompany->name;
+            }
+        }
+    }
+
+    private function loadEmployees()
+    {
+        if ($this->selectedCompanyId) {
+            $this->employees = Employee::where('company_id', $this->selectedCompanyId)
+                ->orderBy('name')
+                ->get();
+        } else {
+            $this->employees = collect();
+        }
     }
 
     public function updatedCompanyId($companyId)
     {
-        if ($companyId) {
+        if ($companyId && $this->isSuperadmin) {
             $this->employees = Employee::where('company_id', $companyId)
                 ->orderBy('name')
                 ->get();
+            // Update company name when company changes
+            $selectedCompany = Company::find($companyId);
+            if ($selectedCompany) {
+                $this->company = $selectedCompany->name;
+            }
         } else {
             $this->employees = collect();
         }
@@ -53,7 +97,7 @@ class Create extends Component
             'position_name' => 'required|string|max:255',
             'work_unit' => 'required|string|max:255',
             'start_date' => 'required|date',
-            'end_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
             'company' => 'required|string|max:255',
         ];
     }
@@ -66,7 +110,7 @@ class Create extends Component
             'position_name.required' => 'Position name is required.',
             'work_unit.required' => 'Work unit is required.',
             'start_date.required' => 'Start date is required.',
-            'end_date.required' => 'End date is required.',
+            'end_date.after_or_equal' => 'End date must be after or equal to start date.',
             'company.required' => 'Company name is required.',
         ];
     }
@@ -85,10 +129,16 @@ class Create extends Component
                 'company' => $this->company,
             ]);
 
-            return redirect()->route('position-histories.index')->success('Position history has been added successfully.');
+            return redirect()->route('position-histories.index', ['company_id' => $this->selectedCompanyId])
+                ->success('Position history has been added successfully.');
         } catch (Exception $e) {
             Toaster::error('Failed to add position history. Please try again.');
         }
+    }
+
+    public function cancel()
+    {
+        return redirect()->route('position-histories.index', ['company_id' => $this->selectedCompanyId]);
     }
 
     public function render()

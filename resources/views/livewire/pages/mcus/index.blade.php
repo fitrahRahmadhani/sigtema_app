@@ -284,11 +284,6 @@
                                         >
                                             {{ $mcu->employee->employee_number }}
                                         </span>
-                                        @if ($mcu->employee->company)
-                                            <p class="mt-1 truncate text-xs text-gray-500">
-                                                {{ $mcu->employee->company->name }}
-                                            </p>
-                                        @endif
                                     @else
                                         <p class="text-sm text-gray-400 italic">No employee data</p>
                                     @endif
