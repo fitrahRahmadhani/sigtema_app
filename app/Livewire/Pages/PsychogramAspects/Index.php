@@ -23,6 +23,7 @@ class Index extends Component
     public $selectedCompany = null;
     public $companies = [];
     public $isSuperadmin = false;
+    public $showCompanySelection = false;
 
     #[Url(as: 'q')]
     public $search = '';
@@ -45,11 +46,15 @@ class Index extends Component
 
             if ($this->selectedCompanyId) {
                 $this->selectedCompany = Company::find($this->selectedCompanyId);
+                $this->showCompanySelection = false;
+            } else {
+                $this->showCompanySelection = true;
             }
         } else {
             $this->selectedCompanyId = $user->company_id;
             $this->selectedCompany = Company::find($this->selectedCompanyId);
             $this->companies = Company::where('id', $user->company_id)->get();
+            $this->showCompanySelection = false;
         }
     }
 
@@ -58,6 +63,7 @@ class Index extends Component
         $this->selectedCompanyId = $companyId;
         $this->selectedCompany = Company::find($companyId);
         session(['psychogram_aspects_company_id' => $companyId]);
+        $this->showCompanySelection = false;
         $this->resetPage();
         $this->resetFilters();
     }
@@ -67,6 +73,7 @@ class Index extends Component
         $this->selectedCompanyId = null;
         $this->selectedCompany = null;
         session()->forget('psychogram_aspects_company_id');
+        $this->showCompanySelection = true;
         $this->resetPage();
         $this->resetFilters();
     }
@@ -102,6 +109,25 @@ class Index extends Component
     public function toggleStatus($aspectId)
     {
         $aspect = PsychogramAspect::findOrFail($aspectId);
+
+        // Authorization check
+        if (!$this->isSuperadmin) {
+            // Admin biasa hanya bisa toggle status untuk:
+            // 1. Global aspects (company_id null) - TIDAK BISA
+            // 2. Aspects dari company mereka sendiri
+            if ($aspect->company_id === null) {
+                Toaster::error('You are not authorized to toggle status of global aspects.');
+                return;
+            }
+
+            if ($aspect->company_id !== $this->selectedCompanyId) {
+                Toaster::error('You are not authorized to toggle status of aspects from other companies.');
+                return;
+            }
+        }
+
+        // Superadmin bisa toggle semua aspects (global dan company-specific)
+
         $aspect->update(['is_active' => !$aspect->is_active]);
 
         Toaster::success('Status updated successfully!');
@@ -119,6 +145,22 @@ class Index extends Component
 
     protected function performDelete($aspect): void
     {
+        // Authorization check untuk delete
+        if (!$this->isSuperadmin) {
+            // Admin biasa hanya bisa delete:
+            // 1. Global aspects (company_id null) - TIDAK BISA
+            // 2. Aspects dari company mereka sendiri
+            if ($aspect->company_id === null) {
+                Toaster::error('You are not authorized to delete global aspects.');
+                return;
+            }
+
+            if ($aspect->company_id !== $this->selectedCompanyId) {
+                Toaster::error('You are not authorized to delete aspects from other companies.');
+                return;
+            }
+        }
+
         // Cek jika aspect digunakan di psychogram scores sebelum menghapus
         if ($aspect->scores()->exists()) {
             Toaster::error('Cannot delete aspect because it is being used in psychogram scores.');
@@ -131,10 +173,23 @@ class Index extends Component
     public function render()
     {
         // Jika superadmin belum pilih company
-        if ($this->isSuperadmin && !$this->selectedCompanyId) {
+        if ($this->showCompanySelection) {
+            // Hitung jumlah data aspect per perusahaan (termasuk global)
+            $companiesWithCount = $this->companies->map(function ($company) {
+                $count = PsychogramAspect::where(function ($query) use ($company) {
+                    $query->where('company_id', $company->id)
+                        ->orWhereNull('company_id');
+                })->count();
+
+                return [
+                    'company' => $company,
+                    'count' => $count
+                ];
+            });
+
             return view('livewire.pages.psychogram-aspects.index', [
                 'showCompanySelection' => true,
-                'companies' => $this->companies,
+                'companiesWithCount' => $companiesWithCount,
                 'isSuperadmin' => $this->isSuperadmin,
                 'selectedCompany' => null,
                 'aspects' => collect(),
@@ -152,12 +207,9 @@ class Index extends Component
             })
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
+                    // Pencarian hanya untuk aspect_code dan aspect_name
                     $q->where('aspect_code', 'like', '%' . $this->search . '%')
-                        ->orWhere('aspect_name', 'like', '%' . $this->search . '%')
-                        ->orWhere('description', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('company', function ($companyQuery) {
-                            $companyQuery->where('name', 'like', '%' . $this->search . '%');
-                        });
+                        ->orWhere('aspect_name', 'like', '%' . $this->search . '%');
                 });
             })
             ->when($this->statusFilter === 'active', fn($query) => $query->where('is_active', true))
