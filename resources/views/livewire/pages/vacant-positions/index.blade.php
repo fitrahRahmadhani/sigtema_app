@@ -30,7 +30,10 @@
                 </svg>
             </div>
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Vacant Positions</h1>
+                <h1 class="inline text-2xl font-bold text-gray-900 md:text-3xl">
+                    Vacant Positions
+                    <img src="{{ asset('assets/icon/logo-ai.svg') }}" class="mb-2 ml-2 inline h-8" alt="Logo AI" />
+                </h1>
 
                 <!-- Company Info with Change Button -->
                 @if ($isSuperadmin && $selectedCompany)

@@ -408,7 +408,13 @@
                                         colspan="{{ $columnCount + 1 }}"
                                         class="left-0 px-6 py-3 font-semibold text-white"
                                     >
-                                        Personality Information
+                                        <p class="inline">Personality Information</p>
+                                        <p class="ml-2 inline text-sm text-white italic">data powered by</p>
+                                        <img
+                                            src="{{ asset('assets/logo/logo-sigmatic-white.png') }}"
+                                            class="mb-1 ml-2 inline h-6 self-end"
+                                            alt="Logo SIGMATIC"
+                                        />
                                     </td>
                                 </tr>
 
@@ -498,7 +504,11 @@
                                         colspan="{{ $columnCount + 1 }}"
                                         class="left-0 px-6 py-3 font-semibold text-white"
                                     >
-                                        Technical Competency
+                                        <p class="inline">Technical Competency</p>
+                                        <p class="ml-2 inline text-sm text-white italic">
+                                            data powered by
+                                            <span class="font-bold">LSP SIG</span>
+                                        </p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -534,7 +544,13 @@
                                         colspan="{{ $columnCount + 1 }}"
                                         class="left-0 px-6 py-3 font-semibold text-white"
                                     >
-                                        Innovation
+                                        <p class="inline">Innovation</p>
+                                        <p class="ml-2 inline text-sm text-white italic">data powered by</p>
+                                        <img
+                                            src="{{ asset('assets/logo/logo-portal-inovasi.png') }}"
+                                            class="mb-1 ml-2 inline h-6 self-end"
+                                            alt="Logo Portal Inovasi"
+                                        />
                                     </td>
                                 </tr>
                                 <tr>
@@ -718,7 +734,13 @@
                                         colspan="{{ $columnCount + 1 }}"
                                         class="left-0 px-6 py-3 font-semibold text-white"
                                     >
-                                        Burnout Test Results
+                                        <p class="inline">Burnout Test Results</p>
+                                        <p class="ml-2 inline text-sm text-white italic">data powered by</p>
+                                        <img
+                                            src="{{ asset('assets/logo/logo-sighap-white.png') }}"
+                                            class="mb-1 ml-2 inline h-5 self-end"
+                                            alt="Logo SIGHAP"
+                                        />
                                     </td>
                                 </tr>
 
