@@ -8,6 +8,7 @@ use App\Models\Company;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Illuminate\Support\Facades\Auth;
 use Masmerise\Toaster\Toaster;
 use Exception;
 
@@ -21,22 +22,51 @@ class Create extends Component
     public $degree;
     public $start_date;
     public $end_date;
-    public $is_studying = false;
 
     public $company_id = '';
-
+    public $selectedCompanyId = null;
+    public $selectedCompany = null;
     public $companies = [];
     public $employees = [];
+    public $isSuperadmin = false;
 
     public function mount()
     {
-        $this->companies = Company::orderBy('name')->get();
-        $this->employees = collect();
+        $user = Auth::user();
+        $this->isSuperadmin = $user->hasRole('superadmin');
+
+        if ($this->isSuperadmin) {
+            $this->companies = Company::where('is_active', true)->get();
+            $this->selectedCompanyId = session('educations_company_id');
+
+            if ($this->selectedCompanyId) {
+                $this->selectedCompany = Company::find($this->selectedCompanyId);
+                $this->company_id = $this->selectedCompanyId;
+                $this->loadEmployees();
+            }
+        } else {
+            // Admin biasa hanya bisa akses perusahaan mereka sendiri
+            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompany = Company::find($this->selectedCompanyId);
+            $this->company_id = $this->selectedCompanyId;
+            $this->loadEmployees();
+        }
+    }
+
+    private function loadEmployees()
+    {
+        if ($this->selectedCompanyId) {
+            $this->employees = Employee::where('company_id', $this->selectedCompanyId)
+                ->orderBy('name')
+                ->get();
+        } else {
+            $this->employees = collect();
+        }
     }
 
     public function updatedCompanyId($companyId)
     {
-        if ($companyId) {
+        if ($companyId && $this->isSuperadmin) {
             $this->employees = Employee::where('company_id', $companyId)
                 ->orderBy('name')
                 ->get();
@@ -63,7 +93,6 @@ class Create extends Component
             'degree' => 'required|string|max:100',
             'start_date' => 'required|date|before_or_equal:today',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'is_studying' => 'boolean',
         ];
     }
 
@@ -86,11 +115,6 @@ class Create extends Component
         try {
             $this->validate();
 
-            // Jika still studying, set end_date ke null
-            if ($this->is_studying) {
-                $this->end_date = null;
-            }
-
             Education::create([
                 'employee_id' => $this->employee_id,
                 'institution_name' => $this->institution_name,
@@ -104,6 +128,11 @@ class Create extends Component
         } catch (Exception $e) {
             Toaster::error('Failed to add education record. Please try again.');
         }
+    }
+
+    public function cancel()
+    {
+        return redirect()->route('educations.index');
     }
 
     public function render()

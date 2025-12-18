@@ -3,8 +3,6 @@
 namespace App\Livewire\Pages\Educations;
 
 use App\Models\Education;
-use App\Models\Employee;
-use App\Models\Company;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
