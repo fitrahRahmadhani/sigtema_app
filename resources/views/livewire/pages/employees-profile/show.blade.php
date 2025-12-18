@@ -783,7 +783,7 @@
                 code: 'L',
                 angle: 54,
                 cat: 'KEPEMIMPINAN',
-                desc: 'Peranan\nSbg\nPemim',
+                desc: 'Peranan\nSbg\nPemimpin',
                 color: '#d1d5db',
                 colorSolid: '#6b7280',
             },

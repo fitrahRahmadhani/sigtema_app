@@ -10,6 +10,7 @@ use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Auth;
 use App\Livewire\Traits\WithDeleteConfirmation;
 
 #[Layout('components.layouts.app')]
@@ -18,17 +19,16 @@ class Index extends Component
 {
     use WithPagination, WithDeleteConfirmation;
 
+    public $selectedCompanyId = null;
+    public $selectedCompany = null;
+    public $companies = [];
+    public $isSuperadmin = false;
+
     #[Url(as: 'q')]
     public $search = '';
 
     #[Url(as: 'sort')]
     public $sortBy = 'year_desc';
-
-    #[Url(as: 'company')]
-    public $companyFilter = '';
-
-    #[Url(as: 'employee')]
-    public $employeeFilter = '';
 
     #[Url(as: 'year')]
     public $yearFilter = '';
@@ -36,23 +36,58 @@ class Index extends Component
     #[Url(as: 'issued_by')]
     public $issuedByFilter = '';
 
+    public function mount(): void
+    {
+        $user = Auth::user();
+
+        $this->isSuperadmin = $user->hasRole('superadmin');
+
+        if ($this->isSuperadmin) {
+            $this->companies = Company::where('is_active', true)->get();
+            $this->selectedCompanyId = session('technical_competencies_company_id') ?? request('company_id');
+
+            if ($this->selectedCompanyId) {
+                $this->selectedCompany = Company::find($this->selectedCompanyId);
+            }
+        } else {
+            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompany = Company::find($this->selectedCompanyId);
+            $this->companies = Company::where('id', $user->company_id)->get();
+        }
+    }
+
+    public function selectCompany($companyId)
+    {
+        $this->selectedCompanyId = $companyId;
+        $this->selectedCompany = Company::find($companyId);
+        session(['technical_competencies_company_id' => $companyId]);
+        $this->resetPage();
+        $this->resetFilters();
+    }
+
+    public function changeCompany()
+    {
+        $this->selectedCompanyId = null;
+        $this->selectedCompany = null;
+        session()->forget('technical_competencies_company_id');
+        $this->resetPage();
+        $this->resetFilters();
+    }
+
+    private function resetFilters()
+    {
+        $this->search = '';
+        $this->sortBy = 'year_desc';
+        $this->yearFilter = '';
+        $this->issuedByFilter = '';
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
     }
 
     public function updatingSortBy()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingCompanyFilter()
-    {
-        $this->resetPage();
-        $this->employeeFilter = '';
-    }
-
-    public function updatingEmployeeFilter()
     {
         $this->resetPage();
     }
@@ -90,8 +125,25 @@ class Index extends Component
 
     public function render()
     {
+        // Jika superadmin belum pilih company
+        if ($this->isSuperadmin && !$this->selectedCompanyId) {
+            return view('livewire.pages.technical-competencies.index', [
+                'showCompanySelection' => true,
+                'companies' => $this->companies,
+                'isSuperadmin' => $this->isSuperadmin,
+                'selectedCompany' => null,
+                'competencies' => collect(),
+                'years' => collect(),
+                'issuedBys' => collect(),
+            ]);
+        }
+
+        // Query competencies berdasarkan company yang dipilih
         $competencies = TechnicalCompetency::query()
             ->with(['employee.company'])
+            ->whereHas('employee', function ($query) {
+                $query->where('company_id', $this->selectedCompanyId);
+            })
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
@@ -102,12 +154,6 @@ class Index extends Component
                         });
                 });
             })
-            ->when($this->companyFilter, function ($query) {
-                $query->whereHas('employee', function ($employeeQuery) {
-                    $employeeQuery->where('company_id', $this->companyFilter);
-                });
-            })
-            ->when($this->employeeFilter, fn($query) => $query->where('employee_id', $this->employeeFilter))
             ->when($this->yearFilter, fn($query) => $query->where('year', $this->yearFilter))
             ->when($this->issuedByFilter, fn($query) => $query->where('issued_by', 'like', '%' . $this->issuedByFilter . '%'))
             ->when($this->sortBy === 'employee_name_asc', fn($query) => $query->join('employees', 'technical_competencies.employee_id', '=', 'employees.id')
@@ -124,30 +170,30 @@ class Index extends Component
             ->when($this->sortBy === 'oldest', fn($query) => $query->oldest('created_at'))
             ->paginate(10);
 
-        $companies = Company::orderBy('name')->get();
-
-        $employees = $this->companyFilter
-            ? Employee::where('company_id', $this->companyFilter)->orderBy('name')->get()
-            : Employee::orderBy('name')->get();
-
-        // Get unique years for filter
-        $years = TechnicalCompetency::select('year')
+        // Get unique years for filter from selected company only
+        $years = TechnicalCompetency::whereHas('employee', function ($query) {
+            $query->where('company_id', $this->selectedCompanyId);
+        })
+            ->select('year')
             ->distinct()
             ->orderBy('year', 'desc')
-            ->get()
             ->pluck('year');
 
-        // Get unique issued_by for filter
-        $issuedBys = TechnicalCompetency::select('issued_by')
+        // Get unique issued_by for filter from selected company only
+        $issuedBys = TechnicalCompetency::whereHas('employee', function ($query) {
+            $query->where('company_id', $this->selectedCompanyId);
+        })
+            ->select('issued_by')
             ->distinct()
             ->orderBy('issued_by')
-            ->get()
             ->pluck('issued_by');
 
         return view('livewire.pages.technical-competencies.index', [
+            'showCompanySelection' => false,
             'competencies' => $competencies,
-            'companies' => $companies,
-            'employees' => $employees,
+            'selectedCompany' => $this->selectedCompany,
+            'isSuperadmin' => $this->isSuperadmin,
+            'companies' => $this->companies,
             'years' => $years,
             'issuedBys' => $issuedBys,
         ]);
