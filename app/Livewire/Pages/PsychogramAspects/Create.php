@@ -8,6 +8,7 @@ use Livewire\Component;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\Auth;
 use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
@@ -17,7 +18,7 @@ class Create extends Component
     #[Validate('nullable|exists:companies,id')]
     public $company_id = '';
 
-    #[Validate('required|string|max:20|unique:psychogram_aspects,aspect_code')]
+    #[Validate('required|string|max:20')]
     public $aspect_code = '';
 
     #[Validate('required|string|max:255')]
@@ -31,6 +32,36 @@ class Create extends Component
 
     #[Validate('required|integer|min:0')]
     public $sort_order = 0;
+
+    public $selectedCompanyId = null;
+    public $selectedCompany = null;
+    public $companies;
+    public $isSuperadmin = false;
+    public $showCompanySelection = false;
+
+    public function mount()
+    {
+        $user = Auth::user();
+        $this->isSuperadmin = $user->hasRole('superadmin');
+
+        if ($this->isSuperadmin) {
+            $this->companies = Company::where('is_active', true)->get();
+            $this->selectedCompanyId = session('psychogram_aspects_company_id');
+
+            if ($this->selectedCompanyId) {
+                $this->selectedCompany = Company::find($this->selectedCompanyId);
+                $this->company_id = $this->selectedCompanyId;
+            } else {
+                $this->showCompanySelection = true;
+            }
+        } else {
+            // Admin biasa hanya bisa akses perusahaan mereka sendiri
+            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompany = Company::find($this->selectedCompanyId);
+            $this->company_id = $this->selectedCompanyId;
+            $this->companies = Company::where('id', $user->company_id)->get();
+        }
+    }
 
     public function save()
     {
@@ -47,6 +78,12 @@ class Create extends Component
 
             if ($exists) {
                 $this->addError('aspect_code', 'This aspect code already exists for the selected company.');
+                return;
+            }
+
+            // Untuk admin biasa, pastikan mereka hanya bisa membuat aspect untuk company mereka sendiri
+            if (!$this->isSuperadmin && $companyId != $this->selectedCompanyId) {
+                Toaster::error('You are not authorized to create aspects for other companies.');
                 return;
             }
 
@@ -72,10 +109,31 @@ class Create extends Component
 
     public function render()
     {
-        $companies = Company::orderBy('name')->get();
+        // Jika superadmin belum pilih company
+        if ($this->showCompanySelection) {
+            // Hitung jumlah data aspect per perusahaan
+            $companiesWithCount = $this->companies->map(function ($company) {
+                $count = PsychogramAspect::where('company_id', $company->id)->count();
+
+                return [
+                    'company' => $company,
+                    'count' => $count
+                ];
+            });
+
+            return view('livewire.pages.psychogram-aspects.create', [
+                'showCompanySelection' => true,
+                'companiesWithCount' => $companiesWithCount,
+                'isSuperadmin' => $this->isSuperadmin,
+                'selectedCompany' => null,
+            ]);
+        }
 
         return view('livewire.pages.psychogram-aspects.create', [
-            'companies' => $companies,
+            'showCompanySelection' => false,
+            'selectedCompany' => $this->selectedCompany,
+            'isSuperadmin' => $this->isSuperadmin,
+            'companies' => $this->companies,
         ]);
     }
 }
