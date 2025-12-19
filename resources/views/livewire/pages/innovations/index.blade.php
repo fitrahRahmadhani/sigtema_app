@@ -35,58 +35,68 @@
                 </div>
             </div>
 
-            <!-- Sync Button -->
-            <button
-                wire:click="syncFromApi"
-                wire:loading.attr="disabled"
-                wire:loading.class="opacity-50 cursor-not-allowed"
-                @if($syncStatus === 'processing' || $syncStatus === 'queued') disabled @endif
-                class="color-gradient inline-flex cursor-pointer items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
-            >
-                <svg
-                    wire:loading.remove
-                    wire:target="syncFromApi"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="h-5 w-5"
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-2">
+                <!-- Sync Button -->
+                <button
+                    wire:click="syncFromApi"
+                    wire:loading.attr="disabled"
+                    wire:loading.class="opacity-50 cursor-not-allowed"
+                    @if($syncStatus === 'processing' || $syncStatus === 'queued') disabled @endif
+                    class="color-gradient inline-flex cursor-pointer items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
                 >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-                    />
-                </svg>
-                <svg
-                    wire:loading
-                    wire:target="syncFromApi"
-                    class="h-5 w-5 animate-spin"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                >
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path
-                        class="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                </svg>
-                <span wire:loading.remove wire:target="syncFromApi">
-                    @if ($syncStatus === 'processing' || $syncStatus === 'queued')
-                        Syncing...
-                    @else
-                        Sync from API
-                    @endif
-                </span>
-                <span wire:loading wire:target="syncFromApi">Queueing...</span>
-            </button>
+                    <svg
+                        wire:loading.remove
+                        wire:target="syncFromApi"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                        />
+                    </svg>
+                    <svg
+                        wire:loading
+                        wire:target="syncFromApi"
+                        class="h-5 w-5 animate-spin"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                        ></circle>
+                        <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                    </svg>
+                    <span wire:loading.remove wire:target="syncFromApi">
+                        @if ($syncStatus === 'processing' || $syncStatus === 'queued')
+                            Syncing...
+                        @else
+                            Sync from API
+                        @endif
+                    </span>
+                    <span wire:loading wire:target="syncFromApi">Queueing...</span>
+                </button>
+            </div>
         </div>
 
         <!-- Stats -->
-        <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
             <div class="rounded-lg border border-gray-200 bg-white p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0 rounded-full bg-blue-100 p-3">
@@ -107,12 +117,12 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-gray-500">Total Innovations</p>
-                        <p class="text-2xl font-semibold text-gray-900">{{ \App\Models\Innovation::count() }}</p>
+                        <p class="text-2xl font-semibold text-gray-900">{{ $totalCount }}</p>
                     </div>
                 </div>
             </div>
 
-            <div class="rounded-lg border border-gray-200 bg-white p-4">
+            <div class="rounded-lg border border-green-200 bg-green-50 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0 rounded-full bg-green-100 p-3">
                         <svg
@@ -126,15 +136,34 @@
                             <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-500">Matched Innovations with Employees</p>
-                        <p class="text-2xl font-semibold text-gray-900">
-                            {{ \App\Models\Innovation::whereNotNull('employee_id')->count() }}
-                        </p>
+                        <p class="text-sm font-medium text-gray-700">Active</p>
+                        <p class="text-2xl font-semibold text-green-700">{{ $activeCount }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-lg border border-red-200 bg-red-50 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 rounded-full bg-red-100 p-3">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="h-6 w-6 text-red-600"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-700">Inactive</p>
+                        <p class="text-2xl font-semibold text-red-700">{{ $inactiveCount }}</p>
                     </div>
                 </div>
             </div>
@@ -153,7 +182,7 @@
                             <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                         </svg>
                     </div>
@@ -174,13 +203,7 @@
         @if ($syncStatus !== 'idle')
             <div class="mb-6">
                 <div
-                    class="{{
-                        $syncStatus === 'processing' || $syncStatus === 'queued'
-                            ? 'border-blue-200 bg-blue-50'
-                            : ($syncStatus === 'completed'
-                                ? 'border-green-200 bg-green-50'
-                                : 'border-red-200 bg-red-50')
-                    }} rounded-lg border p-4"
+                    class="{{ $syncStatus === 'processing' || $syncStatus === 'queued' ? 'border-blue-200 bg-blue-50' : ($syncStatus === 'completed' ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50') }} rounded-lg border p-4"
                 >
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
@@ -287,7 +310,7 @@
                     @if ($lastSyncResult && ($syncStatus === 'completed' || $syncStatus === 'failed'))
                         <div class="mt-3 border-t border-gray-200 pt-3">
                             @if ($syncStatus === 'completed')
-                                <div class="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
+                                <div class="grid grid-cols-2 gap-4 text-sm md:grid-cols-6">
                                     <div>
                                         <span class="text-gray-600">Created:</span>
                                         <span class="ml-2 font-medium text-green-700">
@@ -301,11 +324,26 @@
                                         </span>
                                     </div>
                                     <div>
+                                        <span class="text-gray-600">Deactivated:</span>
+                                        <span class="ml-2 font-medium text-red-700">
+                                            {{ $lastSyncResult['deactivated'] ?? 0 }}
+                                        </span>
+                                    </div>
+                                    <div>
                                         <span class="text-gray-600">Skipped:</span>
                                         <span class="ml-2 font-medium text-yellow-700">
                                             {{ $lastSyncResult['skipped'] ?? 0 }}
                                         </span>
                                     </div>
+                                    @if (isset($lastSyncResult['permanently_deleted']))
+                                        <div>
+                                            <span class="text-gray-600">Deleted:</span>
+                                            <span class="ml-2 font-medium text-gray-700">
+                                                {{ $lastSyncResult['permanently_deleted'] ?? 0 }}
+                                            </span>
+                                        </div>
+                                    @endif
+
                                     <div>
                                         <span class="text-gray-600">Total:</span>
                                         <span class="ml-2 font-medium">{{ $lastSyncResult['total'] ?? 0 }}</span>
@@ -329,27 +367,42 @@
             </div>
         @endif
 
-        <!-- Auto-refresh script - Only when processing or queued -->
+        <!-- Auto-refresh script -->
         @if (in_array($syncStatus, ['processing', 'queued']))
             <script>
-                // Auto-refresh setiap 5 detik untuk cek status
-                const syncInterval = setInterval(() => {
-                    @this.checkSyncStatus();
+                document.addEventListener('livewire:init', () => {
+                    const syncInterval = setInterval(() => {
+                        @this.checkSyncStatus();
 
-                    // Stop polling jika status sudah completed atau failed
-                    const status = @js($syncStatus);
-                    if (status === 'completed' || status === 'failed') {
+                        const status = @js($syncStatus);
+                        if (status === 'completed' || status === 'failed') {
+                            clearInterval(syncInterval);
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }, 5000);
+
+                    document.addEventListener('livewire:navigating', () => {
                         clearInterval(syncInterval);
-                        // Reload page untuk refresh data
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 2000);
-                    }
-                }, 5000);
+                    });
+                });
 
-                // Cleanup saat component di-unmount
-                document.addEventListener('livewire:navigating', () => {
-                    clearInterval(syncInterval);
+                // Bulk actions dropdown
+                document.addEventListener('DOMContentLoaded', function() {
+                    const dropdownButton = document.getElementById('bulkActionsDropdown');
+                    const dropdownMenu = document.getElementById('bulkActionsMenu');
+
+                    if (dropdownButton && dropdownMenu) {
+                        dropdownButton.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            dropdownMenu.classList.toggle('hidden');
+                        });
+
+                        document.addEventListener('click', function() {
+                            dropdownMenu.classList.add('hidden');
+                        });
+                    }
                 });
             </script>
         @endif
@@ -360,7 +413,7 @@
             <div class="grid gap-4 md:grid-cols-3">
                 <!-- Search Input -->
                 <div class="md:col-span-2">
-                    <label class="mb-2 block text-sm font-medium text-gray-700">Search Innovation</label>
+                    <label class="mb-2 block text-sm font-medium text-gray-700">Search Employee</label>
                     <div class="relative">
                         <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                             <svg
@@ -381,24 +434,23 @@
                         <input
                             type="text"
                             wire:model.live.debounce.300ms="search"
-                            placeholder="Search by title, employee, team, or theme..."
+                            placeholder="Search by employee name or employee number..."
                             class="block w-full rounded-lg border border-gray-300 bg-white py-2 pr-3 pl-10 text-sm placeholder-gray-500 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
                     </div>
                 </div>
 
-                <!-- Sort By -->
+                <!-- Status Filter -->
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-gray-700">Sort By</label>
+                    <label class="mb-2 block text-sm font-medium text-gray-700">Status</label>
                     <div class="relative">
                         <select
-                            wire:model.live="sortBy"
+                            wire:model.live="activeFilter"
                             class="block w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         >
-                            <option value="newest">Recently Added</option>
-                            <option value="oldest">Oldest Added</option>
-                            <option value="title_asc">Title (A-Z)</option>
-                            <option value="title_desc">Title (Z-A)</option>
+                            <option value="active">Active Only</option>
+                            <option value="inactive">Inactive Only</option>
+                            <option value="all">All Status</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                             <svg
@@ -502,18 +554,18 @@
                     </div>
                 </div>
 
-                <!-- Status Filter -->
+                <!-- Sort By -->
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-gray-700">Status</label>
+                    <label class="mb-2 block text-sm font-medium text-gray-700">Sort By</label>
                     <div class="relative">
                         <select
-                            wire:model.live="statusFilter"
+                            wire:model.live="sortBy"
                             class="block w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         >
-                            <option value="">All Status</option>
-                            @foreach ($statuses as $status)
-                                <option value="{{ $status }}">{{ ucfirst($status) }}</option>
-                            @endforeach
+                            <option value="newest">Recently Added</option>
+                            <option value="oldest">Oldest Added</option>
+                            <option value="title_asc">Title (A-Z)</option>
+                            <option value="title_desc">Title (Z-A)</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                             <svg
@@ -545,8 +597,8 @@
                 <div class="col-span-2 text-sm font-semibold">Team & Category</div>
                 <div class="col-span-2 text-sm font-semibold">Theme & Event</div>
                 <div class="col-span-2 text-sm font-semibold">Status & Achievement</div>
-                <div class="col-span-1 text-sm font-semibold">Replication</div>
-                <div class="col-span-1 text-center text-sm font-semibold">Updated</div>
+                <div class="col-span-1 text-sm font-semibold">Active</div>
+                <div class="col-span-1 text-center text-sm font-semibold">Actions</div>
             </div>
 
             <!-- Table Body -->
@@ -554,7 +606,7 @@
                 @forelse ($innovations as $innovation)
                     <!-- Desktop View -->
                     <div
-                        class="hidden grid-cols-12 items-center gap-4 px-6 py-4 transition-colors duration-150 hover:bg-gray-50 md:grid"
+                        class="{{ $innovation->is_active ? 'hover:bg-gray-50' : 'bg-gray-50 opacity-75 hover:bg-gray-100' }} hidden grid-cols-12 items-center gap-4 px-6 py-4 transition-colors duration-150 md:grid"
                     >
                         <!-- Innovation & Employee -->
                         <div class="col-span-4">
@@ -621,39 +673,90 @@
                             </p>
                         </div>
 
-                        <!-- Status & Replication -->
+                        <!-- Active Status -->
                         <div class="col-span-1">
-                            @if ($innovation->replication)
-                                <div>
+                            <button wire:click="toggleStatus({{ $innovation->id }})" class="focus:outline-none">
+                                @if ($innovation->is_active)
                                     <span
-                                        class="{{
-                                            str_contains(strtolower($innovation->replication), 'bisa')
-                                                ? 'bg-green-50 text-green-700'
-                                                : (str_contains(strtolower($innovation->replication), 'tidak')
-                                                    ? 'bg-red-50 text-red-700'
-                                                    : 'bg-yellow-50 text-yellow-700')
-                                        }} inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium"
+                                        class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800"
                                     >
-                                        {{ ucfirst($innovation->replication) }}
+                                        <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                clip-rule="evenodd"
+                                            />
+                                        </svg>
+                                        Active
                                     </span>
-                                </div>
-                            @endif
+                                @else
+                                    <span
+                                        class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800"
+                                    >
+                                        <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                clip-rule="evenodd"
+                                            />
+                                        </svg>
+                                        Inactive
+                                    </span>
+                                @endif
+                            </button>
                         </div>
 
-                        <!-- Updated -->
-                        <div class="col-span-1">
-                            <p class="text-center text-xs text-gray-500">
-                                {{ $innovation->updated_at->diffForHumans() }}
-                            </p>
+                        <!-- Actions -->
+                        <div class="col-span-1 flex items-center justify-center gap-2">
+                            <button
+                                wire:click="confirmDelete({{ $innovation->id }}, '{{ $innovation->title }}')"
+                                class="rounded-lg p-1 text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600"
+                                title="Delete"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    class="h-5 w-5"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                                    />
+                                </svg>
+                            </button>
                         </div>
                     </div>
 
                     <!-- Mobile View -->
-                    <div class="block p-4 md:hidden">
+                    <div class="{{ $innovation->is_active ? '' : 'bg-gray-50 opacity-75' }} block p-4 md:hidden">
                         <div class="space-y-3">
                             <!-- Header -->
                             <div class="border-b border-gray-100 pb-3">
-                                <h3 class="font-semibold text-gray-900">{{ $innovation->title }}</h3>
+                                <div class="flex items-start justify-between">
+                                    <h3 class="font-semibold text-gray-900">{{ $innovation->title }}</h3>
+                                    <button
+                                        wire:click="toggleStatus({{ $innovation->id }})"
+                                        class="focus:outline-none"
+                                    >
+                                        @if ($innovation->is_active)
+                                            <span
+                                                class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800"
+                                            >
+                                                Active
+                                            </span>
+                                        @else
+                                            <span
+                                                class="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800"
+                                            >
+                                                Inactive
+                                            </span>
+                                        @endif
+                                    </button>
+                                </div>
                                 <div class="mt-2">
                                     @if ($innovation->employee)
                                         <p class="text-sm text-gray-700">{{ $innovation->employee->name }}</p>
@@ -690,8 +793,8 @@
                                 </div>
                             </div>
 
-                            <!-- Status & Replication -->
-                            <div class="grid grid-cols-2 gap-4">
+                            <!-- Status & Achievement -->
+                            <div class="space-y-2">
                                 <div class="space-y-1">
                                     <p class="text-xs font-medium text-gray-500">Status & Achievement</p>
                                     @if ($innovation->status)
@@ -703,35 +806,32 @@
                                     @else
                                         <p class="text-sm text-gray-400 italic">-</p>
                                     @endif
-                                    <!-- Achievement -->
                                     <p class="text-sm text-gray-900">{{ $innovation->achievement ?? '' }}</p>
-                                </div>
-
-                                <div class="space-y-1">
-                                    <p class="text-xs font-medium text-gray-500">Replication</p>
-                                    @if ($innovation->replication)
-                                        <span
-                                            class="{{
-                                                str_contains(strtolower($innovation->replication), 'bisa')
-                                                    ? 'bg-green-50 text-green-700'
-                                                    : (str_contains(strtolower($innovation->replication), 'tidak')
-                                                        ? 'bg-red-50 text-red-700'
-                                                        : 'bg-yellow-50 text-yellow-700')
-                                            }} inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium"
-                                        >
-                                            {{ ucfirst($innovation->replication) }}
-                                        </span>
-                                    @else
-                                        <p class="text-sm text-gray-400 italic">-</p>
-                                    @endif
                                 </div>
                             </div>
 
-                            <!-- Updated -->
-                            <div class="border-t border-gray-100 pt-3 text-center">
-                                <p class="text-xs text-gray-500">
-                                    Updated: {{ $innovation->updated_at->diffForHumans() }}
-                                </p>
+                            <!-- Actions -->
+                            <div class="flex items-center justify-end gap-2 border-t border-gray-100 pt-3">
+                                <button
+                                    wire:click="confirmDelete({{ $innovation->id }}, '{{ $innovation->title }}')"
+                                    class="rounded-lg p-2 text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600"
+                                    title="Delete"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                        class="h-5 w-5"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                                        />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -753,7 +853,7 @@
                         </svg>
                         <p class="mt-4 font-medium text-gray-500">No innovations found</p>
                         <p class="mt-1 text-sm text-gray-400">
-                            @if ($search || $teamFilter || $categoryFilter || $replicationFilter || $statusFilter)
+                            @if ($search || $teamFilter || $categoryFilter || $replicationFilter || $statusFilter || $activeFilter !== 'all')
                                 Try adjusting your filters or
                             @endif
                             Click "Sync from API" to load data
@@ -762,6 +862,9 @@
                 @endforelse
             </div>
         </div>
+
+        <!-- Delete Confirmation Modal -->
+        <x-ui.modals.delete-confirmation />
 
         <!-- Pagination -->
         @if ($innovations->hasPages())

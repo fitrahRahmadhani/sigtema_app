@@ -88,7 +88,7 @@ class Employee extends Model
 
     public function innovations()
     {
-        return $this->hasMany(Innovation::class);
+        return $this->hasMany(Innovation::class)->where('is_active', true);
     }
 
     /**
