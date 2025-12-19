@@ -462,7 +462,14 @@
                         />
                     </svg>
 
-                    <p>Innovations</p>
+                    <div class="flex w-full justify-between">
+                        <p>Innovations</p>
+                        <img
+                            src="{{ asset('assets/logo/logo-portal-inovasi-red.png') }}"
+                            alt="Logo Portal Inovasi"
+                            class="h-5"
+                        />
+                    </div>
                 </a>
 
                 {{-- Burnout --}}
@@ -486,7 +493,14 @@
                         />
                     </svg>
 
-                    <p>Burnout</p>
+                    <div class="flex w-full justify-between">
+                        <p>Burnout</p>
+                        <img
+                            src="{{ asset('assets/logo/logo-sighap-black.png') }}"
+                            alt="Logo Portal Inovasi"
+                            class="h-4"
+                        />
+                    </div>
                 </a>
 
                 {{-- Personality with Dropdown --}}
@@ -517,7 +531,14 @@
                                 />
                             </svg>
 
-                            <p>Personality</p>
+                            <div class="flex w-full items-center">
+                                <p>Personality</p>
+                                <img
+                                    src="{{ asset('assets/logo/logo-sigmatic-black.png') }}"
+                                    alt="Logo Portal Inovasi"
+                                    class="ml-2 h-4"
+                                />
+                            </div>
                         </div>
                         <div
                             class="rounded-md p-1 transition-transform duration-200 hover:bg-gray-300"
