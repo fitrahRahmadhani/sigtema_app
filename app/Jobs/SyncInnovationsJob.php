@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Models\Employee;
 use App\Models\Innovation;
+use App\Events\SyncStatusUpdated;
+use App\Events\SyncProgressUpdated;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -13,7 +15,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\RateLimiter;
 
 class SyncInnovationsJob implements ShouldQueue
 {
@@ -22,7 +23,6 @@ class SyncInnovationsJob implements ShouldQueue
     public $userId;
     public $tries = 3;
     public $timeout = 1800;
-
     public $deleteWhenMissingModels = true;
 
     public function __construct($userId = null)
@@ -46,20 +46,38 @@ class SyncInnovationsJob implements ShouldQueue
         try {
             Log::info('Starting innovation sync job', ['user_id' => $this->userId]);
 
-            // Set status processing
-            Cache::put("sync_status_{$this->userId}", 'processing', 3600);
+            // Kirim event status processing
+            broadcast(new SyncStatusUpdated($this->userId, 'processing', null, 'Starting sync process...'));
 
+            // Fetch data dari API
+            broadcast(new SyncProgressUpdated($this->userId, 10, 'Fetching data from API...'));
             $apiData = $this->fetchApiData();
+
+            if (empty($apiData)) {
+                throw new \Exception('No data received from API');
+            }
+
+            // Kirim event progress
+            broadcast(new SyncProgressUpdated($this->userId, 30, 'Processing ' . count($apiData) . ' items...', 0, count($apiData)));
+
+            // Process data
             $stats = $this->processData($apiData);
 
             Log::info('Sync job completed', $stats);
-            $this->saveSyncResult($stats);
 
+            // Kirim event completed
+            broadcast(new SyncStatusUpdated($this->userId, 'completed', $stats, 'Sync completed successfully!'));
+
+            $this->saveSyncResult($stats);
         } catch (\Exception $e) {
             Log::error('Sync job failed', [
+                'user_id' => $this->userId,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
+
+            // Kirim event failed
+            broadcast(new SyncStatusUpdated($this->userId, 'failed', ['error' => $e->getMessage()], 'Sync failed: ' . $e->getMessage()));
 
             $this->saveSyncResult([
                 'status' => 'failed',
@@ -82,20 +100,27 @@ class SyncInnovationsJob implements ShouldQueue
         $apiUrl = config('services.innovation_api.url');
         $apiKey = config('services.innovation_api.key');
 
+        if (!$apiUrl || !$apiKey) {
+            throw new \Exception('API configuration not found');
+        }
+
         Log::info('Fetching data from API', ['url' => $apiUrl]);
+
+        broadcast(new SyncProgressUpdated($this->userId, 15, 'Connecting to API...'));
 
         $response = Http::withHeaders([
             'x-api-key' => $apiKey,
             'Accept' => 'application/json',
-        ])->timeout(300)->get($apiUrl); // 5 menit timeout
+        ])->timeout(300)->get($apiUrl);
+
+        broadcast(new SyncProgressUpdated($this->userId, 20, 'Receiving data from API...'));
 
         if (!$response->successful()) {
             $errorMessage = 'API request failed: ' . $response->status();
             Log::error('API request failed', [
                 'status' => $response->status(),
                 'url' => $apiUrl,
-                'response' => $response->body(),
-                'headers' => $response->headers()
+                'response' => $response->body()
             ]);
             throw new \Exception($errorMessage);
         }
@@ -114,6 +139,11 @@ class SyncInnovationsJob implements ShouldQueue
             $rawData = $data;
         }
 
+        if (empty($rawData)) {
+            Log::warning('Empty data received from API');
+            return [];
+        }
+
         // Validasi setiap item
         $validatedData = [];
         foreach ($rawData as $index => $item) {
@@ -125,7 +155,8 @@ class SyncInnovationsJob implements ShouldQueue
             // Validasi field required
             if (empty($item['employee_id']) || empty($item['judul_inovasi'])) {
                 Log::warning('Missing required fields at index ' . $index, [
-                    'item' => $item
+                    'employee_id' => $item['employee_id'] ?? 'missing',
+                    'judul_inovasi' => $item['judul_inovasi'] ?? 'missing'
                 ]);
                 continue;
             }
@@ -133,7 +164,9 @@ class SyncInnovationsJob implements ShouldQueue
             $validatedData[] = $item;
         }
 
+        broadcast(new SyncProgressUpdated($this->userId, 25, 'Validated ' . count($validatedData) . ' items'));
         Log::info('API data validated', ['total' => count($validatedData)]);
+
         return $validatedData;
     }
 
@@ -148,27 +181,33 @@ class SyncInnovationsJob implements ShouldQueue
             'updated' => 0,
             'deactivated' => 0,
             'skipped' => 0,
+            'permanently_deleted' => 0,
             'started_at' => now(),
             'completed_at' => null,
-            'status' => 'completed'
+            'status' => 'processing'
         ];
 
-        // Group data by unique key untuk menghindari duplikasi
-        $groupedData = collect($apiData)->groupBy(function ($item) {
-            return $this->padEmployeeId($item['employee_id']) . '|' .
-                trim($item['judul_inovasi']) . '|' .
-                ($item['event'] ?? '');
-        });
-
-        DB::transaction(function () use ($groupedData, &$stats) {
+        DB::transaction(function () use ($apiData, &$stats) {
             // 1. Reset semua data external menjadi tidak aktif terlebih dahulu
-            Innovation::where('source', 'eksternal')
+            broadcast(new SyncProgressUpdated($this->userId, 35, 'Deactivating existing external innovations...'));
+
+            $deactivatedCount = Innovation::where('source', 'eksternal')
+                ->where('is_active', true)
                 ->update(['is_active' => false]);
 
-            $stats['deactivated'] = Innovation::where('source', 'eksternal')->count();
+            $stats['deactivated'] = $deactivatedCount;
 
-            // 2. Ekstrak semua external_id dari API
-            $apiExternalIds = [];
+            broadcast(new SyncProgressUpdated($this->userId, 40, "Deactivated {$deactivatedCount} innovations"));
+
+            // 2. Group data by unique key untuk menghindari duplikasi
+            $groupedData = collect($apiData)->groupBy(function ($item) {
+                return $this->padEmployeeId($item['employee_id']) . '|' .
+                    trim($item['judul_inovasi']) . '|' .
+                    ($item['event'] ?? '');
+            });
+
+            $totalGroups = count($groupedData);
+            $processed = 0;
 
             // 3. Process data dari API
             foreach ($groupedData as $uniqueKey => $items) {
@@ -184,7 +223,6 @@ class SyncInnovationsJob implements ShouldQueue
 
                     // Buat unique identifier
                     $uniqueIdentifier = md5($employeeNumber . trim($data['judul_inovasi']) . ($data['event'] ?? ''));
-                    $apiExternalIds[] = $uniqueIdentifier;
 
                     // Update atau create innovation
                     $innovation = Innovation::updateOrCreate(
@@ -203,13 +241,25 @@ class SyncInnovationsJob implements ShouldQueue
                             'replication' => $data['potensi_replikasi'] ?? null,
                             'status' => $data['status'] ?? null,
                             'achievement' => $data['penghargaan'] ?? null,
-                            'is_active' => true, // Set aktif karena ada di API
+                            'is_active' => true,
                             'updated_at' => now()
                         ]
                     );
 
                     $innovation->wasRecentlyCreated ? $stats['created']++ : $stats['updated']++;
+                    $processed++;
 
+                    // Update progress setiap 10 item atau 10% dari total
+                    if ($processed % 10 === 0 || $processed === $totalGroups) {
+                        $progress = 40 + (($processed / $totalGroups) * 50);
+                        broadcast(new SyncProgressUpdated(
+                            $this->userId,
+                            (int) $progress,
+                            "Processed {$processed} of {$totalGroups} innovations",
+                            $processed,
+                            $totalGroups
+                        ));
+                    }
                 } catch (\Exception $e) {
                     $stats['skipped']++;
                     Log::warning('Failed to process innovation', [
@@ -221,7 +271,8 @@ class SyncInnovationsJob implements ShouldQueue
             }
 
             // 4. Hapus data yang sudah tidak aktif dalam waktu lama
-            // Data dengan is_active = false dan updated_at > 30 hari bisa dihapus
+            broadcast(new SyncProgressUpdated($this->userId, 92, 'Cleaning up old inactive data...'));
+
             $thirtyDaysAgo = now()->subDays(30);
             $permanentlyDeleted = Innovation::where('source', 'eksternal')
                 ->where('is_active', false)
@@ -229,9 +280,15 @@ class SyncInnovationsJob implements ShouldQueue
                 ->delete();
 
             $stats['permanently_deleted'] = $permanentlyDeleted;
+
+            broadcast(new SyncProgressUpdated($this->userId, 96, "Cleaned up {$permanentlyDeleted} old records"));
         });
 
+        broadcast(new SyncProgressUpdated($this->userId, 98, 'Finalizing sync...'));
+
         $stats['completed_at'] = now();
+        $stats['status'] = 'completed';
+
         return $stats;
     }
 
@@ -274,5 +331,13 @@ class SyncInnovationsJob implements ShouldQueue
 
         // Release lock jika gagal
         Cache::forget("innovation_sync_lock_" . $this->userId);
+
+        // Kirim event failed
+        broadcast(new SyncStatusUpdated(
+            $this->userId,
+            'failed',
+            ['error' => $exception->getMessage()],
+            'Sync failed: ' . $exception->getMessage()
+        ));
     }
 }
