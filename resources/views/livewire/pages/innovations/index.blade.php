@@ -1,4 +1,3 @@
-{{-- resources/views/livewire/pages/innovations/index.blade.php --}}
 <div class="space-y-4 p-2">
     <!-- Breadcrumbs -->
     <flux:breadcrumbs>

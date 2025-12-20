@@ -41,4 +41,9 @@ return [
         'timeout' => env('INNOVATION_API_TIMEOUT', 120),
     ],
 
+    'burnout_api' => [
+        'url' => env('BURNOUT_API_URL'),
+        'key' => env('BURNOUT_API_KEY'),
+    ],
+
 ];
