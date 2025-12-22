@@ -1288,10 +1288,8 @@
             </div>
         @endif
     </div>
-</div>
 
-@push('scripts')
-    <script>
+        <script>
         document.addEventListener('livewire:init', () => {
             // Setup Echo/Pusher listeners
             @if(auth()->check())
@@ -1422,4 +1420,4 @@
         `;
         document.head.appendChild(style);
     </script>
-@endpush
+</div>

@@ -838,10 +838,8 @@
             </div>
         @endif
     </div>
-</div>
 
-@push('scripts')
-    <script>
+        <script>
         document.addEventListener('livewire:init', () => {
             // Setup Echo/Pusher listeners untuk burnout
             @if(auth()->check())
@@ -924,4 +922,4 @@
             });
         });
     </script>
-@endpush
+</div>
