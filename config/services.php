@@ -46,4 +46,9 @@ return [
         'key' => env('BURNOUT_API_KEY'),
     ],
 
+    'mbti_api' => [
+        'url' => env('MBTI_API_URL'),
+        'key' => env('MBTI_API_KEY'),
+    ],
+
 ];

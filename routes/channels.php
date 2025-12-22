@@ -13,3 +13,7 @@ Broadcast::channel('sync-status.{userId}', function ($user, $userId) {
 Broadcast::channel('burnout-sync-status.{userId}', function ($user, $userId) {
     return (int) $user->id === (int) $userId;
 });
+
+Broadcast::channel('mbti-sync-status.{userId}', function ($user, $userId) {
+    return (int) $user->id === (int) $userId;
+});
