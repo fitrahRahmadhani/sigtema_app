@@ -90,6 +90,14 @@
                                 <span class="mr-2">•</span>
                                 <span>position_code, name, dan job_grade wajib diisi</span>
                             </li>
+                            <li class="flex items-start">
+                                <span class="mr-2">•</span>
+                                <span>band: pilih dari Band 1, Band 2, Band 3, Band 4, Band 5</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="mr-2">•</span>
+                                <span>Semua kolom lainnya boleh dikosongkan</span>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -371,12 +379,37 @@
                                     <th
                                         class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
                                     >
+                                        Job Grade
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
+                                        Band
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
+                                        Work Unit
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
                                         Directorate
                                     </th>
                                     <th
                                         class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
                                     >
                                         Department
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
+                                        Group
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
+                                        KOMP
                                     </th>
                                     <th
                                         class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
@@ -392,11 +425,6 @@
                                         class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
                                     >
                                         Location
-                                    </th>
-                                    <th
-                                        class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                    >
-                                        Job Grade
                                     </th>
                                     <th
                                         class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
@@ -422,11 +450,26 @@
                                         <td class="px-4 py-3 text-sm whitespace-nowrap text-gray-500">
                                             {{ $data['employee_name'] ?? '-' }}
                                         </td>
+                                        <td class="px-4 py-3 text-sm whitespace-nowrap text-gray-700">
+                                            {{ $data['job_grade'] }}
+                                        </td>
+                                        <td class="px-4 py-3 text-sm whitespace-nowrap text-gray-500">
+                                            {{ $data['band'] ?? '-' }}
+                                        </td>
+                                        <td class="px-4 py-3 text-sm whitespace-nowrap text-gray-500">
+                                            {{ $data['work_unit'] ?? '-' }}
+                                        </td>
                                         <td class="px-4 py-3 text-sm whitespace-nowrap text-gray-500">
                                             {{ $data['directorate'] ?? '-' }}
                                         </td>
                                         <td class="px-4 py-3 text-sm whitespace-nowrap text-gray-500">
                                             {{ $data['department'] ?? '-' }}
+                                        </td>
+                                        <td class="px-4 py-3 text-sm whitespace-nowrap text-gray-500">
+                                            {{ $data['group'] ?? '-' }}
+                                        </td>
+                                        <td class="px-4 py-3 text-sm whitespace-nowrap text-gray-500">
+                                            {{ $data['komp'] ?? '-' }}
                                         </td>
                                         <td class="px-4 py-3 text-sm whitespace-nowrap text-gray-500">
                                             {{ $data['biro'] ?? '-' }}
@@ -436,9 +479,6 @@
                                         </td>
                                         <td class="px-4 py-3 text-sm whitespace-nowrap text-gray-500">
                                             {{ $data['location'] ?? '-' }}
-                                        </td>
-                                        <td class="px-4 py-3 text-sm whitespace-nowrap text-gray-700">
-                                            {{ $data['job_grade'] }}
                                         </td>
                                         <td class="px-4 py-3 text-sm whitespace-nowrap">
                                             @if (in_array($data['position_code'], $duplicates))

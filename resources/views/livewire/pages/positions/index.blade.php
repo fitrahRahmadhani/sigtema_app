@@ -56,7 +56,7 @@
             </div>
 
             <!-- Add Position Button -->
-            @if (!$showCompanySelection)
+            @if (! $showCompanySelection)
                 <a
                     href="{{ route('positions.create') }}"
                     class="color-gradient inline-flex items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
@@ -142,7 +142,7 @@
         @endif
 
         <!-- MAIN CONTENT SECTION -->
-        @if (!$showCompanySelection)
+        @if (! $showCompanySelection)
             @if ($selectedCompany)
                 <!-- Search and Filter Section -->
                 <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
@@ -161,7 +161,7 @@
                                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                     <svg
                                         class="h-5 w-5 text-gray-400"
-                                        xmlns="http://www.w3.org/2000/svg"
+                                        xmlns="http://www.w3.org2000/svg"
                                         fill="none"
                                         viewBox="0 0 24 24"
                                         stroke="currentColor"
@@ -177,7 +177,7 @@
                                 <input
                                     type="text"
                                     wire:model.live.debounce.300ms="search"
-                                    placeholder="Search by name, code, job grade, or organizational unit..."
+                                    placeholder="Search by position name or code..."
                                     class="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                                 />
                             </div>
@@ -215,7 +215,33 @@
                     </div>
 
                     <!-- Filters Row -->
-                    <div class="grid gap-4 md:grid-cols-3">
+                    <div class="grid gap-4 md:grid-cols-4">
+                        <!-- Band Filter -->
+                        <div class="relative">
+                            <label class="mb-2 block text-sm font-medium text-gray-700">Band</label>
+                            <div class="relative">
+                                <select
+                                    wire:model.live="bandFilter"
+                                    class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                >
+                                    <option value="">All Bands</option>
+                                    @foreach ($bands as $band)
+                                        <option value="{{ $band }}">{{ $band }}</option>
+                                    @endforeach
+                                </select>
+                                <svg
+                                    class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+
                         <!-- Job Grade Filter -->
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Job Grade</label>
@@ -311,12 +337,13 @@
                     <div
                         class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
                     >
-                        <div class="col-span-3 text-sm font-semibold">Position</div>
-                        <div class="col-span-2 text-sm font-semibold">Employee on Duty</div>
+                        <div class="col-span-2 text-sm font-semibold">Position</div>
+                        <div class="col-span-1 text-sm font-semibold">Band</div>
+                        <div class="col-span-1 text-sm font-semibold">Grade</div>
                         <div class="col-span-2 text-sm font-semibold">Organizational Unit</div>
-                        <div class="col-span-2 text-sm font-semibold">Company</div>
+                        <div class="col-span-2 text-sm font-semibold">Employee on Duty</div>
+                        <div class="col-span-2 text-sm font-semibold">Work Unit</div>
                         <div class="col-span-1 text-sm font-semibold">Location</div>
-                        <div class="col-span-1 text-sm font-semibold">Job Grade</div>
                         <div class="col-span-1 text-center text-sm font-semibold">Actions</div>
                     </div>
 
@@ -327,7 +354,7 @@
                             class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
                         >
                             <!-- Position Name & Code -->
-                            <div class="col-span-3 flex items-center gap-3">
+                            <div class="col-span-2 flex items-center gap-3">
                                 <div class="min-w-0 flex-1">
                                     <p class="truncate text-sm font-semibold text-gray-900">{{ $position->name }}</p>
                                     <span
@@ -338,10 +365,48 @@
                                 </div>
                             </div>
 
+                            <!-- Band -->
+                            <div class="col-span-1">
+                                @if ($position->band)
+                                    <span
+                                        class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-800"
+                                    >
+                                        {{ $position->band }}
+                                    </span>
+                                @else
+                                    <span class="text-sm text-gray-400 italic">-</span>
+                                @endif
+                            </div>
+
+                            <!-- Job Grade -->
+                            <div class="col-span-1">
+                                <span
+                                    class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-800"
+                                >
+                                    {{ $position->job_grade }}
+                                </span>
+                            </div>
+
+                            <!-- Organizational Unit -->
+                            <div class="col-span-2 overflow-hidden">
+                                @if ($position->department)
+                                    <p class="truncate text-sm font-medium text-gray-900">
+                                        {{ $position->department }}
+                                    </p>
+                                    @if ($position->directorate)
+                                        <p class="truncate text-xs text-gray-500">{{ $position->directorate }}</p>
+                                    @endif
+                                @else
+                                    <span class="text-sm text-gray-400 italic">No department</span>
+                                @endif
+                            </div>
+
                             <!-- Employee Unit -->
                             <div class="col-span-2 overflow-hidden">
                                 @if ($position->employee_id)
-                                    <p class="truncate text-sm font-medium text-gray-900">{{ $position->employee->name }}</p>
+                                    <p class="truncate text-sm font-medium text-gray-900">
+                                        {{ $position->employee->name }}
+                                    </p>
                                     @if ($position->employee->employee_number)
                                         <p class="truncate text-xs text-gray-400">
                                             {{ $position->employee->employee_number }}
@@ -357,29 +422,20 @@
                                 @endif
                             </div>
 
-                            <!-- Organizational Unit -->
+                            <!-- Work Unit-->
                             <div class="col-span-2 overflow-hidden">
-                                @if ($position->department)
-                                    <p class="truncate text-sm font-medium text-gray-900">{{ $position->department }}</p>
-                                    @if ($position->directorate)
-                                        <p class="truncate text-xs text-gray-500">{{ $position->directorate }}</p>
-                                    @endif
-
-                                    @if ($position->section)
-                                        <p class="truncate text-xs text-gray-400">{{ $position->section }}</p>
-                                    @endif
-                                @else
-                                    <span class="text-sm text-gray-400 italic">No department</span>
+                                @if ($position->work_unit)
+                                    <p class="truncate text-sm font-medium text-gray-900">
+                                        {{ $position->work_unit }}
+                                    </p>
                                 @endif
-                            </div>
 
-                            <!-- Company -->
-                            <div class="col-span-2 overflow-hidden">
-                                @if ($position->company)
-                                    <p class="truncate text-sm text-gray-600">{{ $position->company->name }}</p>
-                                    <p class="truncate text-xs text-gray-500">{{ $position->company->cocd }}</p>
-                                @else
-                                    <span class="text-sm text-gray-400 italic">No company</span>
+                                @if ($position->group)
+                                    <p class="truncate text-xs text-gray-500">{{ $position->group }}</p>
+                                @endif
+
+                                @if ($position->komp)
+                                    <p class="truncate text-xs text-gray-400">{{ $position->komp }}</p>
                                 @endif
                             </div>
 
@@ -394,15 +450,6 @@
                                 @else
                                     <span class="text-sm text-gray-400 italic">-</span>
                                 @endif
-                            </div>
-
-                            <!-- Job Grade -->
-                            <div class="col-span-1">
-                                <span
-                                    class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-800"
-                                >
-                                    {{ $position->job_grade }}
-                                </span>
                             </div>
 
                             <!-- Actions -->
@@ -460,11 +507,26 @@
                                     <div class="min-w-0 flex-1">
                                         <p class="text-xs font-medium text-gray-500 uppercase">Position</p>
                                         <p class="mt-1 font-semibold text-gray-900">{{ $position->name }}</p>
-                                        <span
-                                            class="mt-2 inline-flex items-center rounded-md bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800"
-                                        >
-                                            {{ $position->position_code ?? $position->code }}
-                                        </span>
+                                        <div class="mt-2 flex flex-wrap gap-2">
+                                            <span
+                                                class="inline-flex items-center rounded-md bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800"
+                                            >
+                                                {{ $position->position_code ?? $position->code }}
+                                            </span>
+                                            @if ($position->band)
+                                                <span
+                                                    class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-800"
+                                                >
+                                                    {{ $position->band }}
+                                                </span>
+                                            @endif
+
+                                            <span
+                                                class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-800"
+                                            >
+                                                {{ $position->job_grade }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -472,9 +534,13 @@
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase">Employee on Duty</p>
                                     @if ($position->employee_id)
-                                        <p class="mt-1 text-sm font-medium text-gray-900">{{ $position->employee->name }}</p>
+                                        <p class="mt-1 text-sm font-medium text-gray-900">
+                                            {{ $position->employee->name }}
+                                        </p>
                                         @if ($position->employee->employee_number)
-                                            <p class="text-xs text-gray-500">{{ $position->employee->employee_number }}</p>
+                                            <p class="text-xs text-gray-500">
+                                                {{ $position->employee->employee_number }}
+                                            </p>
                                         @endif
                                     @else
                                         <p
@@ -490,7 +556,9 @@
                                     <div>
                                         <p class="text-xs font-medium text-gray-500 uppercase">Organizational Unit</p>
                                         @if ($position->department)
-                                            <p class="mt-1 text-sm font-medium text-gray-900">{{ $position->department }}</p>
+                                            <p class="mt-1 text-sm font-medium text-gray-900">
+                                                {{ $position->department }}
+                                            </p>
                                             @if ($position->directorate)
                                                 <p class="text-xs text-gray-500">{{ $position->directorate }}</p>
                                             @endif
@@ -500,38 +568,31 @@
                                     </div>
 
                                     <div>
-                                        <p class="text-xs font-medium text-gray-500 uppercase">Company</p>
-                                        @if ($position->company)
-                                            <p class="mt-1 text-sm font-medium text-gray-900">{{ $position->company->name }}</p>
-                                            <p class="text-xs text-gray-500">{{ $position->company->cocd }}</p>
-                                        @else
-                                            <p class="mt-1 text-sm text-gray-400 italic">No company</p>
+                                        <p class="text-xs font-medium text-gray-500 uppercase">Work Unit & Group</p>
+                                        @if ($position->work_unit)
+                                            <p class="mt-1 text-sm font-medium text-gray-900">
+                                                {{ $position->work_unit }}
+                                            </p>
+                                        @endif
+
+                                        @if ($position->group)
+                                            <p class="text-xs text-gray-500">{{ $position->group }}</p>
                                         @endif
                                     </div>
                                 </div>
 
-                                <!-- Location & Grade -->
-                                <div class="flex items-center gap-3">
-                                    <div>
-                                        <p class="text-xs font-medium text-gray-500 uppercase">Location</p>
-                                        @if ($position->location)
-                                            <span
-                                                class="mt-1 inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-800"
-                                            >
-                                                {{ $position->location }}
-                                            </span>
-                                        @else
-                                            <p class="mt-1 text-sm text-gray-400 italic">-</p>
-                                        @endif
-                                    </div>
-                                    <div>
-                                        <p class="text-xs font-medium text-gray-500 uppercase">Job Grade</p>
+                                <!-- Location -->
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500 uppercase">Location</p>
+                                    @if ($position->location)
                                         <span
-                                            class="mt-1 inline-flex items-center rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-800"
+                                            class="mt-1 inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-800"
                                         >
-                                            {{ $position->job_grade }}
+                                            {{ $position->location }}
                                         </span>
-                                    </div>
+                                    @else
+                                        <p class="mt-1 text-sm text-gray-400 italic">-</p>
+                                    @endif
                                 </div>
 
                                 <!-- Actions -->

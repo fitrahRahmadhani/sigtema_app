@@ -32,6 +32,9 @@ class Index extends Component
     #[Url(as: 'grade')]
     public $gradeFilter = '';
 
+    #[Url(as: 'band')]
+    public $bandFilter = '';
+
     #[Url(as: 'department')]
     public $departmentFilter = '';
 
@@ -81,6 +84,7 @@ class Index extends Component
         $this->search = '';
         $this->sortBy = 'name_asc';
         $this->gradeFilter = '';
+        $this->bandFilter = '';
         $this->departmentFilter = '';
         $this->locationFilter = '';
     }
@@ -96,6 +100,11 @@ class Index extends Component
     }
 
     public function updatingGradeFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingBandFilter()
     {
         $this->resetPage();
     }
@@ -141,6 +150,7 @@ class Index extends Component
                 'isSuperadmin' => $this->isSuperadmin,
                 'selectedCompany' => null,
                 'positions' => collect(),
+                'bands' => [],
                 'grades' => [],
                 'departments' => [],
                 'locations' => [],
@@ -152,18 +162,13 @@ class Index extends Component
             ->where('company_id', $this->selectedCompanyId)
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
+                    // Pencarian hanya pada nama posisi dan kode posisi
                     $q->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('position_code', 'like', '%' . $this->search . '%')
-                        ->orWhere('code', 'like', '%' . $this->search . '%')
-                        ->orWhere('job_grade', 'like', '%' . $this->search . '%')
-                        ->orWhere('directorate', 'like', '%' . $this->search . '%')
-                        ->orWhere('department', 'like', '%' . $this->search . '%')
-                        ->orWhere('biro', 'like', '%' . $this->search . '%')
-                        ->orWhere('section', 'like', '%' . $this->search . '%')
-                        ->orWhere('location', 'like', '%' . $this->search . '%');
+                        ->orWhere('position_code', 'like', '%' . $this->search . '%');
                 });
             })
             ->when($this->gradeFilter, fn($query) => $query->where('job_grade', $this->gradeFilter))
+            ->when($this->bandFilter, fn($query) => $query->where('band', $this->bandFilter))
             ->when($this->departmentFilter, fn($query) => $query->where('department', $this->departmentFilter))
             ->when($this->locationFilter, fn($query) => $query->where('location', $this->locationFilter))
             ->when($this->sortBy === 'name_asc', fn($query) => $query->orderBy('name', 'asc'))
@@ -177,6 +182,13 @@ class Index extends Component
             ->paginate(10);
 
         // Get unique values for filters from selected company only
+        $bands = Position::where('company_id', $this->selectedCompanyId)
+            ->distinct()
+            ->whereNotNull('band')
+            ->orderBy('band')
+            ->pluck('band')
+            ->toArray();
+
         $grades = Position::where('company_id', $this->selectedCompanyId)
             ->distinct()
             ->whereNotNull('job_grade')
@@ -201,6 +213,7 @@ class Index extends Component
         return view('livewire.pages.positions.index', [
             'showCompanySelection' => false,
             'positions' => $positions,
+            'bands' => $bands,
             'grades' => $grades,
             'departments' => $departments,
             'locations' => $locations,
