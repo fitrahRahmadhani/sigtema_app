@@ -11,14 +11,17 @@ use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
 use Livewire\Attributes\Layout;
 use App\Jobs\SyncDiscsJob;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\RateLimiter;
+use App\Livewire\Traits\WithDeleteConfirmation;
 
 #[Layout('components.layouts.app')]
-#[Title('DISC Assessment')]
+#[Title('DISC Result')]
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, WithDeleteConfirmation;
 
     #[Url]
     public $search = '';
@@ -27,146 +30,325 @@ class Index extends Component
     public $sortBy = 'newest';
 
     #[Url]
-    public $interpretation1Filter = '';
+    public $sourceFilter = '';
 
     #[Url]
-    public $interpretation2Filter = '';
-
-    #[Url]
-    public $interpretation3Filter = '';
+    public $activeFilter = 'active'; // active, inactive, all
 
     public $syncStatus = 'idle';
     public $lastSyncResult = null;
-    public $polling = false;
+    public $syncProgress = 0;
+    public $syncMessage = '';
+    public $syncCurrent = 0;
+    public $syncTotal = 0;
+    public $isPolling = false;
 
+    // Reset pagination on filter changes
     public function updating($property, $value)
     {
-        if (in_array($property, ['search', 'sortBy', 'interpretation1Filter', 'interpretation2Filter', 'interpretation3Filter'])) {
+        if (in_array($property, ['search', 'sortBy', 'sourceFilter', 'activeFilter'])) {
             $this->resetPage();
         }
     }
 
+    /**
+     * Start sync dengan rate limiting dan locking
+     */
     public function syncFromApi()
     {
         try {
-            if ($this->getSyncStatus() === 'processing') {
+            // Rate limiting: maksimal 3 sync dalam 10 menit
+            $rateLimitKey = 'disc_sync_attempts_' . Auth::id();
+            if (RateLimiter::tooManyAttempts($rateLimitKey, 3)) {
+                $seconds = RateLimiter::availableIn($rateLimitKey);
+                Toaster::warning("Too many sync attempts. Try again in {$seconds} seconds.");
+                return;
+            }
+
+            // Cek lock untuk mencegah multiple sync
+            $lockKey = "disc_sync_lock_" . Auth::id();
+            if (Cache::has($lockKey)) {
+                Toaster::warning('Another DISC sync is already in progress. Please wait.');
+                return;
+            }
+
+            // Cek status saat ini
+            $currentStatus = Cache::get("disc_sync_status_" . Auth::id(), 'idle');
+            if ($currentStatus === 'processing' || $currentStatus === 'queued') {
                 Toaster::warning('DISC sync is already in progress. Please wait.');
                 return;
             }
 
+            // Dispatch job ke queue
             SyncDiscsJob::dispatch(Auth::id())->onQueue('default');
 
-            $this->syncStatus = 'queued';
-            Cache::put("disc_sync_status_" . Auth::id(), 'queued', 3600);
-            $this->startPolling();
+            // Update rate limiter
+            RateLimiter::hit($rateLimitKey, 600); // 10 menit
 
-            Toaster::success('DISC sync has been queued. Processing in background...');
+            // Set status queued
+            Cache::put("disc_sync_status_" . Auth::id(), 'queued', 3600);
+
+            $this->syncStatus = 'queued';
+            $this->syncProgress = 5;
+            $this->syncMessage = 'DISC sync job has been queued...';
+            $this->isPolling = true;
+
+            Toaster::success('DISC sync has been queued and will run in background.');
         } catch (\Exception $e) {
             Toaster::error('Failed to queue DISC sync: ' . $e->getMessage());
+            Log::error('DISC sync dispatch failed', [
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage()
+            ]);
         }
     }
 
-    private function getSyncStatus(): string
+    /**
+     * Setup event listeners untuk Pusher
+     */
+    protected function getListeners()
     {
-        $status = Cache::get("disc_sync_status_" . Auth::id(), 'idle');
-        $lastResult = Cache::get("last_disc_sync_result_" . Auth::id());
+        $userId = Auth::id();
 
-        if ($lastResult) {
-            $status = $lastResult['status'] ?? 'completed';
+        return [
+            // Event listeners untuk Pusher (DISC specific)
+            "echo-private:disc-sync-status.{$userId},.disc.sync.status.updated" => 'handleDiscSyncStatusUpdate',
+            "echo-private:disc-sync-status.{$userId},.disc.sync.progress.updated" => 'handleDiscSyncProgressUpdate',
+
+            // Local events
+            'refreshDiscData' => '$refresh',
+            'clearDiscSyncStatus' => 'clearSyncStatus',
+        ];
+    }
+
+    /**
+     * Handle DISC sync status updates dari Pusher
+     */
+    public function handleDiscSyncStatusUpdate($event)
+    {
+        $this->syncStatus = $event['status'] ?? 'idle';
+        $this->syncMessage = $event['message'] ?? '';
+
+        if (isset($event['result'])) {
+            $this->lastSyncResult = $event['result'];
+
+            // Simpan ke cache juga
+            Cache::put("last_disc_sync_result_" . Auth::id(), $event['result'], 86400);
         }
 
-        return $status;
+        // Update cache status
+        Cache::put("disc_sync_status_" . Auth::id(), $this->syncStatus, 86400);
+
+        // Show toaster berdasarkan status
+        if ($this->syncStatus === 'completed') {
+            $result = $this->lastSyncResult;
+            $message = sprintf(
+                'DISC sync completed! Created: %d, Updated: %d, Deactivated: %d',
+                $result['created'] ?? 0,
+                $result['updated'] ?? 0,
+                $result['deactivated'] ?? 0
+            );
+
+            Toaster::success($message);
+
+            // Auto-refresh data setelah 1 detik
+            $this->dispatch('refreshDiscData');
+
+            // Reset polling setelah 5 detik
+            $this->dispatch('stopDiscPolling');
+        } elseif ($this->syncStatus === 'failed') {
+            $result = $this->lastSyncResult;
+            $errorMessage = $result['error'] ?? 'Unknown error';
+            Toaster::error('DISC sync failed: ' . $errorMessage);
+
+            // Reset polling setelah 5 detik
+            $this->dispatch('stopDiscPolling');
+        }
+
+        // Reset progress jika sudah selesai
+        if (in_array($this->syncStatus, ['completed', 'failed'])) {
+            $this->syncProgress = 0;
+            $this->syncCurrent = 0;
+            $this->syncTotal = 0;
+            $this->isPolling = false;
+        }
     }
 
-    private function startPolling(): void
+    /**
+     * Handle DISC sync progress updates dari Pusher
+     */
+    public function handleDiscSyncProgressUpdate($event)
     {
-        $this->polling = true;
-        Cache::put("disc_polling_start_" . Auth::id(), now()->timestamp, 3600);
+        $this->syncProgress = $event['progress'] ?? 0;
+        $this->syncMessage = $event['message'] ?? '';
+        $this->syncCurrent = $event['current'] ?? 0;
+        $this->syncTotal = $event['total'] ?? 0;
+
+        // Update cache status ke processing
+        if ($this->syncStatus !== 'processing') {
+            $this->syncStatus = 'processing';
+            Cache::put("disc_sync_status_" . Auth::id(), 'processing', 86400);
+        }
     }
 
+    /**
+     * Check sync status secara manual (fallback jika Pusher tidak bekerja)
+     */
     public function checkSyncStatus()
     {
-        if (!$this->polling) {
-            return;
-        }
-
-        $startTime = Cache::get("disc_polling_start_" . Auth::id());
-        if ($startTime && (now()->timestamp - $startTime) > 300) {
-            $this->polling = false;
-            Cache::forget("disc_polling_start_" . Auth::id());
-            return;
-        }
-
-        $this->syncStatus = $this->getSyncStatus();
+        $this->syncStatus = Cache::get("disc_sync_status_" . Auth::id(), 'idle');
         $this->lastSyncResult = Cache::get("last_disc_sync_result_" . Auth::id());
 
-        if (in_array($this->syncStatus, ['completed', 'failed'])) {
-            $this->polling = false;
-            Cache::forget("disc_polling_start_" . Auth::id());
+        // Jika selesai, tampilkan notifikasi
+        if ($this->syncStatus === 'completed' && $this->lastSyncResult) {
+            Toaster::success(sprintf(
+                'DISC sync completed! Created: %d, Updated: %d, Deactivated: %d',
+                $this->lastSyncResult['created'] ?? 0,
+                $this->lastSyncResult['updated'] ?? 0,
+                $this->lastSyncResult['deactivated'] ?? 0
+            ));
 
-            if ($this->syncStatus === 'completed' && $this->lastSyncResult) {
-                Toaster::success(sprintf(
-                    'DISC sync completed! Created: %d, Updated: %d',
-                    $this->lastSyncResult['created'] ?? 0,
-                    $this->lastSyncResult['updated'] ?? 0
-                ));
-                $this->dispatch('refresh-data');
-            }
+            // Refresh data
+            $this->dispatch('refreshDiscData');
+            $this->isPolling = false;
+        } elseif ($this->syncStatus === 'failed' && $this->lastSyncResult) {
+            Toaster::error('DISC sync failed: ' . ($this->lastSyncResult['error'] ?? 'Unknown error'));
+            $this->isPolling = false;
         }
     }
 
+    /**
+     * Clear sync status
+     */
     public function clearSyncStatus()
     {
         Cache::forget("disc_sync_status_" . Auth::id());
         Cache::forget("last_disc_sync_result_" . Auth::id());
-        Cache::forget("disc_polling_start_" . Auth::id());
 
         $this->syncStatus = 'idle';
         $this->lastSyncResult = null;
-        $this->polling = false;
+        $this->syncProgress = 0;
+        $this->syncMessage = '';
+        $this->syncCurrent = 0;
+        $this->syncTotal = 0;
+        $this->isPolling = false;
 
         Toaster::info('DISC sync status cleared');
     }
 
+    /**
+     * Stop polling
+     */
+    public function stopPolling()
+    {
+        $this->isPolling = false;
+    }
+
+    /**
+     * Mount - load initial status
+     */
+    public function mount()
+    {
+        $this->syncStatus = Cache::get("disc_sync_status_" . Auth::id(), 'idle');
+        $this->lastSyncResult = Cache::get("last_disc_sync_result_" . Auth::id());
+
+        // Jika masih processing atau queued, aktifkan polling
+        if (in_array($this->syncStatus, ['processing', 'queued'])) {
+            $this->isPolling = true;
+        }
+    }
+
+    /**
+     * Dehydrate - tambahkan data ke view
+     */
+    public function dehydrate()
+    {
+        // Tambahkan polling flag ke JavaScript
+        $this->dispatch('discSyncPollingUpdated', isPolling: $this->isPolling);
+    }
+
+    /**
+     * Required methods for WithDeleteConfirmation trait
+     */
+    protected function getModelClass(): string
+    {
+        return Disc::class;
+    }
+
+    protected function getModelDisplayName(): string
+    {
+        return 'DISC Assessment';
+    }
+
+    protected function performDelete($disc): void
+    {
+        $disc->delete();
+    }
+
+    /**
+     * Toggle individual DISC assessment status
+     */
+    public function toggleStatus($id)
+    {
+        $disc = Disc::findOrFail($id);
+        $disc->is_active = !$disc->is_active;
+        $disc->save();
+
+        $status = $disc->is_active ? 'activated' : 'deactivated';
+        Toaster::success("DISC assessment {$status} successfully.");
+
+        // Refresh data tanpa reset pagination
+        $this->dispatch('refreshDiscData');
+    }
+
+    /**
+     * Render dengan statistik lengkap
+     */
     public function render()
     {
-        if ($this->polling) {
+        if ($this->isPolling) {
             $this->checkSyncStatus();
-        } else {
-            $this->syncStatus = $this->getSyncStatus();
-            $this->lastSyncResult = Cache::get("last_disc_sync_result_" . Auth::id());
         }
 
         $discs = Disc::query()
             ->with(['employee'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
+                    // HANYA PENCARIAN BERDASARKAN NAMA DAN NOMOR KARYAWAN
                     $q->where('employee_number', 'like', '%' . $this->search . '%')
-                        ->orWhere('interpretation1', 'like', '%' . $this->search . '%')
-                        ->orWhere('interpretation2', 'like', '%' . $this->search . '%')
-                        ->orWhere('interpretation3', 'like', '%' . $this->search . '%')
                         ->orWhereHas('employee', function ($employeeQuery) {
                             $employeeQuery->where('name', 'like', '%' . $this->search . '%');
                         });
                 });
             })
-            ->when($this->interpretation1Filter, fn($q) => $q->where('interpretation1', $this->interpretation1Filter))
-            ->when($this->interpretation2Filter, fn($q) => $q->where('interpretation2', $this->interpretation2Filter))
-            ->when($this->interpretation3Filter, fn($q) => $q->where('interpretation3', $this->interpretation3Filter))
+            ->when($this->sourceFilter, fn($q) => $q->where('source', $this->sourceFilter))
+            ->when($this->activeFilter === 'active', fn($q) => $q->where('is_active', true))
+            ->when($this->activeFilter === 'inactive', fn($q) => $q->where('is_active', false))
             ->when($this->sortBy === 'newest', fn($q) => $q->latest('created_at'))
             ->when($this->sortBy === 'oldest', fn($q) => $q->oldest('created_at'))
-            ->when($this->sortBy === 'interpretation1_asc', fn($q) => $q->orderBy('interpretation1', 'asc'))
-            ->when($this->sortBy === 'interpretation1_desc', fn($q) => $q->orderBy('interpretation1', 'desc'))
-            ->when($this->sortBy === 'interpretation2_asc', fn($q) => $q->orderBy('interpretation2', 'asc'))
-            ->when($this->sortBy === 'interpretation2_desc', fn($q) => $q->orderBy('interpretation2', 'desc'))
-            ->when($this->sortBy === 'interpretation3_asc', fn($q) => $q->orderBy('interpretation3', 'asc'))
-            ->when($this->sortBy === 'interpretation3_desc', fn($q) => $q->orderBy('interpretation3', 'desc'))
+            ->when($this->sortBy === 'employee_asc', fn($q) => $q->orderBy('employee_number', 'asc'))
+            ->when($this->sortBy === 'employee_desc', fn($q) => $q->orderBy('employee_number', 'desc'))
             ->paginate(10);
 
-        $interpretation1s = Disc::whereNotNull('interpretation1')->distinct()->pluck('interpretation1')->sort();
-        $interpretation2s = Disc::whereNotNull('interpretation2')->distinct()->pluck('interpretation2')->sort();
-        $interpretation3s = Disc::whereNotNull('interpretation3')->distinct()->pluck('interpretation3')->sort();
+        $sources = Disc::whereNotNull('source')->distinct()->pluck('source')->sort();
 
-        return view('livewire.pages.discs.index', compact('discs', 'interpretation1s', 'interpretation2s', 'interpretation3s'));
+        $activeCount = Disc::where('is_active', true)->count();
+        $inactiveCount = Disc::where('is_active', false)->count();
+        $totalCount = Disc::count();
+        $externalCount = Disc::where('source', 'eksternal')->count();
+        $internalCount = Disc::where('source', 'internal')->count();
+
+        return view(
+            'livewire.pages.discs.index',
+            compact(
+                'discs',
+                'sources',
+                'activeCount',
+                'inactiveCount',
+                'totalCount',
+                'externalCount',
+                'internalCount'
+            )
+        );
     }
 }
