@@ -112,14 +112,6 @@ class Position extends Model
     }
 
     /**
-     * Scope untuk position aktif
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
-    }
-
-    /**
      * Scope untuk filter berdasarkan company
      */
     public function scopeForCompany($query, $companyId)
@@ -129,6 +121,12 @@ class Position extends Model
 
     public function getWorkUnitAttribute()
     {
+        // Jika kolom work_unit sudah diisi, gunakan nilai tersebut
+        if (!empty($this->attributes['work_unit'])) {
+            return $this->attributes['work_unit'];
+        }
+
+        // Fallback ke logic lama jika work_unit kosong
         if (!empty($this->section)) {
             return $this->section;
         }
@@ -141,6 +139,5 @@ class Position extends Model
         if (!empty($this->directorate)) {
             return $this->directorate;
         }
-        return null;
     }
 }

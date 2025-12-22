@@ -25,6 +25,18 @@ class Create extends Component
     #[Validate('required|string|max:50')]
     public $job_grade = '';
 
+    #[Validate('nullable|string|max:50')]
+    public $band = '';
+
+    #[Validate('nullable|string|max:255')]
+    public $work_unit = '';
+
+    #[Validate('nullable|string|max:255')]
+    public $group = '';
+
+    #[Validate('nullable|string|max:255')]
+    public $komp = '';
+
     #[Validate('required|exists:companies,id')]
     public $company_id = '';
 
@@ -45,6 +57,15 @@ class Create extends Component
 
     public $employees = [];
     public $employee_id;
+
+    // Band options for select dropdown
+    public $bandOptions = [
+        'Band 1',
+        'Band 2',
+        'Band 3',
+        'Band 4',
+        'Band 5',
+    ];
 
     public function mount()
     {
@@ -67,6 +88,10 @@ class Create extends Component
                 'name' => $this->name,
                 'position_code' => $this->position_code,
                 'job_grade' => $this->job_grade,
+                'band' => $this->band,
+                'work_unit' => $this->work_unit,
+                'group' => $this->group,
+                'komp' => $this->komp,
                 'company_id' => $this->company_id,
                 'directorate' => $this->directorate,
                 'department' => $this->department,

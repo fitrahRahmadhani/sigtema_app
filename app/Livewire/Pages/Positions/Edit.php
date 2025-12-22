@@ -26,10 +26,21 @@ class Edit extends Component
     #[Validate('required|string|max:50')]
     public $job_grade = '';
 
+    #[Validate('nullable|string|max:50')]
+    public $band = '';
+
+    #[Validate('nullable|string|max:255')]
+    public $work_unit = '';
+
+    #[Validate('nullable|string|max:255')]
+    public $group = '';
+
+    #[Validate('nullable|string|max:255')]
+    public $komp = '';
+
     #[Validate('required|exists:companies,id')]
     public $company_id = '';
 
-    // Field baru berdasarkan skema database
     #[Validate('nullable|string|max:255')]
     public $directorate = '';
 
@@ -48,33 +59,57 @@ class Edit extends Component
     public $employees = [];
     public $employee_id;
 
+    // Band options for select dropdown
+    public $bandOptions = [
+        'Band 1',
+        'Band 2',
+        'Band 3',
+        'Band 4',
+        'Band 5',
+    ];
+
     public function mount(Position $position)
     {
         $this->position = $position;
 
+        // Set nilai dari database
         $this->name = $position->name;
         $this->position_code = $position->position_code;
         $this->job_grade = $position->job_grade;
+        $this->band = $position->band;
+        $this->work_unit = $position->work_unit;
+        $this->group = $position->group;
+        $this->komp = $position->komp;
         $this->company_id = $position->company_id;
         $this->directorate = $position->directorate;
         $this->department = $position->department;
         $this->biro = $position->biro;
         $this->section = $position->section;
         $this->location = $position->location;
-        if ($position->employee) {
-            $this->employees = $position->company->employees ?? [];
-            $this->employee_id = $position->employee_id;
-        } else {
-            $this->employees = Employee::where('company_id', $this->company_id)
-                ->whereDoesntHave('position')
-                ->get();
-        }
+
+        // Set employee data
+        $this->employee_id = $position->employee_id;
+
+        // Load employees
+        $this->loadEmployees();
     }
 
     public function updatedCompanyId()
     {
+        $this->loadEmployees();
+    }
+
+    private function loadEmployees()
+    {
+        // Load employees from selected company
         $this->employees = Employee::where('company_id', $this->company_id)
-            ->whereDoesntHave('position')
+            ->where(function ($query) {
+                // Include current employee if any
+                if ($this->employee_id) {
+                    $query->orWhere('id', $this->employee_id);
+                }
+            })
+            ->orderBy('name')
             ->get();
     }
 
@@ -87,6 +122,10 @@ class Edit extends Component
                 'name' => $this->name,
                 'position_code' => $this->position_code,
                 'job_grade' => $this->job_grade,
+                'band' => $this->band,
+                'work_unit' => $this->work_unit,
+                'group' => $this->group,
+                'komp' => $this->komp,
                 'company_id' => $this->company_id,
                 'directorate' => $this->directorate,
                 'department' => $this->department,
