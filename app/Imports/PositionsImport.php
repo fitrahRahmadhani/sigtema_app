@@ -40,6 +40,10 @@ class PositionsImport implements ToCollection, WithHeadingRow
                 $jobGrade = $this->cleanValue($row['job_grade'] ?? '');
                 $companyIdRaw = $this->cleanValue($row['company_id'] ?? '');
                 $employeeNumber = $this->cleanValue($row['employee_number'] ?? '');
+                $band = $this->cleanValue($row['band'] ?? '');
+                $workUnit = $this->cleanValue($row['work_unit'] ?? '');
+                $group = $this->cleanValue($row['group'] ?? '');
+                $komp = $this->cleanValue($row['komp'] ?? '');
 
                 // Skip example/info rows
                 if ($this->shouldSkipRow($rowData, $positionCode, $name, $jobGrade, $companyIdRaw)) {
@@ -62,11 +66,15 @@ class PositionsImport implements ToCollection, WithHeadingRow
 
                 // Get employee ID if employee number provided
                 $employeeId = null;
+                $employeeName = null;
                 if (!empty($employeeNumber)) {
                     $employee = Employee::where('employee_number', $employeeNumber)
                         ->where('company_id', $companyId)
                         ->first();
-                    $employeeId = $employee ? $employee->id : null;
+                    if ($employee) {
+                        $employeeId = $employee->id;
+                        $employeeName = $employee->name;
+                    }
                 }
 
                 // Prepare position data
@@ -76,12 +84,16 @@ class PositionsImport implements ToCollection, WithHeadingRow
                     'slug' => Str::uuid(),
                     'position_code' => $positionCode,
                     'name' => $name,
+                    'job_grade' => $jobGrade,
+                    'band' => $band,
+                    'work_unit' => $workUnit,
                     'directorate' => $this->cleanValue($row['directorate'] ?? null),
                     'department' => $this->cleanValue($row['department'] ?? null),
+                    'group' => $group,
+                    'komp' => $komp,
                     'biro' => $this->cleanValue($row['biro'] ?? null),
                     'section' => $this->cleanValue($row['section'] ?? null),
                     'location' => $this->cleanValue($row['location'] ?? null),
-                    'job_grade' => $jobGrade,
                 ];
 
                 // Validate data
@@ -90,12 +102,16 @@ class PositionsImport implements ToCollection, WithHeadingRow
                     'employee_id' => 'nullable|exists:employees,id',
                     'position_code' => 'required|string|max:255',
                     'name' => 'required|string|max:255',
+                    'job_grade' => 'required|string|max:255',
+                    'band' => 'nullable|string|max:50',
+                    'work_unit' => 'nullable|string|max:255',
                     'directorate' => 'nullable|string|max:255',
                     'department' => 'nullable|string|max:255',
+                    'group' => 'nullable|string|max:255',
+                    'komp' => 'nullable|string|max:255',
                     'biro' => 'nullable|string|max:255',
                     'section' => 'nullable|string|max:255',
                     'location' => 'nullable|string|max:255',
-                    'job_grade' => 'required|string|max:255',
                 ]);
 
                 if ($validator->fails()) {
@@ -124,17 +140,15 @@ class PositionsImport implements ToCollection, WithHeadingRow
                             unset($updateData['slug']);
 
                             // Only update if there are changes
-                            if (
-                                $existingPosition->employee_id != $updateData['employee_id'] ||
-                                $existingPosition->name != $updateData['name'] ||
-                                $existingPosition->directorate != $updateData['directorate'] ||
-                                $existingPosition->department != $updateData['department'] ||
-                                $existingPosition->biro != $updateData['biro'] ||
-                                $existingPosition->section != $updateData['section'] ||
-                                $existingPosition->location != $updateData['location'] ||
-                                $existingPosition->job_grade != $updateData['job_grade']
-                            ) {
+                            $hasChanges = false;
+                            foreach ($updateData as $key => $value) {
+                                if ($existingPosition->$key != $value) {
+                                    $hasChanges = true;
+                                    break;
+                                }
+                            }
 
+                            if ($hasChanges) {
                                 $existingPosition->update($updateData);
                                 $this->results['updated']++;
                             } else {
@@ -152,7 +166,7 @@ class PositionsImport implements ToCollection, WithHeadingRow
                 // Add to preview data
                 if (!$this->isImportMode()) {
                     $previewData = $positionData;
-                    $previewData['employee_name'] = $employee ? $employee->name : null;
+                    $previewData['employee_name'] = $employeeName;
                     unset($previewData['slug']);
                     $processedData[] = $previewData;
                 }
