@@ -597,6 +597,96 @@
             </div>
         @endhasanyrole
 
+        {{-- Settings --}}
+        @hasanyrole('superadmin|admin')
+            <div class="mt-8 space-y-2">
+                <p class="ml-4 text-sm font-semibold text-gray-400 uppercase">settings</p>
+
+                {{-- Bulk Upload with Dropdown --}}
+                <div
+                    x-data="{
+                        openSettingsDropdown:
+                            {{ request()->routeIs('requirements.*') ? 'true' : 'false' }},
+                    }"
+                >
+                    <button
+                        @click="openSettingsDropdown = !openSettingsDropdown"
+                        class="flex w-full items-center gap-2 rounded-md p-2 px-4 transition-colors duration-200 hover:bg-gray-100"
+                        :class="{ 'bg-gray-200 ': openSettingsDropdown || {{ request()->routeIs('requirements.*') ? 'true' : 'false' }} }"
+                    >
+                        <div class="flex flex-1 items-center gap-2">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="size-5"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 0 1 9 9v.375M10.125 2.25A3.375 3.375 0 0 1 13.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 0 1 3.375 3.375M9 15l2.25 2.25L15 12"
+                                />
+                            </svg>
+                            <p>Requirement</p>
+                        </div>
+                        <div
+                            class="rounded-md p-1 transition-transform duration-200 hover:bg-gray-300"
+                            :class="{ 'rotate-180 bg-gray-300 ': openSettingsDropdown }"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="size-4"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                            </svg>
+                        </div>
+                    </button>
+
+                    {{-- Submenu Dropdown --}}
+                    <div
+                        x-show="openSettingsDropdown"
+                        x-transition:enter="transition duration-200 ease-out"
+                        x-transition:enter-start="-translate-y-2 opacity-0"
+                        x-transition:enter-end="translate-y-0 opacity-100"
+                        x-transition:leave="transition duration-150 ease-in"
+                        x-transition:leave-start="translate-y-0 opacity-100"
+                        x-transition:leave-end="-translate-y-2 opacity-0"
+                        class="ml-6 space-y-1 border-l border-gray-200 pl-2"
+                        style="display: none"
+                    >
+                        <a
+                            href="{{ route('requirements.position') }}"
+                            wire:navigate
+                            class="{{ request()->routeIs('requirements.position') ? 'active-sub-navbar' : 'navbar' }} flex w-full items-center gap-2 rounded-md p-2 px-3 transition-colors duration-200"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="size-5"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"
+                                />
+                            </svg>
+
+                            <p>Positions</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        @endhasanyrole
+
         @role('superadmin')
             {{-- Authentication --}}
             <div class="mt-8 space-y-2">
