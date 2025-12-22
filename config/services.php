@@ -51,4 +51,14 @@ return [
         'key' => env('MBTI_API_KEY'),
     ],
 
+    'disc_api' => [
+        'url' => env('DISC_API_URL'),
+        'key' => env('DISC_API_KEY'),
+    ],
+
+    'papi_api' => [
+        'url' => env('PAPI_API_URL'),
+        'key' => env('PAPI_API_KEY'),
+    ],
+
 ];
