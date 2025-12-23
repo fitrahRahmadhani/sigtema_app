@@ -749,9 +749,17 @@
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Kelalahan Emosional
                                     </td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                                    @for ($i = 0; $i < $columnCount; $i++)
+                                        <td class="px-6 py-4 align-top text-gray-700">
+                                            @if (! empty($selectedEmployees[$i]))
+                                                <span class="font-medium">
+                                                    {{ $selectedEmployees[$i]->burnout->emotional_exhaustion }}
+                                                </span>
+                                            @else
+                                                <span class="text-gray-400">-</span>
+                                            @endif
+                                        </td>
+                                    @endfor
                                 </tr>
 
                                 <!-- Depersonalisasi -->
@@ -759,9 +767,17 @@
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Depersonalisasi
                                     </td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                                    @for ($i = 0; $i < $columnCount; $i++)
+                                        <td class="px-6 py-4 align-top text-gray-700">
+                                            @if (! empty($selectedEmployees[$i]))
+                                                <span class="font-medium">
+                                                    {{ $selectedEmployees[$i]->burnout->depersonalization }}
+                                                </span>
+                                            @else
+                                                <span class="text-gray-400">-</span>
+                                            @endif
+                                        </td>
+                                    @endfor
                                 </tr>
 
                                 <!-- Penurunan Prestasi -->
@@ -769,9 +785,17 @@
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Penurunan Prestasi
                                     </td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                                    @for ($i = 0; $i < $columnCount; $i++)
+                                        <td class="px-6 py-4 align-top text-gray-700">
+                                            @if (! empty($selectedEmployees[$i]))
+                                                <span class="font-medium">
+                                                    {{ $selectedEmployees[$i]->burnout->achievement_decline }}
+                                                </span>
+                                            @else
+                                                <span class="text-gray-400">-</span>
+                                            @endif
+                                        </td>
+                                    @endfor
                                 </tr>
 
                                 <!-- Penafsiran -->
@@ -779,9 +803,17 @@
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Penafsiran
                                     </td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                                    @for ($i = 0; $i < $columnCount; $i++)
+                                        <td class="px-6 py-4 align-top text-gray-700">
+                                            @if (! empty($selectedEmployees[$i]))
+                                                <span class="font-medium">
+                                                    {!! strip_tags($selectedEmployees[$i]->burnout->result, '<i><b>') !!}
+                                                </span>
+                                            @else
+                                                <span class="text-gray-400">-</span>
+                                            @endif
+                                        </td>
+                                    @endfor
                                 </tr>
                             </tbody>
                         </table>

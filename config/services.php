@@ -43,7 +43,7 @@ return [
 
     'burnout_api' => [
         'url' => env('BURNOUT_API_URL'),
-        'key' => env('BURNOUT_API_KEY'),
+        'token' => env('BURNOUT_API_TOKEN'),
     ],
 
     'mbti_api' => [

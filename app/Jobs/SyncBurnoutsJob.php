@@ -50,19 +50,21 @@ class SyncBurnoutsJob implements ShouldQueue
             // Kirim event status processing
             broadcast(new BurnoutSyncStatusUpdated($this->userId, 'processing', null, 'Starting burnout sync process...'));
 
-            // Fetch data dari API
-            broadcast(new BurnoutSyncProgressUpdated($this->userId, 10, 'Fetching data from API...'));
-            $apiData = $this->fetchApiData();
+            // Fetch data dari API dengan pagination cursor
+            broadcast(new BurnoutSyncProgressUpdated($this->userId, 5, 'Starting API data fetch...'));
 
-            if (empty($apiData)) {
+            // Kumpulkan semua data dari API dengan cursor pagination
+            $allApiData = $this->fetchAllApiData();
+
+            if (empty($allApiData)) {
                 throw new \Exception('No data received from API');
             }
 
             // Kirim event progress
-            broadcast(new BurnoutSyncProgressUpdated($this->userId, 30, 'Processing ' . count($apiData) . ' items...', 0, count($apiData)));
+            broadcast(new BurnoutSyncProgressUpdated($this->userId, 30, 'Processing ' . count($allApiData) . ' items...', 0, count($allApiData)));
 
             // Process data
-            $stats = $this->processData($apiData);
+            $stats = $this->processData($allApiData);
 
             Log::info('Burnout sync job completed', $stats);
 
@@ -94,80 +96,165 @@ class SyncBurnoutsJob implements ShouldQueue
     }
 
     /**
-     * Fetch data dari API dengan validation
+     * Fetch semua data dari API dengan cursor pagination
      */
-    private function fetchApiData(): array
+    private function fetchAllApiData(): array
     {
         $apiUrl = config('services.burnout_api.url');
-        $apiKey = config('services.burnout_api.key');
+        $bearerToken = config('services.burnout_api.token');
 
-        if (!$apiUrl || !$apiKey) {
+        if (!$apiUrl || !$bearerToken) {
             throw new \Exception('Burnout API configuration not found');
         }
 
         Log::info('Fetching burnout data from API', ['url' => $apiUrl]);
 
-        broadcast(new BurnoutSyncProgressUpdated($this->userId, 15, 'Connecting to API...'));
+        $allData = [];
+        $nextCursor = null;
+        $page = 1;
+        $limit = 100; // Ambil 100 data per request
+
+        do {
+            broadcast(new BurnoutSyncProgressUpdated(
+                $this->userId,
+                5 + (($page - 1) * 5),
+                "Fetching page {$page} from API..."
+            ));
+
+            $responseData = $this->fetchApiPage($apiUrl, $bearerToken, $limit, $nextCursor);
+
+            if (!empty($responseData['data'])) {
+                $allData = array_merge($allData, $responseData['data']);
+                $nextCursor = $responseData['meta']['next_cursor'] ?? null;
+
+                Log::info('Fetched page from API', [
+                    'page' => $page,
+                    'items_fetched' => count($responseData['data']),
+                    'total_so_far' => count($allData),
+                    'has_next' => !empty($nextCursor)
+                ]);
+            } else {
+                $nextCursor = null;
+            }
+
+            $page++;
+
+            // Safety limit: maksimal 1000 halaman (100,000 data)
+            if ($page > 1000) {
+                Log::warning('Reached maximum page limit', ['total_items' => count($allData)]);
+                break;
+            }
+        } while (!empty($nextCursor));
+
+        broadcast(new BurnoutSyncProgressUpdated($this->userId, 25, 'Validating data...'));
+
+        // Validasi data
+        $validatedData = $this->validateApiData($allData);
+
+        broadcast(new BurnoutSyncProgressUpdated(
+            $this->userId,
+            30,
+            'Validated ' . count($validatedData) . ' items from ' . count($allData) . ' total'
+        ));
+
+        Log::info('Burnout API data validated', [
+            'total_fetched' => count($allData),
+            'total_valid' => count($validatedData)
+        ]);
+
+        return $validatedData;
+    }
+
+    /**
+     * Fetch satu halaman data dari API
+     */
+    private function fetchApiPage(string $apiUrl, string $bearerToken, int $limit = 100, ?string $cursor = null): array
+    {
+        $queryParams = ['limit' => $limit];
+        if ($cursor) {
+            $queryParams['cursor'] = $cursor;
+        }
 
         $response = Http::withHeaders([
-            'x-api-key' => $apiKey,
+            'Authorization' => 'Bearer ' . $bearerToken,
             'Accept' => 'application/json',
-        ])->timeout(300)->get($apiUrl);
-
-        broadcast(new BurnoutSyncProgressUpdated($this->userId, 20, 'Receiving data from API...'));
+        ])->timeout(300)->get($apiUrl, $queryParams);
 
         if (!$response->successful()) {
             $errorMessage = 'API request failed: ' . $response->status();
             Log::error('Burnout API request failed', [
                 'status' => $response->status(),
                 'url' => $apiUrl,
+                'cursor' => $cursor,
                 'response' => $response->body()
             ]);
+
+            // Jika error 401, token mungkin expired
+            if ($response->status() === 401) {
+                throw new \Exception('API authentication failed. Please check the bearer token.');
+            }
+
             throw new \Exception($errorMessage);
         }
 
         $data = $response->json();
 
-        // Validasi struktur data
-        if (!is_array($data)) {
-            throw new \Exception('Invalid API response: expected array');
+        // Validasi struktur response
+        if (!isset($data['data']) || !is_array($data['data'])) {
+            throw new \Exception('Invalid API response: missing data array');
         }
 
-        // Jika ada key 'data', gunakan itu
-        if (isset($data['data']) && is_array($data['data'])) {
-            $rawData = $data['data'];
-        } else {
-            $rawData = $data;
-        }
+        return [
+            'data' => $data['data'],
+            'meta' => $data['meta'] ?? []
+        ];
+    }
 
-        if (empty($rawData)) {
-            Log::warning('Empty data received from burnout API');
-            return [];
-        }
-
-        // Validasi setiap item
+    /**
+     * Validasi data dari API
+     */
+    private function validateApiData(array $apiData): array
+    {
         $validatedData = [];
-        foreach ($rawData as $index => $item) {
+
+        foreach ($apiData as $index => $item) {
             if (!is_array($item)) {
                 Log::warning('Invalid item format at index ' . $index);
                 continue;
             }
 
             // Validasi field required
-            if (empty($item['employee_number'])) {
-                Log::warning('Missing required field employee_number at index ' . $index);
+            if (empty($item['register_id'])) {
+                Log::warning('Missing required field register_id at index ' . $index);
                 continue;
             }
 
-            // Format employee_number
-            $employeeNumber = $this->padEmployeeId($item['employee_number']);
-            $item['employee_number'] = $employeeNumber;
+            if (empty($item['personnel_number'])) {
+                Log::warning('Missing required field personnel_number at index ' . $index);
+                continue;
+            }
 
-            $validatedData[] = $item;
+            // Format employee_number (personnel_number) sudah 8 digit dari API
+            $employeeNumber = trim($item['personnel_number']);
+
+            // Validasi format employee number
+            if (!preg_match('/^\d{8}$/', $employeeNumber)) {
+                Log::warning('Invalid employee number format: ' . $employeeNumber);
+                continue;
+            }
+
+            // Map field dari API ke struktur database
+            $validatedData[] = [
+                'external_id' => $item['register_id'],
+                'employee_number' => $employeeNumber,
+                'emotional_exhaustion' => $item['emotional_exhaustion'] ?? null,
+                'depersonalization' => $item['depersonalization'] ?? null,
+                'achievement_decline' => $item['achievement_decline'] ?? null,
+                'result' => $item['result'] ?? null,
+                'test_date' => $item['test_date (yyyy-mm-dd)'] ?? null,
+                'api_data' => $item // Simpan data lengkap untuk debugging
+            ];
         }
-
-        broadcast(new BurnoutSyncProgressUpdated($this->userId, 25, 'Validated ' . count($validatedData) . ' items'));
-        Log::info('Burnout API data validated', ['total' => count($validatedData)]);
 
         return $validatedData;
     }
@@ -201,43 +288,31 @@ class SyncBurnoutsJob implements ShouldQueue
 
             broadcast(new BurnoutSyncProgressUpdated($this->userId, 40, "Deactivated {$deactivatedCount} burnouts"));
 
-            // 2. Group data by unique key untuk menghindari duplikasi
-            $groupedData = collect($apiData)->groupBy(function ($item) {
-                return $this->padEmployeeId($item['employee_number']) . '|' .
-                    ($item['result'] ?? '');
-            });
-
-            $totalGroups = count($groupedData);
+            // 2. Process data dari API
+            $totalItems = count($apiData);
             $processed = 0;
 
-            // 3. Process data dari API
-            foreach ($groupedData as $uniqueKey => $items) {
+            foreach ($apiData as $item) {
                 try {
-                    // Ambil item pertama dari group
-                    $data = $items->first();
-
-                    // Format employee_number
-                    $employeeNumber = $this->padEmployeeId($data['employee_number']);
+                    $employeeNumber = $item['employee_number'];
+                    $externalId = $item['external_id'];
 
                     // Cari employee
                     $employee = Employee::where('employee_number', $employeeNumber)->first();
 
-                    // Buat unique identifier
-                    $uniqueIdentifier = md5($employeeNumber . ($data['result'] ?? '') . ($data['assessment_date'] ?? ''));
-
-                    // Update atau create burnout
+                    // Update atau create burnout menggunakan external_id sebagai unique key
                     $burnout = Burnout::updateOrCreate(
                         [
                             'source' => 'eksternal',
-                            'external_id' => $uniqueIdentifier,
+                            'external_id' => $externalId,
                         ],
                         [
                             'employee_id' => $employee?->id,
                             'employee_number' => $employeeNumber,
-                            'emotional_exhaustion' => $data['emotional_exhaustion'] ?? null,
-                            'depersonalization' => $data['depersonalization'] ?? null,
-                            'achievement_decline' => $data['achievement_decline'] ?? null,
-                            'result' => $data['result'] ?? null,
+                            'emotional_exhaustion' => $item['emotional_exhaustion'],
+                            'depersonalization' => $item['depersonalization'],
+                            'achievement_decline' => $item['achievement_decline'],
+                            'result' => $item['result'],
                             'is_active' => true,
                             'updated_at' => now()
                         ]
@@ -247,27 +322,28 @@ class SyncBurnoutsJob implements ShouldQueue
                     $processed++;
 
                     // Update progress setiap 10 item atau 10% dari total
-                    if ($processed % 10 === 0 || $processed === $totalGroups) {
-                        $progress = 40 + (($processed / $totalGroups) * 50);
+                    if ($processed % 10 === 0 || $processed === $totalItems) {
+                        $progress = 40 + (($processed / $totalItems) * 50);
                         broadcast(new BurnoutSyncProgressUpdated(
                             $this->userId,
                             (int) $progress,
-                            "Processed {$processed} of {$totalGroups} burnouts",
+                            "Processed {$processed} of {$totalItems} burnouts",
                             $processed,
-                            $totalGroups
+                            $totalItems
                         ));
                     }
                 } catch (\Exception $e) {
                     $stats['skipped']++;
                     Log::warning('Failed to process burnout', [
-                        'unique_key' => $uniqueKey,
+                        'employee_number' => $item['employee_number'] ?? 'unknown',
+                        'external_id' => $item['external_id'] ?? 'unknown',
                         'error' => $e->getMessage(),
-                        'data' => $data ?? []
+                        'trace' => $e->getTraceAsString()
                     ]);
                 }
             }
 
-            // 4. Hapus data yang sudah tidak aktif dalam waktu lama
+            // 3. Hapus data yang sudah tidak aktif dalam waktu lama
             broadcast(new BurnoutSyncProgressUpdated($this->userId, 92, 'Cleaning up old inactive data...'));
 
             $thirtyDaysAgo = now()->subDays(30);
@@ -287,17 +363,6 @@ class SyncBurnoutsJob implements ShouldQueue
         $stats['status'] = 'completed';
 
         return $stats;
-    }
-
-    /**
-     * Format employee_id menjadi 8 digit
-     */
-    private function padEmployeeId($employeeId): string
-    {
-        if (is_numeric($employeeId)) {
-            return str_pad((string) intval($employeeId), 8, '0', STR_PAD_LEFT);
-        }
-        return str_pad(trim($employeeId), 8, '0', STR_PAD_LEFT);
     }
 
     /**

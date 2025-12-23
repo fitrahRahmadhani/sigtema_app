@@ -706,19 +706,25 @@
                                     <td class="w-2/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
                                         Kelelahan Emosional
                                     </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">50</td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        {{ $employee->burnout->emotional_exhaustion }}
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-2/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
                                         Depersonalisasi
                                     </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">50</td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        {{ $employee->burnout->depersonalization }}
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-2/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
                                         Penurunan Prestasi
                                     </td>
-                                    <td class="px-3 py-2 text-gray-600 sm:px-4">50</td>
+                                    <td class="px-3 py-2 text-gray-600 sm:px-4">
+                                        {{ $employee->burnout->achievement_decline }}
+                                    </td>
                                 </tr>
                                 <tr class="transition-colors hover:bg-gray-50">
                                     <td
@@ -726,16 +732,15 @@
                                     >
                                         Total Skor
                                     </td>
-                                    <td class="px-3 py-2 font-bold text-gray-600 sm:px-4">150</td>
+                                    <td class="px-3 py-2 font-bold text-gray-600 sm:px-4">
+                                        {{ $employee->burnout->getTotalScore() }}
+                                    </td>
                                 </tr>
                                 <tr class="border-t border-gray-300 transition-colors">
                                     <td colspan="2" class="px-3 py-3 sm:px-4">
                                         <div class="mb-1 font-semibold text-gray-800">Penafsiran Hasil:</div>
                                         <div class="text-sm text-gray-700">
-                                            Berdasarkan skor total 150, Anda berada dalam kategori burnout tinggi.
-                                            Disarankan untuk berkonsultasi dengan profesional kesehatan mental dan
-                                            mempertimbangkan langkah-langkah pengurangan stres serta penyeimbangan
-                                            kehidupan kerja.
+                                            {!! strip_tags($employee->burnout->result, '<i><b>') !!}
                                         </div>
                                     </td>
                                 </tr>
