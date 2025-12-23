@@ -107,6 +107,11 @@ class Employee extends Model
         return $this->hasOne(Burnout::class);
     }
 
+    public function mbti()
+    {
+        return $this->hasOne(Mbti::class);
+    }
+
 
     /**
      * Get the position history that the employee holds.

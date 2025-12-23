@@ -846,41 +846,23 @@
             </div>
         @endif
     </div>
-</div>
-
-@push('scripts')
     <script>
         document.addEventListener('livewire:init', () => {
-            // Setup Echo/Pusher listeners untuk MBTI
-            @if(auth()->check())
-                const userId = {{ auth()->id() }};
-
-                // Check if Echo is available
-                if (typeof window.Echo !== 'undefined') {
-                    // Listen for MBTI sync status updates via Echo
-                    window.Echo.private(`mbti-sync-status.${userId}`)
-                        .listen('.mbti.sync.status.updated', (e) => {
-                            @this.handleSyncStatusUpdate(e);
-                        })
-                        .listen('.mbti.sync.progress.updated', (e) => {
-                            @this.handleSyncProgressUpdate(e);
-                        });
-                }
-            @endif
-
-            // Fallback polling jika Pusher tidak tersedia
             let pollingInterval = null;
             let isPollingActive = @js($isPolling);
+            let syncStatus = @js($syncStatus);
+
+            // Function to update sync status
+            function updateSyncStatus() {
+                @this.checkSyncStatus();
+            }
 
             // Function to start/stop polling
             function updatePolling() {
-                const syncStatus = @js($syncStatus);
-                const shouldPoll = ['processing', 'queued'].includes(syncStatus) || isPollingActive;
+                const shouldPoll = ['processing', 'queued'].includes(syncStatus) && isPollingActive;
 
                 if (shouldPoll && !pollingInterval) {
-                    pollingInterval = setInterval(() => {
-                        @this.checkSyncStatus();
-                    }, 3000); // Poll every 3 seconds
+                    pollingInterval = setInterval(updateSyncStatus, 3000);
                 } else if (!shouldPoll && pollingInterval) {
                     clearInterval(pollingInterval);
                     pollingInterval = null;
@@ -893,31 +875,61 @@
             // Listen for Livewire events
             Livewire.on('syncPollingUpdated', ({ isPolling }) => {
                 isPollingActive = isPolling;
-                updatePolling();
+
+                // Jika polling dihentikan, stop interval immediately
+                if (!isPolling && pollingInterval) {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+                } else {
+                    updatePolling();
+                }
             });
 
-            // Listen for sync status changes
+            // Listen for refresh data event
             Livewire.on('refreshData', () => {
+                setTimeout(() => {
+                    @this.$refresh();
+                }, 500);
             });
 
-            // Cleanup on page navigation
+            // Watch for sync status changes from Livewire
+            Livewire.hook('morph.updated', ({ el, component }) => {
+                // Update local syncStatus variable when Livewire updates
+                const newStatus = @this.syncStatus;
+                if (newStatus !== syncStatus) {
+                    syncStatus = newStatus;
+
+                    // Jika status completed atau failed, stop polling
+                    if (['completed', 'failed', 'idle'].includes(syncStatus)) {
+                        isPollingActive = false;
+                        if (pollingInterval) {
+                            clearInterval(pollingInterval);
+                            pollingInterval = null;
+                        }
+                    } else {
+                        updatePolling();
+                    }
+                }
+            });
+
+            // Cleanup on navigation
             document.addEventListener('livewire:navigating', () => {
                 if (pollingInterval) {
                     clearInterval(pollingInterval);
                     pollingInterval = null;
                 }
             });
+        });
 
-            // Auto-refresh page if sync completes while user is on page
-            let refreshTimeout = null;
+        // Page visibility handler
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                const currentStatus = @this.syncStatus;
 
-            Livewire.on('syncCompleted', () => {
-                if (refreshTimeout) clearTimeout(refreshTimeout);
-
-                refreshTimeout = setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
-            });
+                if (['processing', 'queued'].includes(currentStatus)) {
+                    @this.checkSyncStatus();
+                }
+            }
         });
     </script>
-@endpush
+</div>

@@ -421,9 +421,17 @@
                                 <!-- MBTI -->
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">MBTI</td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                                    @for ($i = 0; $i < $columnCount; $i++)
+                                        <td class="px-6 py-4 align-top text-gray-700">
+                                            @if (! empty($selectedEmployees[$i]->mbti->mbti))
+                                                <span class="font-medium">
+                                                    {{ $selectedEmployees[$i]->mbti->mbti }}
+                                                </span>
+                                            @else
+                                                <span class="text-gray-400">-</span>
+                                            @endif
+                                        </td>
+                                    @endfor
                                 </tr>
 
                                 <!-- DISC -->
@@ -751,7 +759,7 @@
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top text-gray-700">
-                                            @if (! empty($selectedEmployees[$i]))
+                                            @if (! empty($selectedEmployees[$i]->burnout->emotional_exhaustion))
                                                 <span class="font-medium">
                                                     {{ $selectedEmployees[$i]->burnout->emotional_exhaustion }}
                                                 </span>
@@ -769,7 +777,7 @@
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top text-gray-700">
-                                            @if (! empty($selectedEmployees[$i]))
+                                            @if (! empty($selectedEmployees[$i]->burnout->depersonalization))
                                                 <span class="font-medium">
                                                     {{ $selectedEmployees[$i]->burnout->depersonalization }}
                                                 </span>
@@ -787,7 +795,7 @@
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top text-gray-700">
-                                            @if (! empty($selectedEmployees[$i]))
+                                            @if (! empty($selectedEmployees[$i]->burnout->achievement_decline))
                                                 <span class="font-medium">
                                                     {{ $selectedEmployees[$i]->burnout->achievement_decline }}
                                                 </span>
@@ -805,7 +813,7 @@
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top text-gray-700">
-                                            @if (! empty($selectedEmployees[$i]))
+                                            @if (! empty($selectedEmployees[$i]->burnout->result))
                                                 <span class="font-medium">
                                                     {!! strip_tags($selectedEmployees[$i]->burnout->result, '<i><b>') !!}
                                                 </span>

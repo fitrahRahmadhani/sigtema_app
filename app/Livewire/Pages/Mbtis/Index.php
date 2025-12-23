@@ -33,7 +33,7 @@ class Index extends Component
     public $mbtiFilter = '';
 
     #[Url]
-    public $activeFilter = 'active'; // active, inactive, all
+    public $activeFilter = 'active';
 
     public $syncStatus = 'idle';
     public $lastSyncResult = null;
@@ -43,7 +43,6 @@ class Index extends Component
     public $syncTotal = 0;
     public $isPolling = false;
 
-    // Reset pagination on filter changes
     public function updating($property, $value)
     {
         if (in_array($property, [
@@ -56,13 +55,9 @@ class Index extends Component
         }
     }
 
-    /**
-     * Start sync dengan rate limiting dan locking
-     */
     public function syncFromApi()
     {
         try {
-            // Rate limiting: maksimal 3 sync dalam 10 menit
             $rateLimitKey = 'mbti_sync_attempts_' . Auth::id();
             if (RateLimiter::tooManyAttempts($rateLimitKey, 3)) {
                 $seconds = RateLimiter::availableIn($rateLimitKey);
@@ -70,27 +65,22 @@ class Index extends Component
                 return;
             }
 
-            // Cek lock untuk mencegah multiple sync
             $lockKey = "mbti_sync_lock_" . Auth::id();
             if (Cache::has($lockKey)) {
                 Toaster::warning('Another MBTI sync is already in progress. Please wait.');
                 return;
             }
 
-            // Cek status saat ini
             $currentStatus = Cache::get("mbti_sync_status_" . Auth::id(), 'idle');
             if ($currentStatus === 'processing' || $currentStatus === 'queued') {
                 Toaster::warning('MBTI sync is already in progress. Please wait.');
                 return;
             }
 
-            // Dispatch job ke queue
             SyncMbtisJob::dispatch(Auth::id())->onQueue('default');
 
-            // Update rate limiter
-            RateLimiter::hit($rateLimitKey, 600); // 10 menit
+            RateLimiter::hit($rateLimitKey, 600);
 
-            // Set status queued
             Cache::put("mbti_sync_status_" . Auth::id(), 'queued', 3600);
 
             $this->syncStatus = 'queued';
@@ -108,45 +98,40 @@ class Index extends Component
         }
     }
 
-    /**
-     * Setup event listeners untuk Pusher
-     */
     protected function getListeners()
     {
         $userId = Auth::id();
 
         return [
-            // Event listeners untuk Pusher
             "echo-private:mbti-sync-status.{$userId},.mbti.sync.status.updated" => 'handleSyncStatusUpdate',
             "echo-private:mbti-sync-status.{$userId},.mbti.sync.progress.updated" => 'handleSyncProgressUpdate',
-
-            // Local events
             'refreshData' => '$refresh',
             'clearSyncStatus' => 'clearSyncStatus',
         ];
     }
 
-    /**
-     * Handle sync status updates dari Pusher
-     */
     public function handleSyncStatusUpdate($event)
     {
+        Log::info('MBTI sync status update received', $event);
+
         $this->syncStatus = $event['status'] ?? 'idle';
         $this->syncMessage = $event['message'] ?? '';
 
         if (isset($event['result'])) {
             $this->lastSyncResult = $event['result'];
-
-            // Simpan ke cache juga
             Cache::put("last_mbti_sync_result_" . Auth::id(), $event['result'], 86400);
         }
 
-        // Update cache status
         Cache::put("mbti_sync_status_" . Auth::id(), $this->syncStatus, 86400);
 
-        // Show toaster berdasarkan status
         if ($this->syncStatus === 'completed') {
             $result = $this->lastSyncResult;
+
+            // Set progress ke 100% untuk memastikan
+            $this->syncProgress = 100;
+            $this->syncCurrent = $result['total'] ?? 0;
+            $this->syncTotal = $result['total'] ?? 0;
+
             $message = sprintf(
                 'MBTI sync completed! Created: %d, Updated: %d, Deactivated: %d',
                 $result['created'] ?? 0,
@@ -156,75 +141,81 @@ class Index extends Component
 
             Toaster::success($message);
 
-            // Auto-refresh data setelah 1 detik
+            // Stop polling IMMEDIATELY
+            $this->isPolling = false;
+            $this->dispatch('syncPollingUpdated', isPolling: false);
+
+            // Refresh data
             $this->dispatch('refreshData');
 
-            // Reset polling setelah 5 detik
-            $this->dispatch('stopPolling');
+            Log::info('MBTI sync completed successfully', ['result' => $result]);
         } elseif ($this->syncStatus === 'failed') {
             $result = $this->lastSyncResult;
             $errorMessage = $result['error'] ?? 'Unknown error';
+
             Toaster::error('MBTI sync failed: ' . $errorMessage);
 
-            // Reset polling setelah 5 detik
-            $this->dispatch('stopPolling');
-        }
-
-        // Reset progress jika sudah selesai
-        if (in_array($this->syncStatus, ['completed', 'failed'])) {
-            $this->syncProgress = 0;
-            $this->syncCurrent = 0;
-            $this->syncTotal = 0;
+            // Stop polling
             $this->isPolling = false;
+            $this->dispatch('syncPollingUpdated', isPolling: false);
+
+            Log::error('MBTI sync failed', ['error' => $errorMessage]);
         }
     }
 
-    /**
-     * Handle sync progress updates dari Pusher
-     */
     public function handleSyncProgressUpdate($event)
     {
+        Log::debug('MBTI sync progress update', $event);
+
         $this->syncProgress = $event['progress'] ?? 0;
         $this->syncMessage = $event['message'] ?? '';
         $this->syncCurrent = $event['current'] ?? 0;
         $this->syncTotal = $event['total'] ?? 0;
 
-        // Update cache status ke processing
         if ($this->syncStatus !== 'processing') {
             $this->syncStatus = 'processing';
             Cache::put("mbti_sync_status_" . Auth::id(), 'processing', 86400);
         }
     }
 
-    /**
-     * Check sync status secara manual (fallback jika Pusher tidak bekerja)
-     */
     public function checkSyncStatus()
     {
+        $oldStatus = $this->syncStatus;
         $this->syncStatus = Cache::get("mbti_sync_status_" . Auth::id(), 'idle');
         $this->lastSyncResult = Cache::get("last_mbti_sync_result_" . Auth::id());
 
-        // Jika selesai, tampilkan notifikasi
-        if ($this->syncStatus === 'completed' && $this->lastSyncResult) {
-            Toaster::success(sprintf(
-                'MBTI sync completed! Created: %d, Updated: %d, Deactivated: %d',
-                $this->lastSyncResult['created'] ?? 0,
-                $this->lastSyncResult['updated'] ?? 0,
-                $this->lastSyncResult['deactivated'] ?? 0
-            ));
+        // Jika status berubah dari processing/queued ke completed
+        if (in_array($oldStatus, ['processing', 'queued']) && $this->syncStatus === 'completed') {
+            if ($this->lastSyncResult) {
+                // Set progress ke 100%
+                $this->syncProgress = 100;
+                $this->syncCurrent = $this->lastSyncResult['total'] ?? 0;
+                $this->syncTotal = $this->lastSyncResult['total'] ?? 0;
 
-            // Refresh data
-            $this->dispatch('refreshData');
+                Toaster::success(sprintf(
+                    'MBTI sync completed! Created: %d, Updated: %d, Deactivated: %d',
+                    $this->lastSyncResult['created'] ?? 0,
+                    $this->lastSyncResult['updated'] ?? 0,
+                    $this->lastSyncResult['deactivated'] ?? 0
+                ));
+
+                $this->dispatch('refreshData');
+            }
+
+            // Stop polling
             $this->isPolling = false;
-        } elseif ($this->syncStatus === 'failed' && $this->lastSyncResult) {
-            Toaster::error('MBTI sync failed: ' . ($this->lastSyncResult['error'] ?? 'Unknown error'));
+            $this->dispatch('syncPollingUpdated', isPolling: false);
+        } elseif (in_array($oldStatus, ['processing', 'queued']) && $this->syncStatus === 'failed') {
+            if ($this->lastSyncResult) {
+                Toaster::error('MBTI sync failed: ' . ($this->lastSyncResult['error'] ?? 'Unknown error'));
+            }
+
+            // Stop polling
             $this->isPolling = false;
+            $this->dispatch('syncPollingUpdated', isPolling: false);
         }
     }
 
-    /**
-     * Clear sync status
-     */
     public function clearSyncStatus()
     {
         Cache::forget("mbti_sync_status_" . Auth::id());
@@ -238,43 +229,32 @@ class Index extends Component
         $this->syncTotal = 0;
         $this->isPolling = false;
 
+        $this->dispatch('syncPollingUpdated', isPolling: false);
+
         Toaster::info('MBTI sync status cleared');
     }
 
-    /**
-     * Stop polling
-     */
     public function stopPolling()
     {
         $this->isPolling = false;
+        $this->dispatch('syncPollingUpdated', isPolling: false);
     }
 
-    /**
-     * Mount - load initial status
-     */
     public function mount()
     {
         $this->syncStatus = Cache::get("mbti_sync_status_" . Auth::id(), 'idle');
         $this->lastSyncResult = Cache::get("last_mbti_sync_result_" . Auth::id());
 
-        // Jika masih processing atau queued, aktifkan polling
         if (in_array($this->syncStatus, ['processing', 'queued'])) {
             $this->isPolling = true;
         }
     }
 
-    /**
-     * Dehydrate - tambahkan data ke view
-     */
     public function dehydrate()
     {
-        // Tambahkan polling flag ke JavaScript
         $this->dispatch('syncPollingUpdated', isPolling: $this->isPolling);
     }
 
-    /**
-     * Required methods for WithDeleteConfirmation trait
-     */
     protected function getModelClass(): string
     {
         return Mbti::class;
@@ -290,9 +270,6 @@ class Index extends Component
         $mbti->delete();
     }
 
-    /**
-     * Bulk activate/deactivate
-     */
     public function bulkActivate()
     {
         $count = Mbti::where('source', 'eksternal')
