@@ -113,7 +113,7 @@
                         <p class="text-primary-text font-semibold">Personality</p>
                         <p class="">
                             MBTI:
-                            <span class="text-red-500 italic">placeholder</span>
+                            <span class="font-semibold">{{ $employee->mbti->mbti ?? '-' }}</span>
                         </p>
                     </div>
                 </div>
@@ -703,7 +703,7 @@
                                         Kelelahan Emosional
                                     </td>
                                     <td class="px-3 py-2 text-gray-600 sm:px-4">
-                                        {{ $employee->burnout->emotional_exhaustion }}
+                                        {{ $employee->burnout->emotional_exhaustion ?? '-' }}
                                     </td>
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
@@ -711,7 +711,7 @@
                                         Depersonalisasi
                                     </td>
                                     <td class="px-3 py-2 text-gray-600 sm:px-4">
-                                        {{ $employee->burnout->depersonalization }}
+                                        {{ $employee->burnout->depersonalization ?? '-' }}
                                     </td>
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
@@ -719,7 +719,7 @@
                                         Penurunan Prestasi
                                     </td>
                                     <td class="px-3 py-2 text-gray-600 sm:px-4">
-                                        {{ $employee->burnout->achievement_decline }}
+                                        {{ $employee->burnout->achievement_decline ?? '-' }}
                                     </td>
                                 </tr>
                                 <tr class="transition-colors hover:bg-gray-50">
@@ -729,14 +729,14 @@
                                         Total Skor
                                     </td>
                                     <td class="px-3 py-2 font-bold text-gray-600 sm:px-4">
-                                        {{ $employee->burnout->getTotalScore() }}
+                                        {{ $employee->burnout?->getTotalScore() ?? '-' }}
                                     </td>
                                 </tr>
                                 <tr class="border-t border-gray-300 transition-colors">
                                     <td colspan="2" class="px-3 py-3 sm:px-4">
                                         <div class="mb-1 font-semibold text-gray-800">Penafsiran Hasil:</div>
                                         <div class="text-sm text-gray-700">
-                                            {!! strip_tags($employee->burnout->result, '<i><b>') !!}
+                                            {!! strip_tags($employee->burnout?->result, '<i><b>') ?? '-' !!}
                                         </div>
                                     </td>
                                 </tr>

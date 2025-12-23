@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\RateLimiter;
 
 class SyncMbtisJob implements ShouldQueue
 {
@@ -48,26 +47,33 @@ class SyncMbtisJob implements ShouldQueue
             Log::info('Starting MBTI sync job', ['user_id' => $this->userId]);
 
             // Kirim event status processing
-            broadcast(new MbtiSyncStatusUpdated($this->userId, 'processing', null, 'Starting MBTI sync process...'));
+            $this->broadcastStatus('processing', null, 'Starting MBTI sync process...');
 
-            // Fetch data dari API
-            broadcast(new MbtiSyncProgressUpdated($this->userId, 10, 'Fetching data from API...'));
-            $apiData = $this->fetchApiData();
+            // Fetch semua data dari API dengan cursor pagination
+            $this->broadcastProgress(5, 'Starting API data fetch...');
 
-            if (empty($apiData)) {
+            $allApiData = $this->fetchAllApiData();
+
+            if (empty($allApiData)) {
                 throw new \Exception('No data received from API');
             }
 
             // Kirim event progress
-            broadcast(new MbtiSyncProgressUpdated($this->userId, 30, 'Processing ' . count($apiData) . ' items...', 0, count($apiData)));
+            $this->broadcastProgress(30, 'Processing ' . count($allApiData) . ' items...', 0, count($allApiData));
 
             // Process data
-            $stats = $this->processData($apiData);
+            $stats = $this->processData($allApiData);
+
+            // PENTING: Kirim progress 100% sebelum status completed
+            $this->broadcastProgress(100, 'Sync completed successfully!', $stats['total'], $stats['total']);
+
+            // Delay kecil untuk memastikan event terkirim
+            usleep(200000); // 200ms
 
             Log::info('MBTI sync job completed', $stats);
 
             // Kirim event completed
-            broadcast(new MbtiSyncStatusUpdated($this->userId, 'completed', $stats, 'MBTI sync completed successfully!'));
+            $this->broadcastStatus('completed', $stats, 'MBTI sync completed successfully!');
 
             $this->saveSyncResult($stats);
         } catch (\Exception $e) {
@@ -78,7 +84,7 @@ class SyncMbtisJob implements ShouldQueue
             ]);
 
             // Kirim event failed
-            broadcast(new MbtiSyncStatusUpdated($this->userId, 'failed', ['error' => $e->getMessage()], 'MBTI sync failed: ' . $e->getMessage()));
+            $this->broadcastStatus('failed', ['error' => $e->getMessage()], 'MBTI sync failed: ' . $e->getMessage());
 
             $this->saveSyncResult([
                 'status' => 'failed',
@@ -94,88 +100,197 @@ class SyncMbtisJob implements ShouldQueue
     }
 
     /**
-     * Fetch data dari API dengan validation
+     * Helper untuk broadcast status
      */
-    private function fetchApiData(): array
+    private function broadcastStatus(string $status, ?array $result, string $message): void
+    {
+        broadcast(new MbtiSyncStatusUpdated($this->userId, $status, $result, $message));
+
+        // Update cache
+        Cache::put("mbti_sync_status_{$this->userId}", $status, 86400);
+        if ($result) {
+            Cache::put("last_mbti_sync_result_{$this->userId}", $result, 86400);
+        }
+    }
+
+    /**
+     * Helper untuk broadcast progress
+     */
+    private function broadcastProgress(int $progress, string $message, int $current = 0, int $total = 0): void
+    {
+        broadcast(new MbtiSyncProgressUpdated($this->userId, $progress, $message, $current, $total));
+    }
+
+    /**
+     * Fetch semua data dari API dengan cursor pagination
+     */
+    private function fetchAllApiData(): array
     {
         $apiUrl = config('services.mbti_api.url');
-        $apiKey = config('services.mbti_api.key');
+        $bearerToken = config('services.mbti_api.token');
 
-        if (!$apiUrl || !$apiKey) {
+        if (!$apiUrl || !$bearerToken) {
             throw new \Exception('MBTI API configuration not found');
         }
 
         Log::info('Fetching MBTI data from API', ['url' => $apiUrl]);
 
-        broadcast(new MbtiSyncProgressUpdated($this->userId, 15, 'Connecting to API...'));
+        $allData = [];
+        $nextCursor = null;
+        $page = 1;
+        $limit = 100;
+
+        do {
+            $this->broadcastProgress(
+                5 + (($page - 1) * 5),
+                "Fetching page {$page} from API..."
+            );
+
+            $responseData = $this->fetchApiPage($apiUrl, $bearerToken, $limit, $nextCursor);
+
+            if (!empty($responseData['data'])) {
+                $allData = array_merge($allData, $responseData['data']);
+                $nextCursor = $responseData['meta']['next_cursor'] ?? null;
+
+                Log::info('Fetched page from API', [
+                    'page' => $page,
+                    'items_fetched' => count($responseData['data']),
+                    'total_so_far' => count($allData),
+                    'has_next' => !empty($nextCursor)
+                ]);
+            } else {
+                $nextCursor = null;
+            }
+
+            $page++;
+
+            if ($page > 1000) {
+                Log::warning('Reached maximum page limit', ['total_items' => count($allData)]);
+                break;
+            }
+        } while (!empty($nextCursor));
+
+        $this->broadcastProgress(25, 'Validating data...');
+
+        $validatedData = $this->validateApiData($allData);
+
+        $this->broadcastProgress(
+            30,
+            'Validated ' . count($validatedData) . ' items from ' . count($allData) . ' total'
+        );
+
+        Log::info('MBTI API data validated', [
+            'total_fetched' => count($allData),
+            'total_valid' => count($validatedData)
+        ]);
+
+        return $validatedData;
+    }
+
+    /**
+     * Fetch satu halaman data dari API
+     */
+    private function fetchApiPage(string $apiUrl, string $bearerToken, int $limit = 100, ?string $cursor = null): array
+    {
+        $queryParams = ['limit' => $limit];
+        if ($cursor) {
+            $queryParams['cursor'] = $cursor;
+        }
 
         $response = Http::withHeaders([
-            'x-api-key' => $apiKey,
+            'Authorization' => 'Bearer ' . $bearerToken,
             'Accept' => 'application/json',
-        ])->timeout(300)->get($apiUrl);
-
-        broadcast(new MbtiSyncProgressUpdated($this->userId, 20, 'Receiving data from API...'));
+        ])->timeout(300)->get($apiUrl, $queryParams);
 
         if (!$response->successful()) {
             $errorMessage = 'API request failed: ' . $response->status();
             Log::error('MBTI API request failed', [
                 'status' => $response->status(),
                 'url' => $apiUrl,
+                'cursor' => $cursor,
                 'response' => $response->body()
             ]);
+
+            if ($response->status() === 401) {
+                throw new \Exception('API authentication failed. Please check the bearer token.');
+            }
+
             throw new \Exception($errorMessage);
         }
 
         $data = $response->json();
 
-        // Validasi struktur data
-        if (!is_array($data)) {
-            throw new \Exception('Invalid API response: expected array');
+        if (!isset($data['data']) || !is_array($data['data'])) {
+            throw new \Exception('Invalid API response: missing data array');
         }
 
-        // Jika ada key 'data', gunakan itu
-        if (isset($data['data']) && is_array($data['data'])) {
-            $rawData = $data['data'];
-        } else {
-            $rawData = $data;
-        }
+        return [
+            'data' => $data['data'],
+            'meta' => $data['meta'] ?? []
+        ];
+    }
 
-        if (empty($rawData)) {
-            Log::warning('Empty data received from MBTI API');
-            return [];
-        }
-
-        // Validasi setiap item
+    /**
+     * Validasi data dari API
+     */
+    private function validateApiData(array $apiData): array
+    {
         $validatedData = [];
-        foreach ($rawData as $index => $item) {
+
+        foreach ($apiData as $index => $item) {
             if (!is_array($item)) {
                 Log::warning('Invalid item format at index ' . $index);
                 continue;
             }
 
-            // Validasi field required
-            if (empty($item['employee_number'])) {
-                Log::warning('Missing required field employee_number at index ' . $index);
+            if (empty($item['personnel_number'])) {
+                Log::warning('Missing required field personnel_number at index ' . $index);
                 continue;
             }
 
-            // Format employee_number
-            $employeeNumber = $this->padEmployeeId($item['employee_number']);
-            $item['employee_number'] = $employeeNumber;
-
-            // Validasi MBTI format (opsional)
-            if (isset($item['mbti']) && !preg_match('/^[EI][SN][TF][JP]$/', $item['mbti'])) {
-                Log::warning('Invalid MBTI format at index ' . $index, ['mbti' => $item['mbti']]);
-                // Tetap proses tapi log warning
+            if (empty($item['mbti_type'])) {
+                Log::warning('Missing required field mbti_type at index ' . $index);
+                continue;
             }
 
-            $validatedData[] = $item;
+            $employeeNumber = trim($item['personnel_number']);
+
+            if (!preg_match('/^\d{8}$/', $employeeNumber)) {
+                Log::warning('Invalid employee number format: ' . $employeeNumber);
+                continue;
+            }
+
+            $mbtiType = strtoupper(trim($item['mbti_type']));
+            if (!preg_match('/^[EI][SN][TF][JP]$/', $mbtiType)) {
+                Log::warning('Invalid MBTI format: ' . $mbtiType . ' at index ' . $index);
+                continue;
+            }
+
+            $testDate = $item['test_date'] ?? $item['test_date (yyyy-mm-dd)'] ?? null;
+            $externalId = $this->generateExternalId($employeeNumber, $testDate, $mbtiType);
+
+            $validatedData[] = [
+                'external_id' => $externalId,
+                'employee_number' => $employeeNumber,
+                'mbti' => $mbtiType,
+                'test_date' => $testDate,
+                'api_data' => $item
+            ];
         }
 
-        broadcast(new MbtiSyncProgressUpdated($this->userId, 25, 'Validated ' . count($validatedData) . ' items'));
-        Log::info('MBTI API data validated', ['total' => count($validatedData)]);
-
         return $validatedData;
+    }
+
+    /**
+     * Generate external_id unik
+     */
+    private function generateExternalId(string $employeeNumber, ?string $testDate, string $mbtiType): string
+    {
+        if ($testDate) {
+            return md5($employeeNumber . $testDate . $mbtiType);
+        }
+
+        return md5($employeeNumber . $mbtiType);
     }
 
     /**
@@ -196,8 +311,8 @@ class SyncMbtisJob implements ShouldQueue
         ];
 
         DB::transaction(function () use ($apiData, &$stats) {
-            // 1. Reset semua data external menjadi tidak aktif terlebih dahulu
-            broadcast(new MbtiSyncProgressUpdated($this->userId, 35, 'Deactivating existing external MBTI data...'));
+            // 1. Reset semua data external menjadi tidak aktif
+            $this->broadcastProgress(35, 'Deactivating existing external MBTI data...');
 
             $deactivatedCount = Mbti::where('source', 'eksternal')
                 ->where('is_active', true)
@@ -205,42 +320,28 @@ class SyncMbtisJob implements ShouldQueue
 
             $stats['deactivated'] = $deactivatedCount;
 
-            broadcast(new MbtiSyncProgressUpdated($this->userId, 40, "Deactivated {$deactivatedCount} MBTI records"));
+            $this->broadcastProgress(40, "Deactivated {$deactivatedCount} MBTI records");
 
-            // 2. Group data by unique key untuk menghindari duplikasi
-            $groupedData = collect($apiData)->groupBy(function ($item) {
-                return $this->padEmployeeId($item['employee_number']) . '|' .
-                    ($item['mbti'] ?? '');
-            });
-
-            $totalGroups = count($groupedData);
+            // 2. Process data dari API
+            $totalItems = count($apiData);
             $processed = 0;
 
-            // 3. Process data dari API
-            foreach ($groupedData as $uniqueKey => $items) {
+            foreach ($apiData as $item) {
                 try {
-                    // Ambil item pertama dari group
-                    $data = $items->first();
+                    $employeeNumber = $item['employee_number'];
+                    $externalId = $item['external_id'];
 
-                    // Format employee_number
-                    $employeeNumber = $this->padEmployeeId($data['employee_number']);
-
-                    // Cari employee
                     $employee = Employee::where('employee_number', $employeeNumber)->first();
 
-                    // Buat unique identifier
-                    $uniqueIdentifier = md5($employeeNumber . ($data['mbti'] ?? '') . ($data['assessment_date'] ?? ''));
-
-                    // Update atau create MBTI
                     $mbti = Mbti::updateOrCreate(
                         [
                             'source' => 'eksternal',
-                            'external_id' => $uniqueIdentifier,
+                            'external_id' => $externalId,
                         ],
                         [
                             'employee_id' => $employee?->id,
                             'employee_number' => $employeeNumber,
-                            'mbti' => $data['mbti'] ?? null,
+                            'mbti' => $item['mbti'],
                             'is_active' => true,
                             'updated_at' => now()
                         ]
@@ -249,29 +350,28 @@ class SyncMbtisJob implements ShouldQueue
                     $mbti->wasRecentlyCreated ? $stats['created']++ : $stats['updated']++;
                     $processed++;
 
-                    // Update progress setiap 10 item atau 10% dari total
-                    if ($processed % 10 === 0 || $processed === $totalGroups) {
-                        $progress = 40 + (($processed / $totalGroups) * 50);
-                        broadcast(new MbtiSyncProgressUpdated(
-                            $this->userId,
+                    // Update progress - range 40-90%
+                    if ($processed % 10 === 0 || $processed === $totalItems) {
+                        $progress = 40 + (($processed / $totalItems) * 50);
+                        $this->broadcastProgress(
                             (int) $progress,
-                            "Processed {$processed} of {$totalGroups} MBTI records",
+                            "Processed {$processed} of {$totalItems} MBTI records",
                             $processed,
-                            $totalGroups
-                        ));
+                            $totalItems
+                        );
                     }
                 } catch (\Exception $e) {
                     $stats['skipped']++;
                     Log::warning('Failed to process MBTI', [
-                        'unique_key' => $uniqueKey,
-                        'error' => $e->getMessage(),
-                        'data' => $data ?? []
+                        'employee_number' => $item['employee_number'] ?? 'unknown',
+                        'external_id' => $item['external_id'] ?? 'unknown',
+                        'error' => $e->getMessage()
                     ]);
                 }
             }
 
-            // 4. Hapus data yang sudah tidak aktif dalam waktu lama
-            broadcast(new MbtiSyncProgressUpdated($this->userId, 92, 'Cleaning up old inactive data...'));
+            // 3. Hapus data yang sudah tidak aktif dalam waktu lama
+            $this->broadcastProgress(92, 'Cleaning up old inactive data...');
 
             $thirtyDaysAgo = now()->subDays(30);
             $permanentlyDeleted = Mbti::where('source', 'eksternal')
@@ -281,26 +381,13 @@ class SyncMbtisJob implements ShouldQueue
 
             $stats['permanently_deleted'] = $permanentlyDeleted;
 
-            broadcast(new MbtiSyncProgressUpdated($this->userId, 96, "Cleaned up {$permanentlyDeleted} old records"));
+            $this->broadcastProgress(95, "Cleaned up {$permanentlyDeleted} old records");
         });
-
-        broadcast(new MbtiSyncProgressUpdated($this->userId, 98, 'Finalizing sync...'));
 
         $stats['completed_at'] = now();
         $stats['status'] = 'completed';
 
         return $stats;
-    }
-
-    /**
-     * Format employee_id menjadi 8 digit
-     */
-    private function padEmployeeId($employeeId): string
-    {
-        if (is_numeric($employeeId)) {
-            return str_pad((string) intval($employeeId), 8, '0', STR_PAD_LEFT);
-        }
-        return str_pad(trim($employeeId), 8, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -329,15 +416,12 @@ class SyncMbtisJob implements ShouldQueue
             'completed_at' => now()
         ]);
 
-        // Release lock jika gagal
         Cache::forget("mbti_sync_lock_" . $this->userId);
 
-        // Kirim event failed
-        broadcast(new MbtiSyncStatusUpdated(
-            $this->userId,
+        $this->broadcastStatus(
             'failed',
             ['error' => $exception->getMessage()],
             'MBTI sync failed: ' . $exception->getMessage()
-        ));
+        );
     }
 }

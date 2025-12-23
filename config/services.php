@@ -48,7 +48,7 @@ return [
 
     'mbti_api' => [
         'url' => env('MBTI_API_URL'),
-        'key' => env('MBTI_API_KEY'),
+        'token' => env('MBTI_API_TOKEN'),
     ],
 
     'disc_api' => [

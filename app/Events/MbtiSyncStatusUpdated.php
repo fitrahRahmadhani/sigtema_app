@@ -38,7 +38,28 @@ class MbtiSyncStatusUpdated implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel('mbti-sync-status.' . $this->userId),
+        ];
+    }
+
+    /**
+     * Nama event untuk broadcasting
+     */
+    public function broadcastAs(): string
+    {
+        return 'mbti.sync.status.updated';
+    }
+
+    /**
+     * Data yang akan di-broadcast
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'status' => $this->status,
+            'result' => $this->result,
+            'message' => $this->message,
+            'timestamp' => now()->toDateTimeString()
         ];
     }
 }
