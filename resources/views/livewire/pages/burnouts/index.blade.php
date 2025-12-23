@@ -542,10 +542,10 @@
         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
             <!-- Table Header - Desktop -->
             <div class="color-gradient hidden grid-cols-12 gap-4 bg-gradient-to-r px-6 py-3 text-white md:grid">
-                <div class="col-span-3 text-sm font-semibold">Employee</div>
+                <div class="col-span-2 text-sm font-semibold">Employee</div>
                 <div class="col-span-2 text-sm font-semibold">Scores</div>
-                <div class="col-span-2 text-sm font-semibold">Result</div>
-                <div class="col-span-2 text-sm font-semibold">Status</div>
+                <div class="col-span-4 text-sm font-semibold">Result</div>
+                <div class="col-span-1 text-sm font-semibold">Status</div>
                 <div class="col-span-2 text-sm font-semibold">Source & Updated</div>
                 <div class="col-span-1 text-center text-sm font-semibold">Actions</div>
             </div>
@@ -559,7 +559,7 @@
                         wire:key="burnout-{{ $burnout->id }}"
                     >
                         <!-- Employee -->
-                        <div class="col-span-3">
+                        <div class="col-span-2">
                             @if ($burnout->employee)
                                 <p class="font-medium text-gray-900">{{ $burnout->employee->name }}</p>
                                 <p class="text-sm text-gray-500">{{ $burnout->employee_number }}</p>
@@ -588,30 +588,18 @@
                         </div>
 
                         <!-- Result - Kolom Terpisah -->
-                        <div class="col-span-2">
+                        <div class="col-span-4">
                             @if ($burnout->result)
-                                @php
-                                    $resultColors = [
-                                        'low' => 'bg-green-100 text-green-800',
-                                        'moderate' => 'bg-yellow-100 text-yellow-800',
-                                        'high' => 'bg-red-100 text-red-800',
-                                        'severe' => 'bg-purple-100 text-purple-800',
-                                    ];
-                                    $resultColor = $resultColors[strtolower($burnout->result)] ?? 'bg-blue-100 text-blue-800';
-                                @endphp
-
-                                <span
-                                    class="{{ $resultColor }} inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-                                >
+                                <p class="line-clamp-2 text-xs font-medium">
                                     {{ ucfirst($burnout->result) }}
-                                </span>
+                                </p>
                             @else
                                 <span class="text-sm text-gray-400">No result</span>
                             @endif
                         </div>
 
                         <!-- Status - Kolom Terpisah -->
-                        <div class="col-span-2">
+                        <div class="col-span-1">
                             @if ($burnout->is_active)
                                 <span
                                     class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800"
@@ -719,21 +707,9 @@
                             <div>
                                 <p class="text-xs font-medium text-gray-500">Result</p>
                                 @if ($burnout->result)
-                                    @php
-                                        $resultColors = [
-                                            'low' => 'bg-green-100 text-green-800',
-                                            'moderate' => 'bg-yellow-100 text-yellow-800',
-                                            'high' => 'bg-red-100 text-red-800',
-                                            'severe' => 'bg-purple-100 text-purple-800',
-                                        ];
-                                        $resultColor = $resultColors[strtolower($burnout->result)] ?? 'bg-blue-100 text-blue-800';
-                                    @endphp
-
-                                    <span
-                                        class="{{ $resultColor }} mt-1 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-                                    >
+                                    <p class="mt-1 text-xs font-medium">
                                         {{ ucfirst($burnout->result) }}
-                                    </span>
+                                    </p>
                                 @else
                                     <p class="text-sm text-gray-400">No result</p>
                                 @endif
@@ -839,7 +815,7 @@
         @endif
     </div>
 
-        <script>
+    <script>
         document.addEventListener('livewire:init', () => {
             // Setup Echo/Pusher listeners untuk burnout
             @if(auth()->check())

@@ -18,4 +18,9 @@ class Burnout extends Model
     {
         return $this->belongsTo(Employee::class);
     }
+
+    public function getTotalScore()
+    {
+        return $this->emotional_exhaustion + $this->depersonalization + $this->achievement_decline;
+    }
 }

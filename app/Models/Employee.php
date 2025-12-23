@@ -100,6 +100,15 @@ class Employee extends Model
     }
 
     /**
+     * Get the burnout result that the employee holds.
+     */
+    public function burnout()
+    {
+        return $this->hasOne(Burnout::class);
+    }
+
+
+    /**
      * Get the position history that the employee holds.
      */
     public function positionHistories()
