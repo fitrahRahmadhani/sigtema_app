@@ -23,6 +23,13 @@ class Index extends Component
     public $columnCount = 3;
     public $isSuperadmin = false;
 
+    // New properties for chart data
+    public $papiChartData = [];
+    public $discChartData = [];
+    public $softCompetenciesData = [];
+
+    protected $listeners = ['employeeSelected' => '$refresh'];
+
     public function mount()
     {
         $user = Auth::user();
@@ -41,6 +48,28 @@ class Index extends Component
             $this->selectedCompany = Company::find($this->selectedCompanyId);
             $this->companies = Company::where('id', $user->company_id)->get();
         }
+
+        // Initialize chart data arrays
+        $this->initializeChartData();
+    }
+
+    public function updated($property)
+    {
+        // Jika ada perubahan pada selectedEmployees, inisialisasi ulang charts
+        if (str_starts_with($property, 'selectedEmployees')) {
+            $this->dispatch('charts-loaded');
+        }
+    }
+
+    private function initializeChartData()
+    {
+        // Initialize arrays for chart data
+        $this->papiChartData = array_fill(0, $this->columnCount, null);
+        $this->discChartData = array_fill(0, $this->columnCount, null);
+        $this->softCompetenciesData = array_fill(0, $this->columnCount, [
+            'strengths' => [],
+            'weaknesses' => []
+        ]);
     }
 
     public function selectCompany($companyId)
@@ -69,6 +98,10 @@ class Index extends Component
         $this->searchTerms = array_fill(0, $this->columnCount, '');
         $this->searchResults = array_fill(0, $this->columnCount, []);
         $this->showSearchDropdown = array_fill(0, $this->columnCount, false);
+        $this->initializeChartData();
+
+        // Dispatch event untuk update chart
+        $this->dispatch('charts-loaded');
     }
 
     public function addColumn()
@@ -79,6 +112,15 @@ class Index extends Component
             $this->searchResults[] = [];
             $this->showSearchDropdown[] = false;
             $this->selectedEmployees[] = null;
+            $this->papiChartData[] = null;
+            $this->discChartData[] = null;
+            $this->softCompetenciesData[] = [
+                'strengths' => [],
+                'weaknesses' => []
+            ];
+
+            // Dispatch event untuk update chart
+            $this->dispatch('charts-loaded');
         }
     }
 
@@ -89,8 +131,104 @@ class Index extends Component
             array_splice($this->searchResults, $index, 1);
             array_splice($this->showSearchDropdown, $index, 1);
             array_splice($this->selectedEmployees, $index, 1);
+            array_splice($this->papiChartData, $index, 1);
+            array_splice($this->discChartData, $index, 1);
+            array_splice($this->softCompetenciesData, $index, 1);
             $this->columnCount--;
+
+            // Dispatch event untuk update chart
+            $this->dispatch('charts-loaded');
         }
+    }
+
+    private function loadChartData($employee, $index)
+    {
+        // Load PAPI data
+        if ($employee->papi) {
+            $this->papiChartData[$index] = $employee->papi->getFormattedData();
+        } else {
+            $this->papiChartData[$index] = $this->getDefaultPAPIData();
+        }
+
+        // Load DISC data
+        if ($employee->disc) {
+            $this->discChartData[$index] = [
+                'D1' => $employee->disc->D1 ?? 0,
+                'I1' => $employee->disc->I1 ?? 0,
+                'S1' => $employee->disc->S1 ?? 0,
+                'C1' => $employee->disc->C1 ?? 0,
+                'interpretation1' => $employee->disc->interpretation1 ?? 'No data available',
+                'D2' => $employee->disc->D2 ?? 0,
+                'I2' => $employee->disc->I2 ?? 0,
+                'S2' => $employee->disc->S2 ?? 0,
+                'C2' => $employee->disc->C2 ?? 0,
+                'interpretation2' => $employee->disc->interpretation2 ?? 'No data available',
+                'D3' => $employee->disc->D3 ?? 0,
+                'I3' => $employee->disc->I3 ?? 0,
+                'S3' => $employee->disc->S3 ?? 0,
+                'C3' => $employee->disc->C3 ?? 0,
+                'interpretation3' => $employee->disc->interpretation3 ?? 'No data available',
+            ];
+        } else {
+            $this->discChartData[$index] = $this->getDefaultDISCData();
+        }
+
+        // Load Soft Competencies data menggunakan method getScores()
+        try {
+            $this->softCompetenciesData[$index] = $employee->getScores();
+        } catch (\Exception $e) {
+            $this->softCompetenciesData[$index] = [
+                'strengths' => [],
+                'weaknesses' => []
+            ];
+        }
+    }
+
+    private function getDefaultPAPIData()
+    {
+        return [
+            ['code' => 'N', 'score' => 0],
+            ['code' => 'G', 'score' => 0],
+            ['code' => 'A', 'score' => 0],
+            ['code' => 'L', 'score' => 0],
+            ['code' => 'P', 'score' => 0],
+            ['code' => 'I', 'score' => 0],
+            ['code' => 'T', 'score' => 0],
+            ['code' => 'V', 'score' => 0],
+            ['code' => 'O', 'score' => 0],
+            ['code' => 'B', 'score' => 0],
+            ['code' => 'S', 'score' => 0],
+            ['code' => 'X', 'score' => 0],
+            ['code' => 'C', 'score' => 0],
+            ['code' => 'D', 'score' => 0],
+            ['code' => 'R', 'score' => 0],
+            ['code' => 'Z', 'score' => 0],
+            ['code' => 'E', 'score' => 0],
+            ['code' => 'K', 'score' => 0],
+            ['code' => 'F', 'score' => 0],
+            ['code' => 'W', 'score' => 0],
+        ];
+    }
+
+    private function getDefaultDISCData()
+    {
+        return [
+            'D1' => 0,
+            'I1' => 0,
+            'S1' => 0,
+            'C1' => 0,
+            'interpretation1' => 'No data available',
+            'D2' => 0,
+            'I2' => 0,
+            'S2' => 0,
+            'C2' => 0,
+            'interpretation2' => 'No data available',
+            'D3' => 0,
+            'I3' => 0,
+            'S3' => 0,
+            'C3' => 0,
+            'interpretation3' => 'No data available',
+        ];
     }
 
     public function updatedSearchTerms($value, $index)
@@ -113,7 +251,10 @@ class Index extends Component
                 'mcuResults',
                 'positionHistories',
                 'innovations',
-                'company'
+                'company',
+                'papi',
+                'disc',
+                // Hapus softCompetencies dari eager loading
             ])
                 ->where('company_id', $this->selectedCompanyId)
                 ->where(function ($query) use ($value) {
@@ -144,7 +285,10 @@ class Index extends Component
             'mcuResults',
             'positionHistories',
             'innovations',
-            'company'
+            'company',
+            'papi',
+            'disc',
+            // Hapus softCompetencies dari eager loading
         ])->find($employeeId);
 
         if ($employee) {
@@ -152,6 +296,13 @@ class Index extends Component
             $this->searchTerms[$index] = $employee->name;
             $this->showSearchDropdown[$index] = false;
             $this->searchResults[$index] = [];
+
+            // Load chart data for this employee
+            $this->loadChartData($employee, $index);
+
+            // Dispatch event to initialize charts
+            $this->dispatch('employee-selected', index: $index);
+            $this->dispatch('charts-loaded');
         }
     }
 
@@ -161,6 +312,16 @@ class Index extends Component
         $this->searchTerms[$index] = '';
         $this->searchResults[$index] = [];
         $this->showSearchDropdown[$index] = false;
+        $this->papiChartData[$index] = null;
+        $this->discChartData[$index] = null;
+        $this->softCompetenciesData[$index] = [
+            'strengths' => [],
+            'weaknesses' => []
+        ];
+
+        // Dispatch event to update charts
+        $this->dispatch('employee-cleared', index: $index);
+        $this->dispatch('charts-loaded');
     }
 
     public function render()
