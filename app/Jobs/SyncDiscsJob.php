@@ -49,19 +49,21 @@ class SyncDiscsJob implements ShouldQueue
             // Kirim event status processing
             broadcast(new DiscSyncStatusUpdated($this->userId, 'processing', null, 'Starting DISC sync process...'));
 
-            // Fetch data dari API
-            broadcast(new DiscSyncProgressUpdated($this->userId, 10, 'Fetching DISC data from API...'));
-            $apiData = $this->fetchApiData();
+            // Fetch data dari API dengan pagination cursor
+            broadcast(new DiscSyncProgressUpdated($this->userId, 5, 'Starting API data fetch...'));
 
-            if (empty($apiData)) {
+            // Kumpulkan semua data dari API dengan cursor pagination
+            $allApiData = $this->fetchAllApiData();
+
+            if (empty($allApiData)) {
                 throw new \Exception('No DISC data received from API');
             }
 
             // Kirim event progress
-            broadcast(new DiscSyncProgressUpdated($this->userId, 30, 'Processing ' . count($apiData) . ' DISC assessments...', 0, count($apiData)));
+            broadcast(new DiscSyncProgressUpdated($this->userId, 30, 'Processing ' . count($allApiData) . ' DISC assessments...', 0, count($allApiData)));
 
             // Process data
-            $stats = $this->processData($apiData);
+            $stats = $this->processData($allApiData);
 
             Log::info('DISC sync job completed', $stats);
 
@@ -93,85 +95,172 @@ class SyncDiscsJob implements ShouldQueue
     }
 
     /**
-     * Fetch data dari API DISC
+     * Fetch semua data dari API dengan cursor pagination
      */
-    private function fetchApiData(): array
+    private function fetchAllApiData(): array
     {
         $apiUrl = config('services.disc_api.url');
-        $apiKey = config('services.disc_api.key');
+        $bearerToken = config('services.disc_api.token');
 
-        if (!$apiUrl) {
+        if (!$apiUrl || !$bearerToken) {
             throw new \Exception('DISC API configuration not found');
         }
 
         Log::info('Fetching DISC data from API', ['url' => $apiUrl]);
 
-        broadcast(new DiscSyncProgressUpdated($this->userId, 15, 'Connecting to DISC API...'));
+        $allData = [];
+        $nextCursor = null;
+        $page = 1;
 
-        $headers = [
-            'Accept' => 'application/json',
-        ];
+        do {
+            broadcast(new DiscSyncProgressUpdated(
+                $this->userId,
+                5 + (($page - 1) * 5),
+                "Fetching page {$page} from DISC API..."
+            ));
 
-        // Tambahkan API key jika ada
-        if ($apiKey) {
-            $headers['x-api-key'] = $apiKey;
-            $headers['Authorization'] = 'Bearer ' . $apiKey;
+            $responseData = $this->fetchApiPage($apiUrl, $bearerToken, $nextCursor);
+
+            if (!empty($responseData['data'])) {
+                $allData = array_merge($allData, $responseData['data']);
+                $nextCursor = $responseData['meta']['next_cursor'] ?? null;
+
+                Log::info('Fetched page from DISC API', [
+                    'page' => $page,
+                    'items_fetched' => count($responseData['data']),
+                    'total_so_far' => count($allData),
+                    'has_next' => !empty($nextCursor)
+                ]);
+            } else {
+                $nextCursor = null;
+            }
+
+            $page++;
+
+            // Safety limit: maksimal 1000 halaman
+            if ($page > 1000) {
+                Log::warning('Reached maximum page limit for DISC sync', ['total_items' => count($allData)]);
+                break;
+            }
+        } while (!empty($nextCursor));
+
+        broadcast(new DiscSyncProgressUpdated($this->userId, 25, 'Validating DISC data...'));
+
+        // Validasi data
+        $validatedData = $this->validateApiData($allData);
+
+        broadcast(new DiscSyncProgressUpdated(
+            $this->userId,
+            30,
+            'Validated ' . count($validatedData) . ' DISC assessments from ' . count($allData) . ' total'
+        ));
+
+        Log::info('DISC API data validated', [
+            'total_fetched' => count($allData),
+            'total_valid' => count($validatedData)
+        ]);
+
+        return $validatedData;
+    }
+
+    /**
+     * Fetch satu halaman data dari API
+     */
+    private function fetchApiPage(string $apiUrl, string $bearerToken, ?string $cursor = null): array
+    {
+        $queryParams = [];
+        if ($cursor) {
+            $queryParams['cursor'] = $cursor;
         }
 
-        $response = Http::withHeaders($headers)
-            ->timeout(300)
-            ->get($apiUrl);
-
-        broadcast(new DiscSyncProgressUpdated($this->userId, 20, 'Receiving DISC data from API...'));
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $bearerToken,
+            'Accept' => 'application/json',
+        ])->timeout(300)->get($apiUrl, $queryParams);
 
         if (!$response->successful()) {
             $errorMessage = 'DISC API request failed: ' . $response->status();
             Log::error('DISC API request failed', [
                 'status' => $response->status(),
                 'url' => $apiUrl,
+                'cursor' => $cursor,
                 'response' => $response->body()
             ]);
+
+            // Jika error 401, token mungkin expired
+            if ($response->status() === 401) {
+                throw new \Exception('DISC API authentication failed. Please check the bearer token.');
+            }
+
             throw new \Exception($errorMessage);
         }
 
         $data = $response->json();
 
-        // Validasi struktur data
-        if (!is_array($data)) {
-            throw new \Exception('Invalid DISC API response: expected array');
+        // Validasi struktur response
+        if (!isset($data['data']) || !is_array($data['data'])) {
+            throw new \Exception('Invalid DISC API response: missing data array');
         }
 
-        // Jika ada key 'data', gunakan itu
-        if (isset($data['data']) && is_array($data['data'])) {
-            $rawData = $data['data'];
-        } else {
-            $rawData = $data;
-        }
+        return [
+            'data' => $data['data'],
+            'meta' => $data['meta'] ?? []
+        ];
+    }
 
-        if (empty($rawData)) {
-            Log::warning('Empty DISC data received from API');
-            return [];
-        }
-
-        // Validasi setiap item
+    /**
+     * Validasi data dari API
+     */
+    private function validateApiData(array $apiData): array
+    {
         $validatedData = [];
-        foreach ($rawData as $index => $item) {
+
+        foreach ($apiData as $index => $item) {
             if (!is_array($item)) {
                 Log::warning('Invalid DISC item format at index ' . $index);
                 continue;
             }
 
-            // Validasi field required minimal
-            if (empty($item['employee_number'])) {
-                Log::warning('Missing employee_number at index ' . $index);
+            // Validasi field required
+            if (empty($item['register_id'])) {
+                Log::warning('Missing required field register_id at index ' . $index);
                 continue;
             }
 
-            $validatedData[] = $item;
-        }
+            if (empty($item['personnel_number'])) {
+                Log::warning('Missing required field personnel_number at index ' . $index);
+                continue;
+            }
 
-        broadcast(new DiscSyncProgressUpdated($this->userId, 25, 'Validated ' . count($validatedData) . ' DISC assessments'));
-        Log::info('DISC API data validated', ['total' => count($validatedData)]);
+            // Format employee_number (personnel_number)
+            $employeeNumber = trim($item['personnel_number']);
+
+            // Map field dari API ke struktur database
+            $validatedData[] = [
+                'external_id' => $item['register_id'],
+                'employee_number' => $employeeNumber,
+                'D1' => $item['D1'] ?? null,
+                'I1' => $item['I1'] ?? null,
+                'S1' => $item['S1'] ?? null,
+                'C1' => $item['C1'] ?? null,
+                'D2' => $item['D2'] ?? null,
+                'I2' => $item['I2'] ?? null,
+                'S2' => $item['S2'] ?? null,
+                'C2' => $item['C2'] ?? null,
+                'D3' => $item['D3'] ?? null,
+                'I3' => $item['I3'] ?? null,
+                'S3' => $item['S3'] ?? null,
+                'C3' => $item['C3'] ?? null,
+                'interpretation1' => $item['interpretation_1'] ?? null,
+                'interpretation2' => $item['interpretation_2'] ?? null,
+                'interpretation3' => $item['interpretation_3'] ?? null,
+                'total_p_raw' => $item['total_p_raw'] ?? null,
+                'total_k_raw' => $item['total_k_raw'] ?? null,
+                'test_date' => $item['test_date (yyyy-mm-dd)'] ?? null,
+                'duration' => $item['duration'] ?? null,
+                'api_data' => $item // Simpan data lengkap untuk debugging
+            ];
+        }
 
         return $validatedData;
     }
@@ -205,66 +294,42 @@ class SyncDiscsJob implements ShouldQueue
 
             broadcast(new DiscSyncProgressUpdated($this->userId, 40, "Deactivated {$deactivatedCount} DISC assessments"));
 
+            // 2. Process data dari API
             $totalItems = count($apiData);
             $processed = 0;
 
-            // 2. Process data dari API
-            foreach ($apiData as $data) {
+            foreach ($apiData as $item) {
                 try {
-                    if (empty($data['employee_number'])) {
-                        $stats['skipped']++;
-                        continue;
-                    }
-
-                    // Format employee_number
-                    $employeeNumber = $this->formatEmployeeNumber($data['employee_number']);
+                    $employeeNumber = $item['employee_number'];
+                    $externalId = $item['external_id'];
 
                     // Cari employee
                     $employee = Employee::where('employee_number', $employeeNumber)->first();
 
-                    // Buat unique identifier
-                    $uniqueIdentifier = md5($employeeNumber .
-                        ($data['assessment_date'] ?? '') .
-                        json_encode([
-                            $data['D1'] ?? null,
-                            $data['I1'] ?? null,
-                            $data['S1'] ?? null,
-                            $data['C1'] ?? null,
-                            $data['D2'] ?? null,
-                            $data['I2'] ?? null,
-                            $data['S2'] ?? null,
-                            $data['C2'] ?? null,
-                            $data['D3'] ?? null,
-                            $data['I3'] ?? null,
-                            $data['S3'] ?? null,
-                            $data['C3'] ?? null,
-                        ]));
-
-                    // Update atau create DISC data dengan is_active = true
+                    // Update atau create DISC menggunakan external_id sebagai unique key
                     $disc = Disc::updateOrCreate(
                         [
                             'source' => 'eksternal',
-                            'external_id' => $uniqueIdentifier,
+                            'external_id' => $externalId,
                         ],
                         [
                             'employee_id' => $employee?->id,
                             'employee_number' => $employeeNumber,
-                            'D1' => $this->cleanNumber($data['D1'] ?? null),
-                            'I1' => $this->cleanNumber($data['I1'] ?? null),
-                            'S1' => $this->cleanNumber($data['S1'] ?? null),
-                            'C1' => $this->cleanNumber($data['C1'] ?? null),
-                            'D2' => $this->cleanNumber($data['D2'] ?? null),
-                            'I2' => $this->cleanNumber($data['I2'] ?? null),
-                            'S2' => $this->cleanNumber($data['S2'] ?? null),
-                            'C2' => $this->cleanNumber($data['C2'] ?? null),
-                            'D3' => $this->cleanNumber($data['D3'] ?? null),
-                            'I3' => $this->cleanNumber($data['I3'] ?? null),
-                            'S3' => $this->cleanNumber($data['S3'] ?? null),
-                            'C3' => $this->cleanNumber($data['C3'] ?? null),
-                            'interpretation1' => $this->cleanInterpretation($data['interpretation1'] ?? null),
-                            'interpretation2' => $this->cleanInterpretation($data['interpretation2'] ?? null),
-                            'interpretation3' => $this->cleanInterpretation($data['interpretation3'] ?? null),
-                            'assessment_date' => $data['assessment_date'] ?? null,
+                            'D1' => $item['D1'] ?? null,
+                            'I1' => $item['I1'] ?? null,
+                            'S1' => $item['S1'] ?? null,
+                            'C1' => $item['C1'] ?? null,
+                            'D2' => $item['D2'] ?? null,
+                            'I2' => $item['I2'] ?? null,
+                            'S2' => $item['S2'] ?? null,
+                            'C2' => $item['C2'] ?? null,
+                            'D3' => $item['D3'] ?? null,
+                            'I3' => $item['I3'] ?? null,
+                            'S3' => $item['S3'] ?? null,
+                            'C3' => $item['C3'] ?? null,
+                            'interpretation1' => $item['interpretation1'] ?? null,
+                            'interpretation2' => $item['interpretation2'] ?? null,
+                            'interpretation3' => $item['interpretation3'] ?? null,
                             'is_active' => true,
                             'updated_at' => now()
                         ]
@@ -287,9 +352,10 @@ class SyncDiscsJob implements ShouldQueue
                 } catch (\Exception $e) {
                     $stats['skipped']++;
                     Log::warning('Failed to process DISC assessment', [
-                        'employee_number' => $data['employee_number'] ?? 'unknown',
+                        'employee_number' => $item['employee_number'] ?? 'unknown',
+                        'external_id' => $item['external_id'] ?? 'unknown',
                         'error' => $e->getMessage(),
-                        'data' => $data
+                        'trace' => $e->getTraceAsString()
                     ]);
                 }
             }
@@ -314,62 +380,6 @@ class SyncDiscsJob implements ShouldQueue
         $stats['status'] = 'completed';
 
         return $stats;
-    }
-
-    /**
-     * Format employee_number menjadi 8 digit
-     */
-    private function formatEmployeeNumber($employeeNumber): string
-    {
-        if (is_numeric($employeeNumber)) {
-            return str_pad((string) intval($employeeNumber), 8, '0', STR_PAD_LEFT);
-        }
-        return str_pad(trim($employeeNumber), 8, '0', STR_PAD_LEFT);
-    }
-
-    /**
-     * Clean number value
-     */
-    private function cleanNumber($value)
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        if (is_numeric($value)) {
-            $intValue = (int) $value;
-            // Validasi range DISC scores (biasanya 0-100 atau 0-10)
-            return max(0, min(100, $intValue));
-        }
-
-        return null;
-    }
-
-    /**
-     * Clean interpretation value
-     */
-    private function cleanInterpretation($value)
-    {
-        if (empty($value)) {
-            return null;
-        }
-
-        $value = trim($value);
-
-        // Normalize common DISC interpretations
-        $normalized = strtolower($value);
-        $interpretations = [
-            'dominant' => 'Dominant',
-            'influential' => 'Influential',
-            'steady' => 'Steady',
-            'conscientious' => 'Conscientious',
-            'd' => 'Dominant',
-            'i' => 'Influential',
-            's' => 'Steady',
-            'c' => 'Conscientious',
-        ];
-
-        return $interpretations[$normalized] ?? ucfirst($value);
     }
 
     /**
