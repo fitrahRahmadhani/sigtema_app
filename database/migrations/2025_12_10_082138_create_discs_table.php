@@ -17,22 +17,22 @@ return new class extends Migration
             $table->string('employee_number')->nullable();
 
             // D1-I1-S1-C1
-            $table->decimal('D1', 4, 1)->nullable();
-            $table->decimal('I1', 4, 1)->nullable();
-            $table->decimal('S1', 4, 1)->nullable();
-            $table->decimal('C1', 4, 1)->nullable();
+            $table->decimal('D1', 5, 2)->nullable();
+            $table->decimal('I1', 5, 2)->nullable();
+            $table->decimal('S1', 5, 2)->nullable();
+            $table->decimal('C1', 5, 2)->nullable();
 
             // D2-I2-S2-C2
-            $table->decimal('D2', 4, 1)->nullable();
-            $table->decimal('I2', 4, 1)->nullable();
-            $table->decimal('S2', 4, 1)->nullable();
-            $table->decimal('C2', 4, 1)->nullable();
+            $table->decimal('D2', 5, 2)->nullable();
+            $table->decimal('I2', 5, 2)->nullable();
+            $table->decimal('S2', 5, 2)->nullable();
+            $table->decimal('C2', 5, 2)->nullable();
 
             // D3-I3-S3-C3
-            $table->decimal('D3', 4, 1)->nullable();
-            $table->decimal('I3', 4, 1)->nullable();
-            $table->decimal('S3', 4, 1)->nullable();
-            $table->decimal('C3', 4, 1)->nullable();
+            $table->decimal('D3', 5, 2)->nullable();
+            $table->decimal('I3', 5, 2)->nullable();
+            $table->decimal('S3', 5, 2)->nullable();
+            $table->decimal('C3', 5, 2)->nullable();
 
             // Interpretations
             $table->string('interpretation1')->nullable();
