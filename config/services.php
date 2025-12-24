@@ -58,7 +58,7 @@ return [
 
     'papi_api' => [
         'url' => env('PAPI_API_URL'),
-        'key' => env('PAPI_API_KEY'),
+        'token' => env('PAPI_API_TOKEN'),
     ],
 
 ];
