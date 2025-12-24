@@ -53,7 +53,7 @@ return [
 
     'disc_api' => [
         'url' => env('DISC_API_URL'),
-        'key' => env('DISC_API_KEY'),
+        'token' => env('DISC_API_TOKEN'),
     ],
 
     'papi_api' => [

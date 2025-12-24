@@ -117,6 +117,10 @@ class Employee extends Model
         return $this->hasOne(Papi::class);
     }
 
+    public function disc()
+    {
+        return $this->hasOne(Disc::class);
+    }
 
     /**
      * Get the position history that the employee holds.

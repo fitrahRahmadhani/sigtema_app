@@ -68,27 +68,35 @@ class Show extends Component
 
     private function getDISCData()
     {
+        if (!$this->employee->disc) {
+            return $this->getDefaultDISCData();
+        }
+        return $this->employee->disc;
+    }
+
+    private function getDefaultDISCData()
+    {
         return [
-            // DISC 1 - Dominance oriented
-            'D1' => 75,
-            'I1' => 45,
-            'S1' => 30,
-            'C1' => 50,
-            'interpretation1' => 'High Dominance - Direct, results-oriented, decisive',
+            // DISC 1
+            'D1' => 0,
+            'I1' => 0,
+            'S1' => 0,
+            'C1' => 0,
+            'interpretation1' => 'No data available',
 
-            // DISC 2 - Influence oriented
-            'D2' => 40,
-            'I2' => 80,
-            'S2' => 60,
-            'C2' => 35,
-            'interpretation2' => 'High Influence - Enthusiastic, persuasive, social',
+            // DISC 2
+            'D2' => 0,
+            'I2' => 0,
+            'S2' => 0,
+            'C2' => 0,
+            'interpretation2' => 'No data available',
 
-            // DISC 3 - Steadiness oriented
-            'D3' => 30,
-            'I3' => 45,
-            'S3' => 85,
-            'C3' => 55,
-            'interpretation3' => 'High Steadiness - Patient, reliable, supportive',
+            // DISC 3
+            'D3' => 0,
+            'I3' => 0,
+            'S3' => 0,
+            'C3' => 0,
+            'interpretation3' => 'No data available',
         ];
     }
 
