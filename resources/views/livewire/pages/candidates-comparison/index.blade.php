@@ -164,10 +164,7 @@
                                         class="left-0 w-64 bg-gray-50 px-6 py-3 text-left text-sm font-medium tracking-wider text-gray-500 uppercase"
                                     ></th>
                                     @for ($i = 0; $i < $columnCount; $i++)
-                                        <th
-                                            scope="col"
-                                            class="relative min-w-[280px] content-start bg-gray-50 px-6 py-3"
-                                        >
+                                        <th scope="col" class="relative w-[400px] content-start bg-gray-50 px-6 py-3">
                                             <!-- Remove Column Button -->
                                             @if ($columnCount > 3)
                                                 <button
@@ -194,7 +191,7 @@
 
                                             <div class="relative">
                                                 <!-- Search Input -->
-                                                <div class="relative">
+                                                <div class="relative w-[400px]">
                                                     <input
                                                         type="text"
                                                         wire:model.live.debounce.300ms="searchTerms.{{ $i }}"
@@ -272,7 +269,7 @@
                                                 <!-- Selected Employee Info -->
                                                 @if (! empty($selectedEmployees[$i]))
                                                     <div
-                                                        class="border-primary-text bg-primary-text/10 mt-3 flex items-center gap-3 rounded-lg border p-3"
+                                                        class="border-primary-text bg-primary-text/10 mt-3 flex w-[400px] items-center gap-3 rounded-lg border p-3"
                                                     >
                                                         <div
                                                             class="bg-primary-text/20 text-primary-text flex h-12 w-12 items-center justify-center place-self-start overflow-hidden rounded-lg object-cover"
@@ -330,7 +327,7 @@
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Email</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
-                                        <td class="px-6 py-4 text-gray-700">
+                                        <td class="w-[400px] px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
                                                 <span class="font-medium">{{ $selectedEmployees[$i]->email }}</span>
                                             @else
@@ -344,7 +341,7 @@
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Phone</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
-                                        <td class="px-6 py-4 text-gray-700">
+                                        <td class="w-[400px] px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
                                                 <span class="font-medium">{{ $selectedEmployees[$i]->phone }}</span>
                                             @else
@@ -360,7 +357,7 @@
                                         Personal Grade
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
-                                        <td class="px-6 py-4 text-gray-700">
+                                        <td class="w-[400px] px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
                                                 <span class="font-medium">
                                                     {{ $selectedEmployees[$i]->personal_grade }}
@@ -376,7 +373,7 @@
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Band</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
-                                        <td class="px-6 py-4 text-gray-700">
+                                        <td class="w-[400px] px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
                                                 <span class="font-medium">{{ $selectedEmployees[$i]->band }}</span>
                                             @else
@@ -390,7 +387,7 @@
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Hire Date</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
-                                        <td class="px-6 py-4 text-gray-700">
+                                        <td class="w-[400px] px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
                                                 <span class="text-gray-400 italic">
                                                     {{ $selectedEmployees[$i]->hire_date?->format('d F Y') ?? 'N/A' }}
@@ -422,7 +419,7 @@
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">MBTI</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
-                                        <td class="px-6 py-4 align-top text-gray-700">
+                                        <td class="w-[400px] px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]->mbti->mbti))
                                                 <span class="font-medium">
                                                     {{ $selectedEmployees[$i]->mbti->mbti }}
@@ -434,20 +431,210 @@
                                     @endfor
                                 </tr>
 
-                                <!-- DISC -->
+                                <!-- PAPI Kostick Section -->
+                                <tr class="color-gradient">
+                                    <td
+                                        colspan="{{ $columnCount + 1 }}"
+                                        class="left-0 px-6 py-3 font-semibold text-white"
+                                    >
+                                        <p class="inline">PAPI Kostick</p>
+                                        <p class="ml-2 inline text-sm text-white italic">data powered by</p>
+                                        <img
+                                            src="{{ asset('assets/logo/logo-sigmatic-white.png') }}"
+                                            class="mb-1 ml-2 inline h-6 self-end"
+                                            alt="Logo SIGMATIC"
+                                        />
+                                    </td>
+                                </tr>
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">DISC</td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                                    <td class="left-0 px-6 py-4 font-medium text-gray-900"></td>
+                                    @for ($i = 0; $i < $columnCount; $i++)
+                                        <td class="px-6 py-4 align-top">
+                                            <div class="flex w-[400px] flex-col items-center justify-start">
+                                                <!-- PAPI Chart Container -->
+                                                <div
+                                                    class="relative aspect-square w-[400px] rounded-full border-2 border-dashed border-gray-300"
+                                                >
+                                                    @if (! empty($selectedEmployees[$i]))
+                                                        <canvas
+                                                            id="papiChart-{{ $i }}"
+                                                            class="h-full w-full"
+                                                            wire:ignore
+                                                            data-papi-data="{{ json_encode($papiChartData[$i]) }}"
+                                                            data-employee-name="{{ $selectedEmployees[$i]->name ?? 'Employee' }}"
+                                                        ></canvas>
+                                                    @else
+                                                        <!-- Placeholder ketika tidak ada karyawan yang dipilih -->
+                                                        <div
+                                                            class="flex h-full w-full flex-col items-center justify-center"
+                                                        >
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                class="h-12 w-12 text-gray-300"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke="currentColor"
+                                                            >
+                                                                <path
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"
+                                                                />
+                                                                <path
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"
+                                                                />
+                                                            </svg>
+                                                            <p class="mt-2 text-sm text-gray-300">Select an employee</p>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </td>
+                                    @endfor
                                 </tr>
 
-                                <!-- PAPI -->
+                                <!-- DISC Section -->
+                                <tr class="color-gradient">
+                                    <td
+                                        colspan="{{ $columnCount + 1 }}"
+                                        class="left-0 px-6 py-3 font-semibold text-white"
+                                    >
+                                        <p class="inline">DISC</p>
+                                        <p class="ml-2 inline text-sm text-white italic">data powered by</p>
+                                        <img
+                                            src="{{ asset('assets/logo/logo-sigmatic-white.png') }}"
+                                            class="mb-1 ml-2 inline h-6 self-end"
+                                            alt="Logo SIGMATIC"
+                                        />
+                                    </td>
+                                </tr>
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">PAPI</td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
-                                    <td><span class="px-6 py-4 text-gray-700">-</span></td>
+                                    <td class="left-0 bg-white px-6 py-4 font-medium text-gray-900"></td>
+                                    @for ($i = 0; $i < $columnCount; $i++)
+                                        <td class="px-6 py-4 align-top">
+                                            @if (! empty($selectedEmployees[$i]) && ! empty($discChartData[$i]))
+                                                <div class="flex w-[400px] flex-col space-y-6">
+                                                    <!-- DISC 1 -->
+                                                    <div class="overflow-hidden rounded-lg border border-gray-300">
+                                                        <div class="bg-red-500 px-3 py-2 text-center">
+                                                            <p class="text-sm font-semibold text-white">DISC 1</p>
+                                                        </div>
+                                                        <div
+                                                            class="relative flex min-h-[150px] items-center justify-center border-x border-gray-300 bg-white p-4"
+                                                        >
+                                                            <canvas
+                                                                id="disc1Chart-{{ $i }}"
+                                                                class="h-full w-full"
+                                                                wire:ignore
+                                                                data-disc-data="{{
+                                                                    json_encode([
+                                                                        'D' => $discChartData[$i]['D1'],
+                                                                        'I' => $discChartData[$i]['I1'],
+                                                                        'S' => $discChartData[$i]['S1'],
+                                                                        'C' => $discChartData[$i]['C1'],
+                                                                    ])
+                                                                }}"
+                                                            ></canvas>
+                                                        </div>
+                                                        <div
+                                                            class="rounded-b-md border-x border-b border-gray-300 bg-gray-50 px-4 py-3"
+                                                        >
+                                                            <p
+                                                                class="text-center text-sm leading-relaxed text-gray-700"
+                                                            >
+                                                                {{ $discChartData[$i]['interpretation1'] }}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- DISC 2 -->
+                                                    <div class="overflow-hidden rounded-lg border border-gray-300">
+                                                        <div class="bg-yellow-500 px-3 py-2 text-center">
+                                                            <p class="text-sm font-semibold text-white">DISC 2</p>
+                                                        </div>
+                                                        <div
+                                                            class="relative flex min-h-[150px] items-center justify-center border-x border-gray-300 bg-white p-4"
+                                                        >
+                                                            <canvas
+                                                                id="disc2Chart-{{ $i }}"
+                                                                class="h-full w-full"
+                                                                wire:ignore
+                                                                data-disc-data="{{
+                                                                    json_encode([
+                                                                        'D' => $discChartData[$i]['D2'],
+                                                                        'I' => $discChartData[$i]['I2'],
+                                                                        'S' => $discChartData[$i]['S2'],
+                                                                        'C' => $discChartData[$i]['C2'],
+                                                                    ])
+                                                                }}"
+                                                            ></canvas>
+                                                        </div>
+                                                        <div
+                                                            class="rounded-b-md border-x border-b border-gray-300 bg-gray-50 px-4 py-3"
+                                                        >
+                                                            <p
+                                                                class="text-center text-sm leading-relaxed text-gray-700"
+                                                            >
+                                                                {{ $discChartData[$i]['interpretation2'] }}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- DISC 3 -->
+                                                    <div class="overflow-hidden rounded-lg border border-gray-300">
+                                                        <div class="bg-green-500 px-3 py-2 text-center">
+                                                            <p class="text-sm font-semibold text-white">DISC 3</p>
+                                                        </div>
+                                                        <div
+                                                            class="relative flex min-h-[150px] items-center justify-center border-x border-gray-300 bg-white p-4"
+                                                        >
+                                                            <canvas
+                                                                id="disc3Chart-{{ $i }}"
+                                                                class="h-full w-full"
+                                                                wire:ignore
+                                                                data-disc-data="{{
+                                                                    json_encode([
+                                                                        'D' => $discChartData[$i]['D3'],
+                                                                        'I' => $discChartData[$i]['I3'],
+                                                                        'S' => $discChartData[$i]['S3'],
+                                                                        'C' => $discChartData[$i]['C3'],
+                                                                    ])
+                                                                }}"
+                                                            ></canvas>
+                                                        </div>
+                                                        <div
+                                                            class="rounded-b-md border-x border-b border-gray-300 bg-gray-50 px-4 py-3"
+                                                        >
+                                                            <p
+                                                                class="text-center text-sm leading-relaxed text-gray-700"
+                                                            >
+                                                                {{ $discChartData[$i]['interpretation3'] }}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div class="flex w-[400px] flex-col items-center justify-center py-8">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        class="h-12 w-12 text-gray-300"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke="currentColor"
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"
+                                                        />
+                                                    </svg>
+                                                    <p class="mt-2 text-sm text-gray-300">No DISC data</p>
+                                                </div>
+                                            @endif
+                                        </td>
+                                    @endfor
                                 </tr>
 
                                 <!-- Soft Competencies Section -->
@@ -462,7 +649,9 @@
 
                                 <!-- Strengths -->
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Strengths</td>
+                                    <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Strengths
+                                    </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
@@ -484,7 +673,7 @@
 
                                 <!-- Weaknesses -->
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                    <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Weaknesses
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -520,7 +709,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 font-medium text-gray-900"></td>
+                                    <td class="left-0 w-[400px] bg-white px-6 py-4 font-medium text-gray-900"></td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->technicalCompetencies && $selectedEmployees[$i]->technicalCompetencies->count() > 0)
@@ -566,7 +755,7 @@
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->innovations && $selectedEmployees[$i]->innovations->count() > 0)
-                                                <ul class="space-y-3">
+                                                <ul class="w-[400px] space-y-3">
                                                     @foreach ($selectedEmployees[$i]->innovations as $innovation)
                                                         <li class="rounded-lg border border-gray-200 bg-gray-50 p-3">
                                                             <div class="mb-1 flex items-start justify-between gap-2">
@@ -622,7 +811,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 font-medium text-gray-900"></td>
+                                    <td class="left-0 w-[400px] bg-white px-6 py-4 font-medium text-gray-900"></td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->positionHistories && $selectedEmployees[$i]->positionHistories->count() > 0)
@@ -658,7 +847,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 font-medium text-gray-900"></td>
+                                    <td class="left-0 w-[400px] bg-white px-6 py-4 font-medium text-gray-900"></td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->educations && $selectedEmployees[$i]->educations->count() > 0)
@@ -696,7 +885,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 font-medium text-gray-900"></td>
+                                    <td class="left-0 w-[400px] bg-white px-6 py-4 font-medium text-gray-900"></td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->mcuResults && $selectedEmployees[$i]->mcuResults->count() > 0)
@@ -758,7 +947,7 @@
                                         Kelalahan Emosional
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
-                                        <td class="px-6 py-4 align-top text-gray-700">
+                                        <td class="w-[400px] px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]->burnout->emotional_exhaustion))
                                                 <span class="font-medium">
                                                     {{ $selectedEmployees[$i]->burnout->emotional_exhaustion }}
@@ -776,7 +965,7 @@
                                         Depersonalisasi
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
-                                        <td class="px-6 py-4 align-top text-gray-700">
+                                        <td class="w-[400px] px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]->burnout->depersonalization))
                                                 <span class="font-medium">
                                                     {{ $selectedEmployees[$i]->burnout->depersonalization }}
@@ -794,7 +983,7 @@
                                         Penurunan Prestasi
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
-                                        <td class="px-6 py-4 align-top text-gray-700">
+                                        <td class="w-[400px] px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]->burnout->achievement_decline))
                                                 <span class="font-medium">
                                                     {{ $selectedEmployees[$i]->burnout->achievement_decline }}
@@ -812,7 +1001,7 @@
                                         Penafsiran
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
-                                        <td class="px-6 py-4 align-top text-gray-700">
+                                        <td class="w-[400px] px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]->burnout->result))
                                                 <span class="font-medium">
                                                     {!! strip_tags($selectedEmployees[$i]->burnout->result, '<i><b>') !!}
@@ -830,4 +1019,847 @@
             @endif
         @endif
     </div>
+    <script>
+        // Konfigurasi PAPI
+        const papiSegments = [
+            {
+                code: 'N',
+                angle: 0,
+                cat: 'ARAH KERJA',
+                desc: 'Menyelesaikan\nTugas\nPribadi',
+                color: '#FFB7B7',
+                colorSolid: '#ef4444',
+            },
+            {
+                code: 'G',
+                angle: 18,
+                cat: 'ARAH KERJA',
+                desc: 'Peranan sbg\nPekerja\nKeras',
+                color: '#FFB7B7',
+                colorSolid: '#ef4444',
+            },
+            {
+                code: 'A',
+                angle: 36,
+                cat: 'ARAH KERJA',
+                desc: 'Hasrat utk\nBerprestasi',
+                color: '#FFB7B7',
+                colorSolid: '#ef4444',
+            },
+            {
+                code: 'L',
+                angle: 54,
+                cat: 'KEPEMIMPINAN',
+                desc: 'Peranan\nSbg\nPemimpin',
+                color: '#d1d5db',
+                colorSolid: '#6b7280',
+            },
+            {
+                code: 'P',
+                angle: 72,
+                cat: 'KEPEMIMPINAN',
+                desc: 'Mengendalikan\nOrang\nLain',
+                color: '#d1d5db',
+                colorSolid: '#6b7280',
+            },
+            {
+                code: 'I',
+                angle: 90,
+                cat: 'KEPEMIMPINAN',
+                desc: 'Mudah\nMembuat\nMemutuskan',
+                color: '#d1d5db',
+                colorSolid: '#6b7280',
+            },
+            { code: 'T', angle: 108, cat: 'AKTIVITAS', desc: 'Tempo Kerja', color: '#bfdbfe', colorSolid: '#3b82f6' },
+            { code: 'V', angle: 126, cat: 'AKTIVITAS', desc: 'Stamina', color: '#bfdbfe', colorSolid: '#3b82f6' },
+            {
+                code: 'S',
+                angle: 180,
+                cat: 'PERGAULAN',
+                desc: 'Pergaulan\nSosial',
+                color: '#cffafe',
+                colorSolid: '#06b6d4',
+            },
+            {
+                code: 'B',
+                angle: 162,
+                cat: 'PERGAULAN',
+                desc: 'Kebutuhan\nTerhadap\nKelompok',
+                color: '#cffafe',
+                colorSolid: '#06b6d4',
+            },
+            {
+                code: 'O',
+                angle: 144,
+                cat: 'PERGAULAN',
+                desc: 'Kebutuhan\nutk mendekati\n& menyayangi',
+                color: '#cffafe',
+                colorSolid: '#06b6d4',
+            },
+            {
+                code: 'X',
+                angle: 198,
+                cat: 'PERGAULAN',
+                desc: 'Mendapatkan\nPerhatian',
+                color: '#cffafe',
+                colorSolid: '#06b6d4',
+            },
+            {
+                code: 'C',
+                angle: 216,
+                cat: 'GAYA KERJA',
+                desc: 'Suka\nPekerjaan\nyg Teratur',
+                color: '#f0fdf4',
+                colorSolid: '#16A34A',
+            },
+            {
+                code: 'D',
+                angle: 234,
+                cat: 'GAYA KERJA',
+                desc: 'Suka\nPekerjaan\nyg Terperinci',
+                color: '#f0fdf4',
+                colorSolid: '#16A34A',
+            },
+            {
+                code: 'R',
+                angle: 252,
+                cat: 'GAYA KERJA',
+                desc: 'Tipe\nTeoritis',
+                color: '#f0fdf4',
+                colorSolid: '#16A34A',
+            },
+            {
+                code: 'Z',
+                angle: 270,
+                cat: 'SIFAT',
+                desc: 'Hasrat utk\nBerubah',
+                color: '#fefce8',
+                colorSolid: '#f59e0b',
+            },
+            {
+                code: 'E',
+                angle: 288,
+                cat: 'SIFAT',
+                desc: 'Pengendalian\nEmosi',
+                color: '#fefce8',
+                colorSolid: '#f59e0b',
+            },
+            { code: 'K', angle: 306, cat: 'SIFAT', desc: 'Agresivitas', color: '#fefce8', colorSolid: '#f59e0b' },
+            {
+                code: 'F',
+                angle: 324,
+                cat: 'KETAATAN',
+                desc: 'Dukungan\nutk\nArahan',
+                color: '#ffedd5',
+                colorSolid: '#f97316',
+            },
+            {
+                code: 'W',
+                angle: 342,
+                cat: 'KETAATAN',
+                desc: 'Kebutuhan utk\nTaat Aturan\nArahan',
+                color: '#ffedd5',
+                colorSolid: '#f97316',
+            },
+        ];
+
+        const papiCategories = {
+            KETAATAN: { start: 315, end: 351, color: '#f97316' },
+            'ARAH KERJA': { start: 351, end: 45, color: '#ef4444' },
+            KEPEMIMPINAN: { start: 45, end: 99, color: '#6b7280' },
+            AKTIVITAS: { start: 99, end: 135, color: '#3b82f6' },
+            PERGAULAN: { start: 135, end: 207, color: '#06b6d4' },
+            'GAYA KERJA': { start: 207, end: 261, color: '#16A34A' },
+            SIFAT: { start: 261, end: 315, color: '#FACC15' },
+        };
+
+        // Store untuk chart instances
+        const chartInstances = {
+            papi: {},
+            disc1: {},
+            disc2: {},
+            disc3: {},
+        };
+
+        // Fungsi untuk menghapus semua chart
+        function destroyAllCharts() {
+            // Hapus PAPI charts
+            Object.values(chartInstances.papi).forEach((chart) => {
+                if (chart && typeof chart.destroy === 'function') {
+                    chart.destroy();
+                }
+            });
+            chartInstances.papi = {};
+
+            // Hapus DISC charts
+            Object.values(chartInstances.disc1).forEach((chart) => {
+                if (chart && typeof chart.destroy === 'function') {
+                    chart.destroy();
+                }
+            });
+            chartInstances.disc1 = {};
+
+            Object.values(chartInstances.disc2).forEach((chart) => {
+                if (chart && typeof chart.destroy === 'function') {
+                    chart.destroy();
+                }
+            });
+            chartInstances.disc2 = {};
+
+            Object.values(chartInstances.disc3).forEach((chart) => {
+                if (chart && typeof chart.destroy === 'function') {
+                    chart.destroy();
+                }
+            });
+            chartInstances.disc3 = {};
+        }
+
+        // Fungsi untuk menggambar teks melengkung (FIXED)
+        function drawArcText(ctx, text, cx, cy, radius, centerDeg, letterSpacing = 0.6) {
+            ctx.save();
+            ctx.font = 'bold 12px Arial';
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const left = centerDeg > 90 && centerDeg < 270;
+            const chars = left ? [...text].reverse() : [...text];
+            const widths = chars.map((c) => ctx.measureText(c).width);
+            const totalWidth = widths.reduce((a, b) => a + b, 0) + letterSpacing * (chars.length - 1);
+            let angle = ((centerDeg - 90) * Math.PI) / 180 - totalWidth / (2 * radius);
+
+            chars.forEach((ch, i) => {
+                const w = widths[i] / radius;
+                const mid = angle + w / 2;
+                const x = cx + radius * Math.cos(mid);
+                const y = cy + radius * Math.sin(mid); // FIXED: sebelumnya typo 'rad'
+
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(mid + Math.PI / 2 + (left ? Math.PI : 0));
+                ctx.fillText(ch, 0, 0);
+                ctx.restore();
+
+                angle += w + letterSpacing / radius;
+            });
+
+            ctx.restore();
+        }
+
+        // Fungsi menggambar chart PAPI (FIXED VERSION)
+        function drawPAPIChart(canvasId, papiData, employeeName = 'Employee') {
+            console.log(`Drawing PAPI chart ${canvasId}`, papiData);
+
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) {
+                console.log(`Canvas ${canvasId} not found`);
+                return null;
+            }
+
+            // Hapus chart sebelumnya jika ada
+            if (chartInstances.papi[canvasId]) {
+                chartInstances.papi[canvasId].destroy();
+                delete chartInstances.papi[canvasId];
+            }
+
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+
+            // Set canvas size berdasarkan container
+            const containerWidth = container.offsetWidth;
+            const size = Math.min(containerWidth, 400); // Max 400px
+
+            // Set canvas dimensions
+            canvas.width = size;
+            canvas.height = size;
+
+            // Set display size
+            canvas.style.width = size + 'px';
+            canvas.style.height = size + 'px';
+
+            const cx = size / 2;
+            const cy = size / 2;
+
+            const outerR = size * 0.48;
+            const innerR = size * 0.4;
+            const boxOuter = size * 0.39;
+            const boxInner = size * 0.31;
+            const descR = size * 0.35;
+            const subDescOuter = size * 0.3;
+            const subDescInner = size * 0.24;
+            const radarR = size * 0.24;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+
+            function getCategoryCenter(start, end) {
+                if (start <= end) return (start + end) / 2;
+                const span = 360 - start + end;
+                let center = start + span / 2;
+                if (center >= 360) center -= 360;
+                return center;
+            }
+
+            function getCategoryAverage(categoryName) {
+                const segs = papiSegments.filter((s) => s.cat === categoryName);
+                if (!segs.length) return 0;
+                const scores = segs
+                    .map((s) => {
+                        const d = papiData.find((w) => w.code === s.code);
+                        return d ? parseFloat(d.score) : null;
+                    })
+                    .filter((v) => v !== null);
+                if (!scores.length) return 0;
+                return (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
+            }
+
+            function arc(start, end, color) {
+                ctx.beginPath();
+                ctx.arc(cx, cy, outerR, ((start - 90) * Math.PI) / 180, ((end - 90) * Math.PI) / 180);
+                ctx.arc(cx, cy, innerR, ((end - 90) * Math.PI) / 180, ((start - 90) * Math.PI) / 180, true);
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+
+            // Draw categories
+            Object.entries(papiCategories).forEach(([n, c]) => {
+                if (n === 'KETAATAN') {
+                    arc(315, 360, c.color);
+                    arc(0, 45, c.color);
+                } else arc(c.start, c.end, c.color);
+            });
+
+            // Draw category labels
+            Object.entries(papiCategories).forEach(([name, c]) => {
+                const r = (outerR + innerR) / 2;
+                const center = getCategoryCenter(c.start, c.end);
+                const avg = getCategoryAverage(name);
+                const label = `${name} | ${avg}`;
+                drawArcText(ctx, label, cx, cy, r, center, 0.6);
+            });
+
+            // Draw segment backgrounds
+            papiSegments.forEach((s) => {
+                const sa = ((s.angle - 9 - 90) * Math.PI) / 180;
+                const ea = ((s.angle + 9 - 90) * Math.PI) / 180;
+                ctx.beginPath();
+                ctx.arc(cx, cy, subDescOuter, sa, ea);
+                ctx.arc(cx, cy, subDescInner, ea, sa, true);
+                ctx.closePath();
+                ctx.fillStyle = s.colorSolid;
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            });
+
+            // Draw segment codes
+            papiSegments.forEach((s) => {
+                const rad = ((s.angle - 90) * Math.PI) / 180;
+                const r = (subDescOuter + subDescInner) / 2;
+                const x = cx + r * Math.cos(rad);
+                const y = cy + r * Math.sin(rad);
+                ctx.save();
+                ctx.translate(x, y);
+                let rotate = rad + Math.PI / 2;
+                if (s.angle > 90 && s.angle < 270) rotate += Math.PI;
+                ctx.rotate(rotate);
+                ctx.font = 'bold 10px Arial';
+                ctx.fillStyle = '#fff';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(s.code, 0, 0);
+                ctx.restore();
+            });
+
+            // Draw description boxes
+            papiSegments.forEach((s) => {
+                const sa = ((s.angle - 9 - 90) * Math.PI) / 180;
+                const ea = ((s.angle + 9 - 90) * Math.PI) / 180;
+                ctx.beginPath();
+                ctx.arc(cx, cy, boxOuter, sa, ea);
+                ctx.arc(cx, cy, boxInner, ea, sa, true);
+                ctx.closePath();
+                ctx.fillStyle = s.color;
+                ctx.fill();
+                ctx.strokeStyle = s.colorSolid;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            });
+
+            // Draw descriptions
+            papiSegments.forEach((s) => {
+                const rad = ((s.angle - 90) * Math.PI) / 180;
+                const x = cx + descR * Math.cos(rad);
+                const y = cy + descR * Math.sin(rad);
+                ctx.save();
+                ctx.translate(x, y);
+                let rotate = rad + Math.PI / 2;
+                if (s.angle > 90 && s.angle < 270) rotate += Math.PI;
+                ctx.rotate(rotate);
+                ctx.font = '8px Arial';
+                ctx.fillStyle = '#000';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const lines = s.desc.split('\n');
+                lines.forEach((line, i) => {
+                    ctx.fillText(line, 0, (i - (lines.length - 1) / 2) * 8);
+                });
+                ctx.restore();
+            });
+
+            // Draw radar chart
+            const radarChart = drawRadarChart(canvas, papiData, cx, cy, radarR);
+
+            // Simpan instance chart
+            if (radarChart) {
+                chartInstances.papi[canvasId] = radarChart;
+            }
+
+            return radarChart;
+        }
+
+        // Fungsi untuk menggambar radar chart menggunakan Chart.js (FIXED)
+        function drawRadarChart(canvas, papiData, cx, cy, r) {
+            const parent = canvas.parentElement;
+
+            // Hapus radar chart sebelumnya jika ada
+            const existingRadar = parent.querySelector('.radar-chart-container');
+            if (existingRadar) {
+                existingRadar.remove();
+            }
+
+            const radarDiv = document.createElement('div');
+            radarDiv.className = 'radar-chart-container';
+            radarDiv.style.position = 'absolute';
+            radarDiv.style.left = cx - r + 'px';
+            radarDiv.style.top = cy - r + 'px';
+            radarDiv.style.width = r * 2 + 'px';
+            radarDiv.style.height = r * 2 + 'px';
+
+            const radarCanvas = document.createElement('canvas');
+            radarCanvas.width = r * 2;
+            radarCanvas.height = r * 2;
+            radarDiv.appendChild(radarCanvas);
+
+            parent.appendChild(radarDiv);
+
+            // Ensure Chart.js is loaded
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js not loaded');
+                return null;
+            }
+
+            try {
+                const chart = new Chart(radarCanvas, {
+                    type: 'radar',
+                    data: {
+                        labels: papiSegments.map((s) => s.code),
+                        datasets: [
+                            {
+                                label: 'PAPI Score',
+                                data: papiSegments.map((s) => {
+                                    const data = papiData.find((d) => d.code === s.code);
+                                    return data ? parseFloat(data.score) : 0;
+                                }),
+                                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                                borderColor: '#2563EB',
+                                borderWidth: 2,
+                                pointRadius: 2,
+                                pointBackgroundColor: '#2563EB',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 1,
+                            },
+                        ],
+                    },
+                    options: {
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    title: function (context) {
+                                        const segment = papiSegments[context[0].dataIndex];
+                                        return `${segment.code} - ${segment.cat}`;
+                                    },
+                                    label: function (context) {
+                                        const segment = papiSegments[context.dataIndex];
+                                        return `${segment.desc.replace(/\n/g, ' ')}: ${context.raw}`;
+                                    },
+                                },
+                            },
+                        },
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                min: 0,
+                                max: 9,
+                                ticks: {
+                                    stepSize: 1,
+                                    display: false,
+                                    backdropColor: 'transparent',
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)',
+                                    circular: true,
+                                },
+                                angleLines: {
+                                    color: 'rgba(0, 0, 0, 0.1)',
+                                },
+                                pointLabels: {
+                                    display: false,
+                                },
+                            },
+                        },
+                        maintainAspectRatio: false,
+                        responsive: true,
+                    },
+                });
+
+                return chart;
+            } catch (error) {
+                console.error('Error creating radar chart:', error);
+                return null;
+            }
+        }
+
+        // Fungsi untuk menggambar chart DISC (sama seperti di employee profile)
+        function drawDISCChart(canvasId, discData, chartType = 1) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return null;
+
+            // Ensure Chart.js is loaded
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js not loaded');
+                return null;
+            }
+
+            // Destroy existing chart if exists
+            const existingChart = Chart.getChart(canvas);
+            if (existingChart) {
+                existingChart.destroy();
+            }
+
+            const colorMap = {
+                1: { border: '#ef4444', background: 'rgba(239, 68, 68, 0.1)' },
+                2: { border: '#eab308', background: 'rgba(234, 179, 8, 0.1)' },
+                3: { border: '#22c55e', background: 'rgba(34, 197, 94, 0.1)' },
+            };
+
+            const colors = colorMap[chartType] || colorMap[1];
+
+            try {
+                const chart = new Chart(canvas, {
+                    type: 'line',
+                    plugins: [window.ChartDataLabels || {}],
+                    data: {
+                        labels: ['D', 'I', 'S', 'C'],
+                        datasets: [
+                            {
+                                label: `DISC ${chartType}`,
+                                data: [
+                                    parseFloat(discData.D) || 0,
+                                    parseFloat(discData.I) || 0,
+                                    parseFloat(discData.S) || 0,
+                                    parseFloat(discData.C) || 0,
+                                ],
+                                borderColor: colors.border,
+                                backgroundColor: colors.background,
+                                borderWidth: 3,
+                                tension: 0.4,
+                                fill: true,
+                                pointRadius: 6,
+                                pointHoverRadius: 8,
+                                pointBackgroundColor: '#fff',
+                                pointBorderWidth: 3,
+                                pointBorderColor: colors.border,
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                top: 10,
+                                bottom: 10,
+                                left: 5,
+                                right: 5,
+                            },
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                padding: 12,
+                                titleFont: { size: 14, weight: 'bold' },
+                                bodyFont: { size: 13 },
+                                callbacks: {
+                                    label: function (context) {
+                                        return `Score: ${context.parsed.y}`;
+                                    },
+                                },
+                            },
+                            datalabels: {
+                                display: true,
+                                color: '#111',
+                                backgroundColor: colors.background.replace('0.1', '0.2'),
+                                borderRadius: 4,
+                                font: { size: 12, weight: 'bold' },
+                                align: 'top',
+                                offset: 6,
+                                formatter: (value) => value,
+                            },
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    stepSize: 20,
+                                    font: { size: 11 },
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    drawBorder: true,
+                                },
+                            },
+                            x: {
+                                ticks: {
+                                    font: { size: 13, weight: 'bold' },
+                                    color: '#374151',
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    drawBorder: true,
+                                },
+                            },
+                        },
+                    },
+                });
+
+                // Simpan instance chart
+                const chartKey = canvasId;
+                if (chartType === 1) {
+                    chartInstances.disc1[chartKey] = chart;
+                } else if (chartType === 2) {
+                    chartInstances.disc2[chartKey] = chart;
+                } else {
+                    chartInstances.disc3[chartKey] = chart;
+                }
+
+                return chart;
+            } catch (error) {
+                console.error('Error creating DISC chart:', error);
+                return null;
+            }
+        }
+
+        // Fungsi untuk menginisialisasi semua charts (FIXED)
+        function initializeCharts() {
+            console.log('Initializing charts...');
+
+            // Initialize PAPI charts for each column
+            for (let i = 0; i < 5; i++) {
+                const canvasId = `papiChart-${i}`;
+                const canvas = document.getElementById(canvasId);
+
+                if (canvas) {
+                    try {
+                        const papiDataAttr = canvas.getAttribute('data-papi-data');
+                        if (papiDataAttr && papiDataAttr !== '[]') {
+                            const papiData = JSON.parse(papiDataAttr);
+                            console.log(`PAPI Data for ${canvasId}:`, papiData);
+                            drawPAPIChart(canvasId, papiData, canvas.dataset.employeeName);
+                        } else {
+                            console.log(`No PAPI data attribute for ${canvasId}`);
+                        }
+                    } catch (error) {
+                        console.error(`Error parsing PAPI data for ${canvasId}:`, error);
+                        const ctx = canvas.getContext('2d');
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    }
+                }
+            }
+
+            // Initialize DISC charts for each column
+            for (let i = 0; i < 5; i++) {
+                // DISC 1
+                const disc1Canvas = document.getElementById(`disc1Chart-${i}`);
+                if (disc1Canvas) {
+                    try {
+                        const discDataAttr = disc1Canvas.getAttribute('data-disc-data');
+                        if (discDataAttr && discDataAttr !== '{}') {
+                            const discData = JSON.parse(discDataAttr);
+                            console.log(`DISC 1 Data for ${i}:`, discData);
+
+                            if (discData && typeof discData === 'object' && Object.keys(discData).length > 0) {
+                                drawDISCChart(`disc1Chart-${i}`, discData, 1);
+                            } else {
+                                const chart = Chart.getChart(disc1Canvas);
+                                if (chart) chart.destroy();
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error parsing DISC 1 data:', error);
+                    }
+                }
+
+                // DISC 2
+                const disc2Canvas = document.getElementById(`disc2Chart-${i}`);
+                if (disc2Canvas) {
+                    try {
+                        const discDataAttr = disc2Canvas.getAttribute('data-disc-data');
+                        if (discDataAttr && discDataAttr !== '{}') {
+                            const discData = JSON.parse(discDataAttr);
+                            if (discData && typeof discData === 'object' && Object.keys(discData).length > 0) {
+                                drawDISCChart(`disc2Chart-${i}`, discData, 2);
+                            } else {
+                                const chart = Chart.getChart(disc2Canvas);
+                                if (chart) chart.destroy();
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error parsing DISC 2 data:', error);
+                    }
+                }
+
+                // DISC 3
+                const disc3Canvas = document.getElementById(`disc3Chart-${i}`);
+                if (disc3Canvas) {
+                    try {
+                        const discDataAttr = disc3Canvas.getAttribute('data-disc-data');
+                        if (discDataAttr && discDataAttr !== '{}') {
+                            const discData = JSON.parse(discDataAttr);
+                            if (discData && typeof discData === 'object' && Object.keys(discData).length > 0) {
+                                drawDISCChart(`disc3Chart-${i}`, discData, 3);
+                            } else {
+                                const chart = Chart.getChart(disc3Canvas);
+                                if (chart) chart.destroy();
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error parsing DISC 3 data:', error);
+                    }
+                }
+            }
+        }
+
+        // Load Chart.js dan plugins jika belum dimuat
+        function loadChartJS() {
+            return new Promise((resolve) => {
+                if (typeof Chart !== 'undefined') {
+                    // Load ChartDataLabels plugin
+                    if (typeof ChartDataLabels === 'undefined') {
+                        const script = document.createElement('script');
+                        script.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2';
+                        script.onload = resolve;
+                        document.head.appendChild(script);
+                    } else {
+                        resolve();
+                    }
+                    return;
+                }
+
+                // Load Chart.js terlebih dahulu
+                const chartScript = document.createElement('script');
+                chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+                chartScript.onload = () => {
+                    // Load ChartDataLabels plugin setelah Chart.js
+                    const datalabelsScript = document.createElement('script');
+                    datalabelsScript.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2';
+                    datalabelsScript.onload = resolve;
+                    document.head.appendChild(datalabelsScript);
+                };
+                document.head.appendChild(chartScript);
+            });
+        }
+
+        // Event listener untuk DOM ready
+        document.addEventListener('DOMContentLoaded', async function () {
+            console.log('DOM loaded, initializing charts...');
+
+            try {
+                // Tunggu hingga Chart.js dan plugins dimuat
+                await loadChartJS();
+                console.log('Chart.js loaded');
+
+                // Tunggu sedikit untuk memastikan DOM siap
+                setTimeout(() => {
+                    initializeCharts();
+                }, 100);
+
+                // Tambahkan event listener untuk resize dengan debounce
+                let resizeTimer;
+                window.addEventListener('resize', function () {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(() => {
+                        console.log('Window resized, reinitializing charts');
+                        initializeCharts();
+                    }, 250);
+                });
+            } catch (error) {
+                console.error('Error initializing charts:', error);
+            }
+        });
+
+        // Event listener untuk Livewire events
+        document.addEventListener('livewire:init', () => {
+            console.log('Livewire initialized');
+
+            Livewire.on('charts-loaded', () => {
+                console.log('Charts-loaded event received');
+                // Tunggu sedikit agar DOM diperbarui
+                setTimeout(() => {
+                    initializeCharts();
+                }, 300);
+            });
+
+            Livewire.on('employee-selected', (data) => {
+                console.log('Employee selected event:', data);
+                setTimeout(() => {
+                    initializeCharts();
+                }, 400);
+            });
+
+            Livewire.on('employee-cleared', (data) => {
+                console.log('Employee cleared event:', data);
+                const index = data.index;
+
+                // Hapus PAPI chart
+                const papiCanvas = document.getElementById(`papiChart-${index}`);
+                if (papiCanvas) {
+                    const ctx = papiCanvas.getContext('2d');
+                    ctx.clearRect(0, 0, papiCanvas.width, papiCanvas.height);
+
+                    // Hapus radar chart container
+                    const radarContainer = papiCanvas.parentElement.querySelector('.radar-chart-container');
+                    if (radarContainer) {
+                        radarContainer.remove();
+                    }
+                }
+
+                // Hapus DISC charts
+                ['disc1', 'disc2', 'disc3'].forEach((discType) => {
+                    const discCanvas = document.getElementById(`${discType}Chart-${index}`);
+                    if (discCanvas) {
+                        const chart = Chart.getChart(discCanvas);
+                        if (chart) chart.destroy();
+                    }
+                });
+            });
+        });
+
+        // Livewire navigation event
+        document.addEventListener('livewire:navigated', () => {
+            console.log('Livewire navigated, reinitializing charts');
+            setTimeout(() => {
+                initializeCharts();
+            }, 500);
+        });
+
+        // Cleanup ketika komponen di-unmount
+        document.addEventListener('livewire:before-unload', function () {
+            console.log('Cleaning up charts before unmount');
+            destroyAllCharts();
+        });
+    </script>
 </div>
