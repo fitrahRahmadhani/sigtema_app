@@ -36,4 +36,24 @@ class Papi extends Model
     {
         return $this->belongsTo(Employee::class);
     }
+
+    /**
+     * Get PAPI data in structured format
+     */
+    public function getFormattedData(): array
+    {
+        $scales = ['N', 'G', 'A', 'L', 'P', 'I', 'T', 'V', 'B', 'O', 'S', 'X', 'C', 'D', 'R', 'Z', 'E', 'K', 'F', 'W'];
+
+        $data = [];
+        foreach ($scales as $scale) {
+            if (!is_null($this->{$scale})) {
+                $data[] = [
+                    'code' => $scale,
+                    'score' => $this->{$scale}
+                ];
+            }
+        }
+
+        return $data;
+    }
 }

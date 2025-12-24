@@ -112,6 +112,11 @@ class Employee extends Model
         return $this->hasOne(Mbti::class);
     }
 
+    public function papi()
+    {
+        return $this->hasOne(Papi::class);
+    }
+
 
     /**
      * Get the position history that the employee holds.
