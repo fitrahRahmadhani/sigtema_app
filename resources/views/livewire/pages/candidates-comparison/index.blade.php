@@ -1281,13 +1281,13 @@
             const cy = size / 2;
 
             const outerR = size * 0.48;
-            const innerR = size * 0.4;
-            const boxOuter = size * 0.39;
-            const boxInner = size * 0.31;
-            const descR = size * 0.35;
-            const subDescOuter = size * 0.3;
-            const subDescInner = size * 0.24;
-            const radarR = size * 0.24;
+            const innerR = size * 0.42;
+            const boxOuter = size * 0.41;
+            const boxInner = size * 0.33;
+            const descR = size * 0.37;
+            const subDescOuter = size * 0.32;
+            const subDescInner = size * 0.28;
+            const radarR = size * 0.28;
 
             // Clear canvas
             ctx.clearRect(0, 0, size, size);
@@ -1491,24 +1491,10 @@
                         },
                         scales: {
                             r: {
-                                beginAtZero: true,
                                 min: 0,
                                 max: 9,
-                                ticks: {
-                                    stepSize: 1,
-                                    display: false,
-                                    backdropColor: 'transparent',
-                                },
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.1)',
-                                    circular: true,
-                                },
-                                angleLines: {
-                                    color: 'rgba(0, 0, 0, 0.1)',
-                                },
-                                pointLabels: {
-                                    display: false,
-                                },
+                                pointLabels: { display: false },
+                                ticks: { stepSize: 1 },
                             },
                         },
                         maintainAspectRatio: false,

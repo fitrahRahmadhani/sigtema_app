@@ -118,7 +118,7 @@ Route::group(['middleware' => ['role:superadmin|admin|head-of-unit', 'auth', 've
 
     // Vacant Positions
     Route::get('career-path/vacant-positions', App\Livewire\Pages\VacantPositions\Index::class)->name('vacant-positions.index');
-    Route::get('career-path/vacant-positions/show', App\Livewire\Pages\VacantPositions\Show::class)->name('vacant-positions.show');
+    Route::get('career-path/vacant-positions/{position:slug}/show', App\Livewire\Pages\VacantPositions\Show::class)->name('vacant-positions.show');
 
     // Candidates Comparison
     Route::get('career-path/candidates-comparison/index', App\Livewire\Pages\CandidatesComparison\Index::class)->name('candidates-comparison.index');

@@ -24,8 +24,15 @@ class Index extends Component
     public string $search = '';
     public string $filterDepartment = '';
     public string $filterUnit = '';
+    public string $activeTab = 'vacant'; // 'vacant' or 'all'
 
-    protected $queryString = ['search', 'filterDepartment', 'filterUnit'];
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'filterDepartment' => ['except' => ''],
+        'filterUnit' => ['except' => ''],
+        'activeTab' => ['except' => 'vacant'],
+        'page' => ['except' => 1]
+    ];
 
     public function mount(): void
     {
@@ -45,6 +52,9 @@ class Index extends Component
             $this->selectedCompany = Company::find($this->selectedCompanyId);
             $this->companies = Company::where('id', $user->company_id)->get();
         }
+
+        // Set default tab from query string or session
+        $this->activeTab = request('activeTab', session('vacant_positions_active_tab', 'vacant'));
     }
 
     public function selectCompany($companyId)
@@ -63,6 +73,13 @@ class Index extends Component
         session()->forget('vacant_positions_company_id');
         $this->resetPage();
         $this->resetFilters();
+    }
+
+    public function setTab($tab)
+    {
+        $this->activeTab = $tab;
+        session(['vacant_positions_active_tab' => $tab]);
+        $this->resetPage();
     }
 
     private function resetFilters()
@@ -87,20 +104,62 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function getFilteredPositions()
+    public function updatedActiveTab(): void
+    {
+        $this->resetPage();
+    }
+
+    public function getStats()
     {
         if (!$this->selectedCompanyId) {
-            return collect();
+            return [
+                'total' => 0,
+                'vacant' => 0,
+                'filled' => 0
+            ];
         }
 
-        $query = Position::where('company_id', $this->selectedCompanyId)
-            ->whereNull('employee_id');
+        $total = Position::where('company_id', $this->selectedCompanyId)->count();
+        $vacant = Position::where('company_id', $this->selectedCompanyId)
+            ->whereNull('employee_id')
+            ->count();
+        $filled = $total - $vacant;
+
+        return [
+            'total' => $total,
+            'vacant' => $vacant,
+            'filled' => $filled
+        ];
+    }
+
+    public function render()
+    {
+        // Jika superadmin belum pilih company
+        if ($this->isSuperadmin && !$this->selectedCompanyId) {
+            return view('livewire.pages.vacant-positions.index', [
+                'showCompanySelection' => true,
+                'companies' => $this->companies,
+                'isSuperadmin' => $this->isSuperadmin,
+                'selectedCompany' => null,
+                'positions' => collect(),
+                'departments' => collect(),
+                'units' => collect(),
+                'stats' => $this->getStats()
+            ]);
+        }
+
+        $query = Position::where('company_id', $this->selectedCompanyId);
+
+        // Filter berdasarkan tab aktif
+        if ($this->activeTab === 'vacant') {
+            $query->whereNull('employee_id');
+        }
 
         // Filter search
         if (!empty($this->search)) {
             $query->where(function ($q) {
                 $q->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('code', 'like', '%' . $this->search . '%');
+                    ->orWhere('position_code', 'like', '%' . $this->search . '%');
             });
         }
 
@@ -119,80 +178,48 @@ class Index extends Component
             });
         }
 
-        return $query->get();
-    }
+        $positions = $query->orderBy('name')->paginate(10);
 
-    public function getUniqueDepartments()
-    {
-        if (!$this->selectedCompanyId) {
-            return collect();
+        // Get unique departments and units for filters
+        $departmentQuery = Position::where('company_id', $this->selectedCompanyId);
+        $unitQuery = Position::where('company_id', $this->selectedCompanyId);
+
+        if ($this->activeTab === 'vacant') {
+            $departmentQuery->whereNull('employee_id');
+            $unitQuery->whereNull('employee_id');
         }
 
-        return Position::where('company_id', $this->selectedCompanyId)
-            ->whereNull('employee_id')
-            ->whereNotNull('department')
+        $departments = $departmentQuery->whereNotNull('department')
             ->pluck('department')
             ->unique()
             ->sort()
             ->values();
-    }
 
-    public function getUniqueUnits()
-    {
-        if (!$this->selectedCompanyId) {
-            return collect();
-        }
-
-        return Position::where('company_id', $this->selectedCompanyId)
-            ->whereNull('employee_id')
-            ->where(function ($query) {
-                $query->whereNotNull('section')
-                    ->orWhereNotNull('biro')
-                    ->orWhereNotNull('department')
-                    ->orWhereNotNull('directorate');
-            })
+        $units = $unitQuery->where(function ($q) {
+            $q->whereNotNull('section')
+                ->orWhereNotNull('biro')
+                ->orWhereNotNull('department')
+                ->orWhereNotNull('directorate');
+        })
             ->get()
             ->map(function ($position) {
-                return $position->work_unit; // Using work_unit accessor
+                return $position->work_unit;
             })
             ->filter()
             ->unique()
             ->sort()
             ->values();
-    }
-
-    public function render()
-    {
-        // Jika superadmin belum pilih company
-        if ($this->isSuperadmin && !$this->selectedCompanyId) {
-            return view('livewire.pages.vacant-positions.index', [
-                'showCompanySelection' => true,
-                'companies' => $this->companies,
-                'isSuperadmin' => $this->isSuperadmin,
-                'selectedCompany' => null,
-                'positions' => collect(),
-                'total' => 0,
-                'departments' => collect(),
-                'units' => collect(),
-            ]);
-        }
-
-        $filtered = $this->getFilteredPositions();
-        $currentPage = request()->query('page', 1);
-        $perPage = 10;
-
-        $positions = $filtered->forPage($currentPage, $perPage);
-        $total = $filtered->count();
 
         return view('livewire.pages.vacant-positions.index', [
             'showCompanySelection' => false,
             'positions' => $positions,
-            'total' => $total,
-            'departments' => $this->getUniqueDepartments(),
-            'units' => $this->getUniqueUnits(),
+            'departments' => $departments,
+            'units' => $units,
             'selectedCompany' => $this->selectedCompany,
             'isSuperadmin' => $this->isSuperadmin,
             'companies' => $this->companies,
+            'stats' => $this->getStats(),
+            'activeTab' => $this->activeTab
         ]);
     }
 }
