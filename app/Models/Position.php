@@ -8,6 +8,11 @@ class Position extends Model
 {
     protected $guarded = [];
 
+    public function requirements()
+    {
+        return $this->hasMany(PositionRequirementSetting::class);
+    }
+
     public function company()
     {
         return $this->belongsTo(Company::class);

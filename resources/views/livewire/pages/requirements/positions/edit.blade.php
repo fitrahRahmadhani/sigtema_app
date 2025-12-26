@@ -36,48 +36,6 @@
                     <p class="mt-1 text-sm text-gray-500">Update requirements for this position</p>
                 </div>
             </div>
-
-            <!-- Save All Button -->
-            <button
-                wire:click="save"
-                wire:loading.attr="disabled"
-                wire:target="save"
-                class="color-gradient inline-flex items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
-            >
-                <svg
-                    wire:loading.remove
-                    wire:target="save"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="h-5 w-5"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-                    />
-                </svg>
-                <svg
-                    wire:loading
-                    wire:target="save"
-                    class="h-5 w-5 animate-spin"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                >
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path
-                        class="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                </svg>
-                <span wire:loading.remove wire:target="save">Save All Changes</span>
-                <span wire:loading wire:target="save">Saving...</span>
-            </button>
         </div>
 
         <!-- Position Information -->
@@ -137,7 +95,7 @@
                         all at once.
                     </p>
                 </div>
-                <span class="rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-purple-800">
+                <span class="rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-wrap text-purple-800">
                     {{ count($requirements) }} requirements
                 </span>
             </div>

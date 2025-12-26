@@ -3,217 +3,192 @@
 namespace App\Livewire\Pages\VacantPositions;
 
 use Livewire\Component;
-use Livewire\Attributes\Title;
+use App\Models\Position;
+use App\Models\Employee;
+use App\Jobs\ProcessAIRecommendationsJob;
 use Masmerise\Toaster\Toaster;
+use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 #[Layout('components.layouts.app')]
 class Show extends Component
 {
     #[Title('Candidates Match')]
 
+    public $positionSlug;
     public $selectedCandidates = [];
+    public $aiProcessing = false;
+    public $aiProgress = 0;
+    public $aiStatus = '';
+    public $recommendations = [];
+    public $position;
 
-    // Validasi maksimal 5 kandidat
-    public function updatedSelectedCandidates($value)
+    public function mount(Position $position)
     {
-        if (count($this->selectedCandidates) > 5) {
-            // Ambil hanya 5 kandidat pertama
-            $this->selectedCandidates = array_slice($this->selectedCandidates, 0, 5);
+        $this->position = $position;
+
+        // Check for cached results
+        $cacheKey = "ai_analysis_{$this->position->id}";
+        $cachedResults = Cache::get($cacheKey);
+
+        if ($cachedResults) {
+            $this->recommendations = $cachedResults;
+            $this->aiProcessing = false;
+            $this->aiProgress = 100;
+            Toaster::info('Loaded cached AI recommendations');
+        }
+    }
+    protected function getListeners()
+    {
+        $userId = Auth::id();
+        $positionId = $this->position->id;
+
+        return [
+            "echo-private:ai-analysis.{$userId}.{$positionId},.ai.progress" => 'handleAIProgress',
+            "echo-private:ai-analysis.{$userId}.{$positionId},.ai.completed" => 'handleAICompleted',
+            "echo-private:ai-analysis.{$userId}.{$positionId},.ai.failed" => 'handleAIFailed',
+        ];
+    }
+
+    public function startAIProcessing()
+    {
+        $this->aiProcessing = true;
+        $this->aiProgress = 0;
+        $this->aiStatus = 'Initializing AI analysis...';
+
+        // Dispatch job
+        ProcessAIRecommendationsJob::dispatch($this->position, Auth::id());
+
+        Toaster::info('AI analysis started. This may take 1-2 minutes.');
+    }
+
+    public function retryAIProcessing()
+    {
+        Cache::forget("ai_analysis_{$this->position->id}");
+        $this->recommendations = [];
+        $this->startAIProcessing();
+    }
+
+    public function handleAIProgress($event)
+    {
+        Log::info('Livewire received progress event', [
+            'event' => $event,
+            'position_id' => $this->position->id,
+            'user_id' => Auth::id()
+        ]);
+
+        $this->aiProgress = $event['progress'];
+        $this->aiStatus = $event['message'];
+
+        // Update UI
+        $this->dispatch('status-updated');
+    }
+
+    public function handleAICompleted($event)
+    {
+        Log::info('Livewire received completed event', [
+            'event' => $event,
+            'position_id' => $this->position->id
+        ]);
+
+        $this->recommendations = $event['results'];
+        $this->aiProcessing = false;
+        $this->aiProgress = 100;
+        $this->aiStatus = 'Analysis complete!';
+
+        // Store in cache
+        Cache::put("ai_analysis_{$this->position->id}", $event['results'], now()->addHours(24));
+
+        Toaster::success('AI analysis complete! Top 10 candidates found.');
+
+        // Update UI
+        $this->dispatch('status-updated');
+    }
+
+    public function handleAIFailed($event)
+    {
+        Log::info('Livewire received failed event', [
+            'event' => $event,
+            'position_id' => $this->position->id
+        ]);
+
+        $this->aiProcessing = false;
+        $this->aiStatus = 'Analysis failed';
+        Toaster::error('AI analysis failed: ' . $event['error']);
+
+        // Update UI
+        $this->dispatch('status-updated');
+    }
+
+    // Polling fallback - check status setiap 2 detik
+    public function pollStatus()
+    {
+        if (!$this->aiProcessing) {
+            return;
+        }
+
+        $cacheKey = "ai_analysis_{$this->position->id}";
+        $cachedResults = Cache::get($cacheKey);
+
+        if ($cachedResults) {
+            $this->recommendations = $cachedResults;
+            $this->aiProcessing = false;
+            $this->aiProgress = 100;
+            $this->aiStatus = 'Analysis complete!';
+            Toaster::success('AI analysis complete!');
+            return;
+        }
+
+        // Check progress dari cache
+        $progressKey = "ai_progress_{$this->position->id}";
+        $progress = Cache::get($progressKey);
+
+        if ($progress) {
+            $this->aiProgress = $progress['progress'];
+            $this->aiStatus = $progress['message'];
         }
     }
 
-    // Optimize rendering dengan computed property
-    public function getCandidatesProperty()
+    public function updatedSelectedCandidates($value)
     {
-        return [
-            [
-                'id' => 'candidate_1',
-                'name' => 'M. Habib Sulaiman',
-                'department' => 'Human Capital',
-                'division' => 'Talent Acquisition & Mobility',
-                'band' => 'Band 4',
-                'match' => 100,
-                'avatar' => 'https://avatar.iran.liara.run/public/22'
-            ],
-            [
-                'id' => 'candidate_2',
-                'name' => 'Siti Nurhaliza',
-                'department' => 'Finance',
-                'division' => 'Financial Planning & Analysis',
-                'band' => 'Band 5',
-                'match' => 98,
-                'avatar' => 'https://avatar.iran.liara.run/public/23'
-            ],
-            [
-                'id' => 'candidate_3',
-                'name' => 'Ahmad Fauzi',
-                'department' => 'IT',
-                'division' => 'Software Development',
-                'band' => 'Band 4',
-                'match' => 95,
-                'avatar' => 'https://avatar.iran.liara.run/public/24'
-            ],
-            [
-                'id' => 'candidate_4',
-                'name' => 'Rina Wijaya',
-                'department' => 'Marketing',
-                'division' => 'Digital Marketing',
-                'band' => 'Band 3',
-                'match' => 93,
-                'avatar' => 'https://avatar.iran.liara.run/public/25'
-            ],
-            [
-                'id' => 'candidate_5',
-                'name' => 'Budi Santoso',
-                'department' => 'Operations',
-                'division' => 'Supply Chain Management',
-                'band' => 'Band 4',
-                'match' => 92,
-                'avatar' => 'https://avatar.iran.liara.run/public/26'
-            ],
-            [
-                'id' => 'candidate_6',
-                'name' => 'Dewi Lestari',
-                'department' => 'Human Capital',
-                'division' => 'Learning & Development',
-                'band' => 'Band 5',
-                'match' => 90,
-                'avatar' => 'https://avatar.iran.liara.run/public/27'
-            ],
-            [
-                'id' => 'candidate_7',
-                'name' => 'Rudi Hermawan',
-                'department' => 'Sales',
-                'division' => 'Enterprise Sales',
-                'band' => 'Band 4',
-                'match' => 89,
-                'avatar' => 'https://avatar.iran.liara.run/public/28'
-            ],
-            [
-                'id' => 'candidate_8',
-                'name' => 'Maya Kartika',
-                'department' => 'IT',
-                'division' => 'Data Analytics',
-                'band' => 'Band 3',
-                'match' => 88,
-                'avatar' => 'https://avatar.iran.liara.run/public/29'
-            ],
-            [
-                'id' => 'candidate_9',
-                'name' => 'Andi Pratama',
-                'department' => 'Finance',
-                'division' => 'Treasury & Risk Management',
-                'band' => 'Band 5',
-                'match' => 87,
-                'avatar' => 'https://avatar.iran.liara.run/public/30'
-            ],
-            [
-                'id' => 'candidate_10',
-                'name' => 'Fitri Handayani',
-                'department' => 'Marketing',
-                'division' => 'Brand Management',
-                'band' => 'Band 4',
-                'match' => 86,
-                'avatar' => 'https://avatar.iran.liara.run/public/31'
-            ],
-            [
-                'id' => 'candidate_11',
-                'name' => 'Doni Setiawan',
-                'department' => 'Operations',
-                'division' => 'Logistics & Distribution',
-                'band' => 'Band 3',
-                'match' => 85,
-                'avatar' => 'https://avatar.iran.liara.run/public/32'
-            ],
-            [
-                'id' => 'candidate_12',
-                'name' => 'Linda Susanti',
-                'department' => 'Human Capital',
-                'division' => 'Compensation & Benefits',
-                'band' => 'Band 5',
-                'match' => 84,
-                'avatar' => 'https://avatar.iran.liara.run/public/33'
-            ],
-            [
-                'id' => 'candidate_13',
-                'name' => 'Hendra Gunawan',
-                'department' => 'IT',
-                'division' => 'Infrastructure & Security',
-                'band' => 'Band 4',
-                'match' => 83,
-                'avatar' => 'https://avatar.iran.liara.run/public/34'
-            ],
-            [
-                'id' => 'candidate_14',
-                'name' => 'Ratna Sari',
-                'department' => 'Finance',
-                'division' => 'Accounting & Tax',
-                'band' => 'Band 3',
-                'match' => 82,
-                'avatar' => 'https://avatar.iran.liara.run/public/35'
-            ],
-            [
-                'id' => 'candidate_15',
-                'name' => 'Yoga Prasetyo',
-                'department' => 'Sales',
-                'division' => 'Business Development',
-                'band' => 'Band 5',
-                'match' => 81,
-                'avatar' => 'https://avatar.iran.liara.run/public/36'
-            ],
-            [
-                'id' => 'candidate_16',
-                'name' => 'Novi Rahmawati',
-                'department' => 'Marketing',
-                'division' => 'Customer Experience',
-                'band' => 'Band 4',
-                'match' => 80,
-                'avatar' => 'https://avatar.iran.liara.run/public/37'
-            ],
-            [
-                'id' => 'candidate_17',
-                'name' => 'Irfan Hakim',
-                'department' => 'Operations',
-                'division' => 'Quality Assurance',
-                'band' => 'Band 3',
-                'match' => 79,
-                'avatar' => 'https://avatar.iran.liara.run/public/38'
-            ],
-            [
-                'id' => 'candidate_18',
-                'name' => 'Tuti Wulandari',
-                'department' => 'Human Capital',
-                'division' => 'Employee Relations',
-                'band' => 'Band 4',
-                'match' => 78,
-                'avatar' => 'https://avatar.iran.liara.run/public/39'
-            ],
-            [
-                'id' => 'candidate_19',
-                'name' => 'Eko Prasetyo',
-                'department' => 'IT',
-                'division' => 'Product Management',
-                'band' => 'Band 5',
-                'match' => 77,
-                'avatar' => 'https://avatar.iran.liara.run/public/40'
-            ],
-            [
-                'id' => 'candidate_20',
-                'name' => 'Sari Indah',
-                'department' => 'Finance',
-                'division' => 'Internal Audit',
-                'band' => 'Band 4',
-                'match' => 76,
-                'avatar' => 'https://avatar.iran.liara.run/public/41'
-            ],
-        ];
+        if (count($this->selectedCandidates) > 5) {
+            $this->selectedCandidates = array_slice($this->selectedCandidates, 0, 5);
+            Toaster::warning('Maximum 5 candidates can be selected');
+        }
+    }
+
+    public function compareSelected()
+    {
+        if (count($this->selectedCandidates) < 2) {
+            Toaster::warning('Please select at least 2 candidates to compare');
+            return;
+        }
+
+        // return redirect()->route('vacant-positions.compare', [
+        //     'slug' => $this->positionSlug,
+        //     'candidates' => implode(',', $this->selectedCandidates)
+        // ]);
+    }
+
+    public function getUserIdProperty()
+    {
+        return Auth::id();
+    }
+
+    public function getPositionIdProperty()
+    {
+        return $this->position->id;
     }
 
     public function render()
     {
         return view('livewire.pages.vacant-positions.show', [
-            'candidates' => $this->candidates
+            'position' => $this->position,
+            'candidates' => $this->recommendations
         ]);
     }
 }
