@@ -9,24 +9,34 @@ use Illuminate\Support\Facades\Log;
 
 class FileBasedAIRecommendationService
 {
-    private const MAX_EMPLOYEES = 1000;
-
-    public function analyzeWithFileUpload(Position $position, $progressCallback = null)
+    public function analyzeWithFileUpload(Position $position, array $employeeIds, $progressCallback = null)
     {
         try {
             if ($progressCallback) {
-                $progressCallback(10, "Preparing analysis...");
+                $progressCallback(10, "Preparing candidate data...");
             }
 
-            // Step 1: Get eligible employees
-            $employees = $this->getEligibleEmployees($position);
+            // Step 1: Get selected employees
+            $employees = Employee::with([
+                'technicalCompetencies',
+                'educations',
+                'innovations',
+                'mcuResults',
+                'burnout',
+                'mbti',
+                'disc',
+                'papi',
+                'positionHistories'
+            ])
+                ->whereIn('id', $employeeIds)
+                ->get();
 
             if ($progressCallback) {
-                $progressCallback(30, "Found {$employees->count()} eligible candidates");
+                $progressCallback(30, "Processing {$employees->count()} selected candidates");
             }
 
             if ($employees->isEmpty()) {
-                Log::warning('No eligible employees found for position: ' . $position->id);
+                Log::warning('No employees selected for analysis');
                 return [];
             }
 
@@ -41,7 +51,7 @@ class FileBasedAIRecommendationService
             $results = $this->callGeminiForAnalysis($position, $analysisData);
 
             if ($progressCallback) {
-                $progressCallback(90, "Processing AI results...");
+                $progressCallback(90, "Processing AI analysis results...");
             }
 
             // Step 4: Validate and format results
@@ -59,18 +69,12 @@ class FileBasedAIRecommendationService
                 'trace' => $e->getTraceAsString()
             ]);
 
-            // Fallback to simple scoring jika API gagal
-            if ($progressCallback) {
-                $progressCallback(100, "Using alternative analysis...");
-            }
-
-            return $this->fallbackAnalysis($position, $employees ?? collect([]));
+            throw $e;
         }
     }
 
     private function prepareAnalysisData(Position $position, $employees)
     {
-        // Format data untuk dikirim ke Gemini
         $positionData = [
             'position_name' => $position->name,
             'band' => $position->band,
@@ -99,7 +103,6 @@ class FileBasedAIRecommendationService
 
         return [
             'employee_id' => $employee->id,
-            'name' => $employee->name,
             'employee_number' => $employee->employee_number,
             'band' => $employee->band,
             'technical_skills' => $employee->technicalCompetencies->pluck('name')->toArray(),
@@ -107,7 +110,8 @@ class FileBasedAIRecommendationService
                 return [
                     'degree' => $edu->degree,
                     'major' => $edu->major,
-                    'institution' => $edu->institution
+                    'institution' => $edu->institution,
+                    'graduation_year' => $edu->graduation_year
                 ];
             })->toArray(),
             'psychogram' => [
@@ -148,13 +152,15 @@ class FileBasedAIRecommendationService
                 return [
                     'title' => $inn->title,
                     'status' => $inn->status,
-                    'achievement' => $inn->achievement
+                    'achievement' => $inn->achievement,
+                    'year' => $inn->year
                 ];
             })->toArray(),
             'medical_checkup' => $employee->mcuResults->map(function ($mcu) {
                 return [
                     'year' => $mcu->year,
-                    'result' => $mcu->result
+                    'result' => $mcu->result,
+                    'recommendation' => $mcu->recommendation
                 ];
             })->toArray(),
             'burnout_status' => $employee->burnout?->result,
@@ -163,32 +169,31 @@ class FileBasedAIRecommendationService
                     'position' => $hist->position_name,
                     'work_unit' => $hist->work_unit,
                     'start_date' => $hist->start_date,
-                    'end_date' => $hist->end_date
+                    'end_date' => $hist->end_date,
+                    'duration_months' => $hist->duration_months
                 ];
-            })->toArray()
+            })->toArray(),
+            'total_experience_years' => $employee->positionHistories->sum('duration_months') / 12
         ];
     }
 
     private function callGeminiForAnalysis(Position $position, $analysisData)
     {
-        // Konversi data ke JSON string untuk prompt
         $dataJson = json_encode($analysisData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
-        // Buat prompt yang jelas untuk Gemini
         $prompt = $this->createAnalysisPrompt($position, $dataJson);
 
         Log::info('Calling Gemini API for position analysis', [
             'position_id' => $position->id,
-            'candidate_count' => count($analysisData['candidates']),
-            'prompt_length' => strlen($prompt)
+            'candidate_count' => count($analysisData['candidates'])
         ]);
 
         try {
             $response = Gemini::text()
-                ->model('gemini-2.5-flash-lite') // Model yang support context panjang
+                ->model('gemini-2.5-flash-lite')
                 ->prompt($prompt)
-                ->temperature(0.3) // Sedikit kreatifitas
-                ->maxTokens(4000) // Token cukup untuk response
+                ->temperature(0.2)
+                ->maxTokens(5000)
                 ->structuredSchema([
                     'type' => 'array',
                     'items' => [
@@ -196,19 +201,20 @@ class FileBasedAIRecommendationService
                         'properties' => [
                             'employee_id' => ['type' => 'integer'],
                             'match_score' => ['type' => 'integer', 'minimum' => 0, 'maximum' => 100],
-                            'reason' => ['type' => 'string', 'maxLength' => 500],
+                            'reason' => ['type' => 'string', 'maxLength' => 300],
                             'strengths' => [
                                 'type' => 'array',
                                 'items' => ['type' => 'string'],
-                                'minItems' => 1,
+                                'minItems' => 0,
                                 'maxItems' => 3
                             ],
-                            'considerations' => [
+                            'weaknesses' => [
                                 'type' => 'array',
                                 'items' => ['type' => 'string'],
                                 'minItems' => 0,
                                 'maxItems' => 2
-                            ]
+                            ],
+                            'recommendation' => ['type' => 'string', 'maxLength' => 200]
                         ],
                         'required' => ['employee_id', 'match_score', 'reason']
                     ]
@@ -216,16 +222,11 @@ class FileBasedAIRecommendationService
                 ->generate();
 
             $content = $response->content();
-            Log::info('Gemini API Response received', [
-                'content_length' => strlen($content),
-                'model_used' => $response->model()
-            ]);
 
             $results = json_decode($content, true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
                 Log::error('Failed to parse Gemini response', [
-                    'content' => $content,
                     'error' => json_last_error_msg()
                 ]);
                 throw new \Exception('Invalid JSON response from AI');
@@ -244,80 +245,96 @@ class FileBasedAIRecommendationService
     private function createAnalysisPrompt(Position $position, $dataJson)
     {
         return <<<PROMPT
-You are an expert HR analyst specializing in candidate-job matching. Analyze the following candidates for the specified position and provide your top 10 recommendations.
+You are an expert HR consultant and organizational psychologist with 20+ years experience in talent assessment and job matching. Your analysis must be CRITICAL and OBJECTIVE.
 
-POSITION DETAILS:
-{$position->name} (Band: {$position->band})
+TASK: Analyze candidates for this position and provide HONEST assessment.
 
-CANDIDATES DATA (in JSON format):
+POSITION: {$position->name} (Band: {$position->band})
+
+CRITICAL EVALUATION GUIDELINES:
+1. Be STRICT and REALISTIC - if candidates are not suitable, give LOW scores (0-40)
+2. Consider MINIMUM requirements vs NICE-TO-HAVE
+3. Penalize significantly for:
+   - Major skill gaps
+   - Insufficient experience
+   - Health/burnout concerns
+   - Personality-job misfit
+   - Band level mismatch
+   - Band 1 for top management
+   - Band 2 equal to senior manager
+   - Band 3 equal to manager or officer
+   - Band 4 equal to jr officer
+   - Band 5 equal to staff
+
+4. Reward appropriately for:
+   - Exact skill match
+   - Relevant achievements
+   - Career progression
+   - Assessment alignment
+   - Innovation record
+
+ANALYSIS FRAMEWORK:
+- Score 0-30: Not suitable (major gaps)
+- Score 31-50: Marginally suitable (needs significant development)
+- Score 51-70: Moderately suitable (meets basic requirements)
+- Score 71-85: Well suited (exceeds some requirements)
+- Score 86-100: Excellent fit (exceeds most requirements)
+
+DATA FOR ANALYSIS:
 {$dataJson}
 
-ANALYSIS INSTRUCTIONS:
-1. For EACH candidate, analyze their suitability based on:
-   - Technical skills alignment with position requirements
-   - Educational background relevance
-   - Psychogram strengths matching position needs
-   - Assessment results (MBTI, DISC, PAPI personality fit)
-   - Innovation track record and achievements
-   - Medical fitness for the role
-   - Burnout risk assessment
-   - Career progression and relevant experience
+OUTPUT REQUIREMENTS:
+1. For EACH candidate, provide:
+   - match_score: 0-100 based on CRITICAL assessment
+   - reason: BRIEF explanation in English (2-3 sentences max)
+   - strengths: 0-3 key strengths relevant to THIS position
+   - weaknesses: 0-2 critical gaps/concerns
+   - recommendation: "Highly Recommended", "Recommended", "Consider", or "Not Recommended" based on score
 
-2. Score each candidate 0-100 based on overall fit.
+2. Sort by match_score descending
+3. If NO candidate scores above 50, return empty array
+4. Be BRUTALLY HONEST - better empty results than false positives
 
-3. For each recommended candidate, provide:
-   - A concise reason for the match score (1-2 sentences)
-   - 2-3 key strengths relevant to this specific position
-   - 1-2 considerations or development areas
-
-4. Return ONLY the top 10 best matches, sorted by match score (highest first).
-
-IMPORTANT: Your response MUST be a valid JSON array following the exact schema provided. Do not include any explanatory text outside the JSON.
+RESPONSE LANGUAGE: INDONESIAN (professional business Indonesian)
+JSON FORMAT ONLY - no additional text.
 PROMPT;
     }
 
     private function validateAndFormatResults($results, $employees)
     {
         if (!is_array($results)) {
-            throw new \Exception('Invalid results format from AI');
+            return [];
         }
 
         $employeeIds = $employees->pluck('id')->toArray();
         $validResults = [];
 
         foreach ($results as $result) {
-            // Validasi data
             if (!isset($result['employee_id']) || !isset($result['match_score'])) {
-                Log::warning('Skipping invalid result item', ['item' => $result]);
                 continue;
             }
 
-            // Pastikan employee_id valid
             if (!in_array($result['employee_id'], $employeeIds)) {
-                Log::warning('Skipping result with invalid employee_id', [
-                    'employee_id' => $result['employee_id'],
-                    'valid_ids' => $employeeIds
-                ]);
                 continue;
             }
 
-            // Validasi dan format score
             $score = intval($result['match_score']);
             if ($score < 0) $score = 0;
             if ($score > 100) $score = 100;
 
+            // Filter out very low scores
+            if ($score < 30) {
+                continue;
+            }
+
             $validResults[] = [
                 'employee_id' => intval($result['employee_id']),
                 'match_score' => $score,
-                'reason' => $result['reason'] ?? 'No reason provided',
+                'reason' => $result['reason'] ?? 'Analysis not available',
                 'strengths' => $result['strengths'] ?? [],
-                'considerations' => $result['considerations'] ?? []
+                'weaknesses' => $result['weaknesses'] ?? [],
+                'recommendation' => $this->getRecommendationLabel($score)
             ];
-
-            // Batasi hanya 10 terbaik
-            if (count($validResults) >= 10) {
-                break;
-            }
         }
 
         // Sort by score descending
@@ -325,103 +342,13 @@ PROMPT;
             return $b['match_score'] <=> $a['match_score'];
         });
 
-        return $validResults;
+        return array_slice($validResults, 0, 10);
     }
 
-    private function fallbackAnalysis(Position $position, $employees)
+    private function getRecommendationLabel($score)
     {
-        Log::info('Using fallback analysis for position: ' . $position->id);
-
-        if ($employees->isEmpty()) {
-            return [];
-        }
-
-        $results = [];
-        foreach ($employees as $employee) {
-            $score = $this->calculateBasicMatchScore($position, $employee);
-
-            $results[] = [
-                'employee_id' => $employee->id,
-                'match_score' => $score,
-                'reason' => 'Basic compatibility analysis (AI analysis unavailable)',
-                'strengths' => ['Eligible based on band and company criteria'],
-                'considerations' => ['Full AI analysis was not available for this evaluation']
-            ];
-        }
-
-        // Sort and limit to top 10
-        usort($results, function ($a, $b) {
-            return $b['match_score'] <=> $a['match_score'];
-        });
-
-        return array_slice($results, 0, 10);
-    }
-
-    private function calculateBasicMatchScore(Position $position, Employee $employee)
-    {
-        $score = 50; // Base score
-
-        // Band match (40 points max)
-        $positionBand = $this->extractBandNumber($position->band);
-        $employeeBand = $this->extractBandNumber($employee->band);
-
-        if ($employeeBand === $positionBand) {
-            $score += 40;
-        } elseif ($employeeBand === ($positionBand + 1)) {
-            $score += 20; // One level below
-        }
-
-        // Technical skills (30 points max)
-        if ($employee->technicalCompetencies->count() > 0) {
-            $score += min(30, $employee->technicalCompetencies->count() * 5);
-        }
-
-        // Education (20 points max)
-        if ($employee->educations->count() > 0) {
-            $score += min(20, $employee->educations->count() * 4);
-        }
-
-        return min($score, 100);
-    }
-
-    private function getEligibleEmployees(Position $position)
-    {
-        $positionBand = $this->extractBandNumber($position->band);
-
-        return Employee::with([
-            'technicalCompetencies',
-            'educations',
-            'innovations',
-            'mcuResults',
-            'burnout',
-            'mbti',
-            'disc',
-            'papi',
-            'positionHistories'
-        ])
-            ->where('company_id', $position->company_id)
-            ->where(function ($query) use ($positionBand) {
-                $query->where('band', $this->formatBand($positionBand));
-
-                if ($positionBand < 5) {
-                    $nextBand = $positionBand + 1;
-                    $query->orWhere('band', $this->formatBand($nextBand));
-                }
-            })
-            ->limit(20)
-            ->get();
-    }
-
-    private function extractBandNumber($bandString)
-    {
-        if (preg_match('/Band\s*(\d+)/i', $bandString, $matches)) {
-            return (int) $matches[1];
-        }
-        return is_numeric($bandString) ? (int) $bandString : 5;
-    }
-
-    private function formatBand($number)
-    {
-        return "Band " . $number;
+        if ($score >= 80) return 'Highly Recommended';
+        if ($score >= 60) return 'Recommended';
+        return 'Not Recommended';
     }
 }

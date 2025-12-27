@@ -26,10 +26,16 @@ class Show extends Component
     public $aiStatus = '';
     public $recommendations = [];
     public $position;
+    public $showEmployeeModal = false;
+    public $searchTerm = '';
+    public $availableEmployees = [];
+    public $selectedForAnalysis = [];
+    public $maxCandidates = 20;
 
     public function mount(Position $position)
     {
         $this->position = $position;
+        $this->positionSlug = $position->slug;
 
         // Check for cached results
         $cacheKey = "ai_analysis_{$this->position->id}";
@@ -39,9 +45,9 @@ class Show extends Component
             $this->recommendations = $cachedResults;
             $this->aiProcessing = false;
             $this->aiProgress = 100;
-            Toaster::info('Loaded cached AI recommendations');
         }
     }
+
     protected function getListeners()
     {
         $userId = Auth::id();
@@ -54,23 +60,88 @@ class Show extends Component
         ];
     }
 
+    public function updatedSearchTerm($value)
+    {
+        if (strlen($value) >= 2) {
+            $this->searchEmployees();
+        } elseif (empty($value)) {
+            $this->availableEmployees = [];
+        }
+    }
+
+    public function searchEmployees()
+    {
+        $this->availableEmployees = Employee::query()
+            ->where('company_id', $this->position->company_id)
+            ->where(function ($query) {
+                $query->where('name', 'like', '%' . $this->searchTerm . '%')
+                    ->orWhere('employee_number', 'like', '%' . $this->searchTerm . '%');
+            })
+            ->whereNotIn('id', $this->selectedForAnalysis)
+            ->limit(10)
+            ->get()
+            ->map(function ($employee) {
+                return [
+                    'id' => $employee->id,
+                    'name' => $employee->name,
+                    'employee_number' => $employee->employee_number,
+                    'band' => $employee->band,
+                    'position' => $employee->position->name ?? 'No Position',
+                ];
+            })
+            ->toArray();
+    }
+
+    public function addToAnalysis($employeeId)
+    {
+        if (count($this->selectedForAnalysis) >= $this->maxCandidates) {
+            Toaster::warning("Maximum {$this->maxCandidates} candidates can be analyzed");
+            return;
+        }
+
+        if (!in_array($employeeId, $this->selectedForAnalysis)) {
+            $this->selectedForAnalysis[] = $employeeId;
+            $this->availableEmployees = array_filter($this->availableEmployees, function ($emp) use ($employeeId) {
+                return $emp['id'] != $employeeId;
+            });
+        }
+    }
+
+    public function removeFromAnalysis($employeeId)
+    {
+        $this->selectedForAnalysis = array_filter($this->selectedForAnalysis, function ($id) use ($employeeId) {
+            return $id != $employeeId;
+        });
+    }
+
     public function startAIProcessing()
     {
+        if (count($this->selectedForAnalysis) === 0) {
+            Toaster::warning('Please select at least 1 candidate to analyze');
+            return;
+        }
+
         $this->aiProcessing = true;
         $this->aiProgress = 0;
-        $this->aiStatus = 'Initializing AI analysis...';
+        $this->aiStatus = 'Preparing AI analysis...';
+        $this->showEmployeeModal = false;
 
-        // Dispatch job
-        ProcessAIRecommendationsJob::dispatch($this->position, Auth::id());
+        // Dispatch job dengan kandidat terpilih
+        ProcessAIRecommendationsJob::dispatch(
+            $this->position,
+            Auth::id(),
+            $this->selectedForAnalysis
+        );
 
-        Toaster::info('AI analysis started. This may take 1-2 minutes.');
+        Toaster::info('AI analysis started. Process may take 1-2 minutes.');
     }
 
     public function retryAIProcessing()
     {
         Cache::forget("ai_analysis_{$this->position->id}");
         $this->recommendations = [];
-        $this->startAIProcessing();
+        $this->selectedForAnalysis = [];
+        $this->showEmployeeModal = true;
     }
 
     public function handleAIProgress($event)
@@ -83,9 +154,6 @@ class Show extends Component
 
         $this->aiProgress = $event['progress'];
         $this->aiStatus = $event['message'];
-
-        // Update UI
-        $this->dispatch('status-updated');
     }
 
     public function handleAICompleted($event)
@@ -103,10 +171,7 @@ class Show extends Component
         // Store in cache
         Cache::put("ai_analysis_{$this->position->id}", $event['results'], now()->addHours(24));
 
-        Toaster::success('AI analysis complete! Top 10 candidates found.');
-
-        // Update UI
-        $this->dispatch('status-updated');
+        Toaster::success('AI analysis complete! Best recommendations have been found.');
     }
 
     public function handleAIFailed($event)
@@ -119,38 +184,6 @@ class Show extends Component
         $this->aiProcessing = false;
         $this->aiStatus = 'Analysis failed';
         Toaster::error('AI analysis failed: ' . $event['error']);
-
-        // Update UI
-        $this->dispatch('status-updated');
-    }
-
-    // Polling fallback - check status setiap 2 detik
-    public function pollStatus()
-    {
-        if (!$this->aiProcessing) {
-            return;
-        }
-
-        $cacheKey = "ai_analysis_{$this->position->id}";
-        $cachedResults = Cache::get($cacheKey);
-
-        if ($cachedResults) {
-            $this->recommendations = $cachedResults;
-            $this->aiProcessing = false;
-            $this->aiProgress = 100;
-            $this->aiStatus = 'Analysis complete!';
-            Toaster::success('AI analysis complete!');
-            return;
-        }
-
-        // Check progress dari cache
-        $progressKey = "ai_progress_{$this->position->id}";
-        $progress = Cache::get($progressKey);
-
-        if ($progress) {
-            $this->aiProgress = $progress['progress'];
-            $this->aiStatus = $progress['message'];
-        }
     }
 
     public function updatedSelectedCandidates($value)
@@ -172,16 +205,6 @@ class Show extends Component
         //     'slug' => $this->positionSlug,
         //     'candidates' => implode(',', $this->selectedCandidates)
         // ]);
-    }
-
-    public function getUserIdProperty()
-    {
-        return Auth::id();
-    }
-
-    public function getPositionIdProperty()
-    {
-        return $this->position->id;
     }
 
     public function render()
