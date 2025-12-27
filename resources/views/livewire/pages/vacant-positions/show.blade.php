@@ -1,4 +1,4 @@
-<div class="space-y-4 p-2" wire:poll.2s="pollStatus">
+<div class="space-y-4 p-2">
     <!-- Breadcrumbs -->
     <flux:breadcrumbs>
         @hasanyrole('superadmin|admin')
@@ -69,9 +69,7 @@
                         <!-- AI Header -->
                         <div class="bg-gradient-to-r from-[#721d21] to-[#8a252a] p-8 text-center">
                             <div class="relative mx-auto mb-6 h-20 w-20">
-                                <div
-                                    class="absolute inset-0 animate-pulse rounded-full bg-white/20"
-                                ></div>
+                                <div class="absolute inset-0 animate-pulse rounded-full bg-white/20"></div>
                                 <div
                                     class="relative flex h-full w-full items-center justify-center rounded-full border-4 border-white/30 bg-gradient-to-r from-white/10 to-white/20"
                                 >
@@ -93,7 +91,7 @@
                             </div>
 
                             <h3 class="text-2xl font-bold text-white">Analyzing Candidates with AI</h3>
-                            <p class="mt-2 text-white/80">Processing up to 1000 candidates for optimal matches</p>
+                            <p class="mt-2 text-white/80">Processing selected candidates for optimal matches</p>
                         </div>
 
                         <!-- Real-time Status -->
@@ -136,7 +134,7 @@
                                             <span class="font-semibold">{{ $stepData['step'] }}</span>
                                         </div>
                                         <p
-                                            class="{{ $aiProgress >= $stepData['threshold'] ? 'text-[#721d21] font-semibold' : 'text-gray-500' }} text-sm transition-colors duration-300"
+                                            class="{{ $aiProgress >= $stepData['threshold'] ? 'font-semibold text-[#721d21]' : 'text-gray-500' }} text-sm transition-colors duration-300"
                                         >
                                             {{ $stepData['label'] }}
                                         </p>
@@ -145,7 +143,9 @@
                             </div>
 
                             <!-- Live Updates -->
-                            <div class="rounded-xl border border-[#721d21]/20 bg-gradient-to-r from-[#721d21]/5 to-transparent p-5">
+                            <div
+                                class="rounded-xl border border-[#721d21]/20 bg-gradient-to-r from-[#721d21]/5 to-transparent p-5"
+                            >
                                 <div class="flex items-start gap-4">
                                     <div class="mt-1 flex-shrink-0">
                                         <svg
@@ -191,6 +191,241 @@
             </div>
         @endif
 
+        <!-- Employee Selection Modal -->
+        @if ($showEmployeeModal && ! $aiProcessing)
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md">
+                <div class="w-full max-w-4xl p-4">
+                    <div class="overflow-hidden rounded-2xl bg-white shadow-2xl">
+                        <!-- Modal Header -->
+                        <div class="bg-gradient-to-r from-[#721d21] to-[#8a252a] p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-white">Select Candidates for AI Analysis</h3>
+                                    <p class="mt-1 text-white/80">
+                                        Select up to {{ $maxCandidates }} employees to analyze
+                                    </p>
+                                </div>
+                                <button
+                                    wire:click="$set('showEmployeeModal', false)"
+                                    class="rounded-lg p-2 text-white hover:bg-white/10"
+                                >
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Search Section -->
+                        <div class="border-b border-gray-200 p-6">
+                            <div class="relative">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <svg
+                                        class="h-5 w-5 text-gray-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                        />
+                                    </svg>
+                                </div>
+                                <input
+                                    wire:model.live.debounce.300ms="searchTerm"
+                                    type="text"
+                                    class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 pl-10 text-sm focus:border-[#721d21] focus:ring-[#721d21]"
+                                    placeholder="Search by name or employee number..."
+                                />
+                            </div>
+                            <p class="mt-2 text-sm text-gray-500">Type at least 2 characters to search</p>
+                        </div>
+
+                        <!-- Selected Candidates -->
+                        @if (count($selectedForAnalysis) > 0)
+                            <div class="border-b border-gray-200 p-6">
+                                <div class="mb-3 flex items-center justify-between">
+                                    <h4 class="font-semibold text-gray-900">Selected Candidates</h4>
+                                    <span class="rounded-full bg-[#721d21] px-3 py-1 text-sm font-semibold text-white">
+                                        {{ count($selectedForAnalysis) }} / {{ $maxCandidates }}
+                                    </span>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach ($selectedForAnalysis as $employeeId)
+                                        @php
+                                            $employee = App\Models\Employee::find($employeeId);
+                                        @endphp
+
+                                        @if ($employee)
+                                            <div class="flex items-center gap-2 rounded-full bg-[#721d21]/10 px-4 py-2">
+                                                <span class="font-medium text-[#721d21]">{{ $employee->name }}</span>
+                                                <button
+                                                    wire:click="removeFromAnalysis({{ $employeeId }})"
+                                                    type="button"
+                                                    class="rounded-full p-1 text-[#721d21] hover:bg-[#721d21]/20"
+                                                >
+                                                    <svg
+                                                        class="h-4 w-4"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M6 18L18 6M6 6l12 12"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Search Results -->
+                        <div class="max-h-96 overflow-y-auto p-6">
+                            @if (count($availableEmployees) > 0)
+                                <h4 class="mb-4 font-semibold text-gray-900">Search Results</h4>
+                                <div class="space-y-3">
+                                    @foreach ($availableEmployees as $employee)
+                                        <div
+                                            class="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:bg-gray-50"
+                                        >
+                                            <div class="flex items-center gap-4">
+                                                <div
+                                                    class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-[#721d21]/10 to-[#8a252a]/10"
+                                                >
+                                                    <span class="font-bold text-[#721d21]">
+                                                        {{ substr($employee['name'], 0, 1) }}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <p class="font-semibold text-gray-900">{{ $employee['name'] }}</p>
+                                                    <p class="text-sm text-gray-600">
+                                                        {{ $employee['employee_number'] }} • {{ $employee['band'] }}
+                                                    </p>
+                                                    <p class="text-sm text-gray-500">{{ $employee['position'] }}</p>
+                                                </div>
+                                            </div>
+                                            <button
+                                                wire:click="addToAnalysis({{ $employee['id'] }})"
+                                                type="button"
+                                                class="rounded-lg bg-[#721d21] px-4 py-2 text-sm font-semibold text-white hover:bg-[#5a1719]"
+                                            >
+                                                Select
+                                            </button>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @elseif (strlen($searchTerm) >= 2)
+                                <div class="py-8 text-center">
+                                    <svg
+                                        class="mx-auto h-12 w-12 text-gray-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
+                                    <p class="mt-2 text-gray-500">
+                                        No employees found with keyword "{{ $searchTerm }}"
+                                    </p>
+                                </div>
+                            @else
+                                <div class="py-8 text-center">
+                                    <svg
+                                        class="mx-auto h-12 w-12 text-gray-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                        />
+                                    </svg>
+                                    <p class="mt-2 text-gray-500">Type name or employee number to search</p>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="border-t border-gray-200 bg-gray-50 p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    @if (count($selectedForAnalysis) > 0)
+                                        <p class="text-sm text-gray-600">
+                                            {{ count($selectedForAnalysis) }} candidates selected
+                                        </p>
+                                    @else
+                                        <p class="text-sm text-gray-600">No candidates selected yet</p>
+                                    @endif
+                                </div>
+                                <div class="flex gap-3">
+                                    <button
+                                        wire:click="$set('showEmployeeModal', false)"
+                                        type="button"
+                                        class="rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        wire:click="startAIProcessing"
+                                        wire:loading.attr="disabled"
+                                        type="button"
+                                        class="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#721d21] to-[#8a252a] px-8 py-3 text-sm font-semibold text-white hover:from-[#5a1719] hover:to-[#721d21] disabled:opacity-50"
+                                        {{ count($selectedForAnalysis) === 0 ? 'disabled' : '' }}
+                                    >
+                                        <svg
+                                            wire:loading
+                                            class="h-5 w-5 animate-spin"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <circle
+                                                class="opacity-25"
+                                                cx="12"
+                                                cy="12"
+                                                r="10"
+                                                stroke="currentColor"
+                                                stroke-width="4"
+                                            ></circle>
+                                            <path
+                                                class="opacity-75"
+                                                fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                            ></path>
+                                        </svg>
+                                        <span wire:loading.remove>Analyze with AI</span>
+                                        <span wire:loading>Preparing...</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <!-- Results Section -->
         <div class="space-y-6">
             <!-- AI Results Header -->
@@ -212,7 +447,7 @@
                             </div>
                             <div>
                                 <h3 class="text-lg font-bold text-gray-900">AI Analysis Complete</h3>
-                                <p class="text-sm text-gray-600">Top 10 matches based on comprehensive data analysis</p>
+                                <p class="text-sm text-gray-600">Top matches based on comprehensive data analysis</p>
                             </div>
                         </div>
                         <button
@@ -309,14 +544,34 @@
                                     <!-- Strengths -->
                                     @if (! empty($candidate['strengths']))
                                         <div class="mt-2">
-                                            <p class="text-sm font-semibold">Strength Points</p>
-                                            <ol class="flex list-decimal flex-wrap gap-1 text-[#721d21]">
-                                                @foreach (array_slice($candidate['strengths'], 0, 2) as $strength)
-                                                    <li class="ml-4 text-sm">
-                                                        {{ $strength }}
+                                            <p class="text-xs font-semibold text-[#721d21]">STRENGTHS</p>
+                                            <ul class="mt-1 space-y-1">
+                                                @foreach (array_slice($candidate['strengths'], 0, 3) as $strength)
+                                                    <li class="flex items-start gap-2 text-xs">
+                                                        <svg class="h-3 w-3 mt-0.5 flex-shrink-0 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                        <span>{{ $strength }}</span>
                                                     </li>
                                                 @endforeach
-                                            </ol>
+                                            </ul>
+                                        </div>
+                                    @endif
+
+                                    <!-- Weaknesses -->
+                                    @if (! empty($candidate['weaknesses']))
+                                        <div class="mt-2">
+                                            <p class="text-xs font-semibold text-red-600">CONSIDERATIONS</p>
+                                            <ul class="mt-1 space-y-1">
+                                                @foreach (array_slice($candidate['weaknesses'], 0, 2) as $weakness)
+                                                    <li class="flex items-start gap-2 text-xs">
+                                                        <svg class="h-3 w-3 mt-0.5 flex-shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                        <span>{{ $weakness }}</span>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
                                         </div>
                                     @endif
                                 </div>
@@ -349,8 +604,25 @@
 
                         <!-- Match Score & Footer - Selalu di bawah -->
                         <div class="mt-auto">
+                            <!-- Recommendation Badge -->
+                            @if (!empty($candidate['recommendation']))
+                                <div class="mb-2">
+                                    @php
+                                        $badgeClass = match($candidate['recommendation']) {
+                                            'Highly Recommended' => 'bg-green-100 text-green-800 border-green-200',
+                                            'Recommended' => 'bg-blue-100 text-blue-800 border-blue-200',
+                                            'Not Recommended' => 'bg-red-100 text-red-800 border-red-200',
+                                            default => 'bg-gray-100 text-gray-800 border-gray-200'
+                                        };
+                                    @endphp
+                                    <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium {{ $badgeClass }}">
+                                        {{ $candidate['recommendation'] }}
+                                    </span>
+                                </div>
+                            @endif
+
                             <!-- Match Score -->
-                            <div class="mt-4 space-y-2">
+                            <div class="mt-2 space-y-2">
                                 <div class="flex items-center justify-between">
                                     <span class="text-sm font-medium text-gray-700">AI Match Score</span>
                                     <span class="text-sm font-semibold text-[#721d21]">
@@ -404,7 +676,7 @@
                             <p class="mt-2 text-gray-500">Click below to analyze candidates with AI</p>
                             <div class="mt-6">
                                 <button
-                                    wire:click="retryAIProcessing"
+                                    wire:click="$set('showEmployeeModal', true)"
                                     type="button"
                                     class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#721d21] to-[#8a252a] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:from-[#5a1719] hover:to-[#721d21]"
                                 >
@@ -416,7 +688,7 @@
                                             d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
                                         />
                                     </svg>
-                                    Start AI Analysis
+                                    Choose Candidates
                                 </button>
                             </div>
                         </div>

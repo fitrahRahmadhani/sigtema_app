@@ -3,8 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\Position;
+use App\Models\Employee;
 use Illuminate\Bus\Queueable;
-use Masmerise\Toaster\Toaster;
 use App\Events\AIAnalysisFailed;
 use App\Events\AIAnalysisProgress;
 use App\Events\AIAnalysisCompleted;
@@ -22,14 +22,15 @@ class ProcessAIRecommendationsJob implements ShouldQueue
 
     public $position;
     public $userId;
+    public $selectedEmployeeIds;
     public $tries = 1;
     public $timeout = 300;
-    public $backoff = [60, 120, 300];
 
-    public function __construct(Position $position, $userId)
+    public function __construct(Position $position, $userId, array $selectedEmployeeIds = [])
     {
         $this->position = $position;
         $this->userId = $userId;
+        $this->selectedEmployeeIds = $selectedEmployeeIds;
     }
 
     public function handle(FileBasedAIRecommendationService $service)
@@ -39,18 +40,22 @@ class ProcessAIRecommendationsJob implements ShouldQueue
 
         try {
             // Broadcast progress
-            $this->broadcastProgress(10, "Starting AI analysis...");
+            $this->broadcastProgress(10, "Preparing AI analysis...");
 
-            $results = $service->analyzeWithFileUpload($this->position, function ($progress, $message) {
-                $this->broadcastProgress($progress, $message);
-            });
+            $results = $service->analyzeWithFileUpload(
+                $this->position,
+                $this->selectedEmployeeIds,
+                function ($progress, $message) {
+                    $this->broadcastProgress($progress, $message);
+                }
+            );
 
             // Store results in cache for 24 hours
             Cache::put($cacheKey, $results, now()->addHours(24));
-            Cache::forget($progressKey); // Clear progress cache
+            Cache::forget($progressKey);
 
             // Broadcast completion
-            $this->broadcastProgress(100, "Analysis complete!");
+            $this->broadcastProgress(100, "AI analysis completed!");
             $this->broadcastCompletion($results);
 
             Log::info("AI Analysis completed successfully for position {$this->position->id}");
@@ -62,14 +67,14 @@ class ProcessAIRecommendationsJob implements ShouldQueue
             ]);
 
             Cache::forget($progressKey);
-            $this->broadcastError("AI analysis failed: " . $e->getMessage());
+            $this->broadcastError("AI Analysis failed: " . $e->getMessage());
             return;
         }
     }
 
     private function broadcastProgress($progress, $message)
     {
-        // Store progress in cache untuk polling fallback
+        // Store progress in cache
         $progressKey = "ai_progress_{$this->position->id}";
         Cache::put($progressKey, [
             'progress' => $progress,
@@ -78,32 +83,20 @@ class ProcessAIRecommendationsJob implements ShouldQueue
 
         // Broadcast via Laravel Echo
         broadcast(new AIAnalysisProgress($this->position->id, $this->userId, $progress, $message))->toOthers();
-
-        Log::info("Progress broadcasted: {$progress}% - {$message}");
     }
 
     private function broadcastCompletion($results)
     {
         broadcast(new AIAnalysisCompleted($this->position->id, $this->userId, $results))->toOthers();
-
-        Log::info("Completion broadcasted for position {$this->position->id}");
     }
 
     private function broadcastError($error)
     {
         broadcast(new AIAnalysisFailed($this->position->id, $this->userId, $error))->toOthers();
-
-        Log::error("Error broadcasted: {$error}");
     }
 
     public function failed(\Throwable $exception)
     {
-        $this->broadcastError("Job failed: " . $exception->getMessage());
-
-        Log::critical("Job failed permanently", [
-            'position_id' => $this->position->id,
-            'user_id' => $this->userId,
-            'exception' => $exception->getMessage()
-        ]);
+        $this->broadcastError("AI Analysis failed: " . $exception->getMessage());
     }
 }
