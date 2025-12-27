@@ -201,10 +201,15 @@ class Show extends Component
             return;
         }
 
-        // return redirect()->route('vacant-positions.compare', [
-        //     'slug' => $this->positionSlug,
-        //     'candidates' => implode(',', $this->selectedCandidates)
-        // ]);
+        if (count($this->selectedCandidates) > 5) {
+            Toaster::warning('Maximum 5 candidates can be compared');
+            return;
+        }
+
+        return redirect()->route('vacant-positions.compare', [
+            'position' => $this->positionSlug,
+            'candidates' => implode(',', $this->selectedCandidates)
+        ]);
     }
 
     public function render()
