@@ -548,8 +548,18 @@
                                             <ul class="mt-1 space-y-1">
                                                 @foreach (array_slice($candidate['strengths'], 0, 3) as $strength)
                                                     <li class="flex items-start gap-2 text-xs">
-                                                        <svg class="h-3 w-3 mt-0.5 flex-shrink-0 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                        <svg
+                                                            class="mt-0.5 h-3 w-3 flex-shrink-0 text-green-500"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M5 13l4 4L19 7"
+                                                            />
                                                         </svg>
                                                         <span>{{ $strength }}</span>
                                                     </li>
@@ -565,8 +575,18 @@
                                             <ul class="mt-1 space-y-1">
                                                 @foreach (array_slice($candidate['weaknesses'], 0, 2) as $weakness)
                                                     <li class="flex items-start gap-2 text-xs">
-                                                        <svg class="h-3 w-3 mt-0.5 flex-shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                        <svg
+                                                            class="mt-0.5 h-3 w-3 flex-shrink-0 text-red-500"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M6 18L18 6M6 6l12 12"
+                                                            />
                                                         </svg>
                                                         <span>{{ $weakness }}</span>
                                                     </li>
@@ -605,17 +625,20 @@
                         <!-- Match Score & Footer - Selalu di bawah -->
                         <div class="mt-auto">
                             <!-- Recommendation Badge -->
-                            @if (!empty($candidate['recommendation']))
-                                <div class="mb-2">
+                            @if (! empty($candidate['recommendation']))
+                                <div class="my-2">
                                     @php
-                                        $badgeClass = match($candidate['recommendation']) {
-                                            'Highly Recommended' => 'bg-green-100 text-green-800 border-green-200',
-                                            'Recommended' => 'bg-blue-100 text-blue-800 border-blue-200',
-                                            'Not Recommended' => 'bg-red-100 text-red-800 border-red-200',
-                                            default => 'bg-gray-100 text-gray-800 border-gray-200'
+                                        $badgeClass = match ($candidate['recommendation']) {
+                                            'Highly Recommended' => 'border-green-200 bg-green-100 text-green-800',
+                                            'Recommended' => 'border-blue-200 bg-blue-100 text-blue-800',
+                                            'Not Recommended' => 'border-red-200 bg-red-100 text-red-800',
+                                            default => 'border-gray-200 bg-gray-100 text-gray-800',
                                         };
                                     @endphp
-                                    <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium {{ $badgeClass }}">
+
+                                    <span
+                                        class="{{ $badgeClass }} inline-block rounded-full border px-3 py-1 text-xs font-medium"
+                                    >
                                         {{ $candidate['recommendation'] }}
                                     </span>
                                 </div>
