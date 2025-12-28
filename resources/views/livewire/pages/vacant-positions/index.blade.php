@@ -400,7 +400,7 @@
 
                         <!-- Mobile View -->
                         <a
-                            href="{{ route('vacant-positions.show', $position->id) }}"
+                            href="{{ route('vacant-positions.show', $position->slug) }}"
                             class="block rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
                         >
                             <div class="space-y-3">
