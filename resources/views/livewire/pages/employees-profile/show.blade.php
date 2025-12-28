@@ -1237,6 +1237,9 @@
                         scales: {
                             y: {
                                 beginAtZero: true,
+                                min: -10,
+                                max: 10,
+                                pointLabels: { display: false },
                                 ticks: {
                                     stepSize: 20,
                                     font: { size: 11 },

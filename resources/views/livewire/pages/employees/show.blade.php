@@ -1233,6 +1233,8 @@
                         scales: {
                             y: {
                                 beginAtZero: true,
+                                min: -10,
+                                max: 10,
                                 ticks: {
                                     stepSize: 20,
                                     font: { size: 11 },

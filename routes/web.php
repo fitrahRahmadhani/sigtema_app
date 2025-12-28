@@ -31,7 +31,7 @@ Route::group(['middleware' => ['role:superadmin', 'auth', 'verified']], function
 
 Route::group(['middleware' => ['role:superadmin|admin', 'auth', 'verified']], function () {
     // Dashboard
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', App\Livewire\Pages\Dashboard\Index::class)->name('dashboard');
 
     // Organization Structure
     Route::get('organization-structure', App\Livewire\Pages\OrgStructure\Index::class)->name('organization-structure.index');
