@@ -122,7 +122,7 @@
                             <div class="mb-8 grid grid-cols-4 gap-4">
                                 @foreach ([
                                         ['step' => 1, 'label' => 'Data Preparation', 'threshold' => 25],
-                                        ['step' => 2, 'label' => 'File Analysis', 'threshold' => 50],
+                                        ['step' => 2, 'label' => 'Data Analysis', 'threshold' => 50],
                                         ['step' => 3, 'label' => 'AI Processing', 'threshold' => 75],
                                         ['step' => 4, 'label' => 'Final Results', 'threshold' => 100]
                                     ]
