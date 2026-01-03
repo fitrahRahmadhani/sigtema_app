@@ -163,6 +163,7 @@ class Index extends Component
                 'level' => $level,
                 'photo' => $employee ? $employee->profile_path : null,
                 'slug' => $employee ? $employee->slug : null,
+                'position_slug' => $position->slug,
                 'hierarchy_id' => $currentHierarchyId, // Tambahkan ini
             ];
 

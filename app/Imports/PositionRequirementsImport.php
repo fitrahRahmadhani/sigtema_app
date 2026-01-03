@@ -9,8 +9,6 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-use Masmerise\Toaster\Toaster;
 
 class PositionRequirementsImport implements ToCollection, WithHeadingRow
 {
@@ -22,6 +20,15 @@ class PositionRequirementsImport implements ToCollection, WithHeadingRow
     ];
     private $errors = [];
 
+    // Tambahkan property untuk menentukan mode
+    private $importMode = false;
+
+    // Tambahkan constructor untuk set mode
+    public function __construct($importMode = false)
+    {
+        $this->importMode = $importMode;
+    }
+
     public function collection(Collection $rows)
     {
         $user = Auth::user();
@@ -29,48 +36,38 @@ class PositionRequirementsImport implements ToCollection, WithHeadingRow
 
         foreach ($rows as $index => $row) {
             try {
-                $rowData = $row->toArray();
+                // Ambil data dengan key lowercase karena Excel bisa case insensitive
+                $rowArray = $row->toArray();
+                $positionCode = $this->getColumnValue($rowArray, 'position_code');
+                $name = $this->getColumnValue($rowArray, 'name');
+                $value = $this->getColumnValue($rowArray, 'value');
 
-                // Clean the data
-                $positionIdRaw = $this->cleanValue($row['position_id'] ?? '');
-                $name = $this->cleanValue($row['name'] ?? '');
-                $value = $this->cleanValue($row['value'] ?? '');
-
-                // Skip example/info rows
-                if ($this->shouldSkipRow($rowData, $positionIdRaw, $name)) {
+                // Skip row contoh
+                if ($this->isExampleRow($positionCode, $name)) {
                     continue;
                 }
 
-                // Skip if essential fields are empty
-                if (empty($positionIdRaw) || empty($name)) {
+                // Skip jika kosong
+                if (empty($positionCode) || empty($name)) {
                     $this->results['skipped']++;
                     continue;
                 }
 
-                // Get position ID
-                $positionId = $this->getPositionId($positionIdRaw, $user);
-                if (!$positionId) {
-                    $this->results['failed']++;
-                    continue;
-                }
-
-                // Get position to get position_code
-                $position = Position::find($positionId);
+                // Cari position berdasarkan position_code
+                $position = $this->findPosition($positionCode, $user);
                 if (!$position) {
                     $this->results['failed']++;
+                    $this->errors[] = "Baris " . ($index + 1) . ": Position code '$positionCode' tidak ditemukan";
                     continue;
                 }
 
-                // Prepare requirement data
-                $requirementData = [
-                    'position_id' => $positionId,
+                // Validasi data
+                $validator = Validator::make([
+                    'position_id' => $position->id,
                     'position_code' => $position->position_code,
                     'name' => $name,
                     'value' => $value
-                ];
-
-                // Validate data
-                $validator = Validator::make($requirementData, [
+                ], [
                     'position_id' => 'required|exists:positions,id',
                     'position_code' => 'required|string|max:255',
                     'name' => 'required|string|max:255',
@@ -82,73 +79,64 @@ class PositionRequirementsImport implements ToCollection, WithHeadingRow
                     continue;
                 }
 
-                // Check for duplicate (same position_id and name combination)
-                $existingRequirement = PositionRequirementSetting::where('position_id', $positionId)
+                // Cek apakah sudah ada
+                $existingRequirement = PositionRequirementSetting::where('position_id', $position->id)
                     ->where('name', $name)
                     ->first();
 
                 $isDuplicate = !is_null($existingRequirement);
 
-                // Handle import mode
-                if ($this->isImportMode()) {
+                // Jika mode import (bukan preview)
+                if ($this->importMode) {
                     if ($isDuplicate) {
-                        // Update existing requirement
-                        $existingRequirement->update([
+                        // Update existing
+                        $existingRequirement->update(['value' => $value]);
+                        $this->results['success']++;
+                    } else {
+                        // Create new
+                        PositionRequirementSetting::create([
+                            'position_id' => $position->id,
+                            'position_code' => $position->position_code,
+                            'name' => $name,
                             'value' => $value
                         ]);
-                        $this->results['success']++; // Count as success for update
-                    } else {
-                        // Create new requirement
-                        PositionRequirementSetting::create($requirementData);
                         $this->results['success']++;
                     }
-                }
-
-                // Add to preview data
-                if (!$this->isImportMode()) {
-                    $previewData = $requirementData;
-                    $previewData['position_name'] = $position->name;
-                    $previewData['position_code_display'] = $position->position_code;
-                    $previewData['company_name'] = $position->company->name ?? 'N/A';
-                    $previewData['is_duplicate'] = $isDuplicate;
-                    $processedData[] = $previewData;
+                } else {
+                    // Mode preview
+                    $processedData[] = [
+                        'position_id' => $position->id,
+                        'position_name' => $position->name,
+                        'position_code_display' => $position->position_code,
+                        'name' => $name,
+                        'value' => $value,
+                        'company_name' => $position->company->name ?? 'N/A',
+                        'is_duplicate' => $isDuplicate
+                    ];
                 }
             } catch (\Exception $e) {
                 $this->results['failed']++;
+                $this->errors[] = "Baris " . ($index + 1) . ": " . $e->getMessage();
                 continue;
             }
         }
 
-        if (!$this->isImportMode()) {
+        if (!$this->importMode) {
             $this->data = $processedData;
         }
     }
 
-    private function shouldSkipRow($rowData, $positionIdRaw, $name)
+    private function getColumnValue($rowArray, $columnName)
     {
-        $rawPositionId = strtoupper(trim($rowData['position_id'] ?? ''));
-        $rawName = strtoupper(trim($rowData['name'] ?? ''));
-
-        if (
-            str_starts_with($rawPositionId, 'CONTOH:') ||
-            str_starts_with($rawName, 'CONTOH:')
-        ) {
-            return true;
+        // Cari kolom dengan berbagai kemungkinan case
+        $keys = array_keys($rowArray);
+        foreach ($keys as $key) {
+            if (strtolower($key) === strtolower($columnName)) {
+                $value = $rowArray[$key];
+                return $this->cleanValue($value);
+            }
         }
-
-        $firstColumn = strtolower($positionIdRaw);
-
-        if (
-            str_contains($firstColumn, 'informasi') ||
-            str_contains($firstColumn, 'penting') ||
-            str_contains($firstColumn, 'aturan') ||
-            str_contains($firstColumn, 'position id') ||
-            empty($firstColumn)
-        ) {
-            return true;
-        }
-
-        return false;
+        return null;
     }
 
     private function cleanValue($value)
@@ -157,44 +145,48 @@ class PositionRequirementsImport implements ToCollection, WithHeadingRow
             return null;
         }
 
-        $value = (string) $value;
+        $value = trim((string) $value);
 
-        $patterns = ['CONTOH: ', 'contoh: ', 'Contoh: ', 'CONTOH:', 'contoh:', 'Contoh:'];
-        foreach ($patterns as $pattern) {
-            if (str_starts_with($value, $pattern)) {
-                $value = substr($value, strlen($pattern));
-                break;
-            }
+        // Hapus kata "CONTOH:" jika ada
+        if (str_starts_with(strtoupper($value), 'CONTOH:')) {
+            $value = substr($value, 7);
         }
 
         return trim($value);
     }
 
-    private function getPositionId($positionIdRaw, $user)
+    private function isExampleRow($positionCode, $name)
     {
-        $positionId = $this->cleanValue($positionIdRaw);
-
-        if (empty($positionId)) {
-            return null;
+        if (empty($positionCode) || empty($name)) {
+            return false;
         }
 
-        $position = Position::find($positionId);
+        $positionCode = strtoupper(trim($positionCode));
+        $name = strtoupper(trim($name));
+
+        return str_contains($positionCode, 'CONTOH:') ||
+            str_contains($name, 'CONTOH:') ||
+            str_contains($positionCode, 'PERHATIAN') ||
+            str_contains($positionCode, 'PETUNJUK') ||
+            str_contains($positionCode, 'ATURAN');
+    }
+
+    private function findPosition($positionCode, $user)
+    {
+        $positionCode = trim($positionCode);
+
+        $position = Position::where('position_code', $positionCode)->first();
 
         if (!$position) {
             return null;
         }
 
-        // For non-superadmin, check if position belongs to their company
+        // Untuk non-superadmin, cek apakah position milik company mereka
         if (!is_null($user->company_id) && $position->company_id != $user->company_id) {
             return null;
         }
 
-        return $positionId;
-    }
-
-    private function isImportMode()
-    {
-        return request()->has('import');
+        return $position;
     }
 
     public function getData()
