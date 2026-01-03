@@ -40,6 +40,7 @@ class Create extends Component
             $this->company = Company::find($this->company_id);
         } else {
             $this->company_id = session('selected_company_id');
+            $this->updatedCompanyId();
         }
     }
 

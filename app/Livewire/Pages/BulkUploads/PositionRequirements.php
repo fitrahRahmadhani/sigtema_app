@@ -5,11 +5,13 @@ namespace App\Livewire\Pages\BulkUploads;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\PositionRequirementTemplateExport;
-use App\Imports\PositionRequirementsImport;
 use Masmerise\Toaster\Toaster;
+use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\PositionRequirementSetting;
+use App\Imports\PositionRequirementsImport;
+use App\Exports\PositionRequirementTemplateExport;
 
 #[Layout('components.layouts.app')]
 #[Title('Bulk Upload Position Requirements')]
@@ -38,8 +40,8 @@ class PositionRequirements extends Component
         try {
             $this->isProcessing = true;
 
-            // Create import instance for preview
-            $import = new PositionRequirementsImport();
+            // Create import instance untuk PREVIEW MODE
+            $import = new PositionRequirementsImport(false); // false = preview mode
 
             // Process the file
             Excel::import($import, $this->excelFile->getRealPath());
@@ -48,8 +50,16 @@ class PositionRequirements extends Component
             $this->uploadedData = $import->getData();
             $this->uploadErrors = $import->getErrors();
 
+            Log::info('Preview Mode - Data count: ' . count($this->uploadedData));
+            Log::info('Preview Mode - Results:', $import->getResults());
+
             if (empty($this->uploadedData)) {
-                Toaster::warning('Tidak ada data valid yang ditemukan. Pastikan Anda sudah menghapus baris contoh dan data telah diisi dengan benar.');
+                $results = $import->getResults();
+                Toaster::warning(
+                    'Tidak ada data valid yang ditemukan. ' .
+                        'Data ditemukan: ' . ($results['success'] + $results['failed']) . ', ' .
+                        'Dilewati: ' . $results['skipped']
+                );
                 $this->isProcessing = false;
                 return;
             }
@@ -62,7 +72,8 @@ class PositionRequirements extends Component
             $this->isProcessing = false;
         } catch (\Exception $e) {
             $this->isProcessing = false;
-            Toaster::error('Error processing file: ' . $e->getMessage());
+            Log::error('Preview Error: ' . $e->getMessage());
+            Toaster::error('Error memproses file: ' . $e->getMessage());
         }
     }
 
@@ -71,8 +82,10 @@ class PositionRequirements extends Component
         try {
             $this->isProcessing = true;
 
-            // Create new import instance
-            $import = new PositionRequirementsImport();
+            Log::info('Starting Import Process...');
+
+            // Create new import instance untuk IMPORT MODE
+            $import = new PositionRequirementsImport(true); // true = import mode
 
             // Process the import
             Excel::import($import, $this->excelFile->getRealPath());
@@ -80,6 +93,13 @@ class PositionRequirements extends Component
             // Get results
             $results = $import->getResults();
             $this->importResults = $results;
+
+            Log::info('Import Mode - Results:', $results);
+            Log::info('Import Mode - Errors:', $import->getErrors());
+
+            // Verifikasi data masuk ke database
+            $importedCount = PositionRequirementSetting::count();
+            Log::info('Total records in database after import: ' . $importedCount);
 
             // Hide preview
             $this->showPreview = false;
@@ -100,7 +120,8 @@ class PositionRequirements extends Component
             $this->isProcessing = false;
         } catch (\Exception $e) {
             $this->isProcessing = false;
-            Toaster::error('Error during import: ' . $e->getMessage());
+            Log::error('Import Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            Toaster::error('Error saat import: ' . $e->getMessage());
         }
     }
 
