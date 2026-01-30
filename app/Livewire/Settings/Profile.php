@@ -3,11 +3,14 @@
 namespace App\Livewire\Settings;
 
 use App\Models\User;
+use Livewire\Component;
+use Livewire\Attributes\Title;
+use Masmerise\Toaster\Toaster;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Validation\Rule;
-use Livewire\Component;
 
+#[Title('Profile')]
 class Profile extends Component
 {
     public string $name = '';
@@ -31,27 +34,18 @@ class Profile extends Component
         $user = Auth::user();
 
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-
-            'email' => [
+            'name' => [
                 'required',
                 'string',
-                'lowercase',
-                'email',
                 'max:255',
-                Rule::unique(User::class)->ignore($user->id),
+                'regex:/^[\p{L}\s]+$/u' // Hanya huruf dan spasi
             ],
         ]);
 
-        $user->fill($validated);
-
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-
+        $user->name = $validated['name'];
         $user->save();
 
-        $this->dispatch('profile-updated', name: $user->name);
+        Toaster::success('Profile updated successfully.');
     }
 
     /**
@@ -63,12 +57,11 @@ class Profile extends Component
 
         if ($user->hasVerifiedEmail()) {
             $this->redirectIntended(default: route('dashboard', absolute: false));
-
             return;
         }
 
         $user->sendEmailVerificationNotification();
 
-        Session::flash('status', 'verification-link-sent');
+        Toaster::success('Verification link sent successfully.');
     }
 }

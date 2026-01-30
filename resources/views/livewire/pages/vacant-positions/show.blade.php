@@ -392,7 +392,7 @@
                                         wire:loading.attr="disabled"
                                         type="button"
                                         class="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#721d21] to-[#8a252a] px-8 py-3 text-sm font-semibold text-white hover:from-[#5a1719] hover:to-[#721d21] disabled:opacity-50"
-                                        {{ count($selectedForAnalysis) === 0 ? 'disabled' : '' }}
+                                        {{ count($selectedForAnalysis) < 2 ? 'disabled' : '' }}
                                     >
                                         <svg
                                             wire:loading

@@ -111,12 +111,14 @@
                     <span class="px-2 text-sm text-red-500">{{ $message }}</span>
                 @enderror
 
-                <a
+                {{--
+                    <a
                     href="{{ route('password.request') }}"
                     class="w-full text-right text-sm text-gray-500 underline transition duration-300 hover:font-semibold"
-                >
+                    >
                     Lupa Password?
-                </a>
+                    </a>
+                --}}
             </div>
 
             {{-- reCAPTCHA Mobile --}}
