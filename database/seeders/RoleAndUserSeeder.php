@@ -74,5 +74,16 @@ class RoleAndUserSeeder extends Seeder
             ]
         );
         $userHeadOfUnit->assignRole($roleHeadOfUnit);
+
+        // 4. User for HC Operator
+        $userHcOperator = User::firstOrCreate(
+            ['email' => 'hcoperator@example.com'],
+            [
+                'name' => 'HC Operator',
+                'password' => Hash::make('password123'),
+                'email_verified_at' => now(),
+            ]
+        );
+        $userHcOperator->assignRole($roleHcOperator);
     }
 }

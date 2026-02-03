@@ -45,7 +45,7 @@ class Index extends Component
         return Company::class;
     }
 
-    // Override performDelete untuk custom logic
+    // Override performDelete
     protected function performDelete($company): void
     {
         // Delete logo file jika ada

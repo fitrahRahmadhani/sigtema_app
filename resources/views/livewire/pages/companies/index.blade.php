@@ -80,7 +80,7 @@
                         <input
                             type="text"
                             wire:model.live.debounce.300ms="search"
-                            placeholder="Search by name, code, or admin..."
+                            placeholder="Search by name or cocd"
                             class="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
                     </div>
@@ -333,7 +333,7 @@
                                 <div class="mt-2 flex items-center gap-3">
                                     @if ($company->admin->first()->profile_path)
                                         <img
-                                            src="{{ \Storage::url($company->admin->first()->profile_path) }}"
+                                            src="{{ asset('storage/' . $company->admin->first()->profile_path) }}"
                                             alt="{{ $company->admin->first()->name }}"
                                             class="h-10 w-10 rounded-full border-2 border-white shadow-sm"
                                         />

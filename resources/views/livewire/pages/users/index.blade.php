@@ -298,7 +298,7 @@
                             <span
                                 class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800"
                             >
-                                {{ ucfirst($role->name) }}
+                                {{ $role->name }}
                             </span>
                         @empty
                             <span class="text-sm text-gray-400 italic">No role</span>
@@ -454,7 +454,7 @@
                                     <span
                                         class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-800"
                                     >
-                                        {{ ucfirst($role->name) }}
+                                        {{ $role->name }}
                                     </span>
                                 @empty
                                     <span class="text-sm text-gray-400 italic">No role assigned</span>

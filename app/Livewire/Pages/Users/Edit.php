@@ -28,7 +28,12 @@ class Edit extends Component
 
     public $email = '';
 
-    #[Validate('nullable|string|min:8')]
+    #[Validate([
+        'nullable',
+        'string',
+        'min:12',
+        'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/'
+    ])]
     public $password = '';
 
     #[Validate('nullable|same:password')]
@@ -54,19 +59,6 @@ class Edit extends Component
         $this->company_id = $user->company_id;
         $this->selectedRoles = $user->roles->pluck('name')->toArray();
         $this->existing_profile_photo = $user->profile_path;
-    }
-
-    public function rules()
-    {
-        return [
-            'name' => 'required|string|max:255',
-            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->user->id)],
-            'password' => 'nullable|string|min:8|confirmed',
-            'password_confirmation' => 'nullable|same:password',
-            'company_id' => 'nullable|exists:companies,id',
-            'selectedRoles' => 'nullable|array',
-            'profile_photo' => 'nullable|image|max:2048',
-        ];
     }
 
     public function updatedProfilePhoto()
@@ -137,9 +129,7 @@ class Edit extends Component
                 $this->user->syncRoles([]);
             }
 
-            Toaster::success('User updated successfully!');
-
-            return $this->redirect(route('users.index'), navigate: true);
+            return redirect()->route('users.index')->success('User updated successfully!');
         } catch (\Exception $e) {
             Toaster::error('Failed to update user: ' . $e->getMessage());
         }
