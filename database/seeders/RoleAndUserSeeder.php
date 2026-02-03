@@ -14,29 +14,35 @@ class RoleAndUserSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // ========== BUAT ROLE ==========
+        // ========== Create Role ==========
 
-        // 1. SUPERADMIN
+        // 1. Superadmin
         $roleSuperadmin = Role::firstOrCreate([
             'name' => 'superadmin',
             'guard_name' => 'web'
         ]);
 
-        // 2. ADMIN
+        // 2. Admin
         $roleAdmin = Role::firstOrCreate([
             'name' => 'admin',
             'guard_name' => 'web'
         ]);
 
-        // 3. KEPALA UNIT (saya beri nama "head-of-unit")
-        $roleKepalaUnit = Role::firstOrCreate([
+        // 3. Head of Unit
+        $roleHeadOfUnit = Role::firstOrCreate([
             'name' => 'head-of-unit',
             'guard_name' => 'web'
         ]);
 
-        // ========== BUAT USER ==========
+        // 4. HC Operator
+        $roleHcOperator = Role::firstOrCreate([
+            'name' => 'hc-operator',
+            'guard_name' => 'web'
+        ]);
 
-        // 1. User untuk Superadmin
+        // ========== Create User ==========
+
+        // 1. User for Superadmin
         $userSuperadmin = User::firstOrCreate(
             ['email' => 'superadmin@example.com'],
             [
@@ -47,7 +53,7 @@ class RoleAndUserSeeder extends Seeder
         );
         $userSuperadmin->assignRole($roleSuperadmin);
 
-        // 2. User untuk Admin
+        // 2. User for Admin
         $userAdmin = User::firstOrCreate(
             ['email' => 'admin@example.com'],
             [
@@ -58,8 +64,8 @@ class RoleAndUserSeeder extends Seeder
         );
         $userAdmin->assignRole($roleAdmin);
 
-        // 3. User untuk Kepala Unit
-        $userKepalaUnit = User::firstOrCreate(
+        // 3. User for Head of Unit
+        $userHeadOfUnit = User::firstOrCreate(
             ['email' => 'kepalaunit@example.com'],
             [
                 'name' => 'Kepala Unit',
@@ -67,6 +73,6 @@ class RoleAndUserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
-        $userKepalaUnit->assignRole($roleKepalaUnit);
+        $userHeadOfUnit->assignRole($roleHeadOfUnit);
     }
 }
