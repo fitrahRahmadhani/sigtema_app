@@ -103,7 +103,7 @@ class PositionsImport implements ToCollection, WithHeadingRow
                     'position_code' => 'required|string|max:255',
                     'name' => 'required|string|max:255',
                     'job_grade' => 'required|string|max:255',
-                    'band' => 'nullable|string|max:50',
+                    'band' => 'nullable|integer|max:2',
                     'work_unit' => 'nullable|string|max:255',
                     'directorate' => 'nullable|string|max:255',
                     'department' => 'nullable|string|max:255',

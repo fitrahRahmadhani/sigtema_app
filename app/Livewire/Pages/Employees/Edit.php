@@ -64,7 +64,7 @@ class Edit extends Component
             'gender' => 'required|in:male,female',
             'personal_grade' => 'required|string|max:50',
             'hire_date' => 'nullable|date',
-            'band' => 'required|in:band 1,band 2,band 3,band 4,band 5',
+            'band' => 'required|in:1,2,3,4,5',
             'company_id' => 'required|exists:companies,id',
             'password' => 'nullable|string|min:8|confirmed',
             'profile_photo' => 'nullable|image|max:2048',
