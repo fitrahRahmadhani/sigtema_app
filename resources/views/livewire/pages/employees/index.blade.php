@@ -1,13 +1,13 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Employees</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -32,7 +32,7 @@
                     <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Employees</h1>
                     <p class="mt-1 text-sm text-gray-500">Manage employee information and assignments</p>
 
-                    <!-- Company Info with Change Button -->
+                    {{-- Company Info with Change Button --}}
                     @if ($isSuperadmin && $selectedCompany)
                         <div class="mt-1 flex items-center gap-2">
                             <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <!-- Add Employee Button -->
+            {{-- Add Employee Button --}}
             @if (! $showCompanySelection)
                 <a
                     href="{{ route('employees.create') }}"
@@ -76,7 +76,7 @@
             @endif
         </div>
 
-        <!-- COMPANY SELECTION SECTION -->
+        {{-- COMPANY SELECTION SECTION --}}
         @if ($showCompanySelection)
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
@@ -96,7 +96,7 @@
                 <h3 class="mt-4 text-xl font-semibold text-gray-700">Pilih Perusahaan</h3>
                 <p class="mt-2 text-gray-500">Silakan pilih perusahaan untuk mengelola karyawan</p>
 
-                <!-- Company List -->
+                {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($companies as $company)
                         <button
@@ -141,20 +141,20 @@
             </div>
         @endif
 
-        <!-- MAIN CONTENT SECTION -->
+        {{-- MAIN CONTENT SECTION --}}
         @if (! $showCompanySelection)
             @if ($selectedCompany)
-                <!-- Search and Filter Section -->
+                {{-- Search and Filter Section --}}
                 <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                    <!-- Results Info -->
+                    {{-- Results Info --}}
                     <div class="text-sm text-gray-600">
                         Mengelola karyawan di
                         <span class="font-semibold">{{ $selectedCompany->name }}</span>
                     </div>
 
-                    <!-- Search Only -->
+                    {{-- Search Only --}}
                     <div class="grid gap-4">
-                        <!-- Search Input -->
+                        {{-- Search Input --}}
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-700">Search Employee</label>
                             <div class="relative">
@@ -184,7 +184,7 @@
                         </div>
                     </div>
 
-                    <!-- Results Count -->
+                    {{-- Results Count --}}
                     <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
                         Showing
                         <span class="font-semibold text-gray-900">{{ $employees->count() }}</span>
@@ -194,9 +194,9 @@
                     </div>
                 </div>
 
-                <!-- Employees List Container -->
+                {{-- Employees List Container --}}
                 <div class="space-y-3 overflow-x-auto">
-                    <!-- Column Headers - Hidden on mobile -->
+                    {{-- Column Headers - Hidden on mobile --}}
                     <div
                         class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
                     >
@@ -207,15 +207,15 @@
                         <div class="col-span-2 text-center text-sm font-semibold">Actions</div>
                     </div>
 
-                    <!-- List Items -->
+                    {{-- List Items --}}
                     @forelse ($employees as $employee)
-                        <!-- Desktop View -->
+                        {{-- Desktop View --}}
                         <div
                             class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
                         >
-                            <!-- Employee Info -->
+                            {{-- Employee Info --}}
                             <div class="col-span-3 flex gap-2">
-                                <!-- Photo -->
+                                {{-- Photo --}}
                                 <div class="flex flex-shrink-0 items-center">
                                     @if ($employee->profile_path)
                                         <img
@@ -254,7 +254,7 @@
                                 </div>
                             </div>
 
-                            <!-- Contact -->
+                            {{-- Contact --}}
                             <div class="col-span-2 flex flex-col justify-center">
                                 <p class="truncate text-sm text-gray-900">{{ $employee->email }}</p>
                                 <p class="truncate text-xs text-gray-500">{{ $employee->phone }}</p>
@@ -265,7 +265,7 @@
                                 </span>
                             </div>
 
-                            <!-- Position -->
+                            {{-- Position --}}
                             <div class="col-span-3 flex flex-col justify-center">
                                 @if ($employee->position)
                                     <p class="truncate text-sm font-medium text-gray-900">
@@ -277,7 +277,7 @@
                                 @endif
                             </div>
 
-                            <!-- Company -->
+                            {{-- Company --}}
                             <div class="col-span-2 flex flex-col justify-center">
                                 @if ($employee->company)
                                     <p class="truncate text-sm text-gray-600">{{ $employee->company->name }}</p>
@@ -287,7 +287,7 @@
                                 @endif
                             </div>
 
-                            <!-- Actions -->
+                            {{-- Actions --}}
                             <div class="col-span-2 flex items-center justify-center gap-2">
                                 <button
                                     wire:click="show({{ $employee->id }})"
@@ -357,12 +357,12 @@
                             </div>
                         </div>
 
-                        <!-- Mobile View -->
+                        {{-- Mobile View --}}
                         <div
                             class="block rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
                         >
                             <div class="space-y-4">
-                                <!-- Employee Header -->
+                                {{-- Employee Header --}}
                                 <div class="flex items-start gap-3 border-b border-gray-100 pb-4">
                                     @if ($employee->profile_path)
                                         <img
@@ -395,14 +395,14 @@
                                     </div>
                                 </div>
 
-                                <!-- Contact Info -->
+                                {{-- Contact Info --}}
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase">Contact</p>
                                     <p class="mt-1 text-sm text-gray-900">{{ $employee->email }}</p>
                                     <p class="text-sm text-gray-500">{{ $employee->phone }}</p>
                                 </div>
 
-                                <!-- Position & Company -->
+                                {{-- Position & Company --}}
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <p class="text-xs font-medium text-gray-500 uppercase">Position</p>
@@ -429,7 +429,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Actions -->
+                                {{-- Actions --}}
                                 <div class="flex items-center justify-end gap-2 border-t border-gray-100 pt-4">
                                     <button
                                         wire:click="show({{ $employee->id }})"
@@ -521,7 +521,7 @@
                     @endforelse
                 </div>
 
-                <!-- Pagination -->
+                {{-- Pagination --}}
                 @if ($employees->hasPages())
                     <div class="mt-6">
                         {{ $employees->links() }}

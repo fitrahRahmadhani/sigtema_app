@@ -1,14 +1,14 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('users.index') }}">Users</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Create User</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -36,13 +36,13 @@
             </div>
         </div>
 
-        <!-- Form -->
+        {{-- Form --}}
         <form wire:submit="save" class="space-y-8">
-            <!-- Profile Photo Section -->
+            {{-- Profile Photo Section --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Profile Photo</h3>
                 <div class="flex flex-col items-center gap-4 sm:flex-row">
-                    <!-- Photo Preview -->
+                    {{-- Photo Preview --}}
                     <div
                         class="flex h-32 w-32 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-gray-300 bg-gray-50"
                     >
@@ -70,7 +70,7 @@
                         @endif
                     </div>
 
-                    <!-- Upload Controls -->
+                    {{-- Upload Controls --}}
                     <div class="flex-1 space-y-3">
                         <div class="flex flex-wrap items-center gap-3">
                             <label
@@ -130,12 +130,12 @@
                 </div>
             </div>
 
-            <!-- Rest of the form remains the same -->
-            <!-- Personal Information -->
+            {{-- Rest of the form remains the same --}}
+            {{-- Personal Information --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Personal Information</h3>
                 <div class="grid gap-6 md:grid-cols-2">
-                    <!-- Name -->
+                    {{-- Name --}}
                     <div class="md:col-span-2">
                         <label for="name" class="mb-2 block text-sm font-medium text-gray-700">
                             Full Name
@@ -153,7 +153,7 @@
                         @enderror
                     </div>
 
-                    <!-- Email -->
+                    {{-- Email --}}
                     <div class="md:col-span-2">
                         <label for="email" class="mb-2 block text-sm font-medium text-gray-700">
                             Email Address
@@ -171,7 +171,7 @@
                         @enderror
                     </div>
 
-                    <!-- Password -->
+                    {{-- Password --}}
                     <div>
                         <label for="password" class="mb-2 block text-sm font-medium text-gray-700">
                             Password
@@ -191,7 +191,7 @@
                         <p class="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
                     </div>
 
-                    <!-- Password Confirmation -->
+                    {{-- Password Confirmation --}}
                     <div>
                         <label for="password_confirmation" class="mb-2 block text-sm font-medium text-gray-700">
                             Confirm Password
@@ -211,7 +211,7 @@
                 </div>
             </div>
 
-            <!-- Company Assignment -->
+            {{-- Company Assignment --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Company Assignment</h3>
                 <div>
@@ -248,7 +248,7 @@
                 </div>
             </div>
 
-            <!-- Role Assignment -->
+            {{-- Role Assignment --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Role Assignment</h3>
                 <div>
@@ -296,7 +296,7 @@
                 </div>
             </div>
 
-            <!-- Form Actions -->
+            {{-- Form Actions --}}
             <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
                 <button
                     type="button"

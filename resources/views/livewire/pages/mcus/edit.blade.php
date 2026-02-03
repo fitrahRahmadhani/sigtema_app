@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('mcus.index', ['company_id' => $selectedCompanyId]) }}">
@@ -8,9 +8,9 @@
         <flux:breadcrumbs.item>Edit MCU Record</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8">
             <div class="flex items-center gap-4">
                 <div
@@ -45,7 +45,7 @@
         </div>
 
         @if ($isSuperadmin && ! $selectedCompanyId)
-            <!-- COMPANY SELECTION SECTION (jika superadmin tanpa company) -->
+            {{-- COMPANY SELECTION SECTION (jika superadmin tanpa company) --}}
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -88,13 +88,13 @@
                 </div>
             </div>
         @else
-            <!-- MAIN CONTENT SECTION -->
+            {{-- MAIN CONTENT SECTION --}}
             @if ($selectedCompany)
-                <!-- Employee Info (Read-only) -->
+                {{-- Employee Info (Read-only) --}}
                 <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
                     <h2 class="text-lg font-semibold text-gray-900">Employee Information</h2>
                     <div class="grid gap-4 md:grid-cols-2">
-                        <!-- Company (Read-only) -->
+                        {{-- Company (Read-only) --}}
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-700">Company</label>
                             <div
@@ -108,7 +108,7 @@
                             </div>
                         </div>
 
-                        <!-- Employee (Read-only) -->
+                        {{-- Employee (Read-only) --}}
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-700">Employee</label>
                             <div
@@ -124,13 +124,13 @@
                     </div>
                 </div>
 
-                <!-- Form -->
+                {{-- Form --}}
                 <form wire:submit="update" class="space-y-6">
-                    <!-- MCU Details -->
+                    {{-- MCU Details --}}
                     <div class="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
                         <h2 class="text-lg font-semibold text-gray-900">MCU Details</h2>
                         <div class="grid gap-4 md:grid-cols-2">
-                            <!-- Year -->
+                            {{-- Year --}}
                             <div>
                                 <label for="year" class="mb-2 block text-sm font-medium text-gray-700">
                                     Year
@@ -149,7 +149,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Result -->
+                            {{-- Result --}}
                             <div>
                                 <label for="result" class="mb-2 block text-sm font-medium text-gray-700">
                                     MCU Result
@@ -216,7 +216,7 @@
                         </div>
                     </div>
 
-                    <!-- Form Actions -->
+                    {{-- Form Actions --}}
                     <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-6">
                         <button
                             type="button"

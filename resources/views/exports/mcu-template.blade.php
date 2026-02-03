@@ -7,7 +7,7 @@
         </tr>
     </thead>
     <tbody>
-        <!-- BARIS CONTOH - HAPUS SEBELUM UPLOAD -->
+        {{-- BARIS CONTOH - HAPUS SEBELUM UPLOAD --}}
         <tr style="background-color: #fed7d7">
             <td>CONTOH: EMP001</td>
             <td>CONTOH: K1</td>
@@ -29,7 +29,7 @@
             <td>CONTOH: {{ $currentYear - 1 }}</td>
         </tr>
 
-        <!-- ISI DATA ANDA MULAI DARI BARIS INI -->
+        {{-- ISI DATA ANDA MULAI DARI BARIS INI --}}
         <tr>
             <td colspan="3" style="height: 10px"></td>
         </tr>

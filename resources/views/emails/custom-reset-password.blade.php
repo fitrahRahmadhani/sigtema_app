@@ -25,7 +25,7 @@
         <table width="100%" bgcolor="#f4f4f4" cellpadding="0" cellspacing="0" role="presentation">
             <tr>
                 <td align="center">
-                    <!-- Container -->
+                    {{-- Container --}}
                     <table
                         width="600"
                         bgcolor="#ffffff"
@@ -34,7 +34,7 @@
                         role="presentation"
                         style="margin-top: 40px; border-radius: 8px; overflow: hidden"
                     >
-                        <!-- Logo -->
+                        {{-- Logo --}}
                         <tr>
                             <td align="center" style="padding: 36px 40px">
                                 <img
@@ -46,7 +46,7 @@
                             </td>
                         </tr>
 
-                        <!-- Title -->
+                        {{-- Title --}}
                         <tr>
                             <td align="center" bgcolor="#fafafa" style="padding: 25px 40px 10px">
                                 <h1
@@ -63,7 +63,7 @@
                             </td>
                         </tr>
 
-                        <!-- Content -->
+                        {{-- Content --}}
                         <tr>
                             <td
                                 bgcolor="#fafafa"
@@ -75,7 +75,7 @@
                             </td>
                         </tr>
 
-                        <!-- Button -->
+                        {{-- Button --}}
                         <tr>
                             <td bgcolor="#fafafa" align="center" style="padding: 20px 40px">
                                 <a
@@ -99,7 +99,7 @@
                             </td>
                         </tr>
 
-                        <!-- Info -->
+                        {{-- Info --}}
                         <tr>
                             <td
                                 bgcolor="#fafafa"
@@ -119,14 +119,14 @@
                             </td>
                         </tr>
 
-                        <!-- Divider -->
+                        {{-- Divider --}}
                         <tr>
                             <td bgcolor="#fafafa" style="padding: 10px 40px">
                                 <hr style="border: none; border-top: 2px solid #d9d9d9" />
                             </td>
                         </tr>
 
-                        <!-- Fallback Link -->
+                        {{-- Fallback Link --}}
                         <tr>
                             <td
                                 bgcolor="#fafafa"
@@ -150,7 +150,7 @@
                         </tr>
                     </table>
 
-                    <!-- Footer -->
+                    {{-- Footer --}}
                     <table
                         width="600"
                         bgcolor="#1b1b1b"

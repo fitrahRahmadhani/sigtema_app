@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('psychogram-results.index') }}">
@@ -8,9 +8,9 @@
         <flux:breadcrumbs.item>Edit Result</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex items-center gap-4">
             <div
                 class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <!-- Result Info Summary -->
+        {{-- Result Info Summary --}}
         <div class="mb-6 rounded-lg border border-blue-100 bg-blue-50 p-4">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -74,13 +74,13 @@
             </div>
         </div>
 
-        <!-- Form -->
+        {{-- Form --}}
         <form wire:submit="update" class="space-y-8">
-            <!-- Employee & Aspect Info -->
+            {{-- Employee & Aspect Info --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Result Information</h3>
 
-                <!-- Company Info -->
+                {{-- Company Info --}}
                 @if ($isSuperadmin && $selectedCompany)
                     <div class="mb-6">
                         <p class="mb-2 text-sm font-medium text-gray-700">Company</p>
@@ -119,7 +119,7 @@
                     </div>
                 @endif
 
-                <!-- Employee Information -->
+                {{-- Employee Information --}}
                 <div class="mb-6">
                     <p class="mb-2 text-sm font-medium text-gray-700">Employee</p>
                     <div class="rounded-lg border border-gray-200 bg-white p-4">
@@ -172,7 +172,7 @@
                     </div>
                 </div>
 
-                <!-- Aspect Information -->
+                {{-- Aspect Information --}}
                 <div>
                     <p class="mb-2 text-sm font-medium text-gray-700">Aspect</p>
                     <div class="rounded-lg border border-gray-200 bg-white p-4">
@@ -196,11 +196,11 @@
                 </div>
             </div>
 
-            <!-- Score Update -->
+            {{-- Score Update --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Update Score</h3>
 
-                <!-- Score Legend -->
+                {{-- Score Legend --}}
                 <div class="mb-6 rounded-lg border border-green-100 bg-green-50 p-4">
                     <h4 class="mb-2 text-sm font-semibold text-green-900">Score Rating Scale (1-5)</h4>
                     <div class="grid grid-cols-5 gap-2">
@@ -228,7 +228,7 @@
                     </div>
                 </div>
 
-                <!-- Current Score -->
+                {{-- Current Score --}}
                 <div class="mb-6">
                     <p class="mb-2 text-sm font-medium text-gray-700">Current Score</p>
                     <div class="flex items-center gap-4">
@@ -271,14 +271,14 @@
                     </div>
                 </div>
 
-                <!-- New Score Input -->
+                {{-- New Score Input --}}
                 <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700">
                         New Score (1-5)
                         <span class="text-red-600">*</span>
                     </label>
                     <div class="flex items-center gap-4">
-                        <!-- Radio Buttons for Score -->
+                        {{-- Radio Buttons for Score --}}
                         <div class="flex flex-1 gap-2">
                             @foreach ([1, 2, 3, 4, 5] as $scoreValue)
                                 @php
@@ -308,7 +308,7 @@
                             @endforeach
                         </div>
 
-                        <!-- Score Display -->
+                        {{-- Score Display --}}
                         <div
                             class="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-300 bg-white"
                         >
@@ -333,7 +333,7 @@
                     @enderror
                 </div>
 
-                <!-- Score Comparison -->
+                {{-- Score Comparison --}}
                 @if (isset($score) && $score != $result->score)
                     <div class="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
                         <div class="flex items-center justify-between">
@@ -401,7 +401,7 @@
                 @endif
             </div>
 
-            <!-- Form Actions -->
+            {{-- Form Actions --}}
             <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
                 <button
                     type="button"

@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('organization-structure.index') }}">
@@ -8,11 +8,11 @@
         <flux:breadcrumbs.item>Organization Structure (Table)</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-4 md:p-8">
-        <!-- Header Section -->
+        {{-- Header Section --}}
         <div class="mb-8">
-            <!-- Title Row -->
+            {{-- Title Row --}}
             <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div class="flex items-start gap-4">
                     <div class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl shadow-sm">
@@ -38,7 +38,7 @@
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
+                {{-- Action Buttons --}}
                 <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
                     <a
                         href="{{ route('organization-structure.index') }}"
@@ -86,7 +86,7 @@
                 </div>
             </div>
 
-            <!-- Company Viewing Info (Superadmin Only) -->
+            {{-- Company Viewing Info (Superadmin Only) --}}
             @if ($isSuperadmin && $selectedCompanyId)
                 <div class="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
                     <div class="flex items-start gap-3">
@@ -136,10 +136,10 @@
             @endif
         </div>
 
-        <!-- Search and Filter Section -->
+        {{-- Search and Filter Section --}}
         <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4 md:p-6">
             <div class="grid gap-4 md:grid-cols-3">
-                <!-- Search Input -->
+                {{-- Search Input --}}
                 <div class="md:col-span-1">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Search Hierarchy</label>
                     <div class="relative">
@@ -168,7 +168,7 @@
                     </div>
                 </div>
 
-                <!-- Company Filter -->
+                {{-- Company Filter --}}
                 @role('superadmin')
                     <div class="relative">
                         <label class="mb-2 block text-sm font-medium text-gray-700">Company</label>
@@ -207,7 +207,7 @@
                     </div>
                 @endrole
 
-                <!-- Relation Type Filter -->
+                {{-- Relation Type Filter --}}
                 <div class="relative">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Relation Type</label>
                     <div class="relative">
@@ -234,7 +234,7 @@
                 </div>
             </div>
 
-            <!-- Results Info -->
+            {{-- Results Info --}}
             <div class="flex items-center justify-between border-t border-gray-200 pt-4">
                 <div class="text-sm text-gray-600">
                     Showing
@@ -254,9 +254,9 @@
             </div>
         </div>
 
-        <!-- Table -->
+        {{-- Table --}}
         <div class="space-y-3 overflow-x-auto">
-            <!-- Column Headers - Hidden on mobile -->
+            {{-- Column Headers - Hidden on mobile --}}
             <div
                 class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
             >
@@ -267,13 +267,13 @@
                 <div class="col-span-1 text-center text-sm font-semibold">Actions</div>
             </div>
 
-            <!-- List Items -->
+            {{-- List Items --}}
             @forelse ($hierarchies as $hierarchy)
-                <!-- Desktop View -->
+                {{-- Desktop View --}}
                 <div
                     class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-all duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
                 >
-                    <!-- Company -->
+                    {{-- Company --}}
                     <div class="col-span-3 flex items-center gap-3">
                         @if ($hierarchy->company->logo_path)
                             <img
@@ -309,7 +309,7 @@
                         </div>
                     </div>
 
-                    <!-- Position -->
+                    {{-- Position --}}
                     <div class="col-span-3 flex min-w-0 flex-col justify-center">
                         <a
                             href="{{ route('positions.edit', $hierarchy->position->slug) }}"
@@ -325,7 +325,7 @@
                         </span>
                     </div>
 
-                    <!-- Reports To -->
+                    {{-- Reports To --}}
                     <div class="col-span-3 flex min-w-0 flex-col justify-center">
                         <a
                             href="{{ route('positions.edit', $hierarchy->superior->slug) }}"
@@ -341,7 +341,7 @@
                         </span>
                     </div>
 
-                    <!-- Relation Type -->
+                    {{-- Relation Type --}}
                     <div class="col-span-2 flex items-center">
                         <span
                             class="{{ $hierarchy->relation_type === 'direct' ? 'bg-green-100 text-green-800' : ($hierarchy->relation_type === 'indirect' ? 'bg-blue-100 text-blue-800' : ($hierarchy->relation_type === 'dotted' ? 'bg-purple-100 text-purple-800' : 'bg-orange-100 text-orange-800')) }} inline-flex rounded-full px-3 py-1 text-xs font-medium"
@@ -350,7 +350,7 @@
                         </span>
                     </div>
 
-                    <!-- Actions -->
+                    {{-- Actions --}}
                     <div class="col-span-1 flex items-center justify-center gap-2">
                         <a
                             href="{{ route('organization-structure.edit', $hierarchy) }}"
@@ -395,12 +395,12 @@
                     </div>
                 </div>
 
-                <!-- Mobile View -->
+                {{-- Mobile View --}}
                 <div
                     class="block rounded-lg border border-gray-200 bg-white p-4 transition-all duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
                 >
                     <div class="space-y-4">
-                        <!-- Company Header -->
+                        {{-- Company Header --}}
                         <div class="flex items-start gap-3 border-b border-gray-100 pb-4">
                             @if ($hierarchy->company->logo_path)
                                 <img
@@ -439,7 +439,7 @@
                             </div>
                         </div>
 
-                        <!-- Position Info -->
+                        {{-- Position Info --}}
                         <div>
                             <p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Position</p>
                             <div class="mt-2">
@@ -458,7 +458,7 @@
                             </div>
                         </div>
 
-                        <!-- Reports To Info -->
+                        {{-- Reports To Info --}}
                         <div>
                             <p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Reports To</p>
                             <div class="mt-2">
@@ -477,7 +477,7 @@
                             </div>
                         </div>
 
-                        <!-- Type & Actions -->
+                        {{-- Type & Actions --}}
                         <div class="flex items-center justify-between border-t border-gray-100 pt-4">
                             <span
                                 class="{{ $hierarchy->relation_type === 'direct' ? 'bg-green-100 text-green-800' : ($hierarchy->relation_type === 'indirect' ? 'bg-blue-100 text-blue-800' : ($hierarchy->relation_type === 'dotted' ? 'bg-purple-100 text-purple-800' : 'bg-orange-100 text-orange-800')) }} inline-flex rounded-full px-3 py-1 text-xs font-medium"
@@ -569,7 +569,7 @@
             @endforelse
         </div>
 
-        <!-- Pagination -->
+        {{-- Pagination --}}
         @if ($hierarchies->hasPages())
             <div class="mt-6">
                 {{ $hierarchies->links() }}

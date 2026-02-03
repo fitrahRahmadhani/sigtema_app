@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         @hasanyrole('superadmin|admin')
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
@@ -12,7 +12,7 @@
 
     {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-4 md:p-6 lg:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col items-start gap-6 lg:flex-row lg:gap-8">
             <div
                 class="flex h-32 w-28 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gray-300 bg-gray-100 sm:h-44 sm:w-40"
@@ -126,7 +126,7 @@
 
         {{-- Content --}}
         <div class="w-full space-y-6 md:space-y-8">
-            <!-- Two Column Section: PAPI Kostick & DISC -->
+            {{-- Two Column Section: PAPI Kostick & DISC --}}
             <div class="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
                 {{-- PAPI Kostick --}}
                 <div class="flex w-full flex-col">
@@ -193,7 +193,7 @@
                     <div class="flex grow flex-col rounded-b-lg border border-t-0 border-gray-300 bg-white p-2 md:p-4">
                         @if ($discData)
                             <div class="grid h-full grid-cols-1 gap-4 sm:grid-cols-3" wire:ignore>
-                                <!-- DISC 1 -->
+                                {{-- DISC 1 --}}
                                 <div class="flex h-full flex-col">
                                     <div class="rounded-t-md bg-red-500 px-3 py-2 text-center">
                                         <p class="text-sm font-semibold text-white">DISC 1</p>
@@ -213,7 +213,7 @@
                                     </div>
                                 </div>
 
-                                <!-- DISC 2 -->
+                                {{-- DISC 2 --}}
                                 <div class="flex h-full flex-col">
                                     <div class="rounded-t-md bg-yellow-500 px-3 py-2 text-center">
                                         <p class="text-sm font-semibold text-white">DISC 2</p>
@@ -233,7 +233,7 @@
                                     </div>
                                 </div>
 
-                                <!-- DISC 3 -->
+                                {{-- DISC 3 --}}
                                 <div class="flex h-full flex-col">
                                     <div class="rounded-t-md bg-green-500 px-3 py-2 text-center">
                                         <p class="text-sm font-semibold text-white">DISC 3</p>
@@ -274,7 +274,7 @@
                     </div>
                 </div>
 
-                <!-- Soft Competencies -->
+                {{-- Soft Competencies --}}
                 <div class="w-full lg:col-span-1">
                     <div class="color-gradient w-full rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">Soft Competencies</p>
@@ -325,7 +325,7 @@
                     </div>
                 </div>
 
-                <!-- Technical Competencies -->
+                {{-- Technical Competencies --}}
                 <div class="w-full lg:col-span-1">
                     <div class="color-gradient flex w-full items-baseline rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">Technical Competencies</p>
@@ -621,9 +621,9 @@
                 </div>
             </div>
 
-            <!-- Two Column Section: MCU Result, Burnout -->
+            {{-- Two Column Section: MCU Result, Burnout --}}
             <div class="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
-                <!-- MCU Result -->
+                {{-- MCU Result --}}
                 <div class="w-full lg:col-span-1">
                     <div class="color-gradient w-full rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">MCU Results</p>
@@ -678,7 +678,7 @@
                     </div>
                 </div>
 
-                <!-- Burnout -->
+                {{-- Burnout --}}
                 <div class="w-full lg:col-span-1">
                     <div class="color-gradient flex w-full items-baseline rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">Burnout Test Result</p>

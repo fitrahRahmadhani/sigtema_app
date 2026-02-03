@@ -1,14 +1,16 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
-        <flux:breadcrumbs.item href="{{ route('requirements.position') }}">Position Requirements</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item href="{{ route('requirements.position') }}">
+            Position Requirements
+        </flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Create Requirements</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -32,18 +34,16 @@
             </div>
         </div>
 
-        <!-- Form -->
+        {{-- Form --}}
         <form wire:submit="save" class="space-y-8">
-            <!-- Position Selection -->
+            {{-- Position Selection --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Select Position</h3>
 
                 @if ($isSuperadmin)
-                    <!-- Company Selection for Superadmin -->
+                    {{-- Company Selection for Superadmin --}}
                     <div class="mb-6">
-                        <label for="company_id" class="mb-2 block text-sm font-medium text-gray-700">
-                            Company
-                        </label>
+                        <label for="company_id" class="mb-2 block text-sm font-medium text-gray-700">Company</label>
                         <div class="relative">
                             <select
                                 id="company_id"
@@ -71,7 +71,7 @@
                     </div>
                 @endif
 
-                <!-- Position Selection -->
+                {{-- Position Selection --}}
                 <div>
                     <label for="position_id" class="mb-2 block text-sm font-medium text-gray-700">
                         Position
@@ -112,12 +112,16 @@
                     @enderror
                 </div>
 
-                <!-- Selected Position Info -->
+                {{-- Selected Position Info --}}
                 @if ($position)
                     <div class="mt-6 rounded-lg border border-green-200 bg-green-50 p-4">
                         <div class="flex items-start">
                             <svg class="mt-0.5 mr-3 h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"
+                                />
                             </svg>
                             <div>
                                 <h4 class="font-semibold text-green-800">Selected Position</h4>
@@ -151,7 +155,7 @@
                 @endif
             </div>
 
-            <!-- Requirements Section -->
+            {{-- Requirements Section --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <div class="mb-4 flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-900">Position Requirements</h3>
@@ -193,22 +197,30 @@
                         <p class="mt-4 font-medium text-gray-500">Click "Add Row" to start adding requirements</p>
                     </div>
                 @else
-                    <!-- Requirements Table -->
+                    {{-- Requirements Table --}}
                     <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
                                         #
                                     </th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
                                         Requirement Name
                                         <span class="text-red-600">*</span>
                                     </th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
                                         Value
                                     </th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
                                         Action
                                     </th>
                                 </tr>
@@ -273,7 +285,7 @@
                 @endif
             </div>
 
-            <!-- Form Actions -->
+            {{-- Form Actions --}}
             <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
                 <button
                     type="button"

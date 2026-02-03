@@ -13,13 +13,13 @@
                         wire:click="$set('selectedCompanyId', {{ $company->id }})"
                         class="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-5 text-left transition-all duration-300 hover:scale-[1.02] hover:border-[#69251a] hover:shadow-lg hover:shadow-[#69251a]/5"
                     >
-                        <!-- Background gradient effect -->
+                        {{-- Background gradient effect --}}
                         <div
                             class="absolute inset-0 bg-gradient-to-br from-white via-white to-gray-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                         ></div>
 
                         <div class="relative flex items-center gap-4">
-                            <!-- Company Logo -->
+                            {{-- Company Logo --}}
                             <div
                                 class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-[#69251a]/10 group-hover:to-[#8b3523]/10"
                             >
@@ -52,7 +52,7 @@
                                 @endif
                             </div>
 
-                            <!-- Company Info -->
+                            {{-- Company Info --}}
                             <div class="flex-1">
                                 <h4 class="font-bold text-gray-900 group-hover:text-[#69251a]">
                                     {{ $company->name }}
@@ -88,7 +88,7 @@
                                 </div>
                             </div>
 
-                            <!-- Chevron Icon -->
+                            {{-- Chevron Icon --}}
                             <div
                                 class="text-gray-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-[#69251a]"
                             >

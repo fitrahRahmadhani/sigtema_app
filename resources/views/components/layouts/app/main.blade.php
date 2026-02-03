@@ -10,13 +10,13 @@
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     </head>
     <body class="bg-primary-gray min-h-screen">
-        <!-- Start Sidebar Dashboard -->
+        {{-- Start Sidebar Dashboard --}}
         <x-layouts.app.sidebar />
-        <!-- End Sidebar Dashboard-->
+        {{-- End Sidebar Dashboard --}}
 
-        <!-- Start Header Dashboard -->
+        {{-- Start Header Dashboard --}}
         <x-layouts.app.header />
-        <!-- End Header Dashboard-->
+        {{-- End Header Dashboard --}}
 
         {{ $slot }}
 

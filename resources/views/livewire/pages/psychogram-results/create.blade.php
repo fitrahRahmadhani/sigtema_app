@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('psychogram-results.index') }}">
@@ -8,9 +8,9 @@
         <flux:breadcrumbs.item>Add Result</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex items-center gap-4">
             <div
                 class="color-gradient flex h-12 w-12 items-center justify-center self-start rounded-xl bg-gradient-to-br shadow-sm"
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <!-- COMPANY SELECTION SECTION -->
+        {{-- COMPANY SELECTION SECTION --}}
         @if ($showCompanySelection)
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
@@ -60,7 +60,7 @@
                     Silakan pilih perusahaan terlebih dahulu untuk menambah data hasil psikogram
                 </p>
 
-                <!-- Company List -->
+                {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($companiesWithCount as $item)
                         <a
@@ -102,15 +102,15 @@
                 </div>
             </div>
         @else
-            <!-- MAIN CONTENT SECTION -->
+            {{-- MAIN CONTENT SECTION --}}
             @if ($selectedCompany)
-                <!-- Form -->
+                {{-- Form --}}
                 <form wire:submit="save" class="space-y-8">
-                    <!-- Employee Selection -->
+                    {{-- Employee Selection --}}
                     <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                         <h3 class="mb-4 text-lg font-semibold text-gray-900">Employee Selection</h3>
                         <div class="space-y-6">
-                            <!-- Company Selection (only for superadmin without session) -->
+                            {{-- Company Selection (only for superadmin without session) --}}
                             @if ($isSuperadmin)
                                 <div>
                                     <label for="company_id" class="mb-2 block text-sm font-medium text-gray-700">
@@ -159,7 +159,7 @@
                                     @endif
                                 </div>
                             @else
-                                <!-- For non-superadmin, show company name (readonly) -->
+                                {{-- For non-superadmin, show company name (readonly) --}}
                                 <div>
                                     <label class="mb-2 block text-sm font-medium text-gray-700">
                                         Company
@@ -174,7 +174,7 @@
                                 </div>
                             @endif
 
-                            <!-- Employee Selection -->
+                            {{-- Employee Selection --}}
                             <div>
                                 <label for="employee_id" class="mb-2 block text-sm font-medium text-gray-700">
                                     Employee
@@ -215,7 +215,7 @@
                             </div>
                         </div>
 
-                        <!-- Selected Employee Info -->
+                        {{-- Selected Employee Info --}}
                         @if ($selectedEmployee)
                             <div class="mt-6 rounded-lg border border-blue-100 bg-blue-50 p-4">
                                 <div class="flex items-center gap-3">
@@ -264,7 +264,7 @@
                         @endif
                     </div>
 
-                    <!-- Aspect & Score Input -->
+                    {{-- Aspect & Score Input --}}
                     <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                         <div class="mb-4 flex items-center justify-between">
                             <h3 class="text-lg font-semibold text-gray-900">Aspect Evaluation</h3>
@@ -312,7 +312,7 @@
                             </div>
                         @endif
 
-                        <!-- Score Legend -->
+                        {{-- Score Legend --}}
                         <div class="mb-6 rounded-lg border border-green-100 bg-green-50 p-4">
                             <h4 class="mb-2 text-sm font-semibold text-green-900">Score Rating Scale (1-5)</h4>
                             <div class="grid grid-cols-5 gap-2">
@@ -329,7 +329,7 @@
                             </div>
                         </div>
 
-                        <!-- Aspect Input Rows -->
+                        {{-- Aspect Input Rows --}}
                         <div class="space-y-4">
                             @foreach ($aspects as $index => $aspect)
                                 <div class="rounded-lg border border-gray-200 bg-white p-4">
@@ -363,7 +363,7 @@
                                     </div>
 
                                     <div class="grid gap-4 md:grid-cols-2">
-                                        <!-- Aspect Selection -->
+                                        {{-- Aspect Selection --}}
                                         <div>
                                             <label class="mb-2 block text-sm font-medium text-gray-700">
                                                 Aspect
@@ -423,14 +423,14 @@
                                             @enderror
                                         </div>
 
-                                        <!-- Score Selection -->
+                                        {{-- Score Selection --}}
                                         <div>
                                             <label class="mb-2 block text-sm font-medium text-gray-700">
                                                 Score (1-5)
                                                 <span class="text-red-600">*</span>
                                             </label>
                                             <div class="flex items-center gap-2">
-                                                <!-- Radio Buttons for Score -->
+                                                {{-- Radio Buttons for Score --}}
                                                 <div class="flex flex-1 gap-1">
                                                     @foreach ([1, 2, 3, 4, 5] as $scoreValue)
                                                         <label class="flex-1 cursor-pointer">
@@ -450,7 +450,7 @@
                                                     @endforeach
                                                 </div>
 
-                                                <!-- Score Display -->
+                                                {{-- Score Display --}}
                                                 <div
                                                     class="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-300 bg-white"
                                                 >
@@ -467,7 +467,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Selected Aspect Info -->
+                                    {{-- Selected Aspect Info --}}
                                     @if ($aspect['aspect_id'])
                                         @php
                                             $selectedAspect = $availableAspects->firstWhere('id', $aspect['aspect_id']);
@@ -507,7 +507,7 @@
                         </div>
                     </div>
 
-                    <!-- Summary Preview -->
+                    {{-- Summary Preview --}}
                     @php
                         $hasSelectedAspects = false;
                         $filledAspects = [];
@@ -524,7 +524,7 @@
                         <div class="rounded-lg border border-blue-200 bg-blue-50 p-6">
                             <h3 class="mb-4 text-lg font-semibold text-blue-900">Summary Preview</h3>
                             <div class="space-y-4">
-                                <!-- Employee Info -->
+                                {{-- Employee Info --}}
                                 <div class="rounded-lg bg-white p-4">
                                     <p class="text-sm font-medium text-gray-500">Employee</p>
                                     <div class="mt-2 flex items-center gap-3">
@@ -551,7 +551,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Aspect Scores Summary -->
+                                {{-- Aspect Scores Summary --}}
                                 <div class="rounded-lg bg-white p-4">
                                     <p class="text-sm font-medium text-gray-500">Aspect Scores</p>
                                     <div class="mt-3 space-y-2">
@@ -594,7 +594,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Average Score -->
+                                {{-- Average Score --}}
                                 <div class="rounded-lg bg-white p-4">
                                     <div class="flex items-center justify-between">
                                         <div>
@@ -613,7 +613,7 @@
                         </div>
                     @endif
 
-                    <!-- Form Actions -->
+                    {{-- Form Actions --}}
                     <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
                         <button
                             type="button"

@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('requirements.position') }}">
@@ -8,9 +8,9 @@
         <flux:breadcrumbs.item>Edit Requirements</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <!-- Position Information -->
+        {{-- Position Information --}}
         <div class="mb-8 rounded-lg border border-green-200 bg-green-50 p-6">
             <div class="flex items-start">
                 <svg class="mt-0.5 mr-3 h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
@@ -85,7 +85,7 @@
             </div>
         </div>
 
-        <!-- Existing Requirements -->
+        {{-- Existing Requirements --}}
         <div class="mb-8 rounded-lg border border-gray-200 bg-gray-50 p-6">
             <div class="mb-6 flex items-center justify-between">
                 <div>
@@ -120,7 +120,7 @@
                     <p class="mt-1 text-sm text-gray-400">Add new requirements using the form below</p>
                 </div>
             @else
-                <!-- Requirements Table -->
+                {{-- Requirements Table --}}
                 <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -251,7 +251,7 @@
                     </table>
                 </div>
 
-                <!-- Auto-save Notice -->
+                {{-- Auto-save Notice --}}
                 <div class="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-3">
                     <div class="flex items-center">
                         <svg class="mr-2 h-4 w-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
@@ -271,7 +271,7 @@
             @endif
         </div>
 
-        <!-- Add New Requirements -->
+        {{-- Add New Requirements --}}
         <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
             <div class="mb-4 flex items-center justify-between">
                 <div>
@@ -299,7 +299,7 @@
                 </button>
             </div>
 
-            <!-- Dynamic Form for New Requirements -->
+            {{-- Dynamic Form for New Requirements --}}
             @if (count($newRequirements) === 0)
                 <div class="rounded-lg border border-dashed border-gray-300 bg-white p-8 text-center">
                     <svg
@@ -315,7 +315,7 @@
                     <p class="mt-4 font-medium text-gray-500">Click "Add Row" to start adding new requirements</p>
                 </div>
             @else
-                <!-- New Requirements Table -->
+                {{-- New Requirements Table --}}
                 <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -398,7 +398,7 @@
                     </table>
                 </div>
 
-                <!-- Add Button -->
+                {{-- Add Button --}}
                 <div class="mt-6">
                     <button
                         type="button"
@@ -449,7 +449,7 @@
                 </div>
             @endif
         </div>
-        <!-- Form Actions -->
+        {{-- Form Actions --}}
         <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
             <button
                 type="button"

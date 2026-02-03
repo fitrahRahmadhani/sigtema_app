@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('position-histories.index', ['company_id' => $selectedCompanyId]) }}">
@@ -8,9 +8,9 @@
         <flux:breadcrumbs.item>Edit Position History</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8">
             <div class="flex items-center gap-4">
                 <div
@@ -45,7 +45,7 @@
         </div>
 
         @if ($isSuperadmin && ! $selectedCompanyId)
-            <!-- COMPANY SELECTION SECTION (jika superadmin tanpa company) -->
+            {{-- COMPANY SELECTION SECTION (jika superadmin tanpa company) --}}
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -71,24 +71,37 @@
                         href="{{ route('position-histories.index') }}"
                         class="color-gradient inline-flex items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="h-5 w-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                            />
                         </svg>
                         Kembali ke Daftar Position Histories
                     </a>
                 </div>
             </div>
         @else
-            <!-- MAIN CONTENT SECTION -->
+            {{-- MAIN CONTENT SECTION --}}
             @if ($selectedCompany)
-                <!-- Employee Info (Read-only) -->
+                {{-- Employee Info (Read-only) --}}
                 <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
                     <h2 class="text-lg font-semibold text-gray-900">Employee Information</h2>
                     <div class="grid gap-4 md:grid-cols-2">
-                        <!-- Company (Read-only) -->
+                        {{-- Company (Read-only) --}}
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-700">Company</label>
-                            <div class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700">
+                            <div
+                                class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700"
+                            >
                                 @if ($history->employee && $history->employee->company)
                                     {{ $history->employee->company->name }} ({{ $history->employee->company->cocd }})
                                 @else
@@ -97,10 +110,12 @@
                             </div>
                         </div>
 
-                        <!-- Employee (Read-only) -->
+                        {{-- Employee (Read-only) --}}
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-700">Employee</label>
-                            <div class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700">
+                            <div
+                                class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700"
+                            >
                                 @if ($history->employee)
                                     {{ $history->employee->name }} ({{ $history->employee->employee_number }})
                                 @else
@@ -111,13 +126,13 @@
                     </div>
                 </div>
 
-                <!-- Form -->
+                {{-- Form --}}
                 <form wire:submit="update" class="space-y-6">
-                    <!-- Position Details -->
+                    {{-- Position Details --}}
                     <div class="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
                         <h2 class="text-lg font-semibold text-gray-900">Position Details</h2>
                         <div class="grid gap-4 md:grid-cols-2">
-                            <!-- Position Name -->
+                            {{-- Position Name --}}
                             <div class="md:col-span-2">
                                 <label for="position_name" class="mb-2 block text-sm font-medium text-gray-700">
                                     Position Name
@@ -135,7 +150,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Work Unit -->
+                            {{-- Work Unit --}}
                             <div>
                                 <label for="work_unit" class="mb-2 block text-sm font-medium text-gray-700">
                                     Work Unit
@@ -153,7 +168,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Company Name -->
+                            {{-- Company Name --}}
                             <div>
                                 <label for="company" class="mb-2 block text-sm font-medium text-gray-700">
                                     Company Name
@@ -171,7 +186,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Start Date -->
+                            {{-- Start Date --}}
                             <div>
                                 <label for="start_date" class="mb-2 block text-sm font-medium text-gray-700">
                                     Start Date
@@ -188,9 +203,11 @@
                                 @enderror
                             </div>
 
-                            <!-- End Date -->
+                            {{-- End Date --}}
                             <div>
-                                <label for="end_date" class="mb-2 block text-sm font-medium text-gray-700">End Date</label>
+                                <label for="end_date" class="mb-2 block text-sm font-medium text-gray-700">
+                                    End Date
+                                </label>
                                 <input
                                     type="date"
                                     id="end_date"
@@ -200,12 +217,13 @@
                                 @error('end_date')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
+
                                 <p class="mt-1 text-sm text-gray-500">Leave empty if current position</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Form Actions -->
+                    {{-- Form Actions --}}
                     <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-6">
                         <button
                             type="button"

@@ -1,13 +1,13 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Users</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -34,7 +34,7 @@
                 </div>
             </div>
 
-            <!-- Add User Button -->
+            {{-- Add User Button --}}
             <a
                 href="{{ route('users.create') }}"
                 class="color-gradient inline-flex items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
@@ -53,11 +53,11 @@
             </a>
         </div>
 
-        <!-- Search and Filter Section -->
+        {{-- Search and Filter Section --}}
         <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-            <!-- Desktop Layout: Search & Filters -->
+            {{-- Desktop Layout: Search & Filters --}}
             <div class="grid gap-4 md:grid-cols-4">
-                <!-- Search Input -->
+                {{-- Search Input --}}
                 <div class="md:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Search User</label>
                     <div class="relative">
@@ -86,7 +86,7 @@
                     </div>
                 </div>
 
-                <!-- Role Filter -->
+                {{-- Role Filter --}}
                 <div class="relative">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Filter by Role</label>
                     <div class="relative">
@@ -112,7 +112,7 @@
                     </div>
                 </div>
 
-                <!-- Sort By -->
+                {{-- Sort By --}}
                 <div class="relative">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Sort By</label>
                     <div class="relative">
@@ -139,7 +139,7 @@
                 </div>
             </div>
 
-            <!-- Company Filter (Full Width) -->
+            {{-- Company Filter (Full Width) --}}
             <div class="relative">
                 <label class="mb-2 block text-sm font-medium text-gray-700">Filter by Company</label>
                 <div class="relative">
@@ -165,7 +165,7 @@
                 </div>
             </div>
 
-            <!-- Results Info -->
+            {{-- Results Info --}}
             <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
                 Showing
                 <span class="font-semibold text-gray-900">{{ $users->count() }}</span>
@@ -175,9 +175,9 @@
             </div>
         </div>
 
-        <!-- Users List Container -->
+        {{-- Users List Container --}}
         <div class="space-y-3 overflow-x-auto">
-            <!-- Column Headers - Hidden on mobile -->
+            {{-- Column Headers - Hidden on mobile --}}
             <div
                 class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
             >
@@ -189,13 +189,13 @@
                 <div class="col-span-2 text-center text-sm font-semibold">Actions</div>
             </div>
 
-            <!-- List Items -->
+            {{-- List Items --}}
             @forelse ($users as $user)
-                <!-- Desktop View -->
+                {{-- Desktop View --}}
                 <div
                     class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
                 >
-                    <!-- Profile Picture -->
+                    {{-- Profile Picture --}}
                     <div class="col-span-1 flex items-center">
                         @if ($user->profile_path)
                             <img
@@ -223,12 +223,12 @@
                         @endif
                     </div>
 
-                    <!-- Name -->
+                    {{-- Name --}}
                     <div class="col-span-2 flex flex-col justify-center">
                         <p class="line-clamp-1 text-sm font-semibold text-gray-900">{{ $user->name }}</p>
                     </div>
 
-                    <!-- Email -->
+                    {{-- Email --}}
                     <div class="col-span-2 flex flex-col justify-center">
                         <p class="line-clamp-1 text-sm text-gray-600">{{ $user->email }}</p>
                         @if ($user->email_verified_at)
@@ -250,7 +250,7 @@
                         @endif
                     </div>
 
-                    <!-- Company -->
+                    {{-- Company --}}
                     <div class="col-span-3 flex items-center gap-2 overflow-hidden">
                         @if ($user->company)
                             <div class="flex items-center gap-2">
@@ -292,7 +292,7 @@
                         @endif
                     </div>
 
-                    <!-- Roles -->
+                    {{-- Roles --}}
                     <div class="col-span-2 flex flex-wrap items-center gap-1">
                         @forelse ($user->roles as $role)
                             <span
@@ -305,7 +305,7 @@
                         @endforelse
                     </div>
 
-                    <!-- Actions -->
+                    {{-- Actions --}}
                     <div class="col-span-2 flex items-center justify-center gap-2">
                         <button
                             wire:click="edit({{ $user->id }})"
@@ -350,12 +350,12 @@
                     </div>
                 </div>
 
-                <!-- Mobile View -->
+                {{-- Mobile View --}}
                 <div
                     class="block rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
                 >
                     <div class="space-y-4">
-                        <!-- User Header -->
+                        {{-- User Header --}}
                         <div class="flex items-start gap-3 border-b border-gray-100 pb-4">
                             @if ($user->profile_path)
                                 <img
@@ -405,7 +405,7 @@
                             </div>
                         </div>
 
-                        <!-- Company Info -->
+                        {{-- Company Info --}}
                         <div>
                             <p class="text-xs font-medium text-gray-500 uppercase">Company</p>
                             @if ($user->company)
@@ -446,7 +446,7 @@
                             @endif
                         </div>
 
-                        <!-- Roles -->
+                        {{-- Roles --}}
                         <div>
                             <p class="text-xs font-medium text-gray-500 uppercase">Roles</p>
                             <div class="mt-2 flex flex-wrap gap-2">
@@ -462,7 +462,7 @@
                             </div>
                         </div>
 
-                        <!-- Actions -->
+                        {{-- Actions --}}
                         <div class="flex items-center justify-end gap-2 border-t border-gray-100 pt-4">
                             <button
                                 wire:click="edit({{ $user->id }})"
@@ -529,7 +529,7 @@
             @endforelse
         </div>
 
-        <!-- Pagination -->
+        {{-- Pagination --}}
         @if ($users->hasPages())
             <div class="mt-6">
                 {{ $users->links() }}

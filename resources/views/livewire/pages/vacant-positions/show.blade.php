@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         @hasanyrole('superadmin|admin')
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
@@ -11,7 +11,7 @@
     </flux:breadcrumbs>
 
     <div class="relative h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex items-center justify-between gap-4">
             <div class="flex items-start gap-4">
                 <div
@@ -61,12 +61,12 @@
             </div>
         </div>
 
-        <!-- AI Processing Overlay -->
+        {{-- AI Processing Overlay --}}
         @if ($aiProcessing)
             <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md">
                 <div class="w-full max-w-2xl p-6">
                     <div class="overflow-hidden rounded-2xl bg-white shadow-2xl">
-                        <!-- AI Header -->
+                        {{-- AI Header --}}
                         <div class="bg-gradient-to-r from-[#721d21] to-[#8a252a] p-8 text-center">
                             <div class="relative mx-auto mb-6 h-20 w-20">
                                 <div class="absolute inset-0 animate-pulse rounded-full bg-white/20"></div>
@@ -94,7 +94,7 @@
                             <p class="mt-2 text-white/80">Processing selected candidates for optimal matches</p>
                         </div>
 
-                        <!-- Real-time Status -->
+                        {{-- Real-time Status --}}
                         <div class="p-8">
                             <div class="mb-6 flex items-center justify-between">
                                 <div class="flex items-center gap-3">
@@ -104,7 +104,7 @@
                                 <span class="text-lg font-semibold text-[#721d21]">{{ $aiStatus }}</span>
                             </div>
 
-                            <!-- Progress Bar -->
+                            {{-- Progress Bar --}}
                             <div class="mb-8">
                                 <div class="mb-2 flex justify-between text-sm font-medium text-gray-700">
                                     <span>Processing Progress</span>
@@ -118,7 +118,7 @@
                                 </div>
                             </div>
 
-                            <!-- Progress Steps -->
+                            {{-- Progress Steps --}}
                             <div class="mb-8 grid grid-cols-4 gap-4">
                                 @foreach ([
                                         ['step' => 1, 'label' => 'Data Preparation', 'threshold' => 25],
@@ -142,7 +142,7 @@
                                 @endforeach
                             </div>
 
-                            <!-- Live Updates -->
+                            {{-- Live Updates --}}
                             <div
                                 class="rounded-xl border border-[#721d21]/20 bg-gradient-to-r from-[#721d21]/5 to-transparent p-5"
                             >
@@ -180,7 +180,7 @@
                                 </div>
                             </div>
 
-                            <!-- Gemini AI Logo -->
+                            {{-- Gemini AI Logo --}}
                             <div class="mt-8 flex items-center justify-center gap-3 rounded-lg bg-gray-50 py-4">
                                 <p class="text-sm font-medium text-gray-600">Powered by</p>
                                 <img src="{{ asset('assets/logo/logo-gemini.png') }}" class="h-8" alt="Gemini AI" />
@@ -191,12 +191,12 @@
             </div>
         @endif
 
-        <!-- Employee Selection Modal -->
+        {{-- Employee Selection Modal --}}
         @if ($showEmployeeModal && ! $aiProcessing)
             <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md">
                 <div class="w-full max-w-4xl p-4">
                     <div class="overflow-hidden rounded-2xl bg-white shadow-2xl">
-                        <!-- Modal Header -->
+                        {{-- Modal Header --}}
                         <div class="bg-gradient-to-r from-[#721d21] to-[#8a252a] p-6">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -221,7 +221,7 @@
                             </div>
                         </div>
 
-                        <!-- Search Section -->
+                        {{-- Search Section --}}
                         <div class="border-b border-gray-200 p-6">
                             <div class="relative">
                                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -249,7 +249,7 @@
                             <p class="mt-2 text-sm text-gray-500">Type at least 2 characters to search</p>
                         </div>
 
-                        <!-- Selected Candidates -->
+                        {{-- Selected Candidates --}}
                         @if (count($selectedForAnalysis) > 0)
                             <div class="border-b border-gray-200 p-6">
                                 <div class="mb-3 flex items-center justify-between">
@@ -293,7 +293,7 @@
                             </div>
                         @endif
 
-                        <!-- Search Results -->
+                        {{-- Search Results --}}
                         <div class="max-h-96 overflow-y-auto p-6">
                             @if (count($availableEmployees) > 0)
                                 <h4 class="mb-4 font-semibold text-gray-900">Search Results</h4>
@@ -367,7 +367,7 @@
                             @endif
                         </div>
 
-                        <!-- Modal Footer -->
+                        {{-- Modal Footer --}}
                         <div class="border-t border-gray-200 bg-gray-50 p-6">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -426,9 +426,9 @@
             </div>
         @endif
 
-        <!-- Results Section -->
+        {{-- Results Section --}}
         <div class="space-y-6">
-            <!-- AI Results Header -->
+            {{-- AI Results Header --}}
             @if (! $aiProcessing && count($recommendations) > 0)
                 <div class="rounded-lg border border-gray-200 bg-gradient-to-r from-[#721d21]/5 to-[#8a252a]/5 p-6">
                     <div class="flex flex-wrap items-center justify-between">
@@ -474,7 +474,7 @@
                 </div>
             @endif
 
-            <!-- Candidate Grid -->
+            {{-- Candidate Grid --}}
             <div id="candidate-match" class="grid grid-cols-1 gap-6 pb-24 md:grid-cols-2 lg:grid-cols-3">
                 @forelse ($recommendations as $index => $candidate)
                     @php
@@ -488,7 +488,7 @@
                     >
                         <div class="flex flex-1 gap-4">
                             <div class="flex w-full gap-4">
-                                <!-- Candidate Avatar & Rank -->
+                                {{-- Candidate Avatar & Rank --}}
                                 <div class="relative">
                                     <div
                                         class="flex h-20 w-20 items-center justify-center rounded-lg bg-gradient-to-br from-[#721d21]/10 to-[#8a252a]/10"
@@ -505,13 +505,13 @@
                                             </span>
                                         @endif
                                     </div>
-                                    <!-- Rank Badge -->
+                                    {{-- Rank Badge --}}
                                     <div
                                         class="absolute -top-2 -left-2 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-[#721d21] to-[#8a252a] shadow-md"
                                     >
                                         <p class="text-sm font-semibold text-white">{{ $index + 1 }}</p>
                                     </div>
-                                    <!-- AI Badge -->
+                                    {{-- AI Badge --}}
                                     <div class="absolute -top-2 -right-2">
                                         <div
                                             class="flex items-center gap-1 rounded-full bg-gradient-to-r from-[#721d21] to-[#8a252a] px-2 py-1 text-xs font-semibold text-white"
@@ -529,19 +529,19 @@
                                     </div>
                                 </div>
 
-                                <!-- Candidate Info -->
+                                {{-- Candidate Info --}}
                                 <div class="flex-1">
                                     <h2 class="text-lg font-semibold text-gray-900">{{ $employee->name }}</h2>
                                     <p class="text-sm text-gray-600">
                                         {{ $employee->band }} • {{ $employee->employee_number }}
                                     </p>
 
-                                    <!-- AI Reason -->
+                                    {{-- AI Reason --}}
                                     <div class="mt-2">
                                         <p class="text-sm text-gray-500">{{ $candidate['reason'] }}</p>
                                     </div>
 
-                                    <!-- Strengths -->
+                                    {{-- Strengths --}}
                                     @if (! empty($candidate['strengths']))
                                         <div class="mt-2">
                                             <p class="text-xs font-semibold text-[#721d21]">STRENGTHS</p>
@@ -568,7 +568,7 @@
                                         </div>
                                     @endif
 
-                                    <!-- Weaknesses -->
+                                    {{-- Weaknesses --}}
                                     @if (! empty($candidate['weaknesses']))
                                         <div class="mt-2">
                                             <p class="text-xs font-semibold text-red-600">CONSIDERATIONS</p>
@@ -597,7 +597,7 @@
                                 </div>
                             </div>
 
-                            <!-- Checkbox -->
+                            {{-- Checkbox --}}
                             <div class="relative flex items-start pt-1">
                                 <input
                                     type="checkbox"
@@ -622,9 +622,9 @@
                             </div>
                         </div>
 
-                        <!-- Match Score & Footer - Selalu di bawah -->
+                        {{-- Match Score & Footer - Selalu di bawah --}}
                         <div class="mt-auto">
-                            <!-- Recommendation Badge -->
+                            {{-- Recommendation Badge --}}
                             @if (! empty($candidate['recommendation']))
                                 <div class="my-2">
                                     @php
@@ -644,7 +644,7 @@
                                 </div>
                             @endif
 
-                            <!-- Match Score -->
+                            {{-- Match Score --}}
                             <div class="mt-2 space-y-2">
                                 <div class="flex items-center justify-between">
                                     <span class="text-sm font-medium text-gray-700">AI Match Score</span>
@@ -660,7 +660,7 @@
                                 </div>
                             </div>
 
-                            <!-- Footer -->
+                            {{-- Footer --}}
                             <div class="mt-4 flex items-end justify-between border-t border-gray-200 pt-3">
                                 <a
                                     href="{{ route('employees.show', $employee->slug) }}"
@@ -720,7 +720,7 @@
             </div>
         </div>
 
-        <!-- Action Buttons -->
+        {{-- Action Buttons --}}
         @if (count($selectedCandidates) > 0)
             <div
                 x-data

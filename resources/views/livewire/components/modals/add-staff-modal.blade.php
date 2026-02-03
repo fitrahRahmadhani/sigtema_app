@@ -19,7 +19,7 @@
     class="relative z-[10000]"
     style="display: none"
 >
-    <!-- Background overlay -->
+    {{-- Background overlay --}}
     <div
         x-show="show"
         x-transition:enter="duration-300 ease-out"
@@ -33,7 +33,7 @@
         @click="closeModal()"
     ></div>
 
-    <!-- Modal panel -->
+    {{-- Modal panel --}}
     <div class="fixed inset-0 z-[10001] overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4">
             <div
@@ -51,7 +51,7 @@
                 <div class="overflow-hidden rounded-2xl bg-white shadow-2xl">
                     <div class="bg-white px-6 pt-6 pb-4">
                         <div class="flex items-start">
-                            <!-- Icon -->
+                            {{-- Icon --}}
                             <div class="flex-shrink-0">
                                 <div
                                     class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100"
@@ -72,7 +72,7 @@
                                 </div>
                             </div>
 
-                            <!-- Content -->
+                            {{-- Content --}}
                             <div class="ml-4 flex-1">
                                 <div class="flex items-center justify-between">
                                     <div>
@@ -103,7 +103,7 @@
                                 <div class="mt-4">
                                     <form wire:submit.prevent="save">
                                         <div class="grid grid-cols-1 gap-5">
-                                            <!-- Company -->
+                                            {{-- Company --}}
                                             <div>
                                                 <label
                                                     for="company_id"
@@ -147,7 +147,7 @@
                                                 @enderror
                                             </div>
 
-                                            <!-- Superior Position - HIDDEN & DISPLAY ONLY -->
+                                            {{-- Superior Position - HIDDEN & DISPLAY ONLY --}}
                                             <input type="hidden" wire:model="form.superior_id" />
 
                                             @if ($selectedSuperiorName)
@@ -183,7 +183,7 @@
                                                 </div>
                                             @endif
 
-                                            <!-- Position -->
+                                            {{-- Position --}}
                                             <div>
                                                 <label
                                                     for="position_id"
@@ -228,7 +228,7 @@
                                                 @enderror
                                             </div>
 
-                                            <!-- Relation Type -->
+                                            {{-- Relation Type --}}
                                             <div>
                                                 <label
                                                     for="relation_type"
@@ -270,7 +270,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Action Buttons -->
+                                        {{-- Action Buttons --}}
                                         <div class="mt-8 flex justify-end gap-3 border-t border-gray-200 pt-6">
                                             <button
                                                 type="button"
