@@ -35,5 +35,6 @@
         </footer>
 
         @fluxScripts
+        <x-toaster-hub />
     </body>
 </html>
