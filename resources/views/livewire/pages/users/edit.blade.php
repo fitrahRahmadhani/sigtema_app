@@ -221,7 +221,9 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
 
-                        <p class="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
+                        <p class="mt-1 text-xs text-gray-500">
+                            At least 12 characters with uppercase, lowercase, number, and symbol.
+                        </p>
                     </div>
 
                     {{-- Password Confirmation --}}
