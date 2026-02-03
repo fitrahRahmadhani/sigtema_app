@@ -1,14 +1,14 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('positions.index') }}">Positions</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Edit Position</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -36,13 +36,13 @@
             </div>
         </div>
 
-        <!-- Form -->
+        {{-- Form --}}
         <form wire:submit="save" class="space-y-8">
-            <!-- Position Information -->
+            {{-- Position Information --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Position Information</h3>
                 <div class="grid gap-6 md:grid-cols-2">
-                    <!-- Position Name -->
+                    {{-- Position Name --}}
                     <div class="md:col-span-2">
                         <label for="name" class="mb-2 block text-sm font-medium text-gray-700">
                             Position Name
@@ -60,7 +60,7 @@
                         @enderror
                     </div>
 
-                    <!-- Position Code -->
+                    {{-- Position Code --}}
                     <div>
                         <label for="position_code" class="mb-2 block text-sm font-medium text-gray-700">
                             Position Code
@@ -78,7 +78,7 @@
                         @enderror
                     </div>
 
-                    <!-- Job Grade -->
+                    {{-- Job Grade --}}
                     <div>
                         <label for="job_grade" class="mb-2 block text-sm font-medium text-gray-700">
                             Job Grade
@@ -98,7 +98,7 @@
                         <p class="mt-1 text-xs text-gray-500">Job grade classification</p>
                     </div>
 
-                    <!-- Band Select -->
+                    {{-- Band Select --}}
                     <div>
                         <label for="band" class="mb-2 block text-sm font-medium text-gray-700">Band</label>
                         <div class="relative">
@@ -132,12 +132,12 @@
                 </div>
             </div>
 
-            <!-- Company Assignment -->
+            {{-- Company Assignment --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Company Assignment</h3>
                 <div class="mb-6 grid gap-6">
                     @hasrole('superadmin')
-                        <!-- Company Selection -->
+                        {{-- Company Selection --}}
                         <div class="md:col-span-2">
                             <label for="company_id" class="mb-2 block text-sm font-medium text-gray-700">
                                 Company
@@ -174,11 +174,11 @@
                     @endhasrole
                 </div>
 
-                <!-- Organizational Structure -->
+                {{-- Organizational Structure --}}
                 <div class="mb-6">
                     <h4 class="text-md mb-4 font-medium text-gray-700">Organizational Structure</h4>
                     <div class="grid gap-6 md:grid-cols-2">
-                        <!-- Directorate -->
+                        {{-- Directorate --}}
                         <div>
                             <label for="directorate" class="mb-2 block text-sm font-medium text-gray-700">
                                 Directorate
@@ -195,7 +195,7 @@
                             @enderror
                         </div>
 
-                        <!-- Department -->
+                        {{-- Department --}}
                         <div>
                             <label for="department" class="mb-2 block text-sm font-medium text-gray-700">
                                 Department
@@ -212,7 +212,7 @@
                             @enderror
                         </div>
 
-                        <!-- Biro -->
+                        {{-- Biro --}}
                         <div>
                             <label for="biro" class="mb-2 block text-sm font-medium text-gray-700">Biro</label>
                             <input
@@ -227,7 +227,7 @@
                             @enderror
                         </div>
 
-                        <!-- Section -->
+                        {{-- Section --}}
                         <div>
                             <label for="section" class="mb-2 block text-sm font-medium text-gray-700">Section</label>
                             <input
@@ -244,11 +244,11 @@
                     </div>
                 </div>
 
-                <!-- Additional Organizational Details -->
+                {{-- Additional Organizational Details --}}
                 <div>
                     <h4 class="text-md mb-4 font-medium text-gray-700">Additional Details</h4>
                     <div class="grid gap-6 md:grid-cols-2">
-                        <!-- Work Unit -->
+                        {{-- Work Unit --}}
                         <div>
                             <label for="work_unit" class="mb-2 block text-sm font-medium text-gray-700">
                                 Work Unit
@@ -265,7 +265,7 @@
                             @enderror
                         </div>
 
-                        <!-- Group -->
+                        {{-- Group --}}
                         <div>
                             <label for="group" class="mb-2 block text-sm font-medium text-gray-700">Group</label>
                             <input
@@ -280,7 +280,7 @@
                             @enderror
                         </div>
 
-                        <!-- KOMP -->
+                        {{-- KOMP --}}
                         <div>
                             <label for="komp" class="mb-2 block text-sm font-medium text-gray-700">KOMP</label>
                             <input
@@ -295,7 +295,7 @@
                             @enderror
                         </div>
 
-                        <!-- Location -->
+                        {{-- Location --}}
                         <div>
                             <label for="location" class="mb-2 block text-sm font-medium text-gray-700">Location</label>
                             <input
@@ -313,14 +313,14 @@
                 </div>
             </div>
 
-            <!-- Employee Assignment -->
+            {{-- Employee Assignment --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <div class="flex items-center justify-between">
                     <h3 class="mb-4 text-lg font-semibold text-gray-900">Employee Assignment</h3>
                     <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">Optional</span>
                 </div>
                 <div class="mb-6">
-                    <!-- Employee Selection -->
+                    {{-- Employee Selection --}}
                     <div class="w-full">
                         <label for="employee_id" class="mb-2 block text-sm font-medium text-gray-700">Employee</label>
                         <div class="relative">
@@ -357,7 +357,7 @@
                 </div>
             </div>
 
-            <!-- Form Actions -->
+            {{-- Form Actions --}}
             <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
                 <button
                     type="button"

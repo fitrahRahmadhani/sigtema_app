@@ -1,13 +1,13 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>DISC Results</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -35,9 +35,9 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
+            {{-- Action Buttons --}}
             <div class="flex items-center gap-2">
-                <!-- Sync Button -->
+                {{-- Sync Button --}}
                 <button
                     wire:click="syncFromApi"
                     wire:loading.attr="disabled"
@@ -95,7 +95,7 @@
             </div>
         </div>
 
-        <!-- Stats -->
+        {{-- Stats --}}
         <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-5">
             <div class="rounded-lg border border-gray-200 bg-white p-4">
                 <div class="flex items-center">
@@ -230,7 +230,7 @@
             </div>
         </div>
 
-        <!-- Sync Status Panel -->
+        {{-- Sync Status Panel --}}
         @if ($syncStatus !== 'idle')
             <div class="animate-fade-in mb-6">
                 <div
@@ -333,7 +333,7 @@
                         @endif
                     </div>
 
-                    <!-- Progress Bar -->
+                    {{-- Progress Bar --}}
                     @if (in_array($syncStatus, ['queued', 'processing']))
                         <div class="mt-3">
                             <div class="mb-1 flex justify-between text-sm">
@@ -364,7 +364,7 @@
                         </div>
                     @endif
 
-                    <!-- Result Details -->
+                    {{-- Result Details --}}
                     @if ($lastSyncResult && ($syncStatus === 'completed' || $syncStatus === 'failed'))
                         <div class="mt-3 border-t border-gray-200 pt-3">
                             @if ($syncStatus === 'completed')
@@ -470,11 +470,11 @@
             </div>
         @endif
 
-        <!-- Filters -->
+        {{-- Filters --}}
         <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm">
-            <!-- Search Row -->
+            {{-- Search Row --}}
             <div class="grid gap-4 md:grid-cols-3">
-                <!-- Search Input -->
+                {{-- Search Input --}}
                 <div class="md:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Search</label>
                     <div class="relative">
@@ -503,7 +503,7 @@
                     </div>
                 </div>
 
-                <!-- Status Filter -->
+                {{-- Status Filter --}}
                 <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700">Status</label>
                     <div class="relative">
@@ -531,9 +531,9 @@
                 </div>
             </div>
 
-            <!-- Filter Row -->
+            {{-- Filter Row --}}
             <div class="grid gap-4 md:grid-cols-4">
-                <!-- Source Filter -->
+                {{-- Source Filter --}}
                 <div class="md:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Source</label>
                     <div class="relative">
@@ -561,7 +561,7 @@
                     </div>
                 </div>
 
-                <!-- Sort By -->
+                {{-- Sort By --}}
                 <div class="md:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Sort By</label>
                     <div class="relative">
@@ -590,7 +590,7 @@
                 </div>
             </div>
 
-            <!-- Results Info -->
+            {{-- Results Info --}}
             <div class="border-t border-gray-200 pt-4">
                 <div class="flex items-center justify-between">
                     <div class="text-sm text-gray-600">
@@ -603,9 +603,9 @@
             </div>
         </div>
 
-        <!-- DISC Assessments Table -->
+        {{-- DISC Assessments Table --}}
         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-            <!-- Table Header - Desktop -->
+            {{-- Table Header - Desktop --}}
             <div class="color-gradient hidden grid-cols-12 gap-4 bg-gradient-to-r px-6 py-3 text-white md:grid">
                 <div class="col-span-3 text-sm font-semibold">Employee</div>
                 <div class="col-span-6 text-sm font-semibold">DISC Scores</div>
@@ -613,15 +613,15 @@
                 <div class="col-span-1 text-center text-sm font-semibold">Actions</div>
             </div>
 
-            <!-- Table Body -->
+            {{-- Table Body --}}
             <div class="divide-y divide-gray-200">
                 @forelse ($discs as $disc)
-                    <!-- Desktop View -->
+                    {{-- Desktop View --}}
                     <div
                         class="{{ $disc->is_active ? 'hover:bg-gray-50' : 'bg-gray-50 opacity-90 hover:bg-gray-100' }} hidden grid-cols-12 items-center gap-4 px-6 py-4 transition-colors duration-150 md:grid"
                         wire:key="disc-{{ $disc->id }}"
                     >
-                        <!-- Employee -->
+                        {{-- Employee --}}
                         <div class="col-span-3">
                             <div class="flex items-center space-x-3">
                                 <div>
@@ -636,10 +636,10 @@
                             </div>
                         </div>
 
-                        <!-- DISC Scores -->
+                        {{-- DISC Scores --}}
                         <div class="col-span-6">
                             <div class="grid grid-cols-3 gap-4">
-                                <!-- Set 1 -->
+                                {{-- Set 1 --}}
                                 <div class="space-y-1 rounded-lg border border-gray-200 p-3">
                                     <p class="text-xs font-medium text-gray-500">Set 1</p>
                                     <div class="grid grid-cols-4 gap-1">
@@ -678,7 +678,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Set 2 -->
+                                {{-- Set 2 --}}
                                 <div class="space-y-1 rounded-lg border border-gray-200 p-3">
                                     <p class="text-xs font-medium text-gray-500">Set 2</p>
                                     <div class="grid grid-cols-4 gap-1">
@@ -717,7 +717,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Set 3 -->
+                                {{-- Set 3 --}}
                                 <div class="space-y-1 rounded-lg border border-gray-200 p-3">
                                     <p class="text-xs font-medium text-gray-500">Set 3</p>
                                     <div class="grid grid-cols-4 gap-1">
@@ -758,7 +758,7 @@
                             </div>
                         </div>
 
-                        <!-- Interpretations -->
+                        {{-- Interpretations --}}
                         <div class="col-span-2 space-y-2">
                             @if ($disc->interpretation1)
                                 <span
@@ -785,7 +785,7 @@
                             @endif
                         </div>
 
-                        <!-- Actions -->
+                        {{-- Actions --}}
                         <div class="col-span-1 flex items-center justify-center gap-2">
                             <button
                                 wire:click="toggleStatus({{ $disc->id }})"
@@ -844,13 +844,13 @@
                         </div>
                     </div>
 
-                    <!-- Mobile View -->
+                    {{-- Mobile View --}}
                     <div
                         class="{{ $disc->is_active ? '' : 'bg-gray-50 opacity-90' }} block p-4 md:hidden"
                         wire:key="disc-mobile-{{ $disc->id }}"
                     >
                         <div class="space-y-3">
-                            <!-- Header -->
+                            {{-- Header --}}
                             <div class="border-b border-gray-100 pb-3">
                                 <div class="flex items-start justify-between">
                                     <div>
@@ -886,9 +886,9 @@
                                 </div>
                             </div>
 
-                            <!-- DISC Scores -->
+                            {{-- DISC Scores --}}
                             <div class="space-y-3">
-                                <!-- Set 1 -->
+                                {{-- Set 1 --}}
                                 <div class="rounded border border-gray-200 p-3">
                                     <p class="mb-2 text-xs font-medium text-gray-500">Set 1</p>
                                     <div class="grid grid-cols-4 gap-2">
@@ -932,7 +932,7 @@
                                     @endif
                                 </div>
 
-                                <!-- Set 2 -->
+                                {{-- Set 2 --}}
                                 <div class="rounded border border-gray-200 p-3">
                                     <p class="mb-2 text-xs font-medium text-gray-500">Set 2</p>
                                     <div class="grid grid-cols-4 gap-2">
@@ -976,7 +976,7 @@
                                     @endif
                                 </div>
 
-                                <!-- Set 3 -->
+                                {{-- Set 3 --}}
                                 <div class="rounded border border-gray-200 p-3">
                                     <p class="mb-2 text-xs font-medium text-gray-500">Set 3</p>
                                     <div class="grid grid-cols-4 gap-2">
@@ -1021,7 +1021,7 @@
                                 </div>
                             </div>
 
-                            <!-- Actions -->
+                            {{-- Actions --}}
                             <div class="flex items-center justify-end gap-2 border-t border-gray-100 pt-3">
                                 <button
                                     wire:click="confirmDelete({{ $disc->id }}, '{{ addslashes($disc->employee?->name ?? $disc->employee_number) }}')"
@@ -1102,10 +1102,10 @@
             </div>
         </div>
 
-        <!-- Delete Confirmation Modal -->
+        {{-- Delete Confirmation Modal --}}
         <x-ui.modals.delete-confirmation />
 
-        <!-- Pagination -->
+        {{-- Pagination --}}
         @if ($discs->hasPages())
             <div class="mt-6">
                 {{ $discs->onEachSide(1)->links(data: ['scrollTo' => false]) }}

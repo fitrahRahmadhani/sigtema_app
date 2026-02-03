@@ -8,7 +8,7 @@
 
     <div class="bg-tertiary-gray mx-auto flex w-fit rounded-xl">
         <div class="flex flex-col gap-4 rounded-md p-4 lg:flex-row">
-            <!-- Email Input -->
+            {{-- Email Input --}}
             <div class="flex flex-col gap-1">
                 <label for="email" class="flex h-fit w-80 items-center gap-2 rounded-xl bg-white p-2">
                     <div class="bg-tertiary-gray rounded-full p-2">
@@ -39,7 +39,7 @@
                 @enderror
             </div>
 
-            <!-- Submit Button -->
+            {{-- Submit Button --}}
             <button
                 type="submit"
                 class="color-gradient flex h-fit items-center justify-center rounded-xl px-10 py-2 text-lg font-bold tracking-wide text-white uppercase hover:cursor-pointer md:h-14"
@@ -65,7 +65,7 @@
         </div>
     </div>
 
-    <!-- reCAPTCHA Desktop -->
+    {{-- reCAPTCHA Desktop --}}
     <div class="hidden flex-col items-center gap-1 lg:flex">
         <div wire:ignore id="recaptcha-desktop">
             {!! NoCaptcha::renderJs() !!}
@@ -76,7 +76,7 @@
         @enderror
     </div>
 
-    <!-- reCAPTCHA Mobile -->
+    {{-- reCAPTCHA Mobile --}}
     <div class="flex flex-col items-center gap-1 lg:hidden">
         <div class="mx-auto" wire:ignore id="recaptcha-mobile">
             {!! NoCaptcha::renderJs() !!}
@@ -87,7 +87,7 @@
         @enderror
     </div>
 
-    <!-- Back to Login Link -->
+    {{-- Back to Login Link --}}
     <div class="text-center">
         <a
             href="{{ route('login') }}"

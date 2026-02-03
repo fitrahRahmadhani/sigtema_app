@@ -1,14 +1,14 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('employees.index') }}">Employees</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Edit Employee</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex items-center gap-4">
             <div
                 class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
@@ -34,9 +34,9 @@
             </div>
         </div>
 
-        <!-- Form -->
+        {{-- Form --}}
         <form wire:submit="save" class="space-y-8">
-            <!-- Profile Photo -->
+            {{-- Profile Photo --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Profile Photo</h3>
                 <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
@@ -149,7 +149,7 @@
                 </div>
             </div>
 
-            <!-- Personal Information (Same as Create but with wire:model without .live) -->
+            {{-- Personal Information (Same as Create but with wire:model without .live) --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Personal Information</h3>
                 <div class="grid gap-6 md:grid-cols-2">
@@ -247,7 +247,7 @@
                 </div>
             </div>
 
-            <!-- Employment Information -->
+            {{-- Employment Information --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Employment Information</h3>
                 <div class="grid gap-6 md:grid-cols-2">
@@ -332,7 +332,7 @@
                 </div>
             </div>
 
-            <!-- Change Password (Optional) -->
+            {{-- Change Password (Optional) --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <div class="mb-4 flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-900">Change Password</h3>
@@ -375,7 +375,7 @@
             </div>
 
             @hasrole('superadmin')
-                <!-- Organization Assignment -->
+                {{-- Organization Assignment --}}
                 <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                     <h3 class="mb-4 text-lg font-semibold text-gray-900">Organization Assignment</h3>
                     <div class="space-y-6">
@@ -416,7 +416,7 @@
                 </div>
             @endhasrole
 
-            <!-- Form Actions -->
+            {{-- Form Actions --}}
             <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
                 <button
                     type="button"

@@ -1,14 +1,14 @@
 <x-layouts.auth>
     <form method="POST" action="{{ route('password.confirm.store') }}" class="flex flex-col gap-6">
         @csrf
-        <!-- Logo -->
+        {{-- Logo --}}
         <img
             class="mx-auto w-64 md:w-80 lg:w-[600px]"
             src="{{ asset('assets/logo/sigtema-logo-primary.png') }}"
             alt="Logo SIGTEMA"
         />
 
-        <!-- Judul -->
+        {{-- Judul --}}
         <div class="text-center">
             <h1 class="text-2xl font-bold text-gray-800">Konfirmasi Password</h1>
             <p class="mt-2 text-gray-600">Harap konfirmasi password Anda sebelum melanjutkan.</p>
@@ -16,7 +16,7 @@
 
         <div class="bg-tertiary-gray mx-auto flex w-fit rounded-xl">
             <div class="flex flex-col gap-4 rounded-md p-4 lg:flex-row">
-                <!-- Password Input -->
+                {{-- Password Input --}}
                 <div class="flex flex-col gap-1">
                     <label
                         for="password"
@@ -50,7 +50,7 @@
                             @click="showPassword = !showPassword"
                             class="absolute right-4 text-gray-300 transition duration-300 hover:text-gray-500"
                         >
-                            <!-- Eye Icon (Show) -->
+                            {{-- Eye Icon (Show) --}}
                             <svg
                                 x-show="!showPassword"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -65,7 +65,7 @@
                                     clip-rule="evenodd"
                                 />
                             </svg>
-                            <!-- Eye Slash Icon (Hide) -->
+                            {{-- Eye Slash Icon (Hide) --}}
                             <svg
                                 x-show="showPassword"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -89,7 +89,7 @@
                     @enderror
                 </div>
 
-                <!-- Confirm Button -->
+                {{-- Confirm Button --}}
                 <button
                     type="submit"
                     class="color-gradient flex h-fit items-center justify-center rounded-xl px-10 py-2 text-lg font-bold tracking-wide text-white uppercase hover:cursor-pointer md:h-14"

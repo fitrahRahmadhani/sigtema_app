@@ -1,13 +1,13 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Positions</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -32,7 +32,7 @@
                     <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Positions</h1>
                     <p class="mt-1 text-sm text-gray-500">Manage organizational positions and job grades</p>
 
-                    <!-- Company Info with Change Button -->
+                    {{-- Company Info with Change Button --}}
                     @if ($isSuperadmin && $selectedCompany)
                         <div class="mt-1 flex items-center gap-2">
                             <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <!-- Add Position Button -->
+            {{-- Add Position Button --}}
             @if (! $showCompanySelection)
                 <a
                     href="{{ route('positions.create') }}"
@@ -76,7 +76,7 @@
             @endif
         </div>
 
-        <!-- COMPANY SELECTION SECTION -->
+        {{-- COMPANY SELECTION SECTION --}}
         @if ($showCompanySelection)
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
@@ -96,7 +96,7 @@
                 <h3 class="mt-4 text-xl font-semibold text-gray-700">Pilih Perusahaan</h3>
                 <p class="mt-2 text-gray-500">Silakan pilih perusahaan untuk mengelola posisi</p>
 
-                <!-- Company List -->
+                {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($companies as $company)
                         <button
@@ -141,20 +141,20 @@
             </div>
         @endif
 
-        <!-- MAIN CONTENT SECTION -->
+        {{-- MAIN CONTENT SECTION --}}
         @if (! $showCompanySelection)
             @if ($selectedCompany)
-                <!-- Search and Filter Section -->
+                {{-- Search and Filter Section --}}
                 <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                    <!-- Results Info -->
+                    {{-- Results Info --}}
                     <div class="text-sm text-gray-600">
                         Mengelola posisi di
                         <span class="font-semibold">{{ $selectedCompany->name }}</span>
                     </div>
 
-                    <!-- Search Row -->
+                    {{-- Search Row --}}
                     <div class="grid gap-4 md:grid-cols-3">
-                        <!-- Search Input -->
+                        {{-- Search Input --}}
                         <div class="md:col-span-2">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Search Position</label>
                             <div class="relative">
@@ -183,7 +183,7 @@
                             </div>
                         </div>
 
-                        <!-- Sort By -->
+                        {{-- Sort By --}}
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Sort By</label>
                             <div class="relative">
@@ -214,9 +214,9 @@
                         </div>
                     </div>
 
-                    <!-- Filters Row -->
+                    {{-- Filters Row --}}
                     <div class="grid gap-4 md:grid-cols-4">
-                        <!-- Band Filter -->
+                        {{-- Band Filter --}}
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Band</label>
                             <div class="relative">
@@ -242,7 +242,7 @@
                             </div>
                         </div>
 
-                        <!-- Job Grade Filter -->
+                        {{-- Job Grade Filter --}}
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Job Grade</label>
                             <div class="relative">
@@ -268,7 +268,7 @@
                             </div>
                         </div>
 
-                        <!-- Department Filter -->
+                        {{-- Department Filter --}}
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Department</label>
                             <div class="relative">
@@ -294,7 +294,7 @@
                             </div>
                         </div>
 
-                        <!-- Location Filter -->
+                        {{-- Location Filter --}}
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Location</label>
                             <div class="relative">
@@ -321,7 +321,7 @@
                         </div>
                     </div>
 
-                    <!-- Results Count -->
+                    {{-- Results Count --}}
                     <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
                         Showing
                         <span class="font-semibold text-gray-900">{{ $positions->count() }}</span>
@@ -331,9 +331,9 @@
                     </div>
                 </div>
 
-                <!-- Positions List Container -->
+                {{-- Positions List Container --}}
                 <div class="space-y-3 overflow-x-auto">
-                    <!-- Column Headers - Hidden on mobile -->
+                    {{-- Column Headers - Hidden on mobile --}}
                     <div
                         class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
                     >
@@ -347,13 +347,13 @@
                         <div class="col-span-1 text-center text-sm font-semibold">Actions</div>
                     </div>
 
-                    <!-- List Items -->
+                    {{-- List Items --}}
                     @forelse ($positions as $position)
-                        <!-- Desktop View -->
+                        {{-- Desktop View --}}
                         <div
                             class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
                         >
-                            <!-- Position Name & Code -->
+                            {{-- Position Name & Code --}}
                             <div class="col-span-2 flex items-center gap-3">
                                 <div class="min-w-0 flex-1">
                                     <p class="truncate text-sm font-semibold text-gray-900">{{ $position->name }}</p>
@@ -365,7 +365,7 @@
                                 </div>
                             </div>
 
-                            <!-- Band -->
+                            {{-- Band --}}
                             <div class="col-span-1">
                                 @if ($position->band)
                                     <span
@@ -378,7 +378,7 @@
                                 @endif
                             </div>
 
-                            <!-- Job Grade -->
+                            {{-- Job Grade --}}
                             <div class="col-span-1">
                                 <span
                                     class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-800"
@@ -387,7 +387,7 @@
                                 </span>
                             </div>
 
-                            <!-- Organizational Unit -->
+                            {{-- Organizational Unit --}}
                             <div class="col-span-2 overflow-hidden">
                                 @if ($position->department)
                                     <p class="truncate text-sm font-medium text-gray-900">
@@ -401,7 +401,7 @@
                                 @endif
                             </div>
 
-                            <!-- Employee Unit -->
+                            {{-- Employee Unit --}}
                             <div class="col-span-2 overflow-hidden">
                                 @if ($position->employee_id)
                                     <p class="truncate text-sm font-medium text-gray-900">
@@ -422,7 +422,7 @@
                                 @endif
                             </div>
 
-                            <!-- Work Unit-->
+                            {{-- Work Unit --}}
                             <div class="col-span-2 overflow-hidden">
                                 @if ($position->work_unit)
                                     <p class="truncate text-sm font-medium text-gray-900">
@@ -439,7 +439,7 @@
                                 @endif
                             </div>
 
-                            <!-- Location -->
+                            {{-- Location --}}
                             <div class="col-span-1">
                                 @if ($position->location)
                                     <span
@@ -452,7 +452,7 @@
                                 @endif
                             </div>
 
-                            <!-- Actions -->
+                            {{-- Actions --}}
                             <div class="col-span-1 flex items-center justify-center gap-2">
                                 <button
                                     wire:click="edit({{ $position->id }})"
@@ -497,12 +497,12 @@
                             </div>
                         </div>
 
-                        <!-- Mobile View -->
+                        {{-- Mobile View --}}
                         <div
                             class="block rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
                         >
                             <div class="space-y-4">
-                                <!-- Position Header -->
+                                {{-- Position Header --}}
                                 <div class="flex items-start gap-3 border-b border-gray-100 pb-4">
                                     <div class="min-w-0 flex-1">
                                         <p class="text-xs font-medium text-gray-500 uppercase">Position</p>
@@ -530,7 +530,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Employee -->
+                                {{-- Employee --}}
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase">Employee on Duty</p>
                                     @if ($position->employee_id)
@@ -551,7 +551,7 @@
                                     @endif
                                 </div>
 
-                                <!-- Organizational Unit & Company -->
+                                {{-- Organizational Unit & Company --}}
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <p class="text-xs font-medium text-gray-500 uppercase">Organizational Unit</p>
@@ -581,7 +581,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Location -->
+                                {{-- Location --}}
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase">Location</p>
                                     @if ($position->location)
@@ -595,7 +595,7 @@
                                     @endif
                                 </div>
 
-                                <!-- Actions -->
+                                {{-- Actions --}}
                                 <div class="flex items-center justify-end gap-2 border-t border-gray-100 pt-4">
                                     <button
                                         wire:click="edit({{ $position->id }})"
@@ -662,7 +662,7 @@
                     @endforelse
                 </div>
 
-                <!-- Pagination -->
+                {{-- Pagination --}}
                 @if ($positions->hasPages())
                     <div class="mt-6">
                         {{ $positions->links() }}

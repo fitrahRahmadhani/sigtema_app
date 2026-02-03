@@ -1,14 +1,14 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('educations.index') }}">Educations</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Edit Education</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8">
             <div class="flex items-center gap-4">
                 <div
@@ -36,13 +36,13 @@
             </div>
         </div>
 
-        <!-- Form -->
+        {{-- Form --}}
         <form wire:submit="update" class="space-y-6">
-            <!-- Employee Selection -->
+            {{-- Employee Selection --}}
             <div class="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h2 class="text-lg font-semibold text-gray-900">Employee Information</h2>
                 <div class="grid gap-4 md:grid-cols-2">
-                    <!-- Company Selection -->
+                    {{-- Company Selection --}}
                     <div>
                         <label class="mb-2 block text-sm font-medium text-gray-700">Company</label>
                         <div
@@ -52,7 +52,7 @@
                         </div>
                     </div>
 
-                    <!-- Employee Selection -->
+                    {{-- Employee Selection --}}
                     <div>
                         <label class="mb-2 block text-sm font-medium text-gray-700">Company</label>
                         <div
@@ -64,11 +64,11 @@
                 </div>
             </div>
 
-            <!-- Education Details -->
+            {{-- Education Details --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Education Details</h3>
                 <div class="grid gap-6 md:grid-cols-3">
-                    <!-- Institution Name -->
+                    {{-- Institution Name --}}
                     <div>
                         <label for="institution_name" class="mb-2 block text-sm font-medium text-gray-700">
                             Institution Name
@@ -86,7 +86,7 @@
                         @enderror
                     </div>
 
-                    <!-- Major -->
+                    {{-- Major --}}
                     <div>
                         <label for="major" class="mb-2 block text-sm font-medium text-gray-700">
                             Major / Field of Study
@@ -104,7 +104,7 @@
                         @enderror
                     </div>
 
-                    <!-- Degree -->
+                    {{-- Degree --}}
                     <div>
                         <label for="degree" class="mb-2 block text-sm font-medium text-gray-700">
                             Degree Level
@@ -143,7 +143,7 @@
                         @enderror
                     </div>
 
-                    <!-- Start Date -->
+                    {{-- Start Date --}}
                     <div>
                         <label for="start_date" class="mb-2 block text-sm font-medium text-gray-700">
                             Start Date
@@ -160,7 +160,7 @@
                         @enderror
                     </div>
 
-                    <!-- End Date -->
+                    {{-- End Date --}}
                     <div>
                         <label for="end_date" class="mb-2 block text-sm font-medium text-gray-700">End Date</label>
                         <input
@@ -176,7 +176,7 @@
                 </div>
             </div>
 
-            <!-- Form Actions -->
+            {{-- Form Actions --}}
             <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-6">
                 <a
                     href="{{ route('educations.index') }}"

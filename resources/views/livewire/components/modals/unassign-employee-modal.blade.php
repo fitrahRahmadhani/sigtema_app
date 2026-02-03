@@ -19,7 +19,7 @@
     class="relative z-[10000]"
     style="display: none"
 >
-    <!-- Background overlay -->
+    {{-- Background overlay --}}
     <div
         x-show="show"
         x-transition:enter="duration-300 ease-out"
@@ -33,7 +33,7 @@
         @click="closeModal()"
     ></div>
 
-    <!-- Modal panel -->
+    {{-- Modal panel --}}
     <div class="fixed inset-0 z-[10001] overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4">
             <div
@@ -51,7 +51,7 @@
                 <div class="overflow-hidden rounded-2xl bg-white shadow-2xl">
                     <div class="bg-white px-6 pt-6 pb-4">
                         <div class="flex items-start">
-                            <!-- Icon -->
+                            {{-- Icon --}}
                             <div class="flex-shrink-0">
                                 <div
                                     class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-yellow-100"
@@ -72,7 +72,7 @@
                                 </div>
                             </div>
 
-                            <!-- Content -->
+                            {{-- Content --}}
                             <div class="ml-4 flex-1">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-xl font-bold text-gray-900">Unassign Employee</h3>
@@ -93,7 +93,7 @@
                                 </div>
 
                                 <div class="mt-4">
-                                    <!-- Warning Message -->
+                                    {{-- Warning Message --}}
                                     <div class="mb-4 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
                                         <div class="flex">
                                             <div class="flex-shrink-0">
@@ -123,7 +123,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Employee Details -->
+                                    {{-- Employee Details --}}
                                     <div class="mb-4 rounded-lg bg-gray-50 p-4">
                                         <div class="grid grid-cols-1 gap-3">
                                             <div>
@@ -141,7 +141,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Confirmation Text -->
+                                    {{-- Confirmation Text --}}
                                     <div class="mb-6 text-sm text-gray-600">
                                         <p>
                                             This will remove
@@ -152,7 +152,7 @@
                                         </p>
                                     </div>
 
-                                    <!-- Action Buttons -->
+                                    {{-- Action Buttons --}}
                                     <div class="flex justify-end gap-3 border-t border-gray-200 pt-6">
                                         <button
                                             type="button"

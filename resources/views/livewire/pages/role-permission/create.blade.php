@@ -1,14 +1,14 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('role-permissions.index') }}">Role Management</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Create Role</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -32,11 +32,11 @@
             </div>
         </div>
 
-        <!-- Form Section -->
+        {{-- Form Section --}}
         <div class="w-full">
             <form wire:submit="saveRole">
                 <div class="space-y-8">
-                    <!-- Card -->
+                    {{-- Card --}}
                     <div class="rounded-lg border border-gray-200 bg-white">
                         <div class="border-b border-gray-200 px-6 py-4">
                             <h3 class="text-lg font-semibold text-gray-900">Role Information</h3>
@@ -44,7 +44,7 @@
                         </div>
 
                         <div class="space-y-6 p-6">
-                            <!-- Role Name -->
+                            {{-- Role Name --}}
                             <div>
                                 <label for="roleName" class="block text-sm font-medium text-gray-700">
                                     Role Name
@@ -69,7 +69,7 @@
                                 </p>
                             </div>
 
-                            <!-- Guard Name Info -->
+                            {{-- Guard Name Info --}}
                             <div class="rounded-lg bg-gray-50 p-4">
                                 <div class="flex items-start gap-3">
                                     <svg
@@ -97,7 +97,7 @@
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
+                    {{-- Action Buttons --}}
                     <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-6">
                         <a
                             href="{{ route('role-permissions.index') }}"

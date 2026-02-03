@@ -1,5 +1,5 @@
 <form wire:submit.prevent="resetPassword" class="flex flex-col gap-6">
-    <!-- Logo -->
+    {{-- Logo --}}
     <img
         class="md mx-auto w-64 lg:w-[600px]"
         src="{{ asset('assets/logo/sigtema-logo-primary.png') }}"
@@ -8,7 +8,7 @@
 
     <div class="bg-tertiary-gray mx-auto flex w-fit rounded-xl">
         <div class="flex flex-col gap-4 rounded-md p-4">
-            <!-- Email Input -->
+            {{-- Email Input --}}
             <div class="flex flex-col gap-1">
                 <label for="email" class="flex h-fit items-center gap-2 rounded-xl bg-white p-2">
                     <div class="bg-tertiary-gray rounded-full p-2">
@@ -40,7 +40,7 @@
                 @enderror
             </div>
 
-            <!-- Password Input -->
+            {{-- Password Input --}}
             <div class="flex flex-col gap-1">
                 <label
                     for="password"
@@ -75,7 +75,7 @@
                         @click="showPassword = !showPassword"
                         class="absolute right-4 text-gray-300 transition duration-300 hover:text-gray-500"
                     >
-                        <!-- Eye Icon (Show) -->
+                        {{-- Eye Icon (Show) --}}
                         <svg
                             x-show="!showPassword"
                             xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +90,7 @@
                                 clip-rule="evenodd"
                             />
                         </svg>
-                        <!-- Eye Slash Icon (Hide) -->
+                        {{-- Eye Slash Icon (Hide) --}}
                         <svg
                             x-show="showPassword"
                             xmlns="http://www.w3.org/2000/svg"
@@ -119,7 +119,7 @@
                 </div>
             </div>
 
-            <!-- Confirm Password Input -->
+            {{-- Confirm Password Input --}}
             <div class="flex flex-col gap-1">
                 <label
                     for="password_confirmation"
@@ -154,7 +154,7 @@
                         @click="showConfirmPassword = !showConfirmPassword"
                         class="absolute right-4 text-gray-300 transition duration-300 hover:text-gray-500"
                     >
-                        <!-- Eye Icon (Show) -->
+                        {{-- Eye Icon (Show) --}}
                         <svg
                             x-show="!showConfirmPassword"
                             xmlns="http://www.w3.org/2000/svg"
@@ -169,7 +169,7 @@
                                 clip-rule="evenodd"
                             />
                         </svg>
-                        <!-- Eye Slash Icon (Hide) -->
+                        {{-- Eye Slash Icon (Hide) --}}
                         <svg
                             x-show="showConfirmPassword"
                             xmlns="http://www.w3.org/2000/svg"
@@ -194,7 +194,7 @@
                 @enderror
             </div>
 
-            <!-- Submit Button -->
+            {{-- Submit Button --}}
             <button
                 type="submit"
                 class="color-gradient flex h-fit items-center justify-center rounded-xl px-10 py-2 text-lg font-bold tracking-wide text-white uppercase hover:cursor-pointer md:h-14"
@@ -220,7 +220,7 @@
         </div>
     </div>
 
-    <!-- Back to Login Link -->
+    {{-- Back to Login Link --}}
     <div class="text-center">
         <a
             href="{{ route('login') }}"

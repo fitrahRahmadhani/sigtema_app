@@ -19,7 +19,7 @@
     class="relative z-[10000]"
     style="display: none"
 >
-    <!-- Background overlay -->
+    {{-- Background overlay --}}
     <div
         x-show="show"
         x-transition:enter="duration-300 ease-out"
@@ -33,7 +33,7 @@
         @click="closeModal()"
     ></div>
 
-    <!-- Modal panel -->
+    {{-- Modal panel --}}
     <div class="fixed inset-0 z-[10001] overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4">
             <div
@@ -51,7 +51,7 @@
                 <div class="overflow-hidden rounded-2xl bg-white shadow-2xl">
                     <div class="bg-white px-6 pt-6 pb-4">
                         <div class="flex items-start">
-                            <!-- Icon -->
+                            {{-- Icon --}}
                             <div class="flex-shrink-0">
                                 <div
                                     class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100"
@@ -72,7 +72,7 @@
                                 </div>
                             </div>
 
-                            <!-- Content -->
+                            {{-- Content --}}
                             <div class="ml-4 flex-1">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-xl font-bold text-gray-900">Assign Employee</h3>
@@ -93,7 +93,7 @@
                                 </div>
 
                                 <div class="mt-4">
-                                    <!-- Position Info -->
+                                    {{-- Position Info --}}
                                     <div class="mb-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
                                         <div class="flex items-center gap-3">
                                             <svg
@@ -116,7 +116,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Employee Selection -->
+                                    {{-- Employee Selection --}}
                                     <div class="mb-6">
                                         <label
                                             for="employeeSelect"
@@ -184,7 +184,7 @@
                                         @endif
                                     </div>
 
-                                    <!-- Action Buttons -->
+                                    {{-- Action Buttons --}}
                                     <div class="flex justify-end gap-3 border-t border-gray-200 pt-6">
                                         <button
                                             type="button"

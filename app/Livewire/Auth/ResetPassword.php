@@ -2,17 +2,19 @@
 
 namespace App\Livewire\Auth;
 
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
+use Livewire\Component;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules;
+use Livewire\Attributes\Title;
+use Masmerise\Toaster\Toaster;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
-use Livewire\Component;
-use Masmerise\Toaster\Toaster;
+use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
 
 #[Layout('components.layouts.auth')]
+#[Title('Reset Password')]
 class ResetPassword extends Component
 {
     #[Locked]

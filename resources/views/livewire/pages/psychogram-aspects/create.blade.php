@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('psychogram-aspects.index') }}">
@@ -8,9 +8,9 @@
         <flux:breadcrumbs.item>Add Aspect</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex items-center gap-4">
             <div
                 class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <!-- COMPANY SELECTION SECTION -->
+        {{-- COMPANY SELECTION SECTION --}}
         @if ($showCompanySelection)
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
@@ -60,7 +60,7 @@
                     Silakan pilih perusahaan terlebih dahulu untuk menambah data aspek psikogram
                 </p>
 
-                <!-- Company List -->
+                {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($companiesWithCount as $item)
                         <a
@@ -102,11 +102,11 @@
                 </div>
             </div>
         @else
-            <!-- MAIN CONTENT SECTION -->
+            {{-- MAIN CONTENT SECTION --}}
             @if ($selectedCompany)
-                <!-- Form -->
+                {{-- Form --}}
                 <form wire:submit="save" class="space-y-8">
-                    <!-- Basic Information -->
+                    {{-- Basic Information --}}
                     <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                         <h3 class="mb-4 text-lg font-semibold text-gray-900">Basic Information</h3>
                         <div class="grid gap-6 md:grid-cols-2">
@@ -166,11 +166,11 @@
                         </div>
                     </div>
 
-                    <!-- Configuration -->
+                    {{-- Configuration --}}
                     <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                         <h3 class="mb-4 text-lg font-semibold text-gray-900">Configuration</h3>
                         <div class="grid gap-6 md:grid-cols-2">
-                            <!-- Company Assignment -->
+                            {{-- Company Assignment --}}
                             <div>
                                 <label for="company_id" class="mb-2 block text-sm font-medium text-gray-700">
                                     Company Assignment
@@ -208,7 +208,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                                         </svg>
                                     @else
-                                        <!-- For non-superadmin, show company name (readonly) -->
+                                        {{-- For non-superadmin, show company name (readonly) --}}
                                         <div
                                             class="w-full cursor-not-allowed rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-sm text-gray-700"
                                         >
@@ -230,7 +230,7 @@
                                 @endif
                             </div>
 
-                            <!-- Sort Order -->
+                            {{-- Sort Order --}}
                             <div>
                                 <label for="sort_order" class="mb-2 block text-sm font-medium text-gray-700">
                                     Sort Order
@@ -251,7 +251,7 @@
                                 <p class="mt-1 text-xs text-gray-500">Lower numbers appear first in lists</p>
                             </div>
 
-                            <!-- Status -->
+                            {{-- Status --}}
                             <div>
                                 <label for="is_active" class="mb-2 block text-sm font-medium text-gray-700">
                                     Status
@@ -296,7 +296,7 @@
                         </div>
                     </div>
 
-                    <!-- Form Actions -->
+                    {{-- Form Actions --}}
                     <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
                         <button
                             type="button"

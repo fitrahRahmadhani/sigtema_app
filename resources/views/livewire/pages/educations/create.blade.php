@@ -1,14 +1,14 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('educations.index') }}">Educations</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Add Education</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex items-center gap-4">
             <div
                 class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
@@ -37,7 +37,7 @@
         </div>
 
         @if ($isSuperadmin && ! $selectedCompanyId)
-            <!-- COMPANY SELECTION SECTION -->
+            {{-- COMPANY SELECTION SECTION --}}
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -58,7 +58,7 @@
                     Silakan pilih perusahaan terlebih dahulu untuk menambah data pendidikan
                 </p>
 
-                <!-- Company List -->
+                {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($companies as $company)
                         <a
@@ -107,15 +107,15 @@
                 </div>
             </div>
         @else
-            <!-- MAIN CONTENT SECTION -->
+            {{-- MAIN CONTENT SECTION --}}
             @if ($selectedCompany)
-                <!-- Form -->
+                {{-- Form --}}
                 <form wire:submit="save" class="space-y-8">
-                    <!-- Company & Employee Selection -->
+                    {{-- Company & Employee Selection --}}
                     <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                         <h3 class="mb-4 text-lg font-semibold text-gray-900">Employee Selection</h3>
                         <div class="space-y-6">
-                            <!-- Company Selection (only for superadmin without session) -->
+                            {{-- Company Selection (only for superadmin without session) --}}
                             @if ($isSuperadmin)
                                 <div>
                                     <label for="company_id" class="mb-2 block text-sm font-medium text-gray-700">
@@ -164,7 +164,7 @@
                                     @endif
                                 </div>
                             @else
-                                <!-- For non-superadmin, show company name (readonly) -->
+                                {{-- For non-superadmin, show company name (readonly) --}}
                                 <div>
                                     <label class="mb-2 block text-sm font-medium text-gray-700">
                                         Company
@@ -179,7 +179,7 @@
                                 </div>
                             @endif
 
-                            <!-- Employee Selection -->
+                            {{-- Employee Selection --}}
                             <div>
                                 <label for="employee_id" class="mb-2 block text-sm font-medium text-gray-700">
                                     Employee
@@ -221,11 +221,11 @@
                         </div>
                     </div>
 
-                    <!-- Education Details -->
+                    {{-- Education Details --}}
                     <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                         <h3 class="mb-4 text-lg font-semibold text-gray-900">Education Details</h3>
                         <div class="grid gap-6 md:grid-cols-3">
-                            <!-- Institution Name -->
+                            {{-- Institution Name --}}
                             <div>
                                 <label for="institution_name" class="mb-2 block text-sm font-medium text-gray-700">
                                     Institution Name
@@ -243,7 +243,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Major -->
+                            {{-- Major --}}
                             <div>
                                 <label for="major" class="mb-2 block text-sm font-medium text-gray-700">
                                     Major / Field of Study
@@ -261,7 +261,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Degree -->
+                            {{-- Degree --}}
                             <div>
                                 <label for="degree" class="mb-2 block text-sm font-medium text-gray-700">
                                     Degree Level
@@ -300,7 +300,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Start Date -->
+                            {{-- Start Date --}}
                             <div>
                                 <label for="start_date" class="mb-2 block text-sm font-medium text-gray-700">
                                     Start Date
@@ -317,7 +317,7 @@
                                 @enderror
                             </div>
 
-                            <!-- End Date -->
+                            {{-- End Date --}}
                             <div>
                                 <label for="end_date" class="mb-2 block text-sm font-medium text-gray-700">
                                     End Date
@@ -335,7 +335,7 @@
                         </div>
                     </div>
 
-                    <!-- Form Actions -->
+                    {{-- Form Actions --}}
                     <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
                         <button
                             type="button"

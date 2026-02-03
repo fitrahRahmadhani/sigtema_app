@@ -7,7 +7,7 @@
         </tr>
     </thead>
     <tbody>
-        <!-- CONTOH DATA - HAPUS BARIS INI SEBELUM UPLOAD -->
+        {{-- CONTOH DATA - HAPUS BARIS INI SEBELUM UPLOAD --}}
         <tr style="background-color: #fed7d7">
             <td style="padding: 8px">CONTOH: 50212121</td>
             <td style="padding: 8px">CONTOH: Education</td>
@@ -23,14 +23,14 @@
             <td style="padding: 8px">CONTOH: Certification</td>
             <td style="padding: 8px">CONTOH: PMP Certified</td>
         </tr>
-        <!-- AKHIR CONTOH DATA -->
+        {{-- AKHIR CONTOH DATA --}}
 
-        <!-- ISI DATA ANDA DI BAWAH INI -->
+        {{-- ISI DATA ANDA DI BAWAH INI --}}
         <tr>
             <td colspan="3" style="height: 20px"></td>
         </tr>
 
-        <!-- INSTRUKSI -->
+        {{-- INSTRUKSI --}}
         <tr>
             <td colspan="3" style="background-color: #fee2e2; color: #991b1b; font-weight: bold; padding: 12px">
                 ⚠️ PERHATIAN SEBELUM UPLOAD
@@ -50,7 +50,7 @@
             <td colspan="3" style="height: 10px"></td>
         </tr>
 
-        <!-- PETUNJUK PENGISIAN -->
+        {{-- PETUNJUK PENGISIAN --}}
         <tr>
             <td colspan="3" style="background-color: #dbeafe; color: #1e40af; font-weight: bold; padding: 12px">
                 📋 PETUNJUK PENGISIAN

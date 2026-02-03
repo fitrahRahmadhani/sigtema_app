@@ -1,13 +1,13 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Medical Check Up</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -32,7 +32,7 @@
                     <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Medical Check Up</h1>
                     <p class="mt-1 text-sm text-gray-500">Manage employee medical check up records</p>
 
-                    <!-- Company Info with Change Button -->
+                    {{-- Company Info with Change Button --}}
                     @if ($isSuperadmin && $selectedCompany)
                         <div class="mt-1 flex items-center gap-2">
                             <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <!-- Add MCU Button -->
+            {{-- Add MCU Button --}}
             @if (! $showCompanySelection)
                 <a
                     href="{{ route('mcus.create') }}"
@@ -76,7 +76,7 @@
             @endif
         </div>
 
-        <!-- COMPANY SELECTION SECTION -->
+        {{-- COMPANY SELECTION SECTION --}}
         @if ($showCompanySelection)
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
@@ -96,7 +96,7 @@
                 <h3 class="mt-4 text-xl font-semibold text-gray-700">Pilih Perusahaan</h3>
                 <p class="mt-2 text-gray-500">Silakan pilih perusahaan untuk mengelola data Medical Check Up</p>
 
-                <!-- Company List -->
+                {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($companies as $company)
                         <button
@@ -146,20 +146,20 @@
             </div>
         @endif
 
-        <!-- MAIN CONTENT SECTION -->
+        {{-- MAIN CONTENT SECTION --}}
         @if (! $showCompanySelection)
             @if ($selectedCompany)
-                <!-- Search and Filter Section -->
+                {{-- Search and Filter Section --}}
                 <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                    <!-- Results Info -->
+                    {{-- Results Info --}}
                     <div class="text-sm text-gray-600">
                         Mengelola data Medical Check Up di
                         <span class="font-semibold">{{ $selectedCompany->name }}</span>
                     </div>
 
-                    <!-- Search Row -->
+                    {{-- Search Row --}}
                     <div class="grid gap-4">
-                        <!-- Search Input -->
+                        {{-- Search Input --}}
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-700">Search Employee</label>
                             <div class="relative">
@@ -189,9 +189,9 @@
                         </div>
                     </div>
 
-                    <!-- Filters Row -->
+                    {{-- Filters Row --}}
                     <div class="grid gap-4 md:grid-cols-2">
-                        <!-- Year Filter -->
+                        {{-- Year Filter --}}
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Year</label>
                             <div class="relative">
@@ -217,7 +217,7 @@
                             </div>
                         </div>
 
-                        <!-- Result Filter -->
+                        {{-- Result Filter --}}
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">MCU Result</label>
                             <div class="relative">
@@ -244,7 +244,7 @@
                         </div>
                     </div>
 
-                    <!-- Results Count -->
+                    {{-- Results Count --}}
                     <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
                         Showing
                         <span class="font-semibold text-gray-900">{{ $mcus->count() }}</span>
@@ -254,9 +254,9 @@
                     </div>
                 </div>
 
-                <!-- MCU List Container -->
+                {{-- MCU List Container --}}
                 <div class="space-y-3 overflow-x-auto">
-                    <!-- Column Headers - Hidden on mobile -->
+                    {{-- Column Headers - Hidden on mobile --}}
                     <div
                         class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
                     >
@@ -266,13 +266,13 @@
                         <div class="col-span-3 text-center text-sm font-semibold">Actions</div>
                     </div>
 
-                    <!-- List Items -->
+                    {{-- List Items --}}
                     @forelse ($mcus as $mcu)
-                        <!-- Desktop View -->
+                        {{-- Desktop View --}}
                         <div
                             class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
                         >
-                            <!-- Employee Info -->
+                            {{-- Employee Info --}}
                             <div class="col-span-4 flex gap-2 overflow-hidden">
                                 <div class="flex flex-col justify-center">
                                     @if ($mcu->employee)
@@ -290,7 +290,7 @@
                                 </div>
                             </div>
 
-                            <!-- Year -->
+                            {{-- Year --}}
                             <div class="col-span-2 flex flex-col justify-center">
                                 <span
                                     class="inline-flex w-fit items-center rounded-md bg-gray-100 px-3 py-1 text-sm font-medium text-gray-800"
@@ -299,7 +299,7 @@
                                 </span>
                             </div>
 
-                            <!-- MCU Result -->
+                            {{-- MCU Result --}}
                             <div class="col-span-3 flex flex-col justify-center">
                                 @php
                                     $colorClass = match ($mcu->result) {
@@ -319,7 +319,7 @@
                                 </span>
                             </div>
 
-                            <!-- Actions -->
+                            {{-- Actions --}}
                             <div class="col-span-3 flex items-center justify-center gap-2">
                                 <button
                                     wire:click="edit({{ $mcu->id }})"
@@ -364,12 +364,12 @@
                             </div>
                         </div>
 
-                        <!-- Mobile View -->
+                        {{-- Mobile View --}}
                         <div
                             class="block rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
                         >
                             <div class="space-y-4">
-                                <!-- Employee Header -->
+                                {{-- Employee Header --}}
                                 <div class="flex items-start gap-3 border-b border-gray-100 pb-4">
                                     <div class="min-w-0 flex-1">
                                         <p class="text-xs font-medium text-gray-500 uppercase">Employee</p>
@@ -395,7 +395,7 @@
                                     </div>
                                 </div>
 
-                                <!-- MCU Details -->
+                                {{-- MCU Details --}}
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <p class="text-xs font-medium text-gray-500 uppercase">Year</p>
@@ -422,7 +422,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Actions -->
+                                {{-- Actions --}}
                                 <div class="flex items-center justify-end gap-2 border-t border-gray-100 pt-4">
                                     <button
                                         wire:click="edit({{ $mcu->id }})"
@@ -489,7 +489,7 @@
                     @endforelse
                 </div>
 
-                <!-- Pagination -->
+                {{-- Pagination --}}
                 @if ($mcus->hasPages())
                     <div class="mt-6">
                         {{ $mcus->links() }}
