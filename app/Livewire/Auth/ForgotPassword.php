@@ -2,12 +2,13 @@
 
 namespace App\Livewire\Auth;
 
+use App\Models\User;
 use Livewire\Component;
 use Livewire\Attributes\Title;
+use Masmerise\Toaster\Toaster;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Password;
-use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.auth')]
 #[Title('Forget Password')]
@@ -27,19 +28,24 @@ class ForgotPassword extends Component
     {
         $this->validate();
 
-        $status = Password::sendResetLink($this->only('email'));
+        // Cari user berdasarkan email
+        $user = User::where('email', $this->email)->first();
 
-        if ($status === Password::RESET_LINK_SENT) {
+        if (!$user) {
+            // Untuk keamanan, tetap tampilkan sukses meski email tidak ditemukan
             Toaster::success(__('Tautan reset password telah dikirim ke email Anda.'));
-
-            // Reset form
             $this->reset(['email', 'gRecaptchaResponse']);
-
-            // Reset reCAPTCHA
-            $this->dispatch('resetRecaptcha');
-        } else {
-            Toaster::error(__('Gagal mengirim tautan reset. Silakan coba lagi.'));
+            return;
         }
+
+        // Generate token
+        $token = Password::createToken($user);
+
+        // Kirim notifikasi custom
+        $user->sendPasswordResetNotification($token);
+
+        Toaster::success(__('Tautan reset password telah dikirim ke email Anda.'));
+        $this->reset(['email', 'gRecaptchaResponse']);
     }
 
     public function render()

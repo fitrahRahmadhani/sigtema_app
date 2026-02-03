@@ -1,5 +1,5 @@
 <form wire:submit.prevent="sendPasswordResetLink" class="flex flex-col gap-6">
-    <!-- Logo -->
+    {{-- Logo --}}
     <img
         class="mx-auto w-64 md:w-80 lg:w-[600px]"
         src="{{ asset('assets/logo/sigtema-logo-primary.png') }}"
@@ -77,7 +77,7 @@
     </div>
 
     <!-- reCAPTCHA Mobile -->
-    <div class="flex flex-col gap-1 lg:hidden">
+    <div class="flex flex-col items-center gap-1 lg:hidden">
         <div class="mx-auto" wire:ignore id="recaptcha-mobile">
             {!! NoCaptcha::renderJs() !!}
             {!! NoCaptcha::display(['data-callback' => 'onRecaptchaSuccess']) !!}

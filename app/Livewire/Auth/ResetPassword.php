@@ -5,12 +5,12 @@ namespace App\Livewire\Auth;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.auth')]
 class ResetPassword extends Component
@@ -37,17 +37,28 @@ class ResetPassword extends Component
     /**
      * Reset the password for the given user.
      */
-    public function resetPassword(): void
+    public function resetPassword()
     {
+        // Validasi kustom untuk password kuat
         $this->validate([
             'token' => ['required'],
             'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+            'password' => [
+                'required',
+                'string',
+                'confirmed',
+                'min:12',
+                'regex:/[a-z]/',      // minimal satu huruf kecil
+                'regex:/[A-Z]/',      // minimal satu huruf besar
+                'regex:/[0-9]/',      // minimal satu angka
+                'regex:/[@$!%*#?&]/', // minimal satu simbol
+            ],
+        ], [
+            'password.min' => 'Password minimal 12 karakter.',
+            'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, angka, dan simbol.',
         ]);
 
-        // Here we will attempt to reset the user's password. If it is successful we
-        // will update the password on an actual user model and persist it to the
-        // database. Otherwise we will parse the error and return the response.
+        // Reset password
         $status = Password::reset(
             $this->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) {
@@ -60,17 +71,17 @@ class ResetPassword extends Component
             }
         );
 
-        // If the password was successfully reset, we will redirect the user back to
-        // the application's home authenticated view. If there is an error we can
-        // redirect them back to where they came from with their error message.
-        if ($status != Password::PasswordReset) {
+        // Handle response
+        if ($status != Password::PASSWORD_RESET) {
             $this->addError('email', __($status));
-
+            Toaster::error(__('Gagal mereset password. ' . __($status)));
             return;
         }
+        return redirect()->route('login')->success('Password berhasil direset! Silakan login dengan password baru Anda.');
+    }
 
-        Session::flash('status', __($status));
-
-        $this->redirectRoute('login', navigate: true);
+    public function render()
+    {
+        return view('livewire.auth.reset-password');
     }
 }
