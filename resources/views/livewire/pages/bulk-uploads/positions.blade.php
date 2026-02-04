@@ -80,10 +80,6 @@
                             </li>
                             <li class="flex items-start">
                                 <span class="mr-2">•</span>
-                                <span>employee_number harus sudah terdaftar dalam sistem</span>
-                            </li>
-                            <li class="flex items-start">
-                                <span class="mr-2">•</span>
                                 <span>Kolom employee_number boleh dikosongkan</span>
                             </li>
                             <li class="flex items-start">
@@ -352,7 +348,7 @@
                     @endif
 
                     {{-- Preview Table - Show All Data --}}
-                    <div class="overflow-x-auto rounded-lg border border-gray-200 shadow">
+                    <div class="h-screen overflow-x-auto overflow-y-scroll rounded-lg border border-gray-200 shadow">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>

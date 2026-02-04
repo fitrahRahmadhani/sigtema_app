@@ -226,7 +226,7 @@
                                 >
                                     <option value="">All Bands</option>
                                     @foreach ($bands as $band)
-                                        <option value="{{ $band }}">{{ $band }}</option>
+                                        <option value="{{ $band }}">Band {{ $band }}</option>
                                     @endforeach
                                 </select>
                                 <svg
@@ -371,7 +371,7 @@
                                     <span
                                         class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-800"
                                     >
-                                        {{ $position->band }}
+                                        Band {{ $position->band }}
                                     </span>
                                 @else
                                     <span class="text-sm text-gray-400 italic">-</span>
