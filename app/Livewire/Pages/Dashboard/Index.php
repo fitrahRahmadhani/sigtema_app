@@ -326,26 +326,25 @@ class Index extends Component
             })
             ->toArray();
 
-        // Monthly Hiring Trend (last 12 months)
+        // Monthly Hiring Trend (last 12 months) - PostgreSQL compatible
         $this->monthlyHiringTrend = Employee::where('company_id', $companyId)
             ->whereNotNull('hire_date')
             ->where('hire_date', '>=', now()->subYear())
             ->select(
-                DB::raw('MONTH(hire_date) as month'),
-                DB::raw('YEAR(hire_date) as year'),
+                DB::raw('EXTRACT(MONTH FROM hire_date) as month'),
+                DB::raw('EXTRACT(YEAR FROM hire_date) as year'),
                 DB::raw('count(*) as total')
             )
-            ->groupBy('year', 'month')
+            ->groupBy(DB::raw('EXTRACT(YEAR FROM hire_date)'), DB::raw('EXTRACT(MONTH FROM hire_date)'))
             ->orderBy('year')
             ->orderBy('month')
             ->get()
             ->map(fn($item) => [
-                'label' => date('M Y', mktime(0, 0, 0, $item->month, 1, $item->year)),
+                'label' => date('M Y', mktime(0, 0, 0, (int)$item->month, 1, (int)$item->year)),
                 'value' => $item->total
             ])
             ->toArray();
 
-        // Dispatch event to render charts
         $this->dispatch('charts-ready');
         $this->dispatch('dashboard-data-loaded');
         $this->dispatch('company-changed');

@@ -104,7 +104,7 @@ class EmployeesImport implements ToCollection, WithHeadingRow
                     'birth_date' => 'nullable|date',
                     'gender' => 'required|in:Male,Female',
                     'personal_grade' => 'required|string|max:255',
-                    'band' => 'required|integer|max:2',
+                    'band' => 'required|numeric|min:1|max:5',
                     'hire_date' => 'nullable|date',
                     'profile_path' => 'nullable|string|max:255',
                 ];

@@ -189,9 +189,7 @@
             <div class="rounded-lg border border-red-200 bg-red-50 p-6">
                 <div class="mb-4 flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-red-900">Change Password</h3>
-                    <span class="rounded-full bg-red-200 px-3 py-1 text-xs font-medium text-red-800">
-                        Danger Zone
-                    </span>
+                    <span class="rounded-full bg-red-200 px-3 py-1 text-xs font-medium text-red-800">Danger Zone</span>
                 </div>
                 <p class="mb-4 text-sm text-gray-600">Leave blank to keep your current password</p>
                 <div class="grid gap-6 md:grid-cols-2">
