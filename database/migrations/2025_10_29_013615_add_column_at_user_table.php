@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('company_id')->nullable()->constrained();
-            $table->string('profile_path')->nullable();
+            $table->foreignId('company_id')->nullable()->constrained()->after('password');
+            $table->string('profile_path')->nullable()->after('company_id');
+            $table->integer('band')->nullable()->after('profile_path');
         });
     }
 
