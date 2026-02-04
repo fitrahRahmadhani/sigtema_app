@@ -37,6 +37,9 @@ class Create extends Component
     #[Validate('required|same:password')]
     public $password_confirmation = '';
 
+    #[Validate('nullable|numeric|min:1|max:5')]
+    public $band = '';
+
     #[Validate('nullable|exists:companies,id')]
     public $company_id = '';
 
@@ -47,6 +50,12 @@ class Create extends Component
     public $profile_photo;
 
     public $profile_photo_preview = null;
+    public $bandOptions = [];
+
+    public function mount()
+    {
+        $this->bandOptions = range(1, 5);
+    }
 
     public function updatedProfilePhoto()
     {
@@ -77,6 +86,7 @@ class Create extends Component
                 'password' => Hash::make($this->password),
                 'company_id' => $this->company_id ?: null,
                 'email_verified_at' => now(),
+                'band' => $this->band ?: null,
             ]);
 
             // Upload profile photo if exists
