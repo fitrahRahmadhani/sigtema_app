@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('employee_number');
             $table->string('name');
             $table->string('email');
-            $table->string('phone');
+            $table->string('phone')->nullable();
             $table->date('birth_date')->nullable();
             $table->string('gender');
             $table->string('password')->nullable();

@@ -27,7 +27,7 @@
             <td>CONTOH: Male</td>
             <td>CONTOH: (kosongkan)</td>
             <td>CONTOH: 12</td>
-            <td>CONTOH: Band 1</td>
+            <td>CONTOH: 1</td>
             <td>CONTOH: 2024-01-01</td>
             <td>CONTOH: (kosongkan)</td>
         </tr>
@@ -41,7 +41,7 @@
             <td>CONTOH: Female</td>
             <td>CONTOH: mypassword</td>
             <td>CONTOH: 10</td>
-            <td>CONTOH: Band 2</td>
+            <td>CONTOH: 2</td>
             <td>CONTOH: 2024-02-01</td>
             <td>CONTOH: (kosongkan)</td>
         </tr>
@@ -82,7 +82,7 @@
             </tr>
             <tr>
                 <td colspan="12" style="background-color: #d1fae5; color: #065f46; padding: 8px">
-                    Anda tidak perlu mengisi kolom company_id. Langsung isi data employee Anda saja.
+                    Gunakan company id tersebut untuk mengisi kolom employee_id.
                 </td>
             </tr>
         @endif
