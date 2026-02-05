@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         @hasanyrole('superadmin|admin')
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
@@ -13,9 +13,9 @@
         <flux:breadcrumbs.item>AI Candidates Comparison</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl text-white">
@@ -55,7 +55,7 @@
             </button>
         </div>
 
-        <!-- AI Comparison Summary -->
+        {{-- AI Comparison Summary --}}
         @if (count($aiRecommendations) > 0)
             <div class="mb-8 rounded-lg border border-gray-200 bg-gradient-to-r from-[#721d21]/5 to-[#8a252a]/5 p-6">
                 <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -81,7 +81,7 @@
             </div>
         @endif
 
-        <!-- Comparison Table -->
+        {{-- Comparison Table --}}
         <div class="overflow-x-auto">
             <div class="inline-block min-w-full align-middle">
                 <table class="min-w-full divide-y divide-gray-200">
@@ -159,7 +159,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 bg-white">
-                        <!-- AI RECOMMENDATION SECTION -->
+                        {{-- AI RECOMMENDATION SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -169,7 +169,7 @@
                             </td>
                         </tr>
 
-                        <!-- AI Match Score -->
+                        {{-- AI Match Score --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">AI Match Score</td>
                             @foreach ($selectedEmployees as $employee)
@@ -197,7 +197,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- AI Strengths -->
+                        {{-- AI Strengths --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 AI Strengths Analysis
@@ -237,7 +237,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- AI Development Areas -->
+                        {{-- AI Development Areas --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 AI Development Areas
@@ -277,7 +277,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- BASIC INFORMATION SECTION -->
+                        {{-- BASIC INFORMATION SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -287,7 +287,7 @@
                             </td>
                         </tr>
 
-                        <!-- Email -->
+                        {{-- Email --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Email</td>
                             @foreach ($selectedEmployees as $employee)
@@ -297,7 +297,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Phone -->
+                        {{-- Phone --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Phone</td>
                             @foreach ($selectedEmployees as $employee)
@@ -307,7 +307,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Personal Grade -->
+                        {{-- Personal Grade --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Personal Grade</td>
                             @foreach ($selectedEmployees as $employee)
@@ -317,7 +317,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Band -->
+                        {{-- Band --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Band</td>
                             @foreach ($selectedEmployees as $employee)
@@ -327,7 +327,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Hire Date -->
+                        {{-- Hire Date --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Hire Date</td>
                             @foreach ($selectedEmployees as $employee)
@@ -339,7 +339,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- PERSONALITY INFORMATION SECTION -->
+                        {{-- PERSONALITY INFORMATION SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -355,7 +355,7 @@
                             </td>
                         </tr>
 
-                        <!-- MBTI -->
+                        {{-- MBTI --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">MBTI</td>
                             @foreach ($selectedEmployees as $employee)
@@ -369,7 +369,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- PAPI KOSTICK SECTION -->
+                        {{-- PAPI KOSTICK SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -410,7 +410,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- DISC SECTION -->
+                        {{-- DISC SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -436,7 +436,7 @@
 
                                     @if (! empty($discData))
                                         <div class="flex w-[400px] flex-col space-y-6">
-                                            <!-- DISC 1 -->
+                                            {{-- DISC 1 --}}
                                             <div class="overflow-hidden rounded-lg border border-gray-300">
                                                 <div class="bg-red-500 px-3 py-2 text-center">
                                                     <p class="text-sm font-semibold text-white">DISC 1</p>
@@ -467,7 +467,7 @@
                                                 </div>
                                             </div>
 
-                                            <!-- DISC 2 -->
+                                            {{-- DISC 2 --}}
                                             <div class="overflow-hidden rounded-lg border border-gray-300">
                                                 <div class="bg-yellow-500 px-3 py-2 text-center">
                                                     <p class="text-sm font-semibold text-white">DISC 2</p>
@@ -498,7 +498,7 @@
                                                 </div>
                                             </div>
 
-                                            <!-- DISC 3 -->
+                                            {{-- DISC 3 --}}
                                             <div class="overflow-hidden rounded-lg border border-gray-300">
                                                 <div class="bg-green-500 px-3 py-2 text-center">
                                                     <p class="text-sm font-semibold text-white">DISC 3</p>
@@ -551,7 +551,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- SOFT COMPETENCIES SECTION -->
+                        {{-- SOFT COMPETENCIES SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -561,7 +561,7 @@
                             </td>
                         </tr>
 
-                        <!-- Strengths -->
+                        {{-- Strengths --}}
                         <tr>
                             <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 Strengths
@@ -585,7 +585,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Weaknesses -->
+                        {{-- Weaknesses --}}
                         <tr>
                             <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 Weaknesses
@@ -609,7 +609,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- TECHNICAL COMPETENCY SECTION -->
+                        {{-- TECHNICAL COMPETENCY SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -644,7 +644,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- INNOVATION SECTION -->
+                        {{-- INNOVATION SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -707,7 +707,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- POSITION HISTORY SECTION -->
+                        {{-- POSITION HISTORY SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -742,7 +742,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- EDUCATION SECTION -->
+                        {{-- EDUCATION SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -779,7 +779,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- MCU HISTORY SECTION -->
+                        {{-- MCU HISTORY SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -826,7 +826,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- BURNOUT SECTION -->
+                        {{-- BURNOUT SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -842,7 +842,7 @@
                             </td>
                         </tr>
 
-                        <!-- Kelalahan Emosional -->
+                        {{-- Kelalahan Emosional --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 Kelalahan Emosional
@@ -858,7 +858,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Depersonalisasi -->
+                        {{-- Depersonalisasi --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Depersonalisasi</td>
                             @foreach ($selectedEmployees as $employee)
@@ -872,7 +872,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Penurunan Prestasi -->
+                        {{-- Penurunan Prestasi --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 Penurunan Prestasi
@@ -888,7 +888,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Penafsiran -->
+                        {{-- Penafsiran --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Penafsiran</td>
                             @foreach ($selectedEmployees as $employee)

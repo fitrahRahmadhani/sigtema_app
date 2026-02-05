@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         @hasanyrole('superadmin|admin')
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
@@ -9,9 +9,9 @@
         <flux:breadcrumbs.item>Employee Comparison</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex items-center justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -35,7 +35,7 @@
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Employee Comparison</h1>
 
-                    <!-- Company Info with Change Button -->
+                    {{-- Company Info with Change Button --}}
                     @if ($isSuperadmin && $selectedCompany)
                         <div class="mt-1 flex items-center gap-2">
                             <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
@@ -58,7 +58,7 @@
                 </div>
             </div>
 
-            <!-- Add Column Button -->
+            {{-- Add Column Button --}}
             @if (! $showCompanySelection && $columnCount < 5)
                 <button
                     wire:click="addColumn"
@@ -79,7 +79,7 @@
             @endif
         </div>
 
-        <!-- COMPANY SELECTION SECTION -->
+        {{-- COMPANY SELECTION SECTION --}}
         @if ($showCompanySelection)
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
@@ -99,7 +99,7 @@
                 <h3 class="mt-4 text-xl font-semibold text-gray-700">Pilih Perusahaan</h3>
                 <p class="mt-2 text-gray-500">Silakan pilih perusahaan untuk membandingkan karyawan</p>
 
-                <!-- Company List -->
+                {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($companies as $company)
                         <button
@@ -142,10 +142,10 @@
             </div>
         @endif
 
-        <!-- COMPARISON TABLE SECTION -->
+        {{-- COMPARISON TABLE SECTION --}}
         @if (! $showCompanySelection)
             @if ($selectedCompany)
-                <!-- Info Box -->
+                {{-- Info Box --}}
                 <div class="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
                     <div class="text-sm text-gray-600">
                         Membandingkan karyawan di
@@ -153,7 +153,7 @@
                     </div>
                 </div>
 
-                <!-- Comparison Table -->
+                {{-- Comparison Table --}}
                 <div class="overflow-x-auto">
                     <div class="inline-block min-w-full align-middle">
                         <table class="min-w-full divide-y divide-gray-200">
@@ -165,7 +165,7 @@
                                     ></th>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <th scope="col" class="relative w-[400px] content-start bg-gray-50 px-6 py-3">
-                                            <!-- Remove Column Button -->
+                                            {{-- Remove Column Button --}}
                                             @if ($columnCount > 3)
                                                 <button
                                                     wire:click="removeColumn({{ $i }})"
@@ -190,7 +190,7 @@
                                             @endif
 
                                             <div class="relative">
-                                                <!-- Search Input -->
+                                                {{-- Search Input --}}
                                                 <div class="relative w-[400px]">
                                                     <input
                                                         type="text"
@@ -240,7 +240,7 @@
                                                     @endif
                                                 </div>
 
-                                                <!-- Search Dropdown -->
+                                                {{-- Search Dropdown --}}
                                                 @if ($showSearchDropdown[$i] && ! empty($searchResults[$i]))
                                                     <div
                                                         class="absolute top-full right-0 left-0 mt-1 max-h-60 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg"
@@ -266,7 +266,7 @@
                                                     </div>
                                                 @endif
 
-                                                <!-- Selected Employee Info -->
+                                                {{-- Selected Employee Info --}}
                                                 @if (! empty($selectedEmployees[$i]))
                                                     <div
                                                         class="border-primary-text bg-primary-text/10 mt-3 flex w-[400px] items-center gap-3 rounded-lg border p-3"
@@ -313,7 +313,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
-                                <!-- Basic Information Section -->
+                                {{-- Basic Information Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -323,7 +323,7 @@
                                     </td>
                                 </tr>
 
-                                <!-- Email -->
+                                {{-- Email --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Email</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -337,7 +337,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Phone -->
+                                {{-- Phone --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Phone</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -351,7 +351,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Personal Grade -->
+                                {{-- Personal Grade --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Personal Grade
@@ -369,7 +369,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Band -->
+                                {{-- Band --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Band</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -383,7 +383,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Hire Date -->
+                                {{-- Hire Date --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Hire Date</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -399,7 +399,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Personality Information Section -->
+                                {{-- Personality Information Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -415,7 +415,7 @@
                                     </td>
                                 </tr>
 
-                                <!-- MBTI -->
+                                {{-- MBTI --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">MBTI</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -431,7 +431,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- PAPI Kostick Section -->
+                                {{-- PAPI Kostick Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -451,7 +451,7 @@
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top">
                                             <div class="flex w-[400px] flex-col items-center justify-start">
-                                                <!-- PAPI Chart Container -->
+                                                {{-- PAPI Chart Container --}}
                                                 <div
                                                     class="relative aspect-square w-[400px] rounded-full border-2 border-dashed border-gray-300"
                                                 >
@@ -464,7 +464,7 @@
                                                             data-employee-name="{{ $selectedEmployees[$i]->name ?? 'Employee' }}"
                                                         ></canvas>
                                                     @else
-                                                        <!-- Placeholder ketika tidak ada karyawan yang dipilih -->
+                                                        {{-- Placeholder ketika tidak ada karyawan yang dipilih --}}
                                                         <div
                                                             class="flex h-full w-full flex-col items-center justify-center"
                                                         >
@@ -495,7 +495,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- DISC Section -->
+                                {{-- DISC Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -516,7 +516,7 @@
                                         <td class="px-6 py-4 align-top">
                                             @if (! empty($selectedEmployees[$i]) && ! empty($discChartData[$i]))
                                                 <div class="flex w-[400px] flex-col space-y-6">
-                                                    <!-- DISC 1 -->
+                                                    {{-- DISC 1 --}}
                                                     <div class="overflow-hidden rounded-lg border border-gray-300">
                                                         <div class="bg-red-500 px-3 py-2 text-center">
                                                             <p class="text-sm font-semibold text-white">DISC 1</p>
@@ -549,7 +549,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <!-- DISC 2 -->
+                                                    {{-- DISC 2 --}}
                                                     <div class="overflow-hidden rounded-lg border border-gray-300">
                                                         <div class="bg-yellow-500 px-3 py-2 text-center">
                                                             <p class="text-sm font-semibold text-white">DISC 2</p>
@@ -582,7 +582,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <!-- DISC 3 -->
+                                                    {{-- DISC 3 --}}
                                                     <div class="overflow-hidden rounded-lg border border-gray-300">
                                                         <div class="bg-green-500 px-3 py-2 text-center">
                                                             <p class="text-sm font-semibold text-white">DISC 3</p>
@@ -637,7 +637,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Soft Competencies Section -->
+                                {{-- Soft Competencies Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -647,7 +647,7 @@
                                     </td>
                                 </tr>
 
-                                <!-- Strengths -->
+                                {{-- Strengths --}}
                                 <tr>
                                     <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Strengths
@@ -671,7 +671,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Weaknesses -->
+                                {{-- Weaknesses --}}
                                 <tr>
                                     <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Weaknesses
@@ -695,7 +695,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Technical Competency Section -->
+                                {{-- Technical Competency Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -735,7 +735,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Innovation Section -->
+                                {{-- Innovation Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -801,7 +801,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Position History Section -->
+                                {{-- Position History Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -837,7 +837,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Education Section -->
+                                {{-- Education Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -875,7 +875,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- MCU History Section -->
+                                {{-- MCU History Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -925,7 +925,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Burnout Section -->
+                                {{-- Burnout Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -941,7 +941,7 @@
                                     </td>
                                 </tr>
 
-                                <!-- Kelalahan Emosional -->
+                                {{-- Kelalahan Emosional --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Kelalahan Emosional
@@ -959,7 +959,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Depersonalisasi -->
+                                {{-- Depersonalisasi --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Depersonalisasi
@@ -977,7 +977,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Penurunan Prestasi -->
+                                {{-- Penurunan Prestasi --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Penurunan Prestasi
@@ -995,7 +995,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Penafsiran -->
+                                {{-- Penafsiran --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Penafsiran

@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
                         @hasanyrole('superadmin|admin')
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
@@ -8,9 +8,9 @@
         <flux:breadcrumbs.item>Employees Profile</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex items-center gap-4">
             <div class="color-gradient flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-white">
                 <svg
@@ -31,7 +31,7 @@
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Employees Profile</h1>
 
-                <!-- FIX: Hanya tampilkan jika selectedCompany ADA dan BUKAN null -->
+                {{-- FIX: Hanya tampilkan jika selectedCompany ADA dan BUKAN null --}}
                 @if ($isSuperadmin && $selectedCompany)
                     <div class="mt-1 flex items-center gap-2">
                         <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
@@ -54,7 +54,7 @@
             </div>
         </div>
 
-        <!-- COMPANY SELECTION SECTION -->
+        {{-- COMPANY SELECTION SECTION --}}
         @if ($showCompanySelection)
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
@@ -74,7 +74,7 @@
                 <h3 class="mt-4 text-xl font-semibold text-gray-700">Pilih Perusahaan</h3>
                 <p class="mt-2 text-gray-500">Silakan pilih perusahaan untuk melihat data karyawan</p>
 
-                <!-- Company List -->
+                {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($companies as $company)
                         <button
@@ -117,21 +117,21 @@
             </div>
         @endif
 
-        <!-- MAIN CONTENT SECTION -->
+        {{-- MAIN CONTENT SECTION --}}
         @if (! $showCompanySelection)
-            <!-- FIX: Pastikan $selectedCompany ada sebelum menggunakan -->
+            {{-- FIX: Pastikan $selectedCompany ada sebelum menggunakan --}}
             @if ($selectedCompany)
-                <!-- Search and Filter Section -->
+                {{-- Search and Filter Section --}}
                 <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                    <!-- Results Info -->
+                    {{-- Results Info --}}
                     <div class="text-sm text-gray-600">
                         Menampilkan karyawan di
                         <span class="font-semibold">{{ $selectedCompany->name }}</span>
                     </div>
 
-                    <!-- Desktop Layout: Search & Filter -->
+                    {{-- Desktop Layout: Search & Filter --}}
                     <div class="hidden gap-4 md:grid md:grid-cols-4">
-                        <!-- Search Input-->
+                        {{-- Search Input --}}
                         <div class="md:col-span-2">
                             <label class="mb-2 block text-sm font-medium text-gray-700">
                                 Cari Nama atau Employee ID
@@ -144,7 +144,7 @@
                             />
                         </div>
 
-                        <!-- Filter Gender -->
+                        {{-- Filter Gender --}}
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Gender</label>
                             <div class="relative">
@@ -169,7 +169,7 @@
                             </div>
                         </div>
 
-                        <!-- Filter Unit -->
+                        {{-- Filter Unit --}}
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Unit</label>
                             <div class="relative">
@@ -196,9 +196,9 @@
                         </div>
                     </div>
 
-                    <!-- Mobile Layout: Stacked -->
+                    {{-- Mobile Layout: Stacked --}}
                     <div class="space-y-4 md:hidden">
-                        <!-- Search Input -->
+                        {{-- Search Input --}}
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-700">
                                 Cari Nama atau Employee ID
@@ -211,9 +211,9 @@
                             />
                         </div>
 
-                        <!-- Filter Row -->
+                        {{-- Filter Row --}}
                         <div class="grid grid-cols-2 gap-4">
-                            <!-- Gender -->
+                            {{-- Gender --}}
                             <div class="relative">
                                 <label class="mb-2 block text-sm font-medium text-gray-700">Gender</label>
                                 <div class="relative">
@@ -238,7 +238,7 @@
                                 </div>
                             </div>
 
-                            <!-- Unit -->
+                            {{-- Unit --}}
                             <div class="relative">
                                 <label class="mb-2 block text-sm font-medium text-gray-700">Unit</label>
                                 <div class="relative">
@@ -266,7 +266,7 @@
                         </div>
                     </div>
 
-                    <!-- Results Count -->
+                    {{-- Results Count --}}
                     <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
                         Menampilkan
                         <span class="font-semibold">{{ $employees->count() }}</span>
@@ -276,9 +276,9 @@
                     </div>
                 </div>
 
-                <!-- List Container -->
+                {{-- List Container --}}
                 <div class="space-y-3 overflow-x-auto">
-                    <!-- Column Headers - Hidden on mobile -->
+                    {{-- Column Headers - Hidden on mobile --}}
                     <div
                         class="color-gradient hidden place-items-center justify-items-start gap-4 rounded-lg px-4 py-3 text-white md:grid md:grid-cols-12"
                     >
@@ -290,9 +290,9 @@
                         <div class="col-span-3 text-sm font-semibold">Unit</div>
                     </div>
 
-                    <!-- List Items -->
+                    {{-- List Items --}}
                     @forelse ($employees as $employee)
-                        <!-- Desktop View -->
+                        {{-- Desktop View --}}
                         <a
                             href="{{ route('employees-profile.show', $employee->slug) }}"
                             class="hidden rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid md:grid-cols-12 md:gap-4"
@@ -329,7 +329,7 @@
                             </div>
                         </a>
 
-                        <!-- Mobile View -->
+                        {{-- Mobile View --}}
                         <a
                             href="{{ route('employees-profile.show', $employee->slug) }}"
                             class="block rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
@@ -399,7 +399,7 @@
                     @endforelse
                 </div>
 
-                <!-- Pagination -->
+                {{-- Pagination --}}
                 @if ($employees->hasPages())
                     <div class="mt-6">
                         {{ $employees->links() }}

@@ -308,11 +308,11 @@
                                 class="@error('band') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                             >
                                 <option value="">Select band</option>
-                                <option value="band 1">Band 1</option>
-                                <option value="band 2">Band 2</option>
-                                <option value="band 3">Band 3</option>
-                                <option value="band 4">Band 4</option>
-                                <option value="band 5">Band 5</option>
+                                <option value="1">Band 1</option>
+                                <option value="2">Band 2</option>
+                                <option value="3">Band 3</option>
+                                <option value="4">Band 4</option>
+                                <option value="5">Band 5</option>
                             </select>
                             <svg
                                 class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
@@ -340,32 +340,36 @@
                 </div>
                 <p class="mb-4 text-sm text-gray-600">Leave blank to keep the current password</p>
                 <div class="grid gap-6 md:grid-cols-2">
+                    {{-- Password --}}
                     <div>
-                        <label for="password" class="mb-2 block text-sm font-medium text-gray-700">New Password</label>
+                        <label for="password" class="mb-2 block text-sm font-medium text-gray-700">Password</label>
                         <input
                             type="password"
                             id="password"
-                            wire:model.blur="password"
-                            placeholder="••••••••"
-                            class="@error('password') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            wire:model.live="password"
+                            placeholder="••••••••••••"
+                            class="@error('password') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
                         />
                         @error('password')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
 
-                        <p class="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
+                        <p class="mt-1 text-xs text-gray-500">
+                            At least 12 characters with uppercase, lowercase, number, and symbol.
+                        </p>
                     </div>
 
+                    {{-- Password Confirmation --}}
                     <div>
                         <label for="password_confirmation" class="mb-2 block text-sm font-medium text-gray-700">
-                            Confirm New Password
+                            Confirm Password
                         </label>
                         <input
                             type="password"
                             id="password_confirmation"
-                            wire:model.blur="password_confirmation"
-                            placeholder="••••••••"
-                            class="@error('password_confirmation') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            wire:model.live="password_confirmation"
+                            placeholder="••••••••••••"
+                            class="@error('password_confirmation') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
                         />
                         @error('password_confirmation')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

@@ -38,7 +38,13 @@ class Create extends Component
     #[Validate('required|in:male,female')]
     public $gender = '';
 
-    #[Validate('nullable|string|min:8|confirmed')]
+    #[Validate([
+        'nullable',
+        'string',
+        'min:12',
+        'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+        'confirmed'
+    ])]
     public $password = '';
 
     public $password_confirmation = '';
@@ -49,7 +55,7 @@ class Create extends Component
     #[Validate('nullable|date')]
     public $hire_date = '';
 
-    #[Validate('required|in:band 1,band 2,band 3,band 4,band 5')]
+    #[Validate('required|in:1,2,3,4,5')]
     public $band = '';
 
     #[Validate('required|exists:companies,id')]

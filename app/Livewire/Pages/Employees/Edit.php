@@ -4,13 +4,11 @@ namespace App\Livewire\Pages\Employees;
 
 use App\Models\Employee;
 use App\Models\Company;
-use App\Models\Position;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -24,13 +22,44 @@ class Edit extends Component
 
     public Employee $employee;
 
-    public $name, $employee_number, $email, $phone;
-    public $birth_date, $gender, $personal_grade, $hire_date;
-    public $company_id, $band;
+    #[Validate('required|string|max:255')]
+    public $name = '';
 
-    #[Validate('nullable|string|min:8|confirmed')]
+    public $employee_number = '';
+
+    public $email = '';
+
+    #[Validate('required|string|max:20')]
+    public $phone = '';
+
+    #[Validate('nullable|date')]
+    public $birth_date = '';
+
+    #[Validate('required|in:male,female')]
+    public $gender = '';
+
+    #[Validate([
+        'nullable',
+        'string',
+        'min:12',
+        'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+        'confirmed'
+    ])]
     public $password = '';
+
     public $password_confirmation = '';
+
+    #[Validate('required|string|max:50')]
+    public $personal_grade = '';
+
+    #[Validate('nullable|date')]
+    public $hire_date = '';
+
+    #[Validate('required|in:1,2,3,4,5')]
+    public $band = '';
+
+    #[Validate('required|exists:companies,id')]
+    public $company_id = '';
 
     #[Validate('nullable|image|max:2048')]
     public $profile_photo;
@@ -56,18 +85,8 @@ class Edit extends Component
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
-            'employee_number' => ['required', 'string', Rule::unique('employees')->ignore($this->employee->id)],
             'email' => ['required', 'email', Rule::unique('employees')->ignore($this->employee->id)],
-            'phone' => 'required|string|max:20',
-            'birth_date' => 'nullable|date',
-            'gender' => 'required|in:male,female',
-            'personal_grade' => 'required|string|max:50',
-            'hire_date' => 'nullable|date',
-            'band' => 'required|in:1,2,3,4,5',
-            'company_id' => 'required|exists:companies,id',
-            'password' => 'nullable|string|min:8|confirmed',
-            'profile_photo' => 'nullable|image|max:2048',
+            'employee_number' => ['required', 'string', Rule::unique('employees')->ignore($this->employee->id)],
         ];
     }
 
