@@ -152,8 +152,8 @@
                         <span class="font-semibold">{{ $selectedCompany->name }}</span>
                     </div>
 
-                    {{-- Search Only --}}
-                    <div class="grid gap-4">
+                    {{-- Search and Filter Grid --}}
+                    <div class="grid gap-4 md:grid-cols-3">
                         {{-- Search Input --}}
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-700">Search Employee</label>
@@ -182,6 +182,60 @@
                                 />
                             </div>
                         </div>
+
+                        {{-- Band Filter --}}
+                        <div class="relative">
+                            <label class="mb-2 block text-sm font-medium text-gray-700">Band</label>
+                            <div class="relative">
+                                <select
+                                    wire:model.live="bandFilter"
+                                    class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                >
+                                    <option value="">All Bands</option>
+                                    @foreach ($bands as $band)
+                                        <option value="{{ $band }}">Band {{ $band }}</option>
+                                    @endforeach
+                                </select>
+                                <svg
+                                    class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        {{-- Sort By --}}
+                        <div class="relative">
+                            <label class="mb-2 block text-sm font-medium text-gray-700">Sort By</label>
+                            <div class="relative">
+                                <select
+                                    wire:model.live="sortBy"
+                                    class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                >
+                                    <option value="name_asc">Name (A-Z)</option>
+                                    <option value="name_desc">Name (Z-A)</option>
+                                    <option value="number_asc">Employee Number (Asc)</option>
+                                    <option value="number_desc">Employee Number (Desc)</option>
+                                    <option value="newest">Newest First</option>
+                                    <option value="oldest">Oldest First</option>
+                                </select>
+                                <svg
+                                    class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
 
                     {{-- Results Count --}}
@@ -191,6 +245,12 @@
                         of
                         <span class="font-semibold text-gray-900">{{ $employees->total() }}</span>
                         employees
+
+                        @if ($bandFilter)
+                            <span class="ml-2 rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
+                                Band: {{ $bandFilter }}
+                            </span>
+                        @endif
                     </div>
                 </div>
 
@@ -200,10 +260,11 @@
                     <div
                         class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
                     >
-                        <div class="col-span-3 text-sm font-semibold">Employee</div>
+                        <div class="col-span-2 text-sm font-semibold">Employee</div>
                         <div class="col-span-2 text-sm font-semibold">Contact</div>
-                        <div class="col-span-3 text-sm font-semibold">Position</div>
+                        <div class="col-span-2 text-sm font-semibold">Position</div>
                         <div class="col-span-2 text-sm font-semibold">Company</div>
+                        <div class="col-span-2 text-sm font-semibold">Band</div>
                         <div class="col-span-2 text-center text-sm font-semibold">Actions</div>
                     </div>
 
@@ -214,7 +275,7 @@
                             class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
                         >
                             {{-- Employee Info --}}
-                            <div class="col-span-3 flex gap-2">
+                            <div class="col-span-2 flex gap-2">
                                 {{-- Photo --}}
                                 <div class="flex flex-shrink-0 items-center">
                                     @if ($employee->profile_path)
@@ -266,7 +327,7 @@
                             </div>
 
                             {{-- Position --}}
-                            <div class="col-span-3 flex flex-col justify-center">
+                            <div class="col-span-2 flex flex-col justify-center">
                                 @if ($employee->position)
                                     <p class="truncate text-sm font-medium text-gray-900">
                                         {{ $employee->position->name }}
@@ -284,6 +345,19 @@
                                     <p class="truncate text-xs text-gray-500">{{ $employee->company->cocd }}</p>
                                 @else
                                     <span class="text-sm text-gray-400 italic">No company</span>
+                                @endif
+                            </div>
+
+                            {{-- Band --}}
+                            <div class="col-span-2 flex flex-col justify-center">
+                                @if ($employee->band)
+                                    <span
+                                        class="inline-flex w-fit items-center rounded-md bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800"
+                                    >
+                                        Band {{ $employee->band ?? '-' }}
+                                    </span>
+                                @else
+                                    <span class="text-sm text-gray-400 italic">-</span>
                                 @endif
                             </div>
 
@@ -391,6 +465,13 @@
                                             >
                                                 {{ ucfirst($employee->gender) }}
                                             </span>
+                                            @if ($employee->band)
+                                                <span
+                                                    class="inline-flex items-center rounded-md bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-800"
+                                                >
+                                                    {{ $employee->band }}
+                                                </span>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
