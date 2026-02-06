@@ -41,12 +41,12 @@
             {{-- Employee Selection --}}
             <div class="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h2 class="text-lg font-semibold text-gray-900">Employee Information</h2>
-                <div class="grid gap-4 md:grid-cols-2">
+                <div class="grid gap-4 lg:grid-cols-2">
                     {{-- Company Selection --}}
                     <div>
                         <label class="mb-2 block text-sm font-medium text-gray-700">Company</label>
                         <div
-                            class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700"
+                            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700"
                         >
                             {{ $employee->company->name }} ({{ $employee->company->cocd }})
                         </div>
@@ -54,9 +54,9 @@
 
                     {{-- Employee Selection --}}
                     <div>
-                        <label class="mb-2 block text-sm font-medium text-gray-700">Company</label>
+                        <label class="mb-2 block text-sm font-medium text-gray-700">Employee</label>
                         <div
-                            class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700"
+                            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700"
                         >
                             {{ $employee->name }} ({{ $employee->employee_number }})
                         </div>
