@@ -25,8 +25,6 @@ class Edit extends Component
     public function mount(Education $education)
     {
         $this->education = $education;
-
-        // Set nilai dari education yang akan diedit
         $this->employee = $education->employee;
         $this->institution_name = $education->institution_name;
         $this->major = $education->major;
