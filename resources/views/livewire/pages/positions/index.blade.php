@@ -371,7 +371,8 @@
                                     <span
                                         class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-800"
                                     >
-                                        Band {{ $position->band }}
+                                        <span class="lg:show hidden">Band</span>
+                                        {{ $position->band }}
                                     </span>
                                 @else
                                     <span class="text-sm text-gray-400 italic">-</span>
