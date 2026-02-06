@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Positions;
 use App\Models\Company;
 use Livewire\Component;
 use App\Models\Position;
+use App\Models\Employee;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
@@ -59,71 +60,140 @@ class Create extends Component
     #[Validate('nullable|exists:employees,id')]
     public $employee_id;
 
-    public $employees = [];
-    public $companies = [];
+    public $selectedCompany = null;
+    public $isSuperadmin = false;
+
+    // Employee search properties
+    public $employeeSearch = '';
+    public $showEmployeeDropdown = false;
+    public $selectedEmployee = null;
+    public $highlightedIndex = 0;
+
+    // Minimum karakter untuk pencarian
+    private $minSearchLength = 5;
+
     public $bandOptions = [];
 
     public function mount()
     {
         $user = Auth::user();
+        $this->isSuperadmin = $user->hasRole('superadmin');
 
-        // Load companies based on role
-        if ($user->hasRole('superadmin')) {
-            $this->companies = Company::where('is_active', true)
-                ->orderBy('name')
-                ->get()
-                ->map(function ($company) {
-                    return [
-                        'value' => $company->id,
-                        'text' => $company->name . ' (' . $company->cocd . ')'
-                    ];
-                })
-                ->toArray();
-        } else {
-            $this->company_id = $user->company_id;
-            $company = Company::find($user->company_id);
-            if ($company) {
-                $this->companies = [[
-                    'value' => $company->id,
-                    'text' => $company->name . ' (' . $company->cocd . ')'
-                ]];
+        // Ambil company_id dari session untuk superadmin, atau dari user untuk admin biasa
+        if ($this->isSuperadmin) {
+            $companyId = session('positions_company_id');
+            if (!$companyId) {
+                // Redirect ke index jika belum ada company di session
+                return redirect()->route('positions.index');
             }
+        } else {
+            $companyId = $user->company_id;
         }
+
+        $this->selectedCompany = Company::find($companyId);
+        $this->company_id = $companyId;
 
         $this->bandOptions = range(1, 5);
+    }
 
-        if ($this->company_id) {
-            $this->loadEmployees();
+    public function updatedEmployeeSearch($value)
+    {
+        // Reset highlight
+        $this->highlightedIndex = 0;
+
+        // Tampilkan dropdown hanya jika ada input minimal 5 karakter
+        if (strlen(trim($value)) >= $this->minSearchLength) {
+            $this->showEmployeeDropdown = true;
+        } else {
+            $this->showEmployeeDropdown = false;
         }
     }
 
-    public function updatedCompanyId($value)
+    public function getFilteredEmployeesProperty()
     {
-        $this->employees = [];
-        $this->employee_id = null;
-
-        if ($value) {
-            $this->loadEmployees();
+        if (!$this->company_id) {
+            return collect();
         }
 
-        $this->dispatch('companyUpdated');
-    }
+        $searchTerm = trim($this->employeeSearch);
 
-    protected function loadEmployees()
-    {
-        $company = Company::find($this->company_id);
-        if (!$company) return;
+        // Hanya lakukan pencarian jika input >= 5 karakter
+        if (strlen($searchTerm) < $this->minSearchLength) {
+            return collect();
+        }
 
-        $this->employees = $company->employees()
-            ->orderBy('name')
-            ->get()
-            ->map(function ($employee) {
-                return [
-                    'value' => $employee->id,
-                    'text' => $employee->name . ' (' . $employee->employee_id . ')'
-                ];
+        // Pencarian dengan minimal 5 karakter
+        $searchTermLower = strtolower($searchTerm);
+
+        return Employee::where('company_id', $this->company_id)
+            ->where(function ($query) use ($searchTermLower) {
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . $searchTermLower . '%'])
+                    ->orWhereRaw('LOWER(employee_number) LIKE ?', ['%' . $searchTermLower . '%']);
             })
-            ->toArray();
+            ->orderBy('name')
+            ->limit(10)
+            ->get();
+    }
+
+    public function selectEmployee($employeeId)
+    {
+        $employee = Employee::find($employeeId);
+
+        if ($employee) {
+            $this->selectedEmployee = $employee;
+            $this->employee_id = $employee->id;
+            $this->employeeSearch = $employee->name . ' (' . $employee->employee_number . ')';
+            $this->showEmployeeDropdown = false;
+            $this->highlightedIndex = 0;
+        }
+    }
+
+    public function clearEmployeeSelection()
+    {
+        $this->resetEmployeeSelection();
+    }
+
+    private function resetEmployeeSelection()
+    {
+        $this->selectedEmployee = null;
+        $this->employee_id = null;
+        $this->employeeSearch = '';
+        $this->showEmployeeDropdown = false;
+        $this->highlightedIndex = 0;
+    }
+
+    public function incrementHighlight()
+    {
+        $count = $this->filteredEmployees->count();
+        if ($count > 0) {
+            $this->highlightedIndex = min($this->highlightedIndex + 1, $count - 1);
+        }
+    }
+
+    public function decrementHighlight()
+    {
+        $this->highlightedIndex = max($this->highlightedIndex - 1, 0);
+    }
+
+    public function selectHighlighted()
+    {
+        $employees = $this->filteredEmployees;
+
+        if ($employees->count() > 0 && isset($employees[$this->highlightedIndex])) {
+            $this->selectEmployee($employees[$this->highlightedIndex]->id);
+        }
+    }
+
+    public function closeDropdown()
+    {
+        $this->showEmployeeDropdown = false;
+    }
+
+    public function openDropdown()
+    {
+        if ($this->company_id && !$this->selectedEmployee && strlen(trim($this->employeeSearch)) >= $this->minSearchLength) {
+            $this->showEmployeeDropdown = true;
+        }
     }
 
     public function save()
@@ -131,7 +201,7 @@ class Create extends Component
         $this->validate();
 
         if ($this->employee_id) {
-            $exists = \App\Models\Employee::where('id', $this->employee_id)
+            $exists = Employee::where('id', $this->employee_id)
                 ->where('company_id', $this->company_id)
                 ->exists();
 
