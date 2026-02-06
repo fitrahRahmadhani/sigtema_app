@@ -63,7 +63,6 @@
                     </div>
 
                     {{-- Employee Selection with Search --}}
-                    {{-- Employee Selection with Search --}}
                     <div
                         x-data="{
                             open: @entangle('showEmployeeDropdown').live,
