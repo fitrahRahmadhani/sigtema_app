@@ -11,7 +11,7 @@
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
-                    class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
+                    class="color-gradient flex h-12 w-12 items-center justify-center self-start rounded-xl bg-gradient-to-br shadow-sm"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -271,7 +271,7 @@
                                         <span
                                             class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-800"
                                         >
-                                            {{ $position->band }}
+                                            Band: {{ $position->band }}
                                         </span>
                                     @endif
                                 </div>
@@ -465,7 +465,7 @@
                                                 <span
                                                     class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-800"
                                                 >
-                                                    {{ $position->band }}
+                                                    Band: {{ $position->band }}
                                                 </span>
                                             @endif
                                         </div>
