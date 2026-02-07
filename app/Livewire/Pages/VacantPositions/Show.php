@@ -31,9 +31,15 @@ class Show extends Component
     public $availableEmployees = [];
     public $selectedForAnalysis = [];
     public $maxCandidates = 20;
+    public $user;
 
     public function mount(Position $position)
     {
+        $this->user = Auth::user();
+
+        if ($this->user->hasRole('head-of-unit') && $this->user->band >= $position->band) {
+            return redirect()->route('vacant-positions.index')->warning('You do not have permission to access this page.');
+        }
         $this->position = $position;
         $this->positionSlug = $position->slug;
 
@@ -71,26 +77,41 @@ class Show extends Component
 
     public function searchEmployees()
     {
-        $this->availableEmployees = Employee::query()
+        $this->availableEmployees = Employee::with('position')
             ->where('company_id', $this->position->company_id)
-            ->where(function ($query) {
-                $query->where('name', 'like', '%' . $this->searchTerm . '%')
-                    ->orWhere('employee_number', 'like', '%' . $this->searchTerm . '%');
+
+            // Jika user role head-of-unit, tampilkan employee dengan band >= band user
+            ->when($this->user->hasRole('head-of-unit'), function ($q) {
+                $q->where('band', '>=', (int) $this->user->band);
             })
-            ->whereNotIn('id', $this->selectedForAnalysis)
-            ->limit(10)
+
+            // Filter berdasarkan searchTerm (CASE-INSENSITIVE)
+            ->when($this->searchTerm, function ($q) {
+                $searchTerm = strtolower($this->searchTerm); // Convert ke lowercase
+                $q->where(function ($query) use ($searchTerm) {
+                    $query->whereRaw('LOWER(name) LIKE ?', ['%' . $searchTerm . '%'])
+                        ->orWhereRaw('LOWER(employee_number) LIKE ?', ['%' . $searchTerm . '%']);
+                });
+            })
+
+            // Kecualikan employee yang sudah dipilih
+            ->when(!empty($this->selectedForAnalysis), function ($q) {
+                $q->whereNotIn('id', $this->selectedForAnalysis);
+            })
+
+            ->limit(50)
             ->get()
-            ->map(function ($employee) {
-                return [
-                    'id' => $employee->id,
-                    'name' => $employee->name,
-                    'employee_number' => $employee->employee_number,
-                    'band' => $employee->band,
-                    'position' => $employee->position->name ?? 'No Position',
-                ];
-            })
+            ->map(fn($employee) => [
+                'id' => $employee->id,
+                'name' => $employee->name,
+                'employee_number' => $employee->employee_number,
+                'band' => $employee->band,
+                'position' => $employee->position->name ?? 'No Position',
+            ])
             ->toArray();
     }
+
+
 
     public function addToAnalysis($employeeId)
     {
