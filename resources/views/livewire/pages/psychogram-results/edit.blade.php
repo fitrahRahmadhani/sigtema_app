@@ -13,7 +13,7 @@
         {{-- Header --}}
         <div class="mb-8 flex items-center gap-4">
             <div
-                class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
+                class="color-gradient flex h-12 w-12 items-center justify-center self-start rounded-xl bg-gradient-to-br shadow-sm"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -33,12 +33,9 @@
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Edit Psychogram Result</h1>
                 <p class="mt-1 text-sm text-gray-500">Update evaluation score for this result</p>
-
-                @if ($selectedCompany)
-                    <div class="mt-1 flex items-center gap-2">
-                        <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
-                    </div>
-                @endif
+                <div class="mt-1 flex items-center gap-2">
+                    <span class="text-sm text-gray-600">{{ $result->employee->company->name }}</span>
+                </div>
             </div>
         </div>
 
@@ -57,11 +54,9 @@
                         <span class="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800">
                             Score: {{ $result->score }}
                         </span>
-                        @if ($selectedCompany)
-                            <span class="rounded-md bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                                {{ $selectedCompany->name }}
-                            </span>
-                        @endif
+                        <span class="rounded-md bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                            {{ $result->employee->company->name }}
+                        </span>
                     </div>
                 </div>
                 <div class="text-sm text-gray-600">
@@ -80,17 +75,17 @@
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Result Information</h3>
 
-                {{-- Company Info --}}
-                @if ($isSuperadmin && $selectedCompany)
+                {{-- Company Info (Only for Superadmin) --}}
+                @if ($isSuperadmin)
                     <div class="mb-6">
                         <p class="mb-2 text-sm font-medium text-gray-700">Company</p>
                         <div class="rounded-lg border border-gray-200 bg-white p-4">
                             <div class="flex items-center gap-3">
-                                @if ($selectedCompany->logo_path)
+                                @if ($result->employee->company->logo_path)
                                     <img
                                         class="h-10 w-10 rounded-lg object-cover"
-                                        src="{{ asset('storage/' . $selectedCompany->logo_path) }}"
-                                        alt="{{ 'Logo ' . $selectedCompany->name }}"
+                                        src="{{ asset('storage/' . $result->employee->company->logo_path) }}"
+                                        alt="{{ 'Logo ' . $result->employee->company->name }}"
                                     />
                                 @else
                                     <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
@@ -111,8 +106,10 @@
                                     </div>
                                 @endif
                                 <div>
-                                    <p class="font-semibold text-gray-900">{{ $selectedCompany->name }}</p>
-                                    <p class="text-sm text-gray-500">{{ $selectedCompany->cocd ?? 'No COCD' }}</p>
+                                    <p class="font-semibold text-gray-900">{{ $result->employee->company->name }}</p>
+                                    <p class="text-sm text-gray-500">
+                                        {{ $result->employee->company->cocd ?? 'No COCD' }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -143,14 +140,9 @@
                                     <span class="rounded-md bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
                                         {{ $result->employee->employee_number }}
                                     </span>
-                                    @if ($result->employee->company)
-                                        <span
-                                            class="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800"
-                                        >
-                                            {{ $result->employee->company->name }}
-                                        </span>
-                                    @endif
-
+                                    <span class="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800">
+                                        {{ $result->employee->company->name }}
+                                    </span>
                                     @if ($result->employee->position)
                                         <span
                                             class="rounded-md bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-800"
@@ -204,23 +196,12 @@
                 <div class="mb-6 rounded-lg border border-green-100 bg-green-50 p-4">
                     <h4 class="mb-2 text-sm font-semibold text-green-900">Score Rating Scale (1-5)</h4>
                     <div class="grid grid-cols-5 gap-2">
-                        @foreach ([1 => 'Very Poor', 2 => 'Poor', 3 => 'Average', 4 => 'Good', 5 => 'Excellent'] as $scoreItem => $label)
+                        @foreach ([1 => 'Very Poor', 2 => 'Poor', 3 => 'Average', 4 => 'Good', 5 => 'Excellent'] as $scoreValue => $label)
                             <div class="text-center">
-                                @php
-                                    $bgClass = match ($scoreItem) {
-                                        1 => 'bg-red-100 text-red-800',
-                                        2 => 'bg-orange-100 text-orange-800',
-                                        3 => 'bg-yellow-100 text-yellow-800',
-                                        4 => 'bg-lime-100 text-lime-800',
-                                        5 => 'bg-green-100 text-green-800',
-                                        default => 'bg-gray-100 text-gray-800',
-                                    };
-                                @endphp
-
                                 <div
-                                    class="{{ $bgClass }} mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-full"
+                                    class="@if ($scoreValue == 1) bg-red-100 text-red-800 @elseif ($scoreValue == 2) bg-orange-100 text-orange-800 @elseif ($scoreValue == 3) bg-yellow-100 text-yellow-800 @elseif ($scoreValue == 4) bg-lime-100 text-lime-800 @else bg-green-100 text-green-800 @endif mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-full"
                                 >
-                                    <span class="font-bold">{{ $scoreItem }}</span>
+                                    <span class="font-bold">{{ $scoreValue }}</span>
                                 </div>
                                 <p class="text-xs font-medium text-gray-700">{{ $label }}</p>
                             </div>
@@ -234,38 +215,33 @@
                     <div class="flex items-center gap-4">
                         <div class="flex-1">
                             <div class="flex items-center justify-between">
-                                @php
-                                    $scoreTextClass = match ($result->score) {
-                                        1 => 'text-red-600',
-                                        2 => 'text-orange-600',
-                                        3 => 'text-yellow-600',
-                                        4 => 'text-lime-600',
-                                        5 => 'text-green-600',
-                                        default => 'text-gray-600',
-                                    };
-                                    $scoreLabel = match ($result->score) {
-                                        1 => 'Very Poor',
-                                        2 => 'Poor',
-                                        3 => 'Average',
-                                        4 => 'Good',
-                                        5 => 'Excellent',
-                                        default => 'Unknown',
-                                    };
-                                @endphp
-
-                                <span class="{{ $scoreTextClass }} text-3xl font-bold">
+                                <span
+                                    class="@if ($result->score == 1) text-red-600 @elseif ($result->score == 2) text-orange-600 @elseif ($result->score == 3) text-yellow-600 @elseif ($result->score == 4) text-lime-600 @else text-green-600 @endif text-3xl font-bold"
+                                >
                                     {{ $result->score }}
                                 </span>
                                 <div class="flex items-center gap-1">
                                     @for ($i = 1; $i <= 5; $i++)
                                         <div
-                                            class="{{ $i <= $result->score ? 'bg-[#721d21]' : 'bg-gray-200' }} h-3 w-3 rounded-full"
+                                            class="@if($i <= $result->score) bg-[#721d21] @else bg-gray-200 @endif h-3 w-3 rounded-full"
                                         ></div>
                                     @endfor
                                 </div>
                             </div>
-                            <p class="{{ $scoreTextClass }} mt-1 text-sm font-medium">
-                                {{ $scoreLabel }}
+                            <p
+                                class="@if ($result->score == 1) text-red-600 @elseif ($result->score == 2) text-orange-600 @elseif ($result->score == 3) text-yellow-600 @elseif ($result->score == 4) text-lime-600 @else text-green-600 @endif mt-1 text-sm font-medium"
+                            >
+                                @if ($result->score == 1)
+                                    Very Poor
+                                @elseif ($result->score == 2)
+                                    Poor
+                                @elseif ($result->score == 3)
+                                    Average
+                                @elseif ($result->score == 4)
+                                    Good
+                                @else
+                                    Excellent
+                                @endif
                             </p>
                         </div>
                     </div>
@@ -281,17 +257,6 @@
                         {{-- Radio Buttons for Score --}}
                         <div class="flex flex-1 gap-2">
                             @foreach ([1, 2, 3, 4, 5] as $scoreValue)
-                                @php
-                                    $hoverClass = match ($scoreValue) {
-                                        1 => 'hover:border-red-300 hover:bg-red-50',
-                                        2 => 'hover:border-orange-300 hover:bg-orange-50',
-                                        3 => 'hover:border-yellow-300 hover:bg-yellow-50',
-                                        4 => 'hover:border-lime-300 hover:bg-lime-50',
-                                        5 => 'hover:border-green-300 hover:bg-green-50',
-                                        default => 'hover:border-gray-300 hover:bg-gray-50',
-                                    };
-                                @endphp
-
                                 <label class="flex-1 cursor-pointer">
                                     <input
                                         type="radio"
@@ -300,7 +265,7 @@
                                         class="peer hidden"
                                     />
                                     <div
-                                        class="{{ $hoverClass }} flex h-12 items-center justify-center rounded-lg border border-gray-300 text-center text-base font-medium transition-all peer-checked:border-[#721d21] peer-checked:bg-[#721d21] peer-checked:text-white"
+                                        class="@if ($scoreValue == 1) hover:border-red-300 hover:bg-red-50 @elseif ($scoreValue == 2) hover:border-orange-300 hover:bg-orange-50 @elseif ($scoreValue == 3) hover:border-yellow-300 hover:bg-yellow-50 @elseif ($scoreValue == 4) hover:border-lime-300 hover:bg-lime-50 @else hover:border-green-300 hover:bg-green-50 @endif flex h-12 items-center justify-center rounded-lg border border-gray-300 text-center text-base font-medium transition-all peer-checked:border-[#721d21] peer-checked:bg-[#721d21] peer-checked:text-white"
                                     >
                                         {{ $scoreValue }}
                                     </div>
@@ -312,18 +277,9 @@
                         <div
                             class="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-300 bg-white"
                         >
-                            @php
-                                $displayScoreClass = match ($score ?? 0) {
-                                    1 => 'text-red-600',
-                                    2 => 'text-orange-600',
-                                    3 => 'text-yellow-600',
-                                    4 => 'text-lime-600',
-                                    5 => 'text-green-600',
-                                    default => 'text-gray-600',
-                                };
-                            @endphp
-
-                            <span class="{{ $displayScoreClass }} text-2xl font-bold">
+                            <span
+                                class="@if ($score == 1) text-red-600 @elseif ($score == 2) text-orange-600 @elseif ($score == 3) text-yellow-600 @elseif ($score == 4) text-lime-600 @elseif ($score == 5) text-green-600 @else text-gray-600 @endif text-2xl font-bold"
+                            >
                                 {{ $score ?? 0 }}
                             </span>
                         </div>
@@ -340,26 +296,9 @@
                             <div>
                                 <p class="text-sm font-medium text-blue-900">Score Change</p>
                                 <div class="mt-1 flex items-center gap-2">
-                                    @php
-                                        $oldScoreClass = match ($result->score) {
-                                            1 => 'text-red-600',
-                                            2 => 'text-orange-600',
-                                            3 => 'text-yellow-600',
-                                            4 => 'text-lime-600',
-                                            5 => 'text-green-600',
-                                            default => 'text-gray-600',
-                                        };
-                                        $newScoreClass = match ($score) {
-                                            1 => 'text-red-600',
-                                            2 => 'text-orange-600',
-                                            3 => 'text-yellow-600',
-                                            4 => 'text-lime-600',
-                                            5 => 'text-green-600',
-                                            default => 'text-gray-600',
-                                        };
-                                    @endphp
-
-                                    <span class="{{ $oldScoreClass }} text-lg font-semibold">
+                                    <span
+                                        class="@if ($result->score == 1) text-red-600 @elseif ($result->score == 2) text-orange-600 @elseif ($result->score == 3) text-yellow-600 @elseif ($result->score == 4) text-lime-600 @else text-green-600 @endif text-lg font-semibold"
+                                    >
                                         {{ $result->score }}
                                     </span>
                                     <svg
@@ -376,7 +315,9 @@
                                             d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
                                         />
                                     </svg>
-                                    <span class="{{ $newScoreClass }} text-lg font-semibold">
+                                    <span
+                                        class="@if ($score == 1) text-red-600 @elseif ($score == 2) text-orange-600 @elseif ($score == 3) text-yellow-600 @elseif ($score == 4) text-lime-600 @else text-green-600 @endif text-lg font-semibold"
+                                    >
                                         {{ $score }}
                                     </span>
                                 </div>
@@ -384,11 +325,12 @@
                             <div class="text-right">
                                 @php
                                     $difference = $score - $result->score;
-                                    $diffClass = $difference > 0 ? 'text-green-600' : ($difference < 0 ? 'text-red-600' : 'text-gray-600');
                                 @endphp
 
                                 <p class="text-sm font-medium text-blue-900">Difference</p>
-                                <p class="{{ $diffClass }} text-lg font-bold">
+                                <p
+                                    class="@if($difference > 0) text-green-600 @elseif($difference < 0) text-red-600 @else text-gray-600 @endif text-lg font-bold"
+                                >
                                     @if ($difference > 0)
                                         +{{ $difference }}
                                     @else
@@ -439,7 +381,7 @@
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0 1 20.25 6v12A2.25 2.25 0 0 1 18 20.25H6A2.25 2.25 0 0 1 3.75 18V6A2.25 2.25 0 0 1 6 3.75h1.5m9 0h-9"
+                            d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
                         />
                     </svg>
                     <svg
