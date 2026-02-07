@@ -377,23 +377,6 @@
             @endif
         </div>
 
-        {{-- Hiring Trend --}}
-        @if (count($monthlyHiringTrend) > 0)
-            <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-                <div class="mb-4 flex items-center justify-between">
-                    <h6 class="text-lg font-bold text-gray-900">Hiring Trend</h6>
-                    <span
-                        class="rounded-full bg-gradient-to-r from-green-500 to-emerald-600 px-3 py-1 text-xs font-semibold text-white"
-                    >
-                        Last 12 Months
-                    </span>
-                </div>
-                <div class="h-80" wire:ignore>
-                    <canvas id="hiringTrendChart"></canvas>
-                </div>
-            </div>
-        @endif
-
         {{-- Tables Row --}}
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {{-- Vacant Positions --}}
@@ -515,7 +498,6 @@
             const departmentData = @this.departmentDistribution;
             const mbtiData = @this.mbtiDistribution;
             const burnoutData = @this.burnoutLevels;
-            const hiringData = @this.monthlyHiringTrend;
 
             console.log('Data check:', {
                 genderData: genderData ? genderData.length : 'no data',
@@ -795,52 +777,6 @@
                     }
                 }
 
-                // Hiring Trend Chart
-                if (hiringData && hiringData.length > 0) {
-                    const ctx = document.getElementById('hiringTrendChart');
-                    if (ctx) {
-                        new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: hiringData.map(d => d.label),
-                                datasets: [{
-                                    label: 'New Hires',
-                                    data: hiringData.map(d => d.value),
-                                    borderColor: '#10b981',
-                                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                                    tension: 0.4,
-                                    fill: true,
-                                    borderWidth: 3,
-                                    pointRadius: 4,
-                                    pointHoverRadius: 6,
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        display: false
-                                    }
-                                },
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        grid: {
-                                            color: 'rgba(0,0,0,0.05)'
-                                        }
-                                    },
-                                    x: {
-                                        grid: {
-                                            color: 'rgba(0,0,0,0.05)'
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-
                 console.log('Charts initialization completed');
             }, 200);
         }
@@ -849,7 +785,7 @@
         function destroyAllCharts() {
             const chartIds = [
                 'genderChart', 'ageChart', 'tenureChart', 'bandChart',
-                'departmentChart', 'mbtiChart', 'burnoutChart', 'hiringTrendChart'
+                'departmentChart', 'mbtiChart', 'burnoutChart'
             ];
 
             chartIds.forEach(chartId => {
