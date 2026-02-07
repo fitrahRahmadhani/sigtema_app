@@ -11,7 +11,7 @@
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
-                    class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
+                    class="color-gradient flex h-12 w-12 items-center justify-center self-start rounded-xl bg-gradient-to-br shadow-sm"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -316,13 +316,8 @@
 
                             {{-- Scope --}}
                             <div class="col-span-2">
-                                @if ($aspect->company)
-                                    <p class="text-sm font-medium text-gray-900">{{ $aspect->company->name }}</p>
-                                    <p class="text-xs text-gray-500">Company Specific</p>
-                                @else
-                                    <span class="text-sm font-medium text-gray-900">Global Aspect</span>
-                                    <p class="text-xs text-gray-500">Available for all companies</p>
-                                @endif
+                                <p class="text-sm font-medium text-gray-900">{{ $aspect->company->name }}</p>
+                                <p class="text-xs text-gray-500">Company Specific</p>
                             </div>
 
                             {{-- Actions --}}
@@ -516,15 +511,10 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <p class="text-xs font-medium text-gray-500 uppercase">Scope</p>
-                                        @if ($aspect->company)
-                                            <p class="mt-1 text-sm font-medium text-gray-900">
-                                                {{ $aspect->company->name }}
-                                            </p>
-                                            <p class="text-xs text-gray-500">Company Specific</p>
-                                        @else
-                                            <p class="mt-1 text-sm font-medium text-gray-900">Global Aspect</p>
-                                            <p class="text-xs text-gray-500">Available for all</p>
-                                        @endif
+                                        <p class="mt-1 text-sm font-medium text-gray-900">
+                                            {{ $aspect->company->name }}
+                                        </p>
+                                        <p class="text-xs text-gray-500">Company Specific</p>
                                     </div>
                                     <div>
                                         <p class="text-xs font-medium text-gray-500 uppercase">Created</p>
