@@ -13,7 +13,7 @@
         <p class="ml-4 text-sm font-semibold text-gray-400 uppercase">main menu</p>
 
         {{-- Dashboard Menu --}}
-        @hasanyrole('superadmin|admin')
+        @hasanyrole('superadmin|admin|hc-operator')
             <a
                 href="{{ route('dashboard') }}"
                 wire:navigate
@@ -37,7 +37,7 @@
             </a>
         @endhasanyrole
 
-        @hasanyrole('superadmin|admin|head-of-unit')
+        @hasanyrole('superadmin|admin|head-of-unit|hc-operator')
             {{-- Career Path Menu with Dropdown --}}
             <div
                 x-data="{

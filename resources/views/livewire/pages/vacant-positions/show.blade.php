@@ -313,7 +313,8 @@
                                                 <div>
                                                     <p class="font-semibold text-gray-900">{{ $employee['name'] }}</p>
                                                     <p class="text-sm text-gray-600">
-                                                        {{ $employee['employee_number'] }} • {{ $employee['band'] }}
+                                                        {{ $employee['employee_number'] }} • Band
+                                                        {{ $employee['band'] }}
                                                     </p>
                                                     <p class="text-sm text-gray-500">{{ $employee['position'] }}</p>
                                                 </div>

@@ -113,6 +113,7 @@ class Edit extends Component
                 'email' => $this->email,
                 'phone' => $this->phone,
                 'birth_date' => $this->birth_date,
+                'band' => $this->band,
                 'gender' => $this->gender,
                 'personal_grade' => $this->personal_grade,
                 'hire_date' => $this->hire_date,

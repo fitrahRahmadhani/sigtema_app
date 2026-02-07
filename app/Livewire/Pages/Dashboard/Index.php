@@ -38,7 +38,6 @@ class Index extends Component
     public $tenureDistribution = [];
     public $mbtiDistribution = [];
     public $burnoutLevels = [];
-    public $monthlyHiringTrend = [];
 
     // Table Data
     public $vacantPositionsList = [];
@@ -99,7 +98,6 @@ class Index extends Component
             'tenureDistribution',
             'mbtiDistribution',
             'burnoutLevels',
-            'monthlyHiringTrend',
             'vacantPositionsList',
             'topInnovators'
         ]);
@@ -324,25 +322,6 @@ class Index extends Component
                     'total' => $item->total,
                 ];
             })
-            ->toArray();
-
-        // Monthly Hiring Trend (last 12 months) - PostgreSQL compatible
-        $this->monthlyHiringTrend = Employee::where('company_id', $companyId)
-            ->whereNotNull('hire_date')
-            ->where('hire_date', '>=', now()->subYear())
-            ->select(
-                DB::raw('EXTRACT(MONTH FROM hire_date) as month'),
-                DB::raw('EXTRACT(YEAR FROM hire_date) as year'),
-                DB::raw('count(*) as total')
-            )
-            ->groupBy(DB::raw('EXTRACT(YEAR FROM hire_date)'), DB::raw('EXTRACT(MONTH FROM hire_date)'))
-            ->orderBy('year')
-            ->orderBy('month')
-            ->get()
-            ->map(fn($item) => [
-                'label' => date('M Y', mktime(0, 0, 0, (int)$item->month, 1, (int)$item->year)),
-                'value' => $item->total
-            ])
             ->toArray();
 
         $this->dispatch('charts-ready');
