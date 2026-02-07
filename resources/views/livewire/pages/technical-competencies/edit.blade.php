@@ -33,9 +33,7 @@
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Edit Technical Competency</h1>
-                    <p class="mt-1 text-sm text-gray-500">
-                        Update technical competency or certification details
-                    </p>
+                    <p class="mt-1 text-sm text-gray-500">Update technical competency or certification details</p>
                     @if ($selectedCompany)
                         <div class="mt-1 flex items-center gap-2">
                             <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
@@ -47,11 +45,11 @@
 
         {{-- Form --}}
         <form wire:submit="save" class="space-y-6">
-            {{-- Employee Information (Read-only) --}}
+            {{-- Employee Information --}}
             <div class="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h2 class="text-lg font-semibold text-gray-900">Employee Information</h2>
-                <div class="grid gap-4 md:grid-cols-2">
-                    {{-- Company (Read-only) --}}
+                <div class="space-y-4">
+                    {{-- Company --}}
                     <div>
                         <label class="mb-2 block text-sm font-medium text-gray-700">Company</label>
                         <div
@@ -62,7 +60,7 @@
                         <p class="mt-1 text-xs text-gray-500">Company cannot be changed</p>
                     </div>
 
-                    {{-- Employee (Read-only) --}}
+                    {{-- Employee --}}
                     <div>
                         <label class="mb-2 block text-sm font-medium text-gray-700">Employee</label>
                         <div
@@ -184,7 +182,11 @@
                         stroke="currentColor"
                         class="h-5 w-5"
                     >
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+                        />
                     </svg>
                     <span wire:loading.remove wire:target="save">Update Competency</span>
                     <span wire:loading wire:target="save">Processing...</span>
