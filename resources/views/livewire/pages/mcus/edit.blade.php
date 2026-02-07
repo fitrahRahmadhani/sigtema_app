@@ -102,39 +102,39 @@
                             >
                                 <option value="">Select Result</option>
                                 <option
-                                    value="K1"
-                                    {{ $result == 'K1' ? 'selected' : '' }}
-                                    class="text-green-700"
-                                >
-                                    K1 (Best)
-                                </option>
-                                <option
-                                    value="K2"
-                                    {{ $result == 'K2' ? 'selected' : '' }}
-                                    class="text-blue-700"
-                                >
-                                    K2
-                                </option>
-                                <option
-                                    value="K3"
-                                    {{ $result == 'K3' ? 'selected' : '' }}
-                                    class="text-yellow-700"
-                                >
-                                    K3
-                                </option>
-                                <option
-                                    value="K4"
-                                    {{ $result == 'K4' ? 'selected' : '' }}
-                                    class="text-orange-700"
-                                >
-                                    K4
-                                </option>
-                                <option
-                                    value="K5"
-                                    {{ $result == 'K5' ? 'selected' : '' }}
+                                    value="1"
+                                    {{ $result == '1' ? 'selected' : '' }}
                                     class="text-red-700"
                                 >
-                                    K5 (Worst)
+                                    1 (Worst)
+                                </option>
+                                <option
+                                    value="2"
+                                    {{ $result == '2' ? 'selected' : '' }}
+                                    class="text-orange-700"
+                                >
+                                    2
+                                </option>
+                                <option
+                                    value="3"
+                                    {{ $result == '3' ? 'selected' : '' }}
+                                    class="text-yellow-700"
+                                >
+                                    3
+                                </option>
+                                <option
+                                    value="4"
+                                    {{ $result == '4' ? 'selected' : '' }}
+                                    class="text-blue-700"
+                                >
+                                    4
+                                </option>
+                                <option
+                                    value="5"
+                                    {{ $result == '5' ? 'selected' : '' }}
+                                    class="text-green-700"
+                                >
+                                    5 (Best)
                                 </option>
                             </select>
                             <svg

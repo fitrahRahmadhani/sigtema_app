@@ -362,11 +362,11 @@
                                 class="@error('result') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                             >
                                 <option value="">Select Result</option>
-                                <option value="K1" class="text-green-700">K1 (Best)</option>
-                                <option value="K2" class="text-blue-700">K2</option>
-                                <option value="K3" class="text-yellow-700">K3</option>
-                                <option value="K4" class="text-orange-700">K4</option>
-                                <option value="K5" class="text-red-700">K5 (Worst)</option>
+                                <option value="1" class="text-red-700">1 (Worst)</option>
+                                <option value="2" class="text-orange-700">2</option>
+                                <option value="3" class="text-yellow-700">3</option>
+                                <option value="4" class="text-blue-700">4</option>
+                                <option value="5" class="text-green-700">5 (Best)</option>
                             </select>
                             <svg
                                 class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
