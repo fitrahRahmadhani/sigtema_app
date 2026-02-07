@@ -46,7 +46,7 @@
                     <div>
                         <label class="mb-2 block text-sm font-medium text-gray-700">Company</label>
                         <div
-                            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700"
+                            class="w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-sm text-gray-700"
                         >
                             {{ $employee->company->name }} ({{ $employee->company->cocd }})
                         </div>
@@ -56,7 +56,7 @@
                     <div>
                         <label class="mb-2 block text-sm font-medium text-gray-700">Employee</label>
                         <div
-                            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700"
+                            class="w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-sm text-gray-700"
                         >
                             {{ $employee->name }} ({{ $employee->employee_number }})
                         </div>
