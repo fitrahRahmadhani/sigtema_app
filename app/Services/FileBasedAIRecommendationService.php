@@ -160,7 +160,6 @@ class FileBasedAIRecommendationService
                 return [
                     'year' => $mcu->year,
                     'result' => $mcu->result,
-                    'recommendation' => $mcu->recommendation
                 ];
             })->toArray(),
             'burnout_status' => $employee->burnout?->result,
@@ -287,9 +286,9 @@ OUTPUT REQUIREMENTS:
 1. For EACH candidate, provide:
    - match_score: 0-100 based on CRITICAL assessment
    - reason: BRIEF explanation in English (2-3 sentences max)
-   - strengths: 0-3 key strengths relevant to THIS position
-   - weaknesses: 0-2 critical gaps/concerns
-   - recommendation: "Highly Recommended", "Recommended", "Consider", or "Not Recommended" based on score
+   - strengths: 0-5 key strengths relevant to THIS position
+   - weaknesses: 0-5 critical gaps/concerns
+   - recommendation: "Highly Recommended", "Recommended", or "Not Recommended" based on score
 
 2. Sort by match_score descending
 3. If NO candidate scores above 50, return empty array

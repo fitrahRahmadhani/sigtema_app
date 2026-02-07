@@ -625,8 +625,12 @@
             <div class="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
                 {{-- MCU Result --}}
                 <div class="w-full lg:col-span-1">
-                    <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                    <div class="color-gradient flex w-full items-baseline rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">MCU Results</p>
+                        <p class="ml-2 text-sm text-white italic">
+                            data powered by
+                            <span class="font-bold">Unit of Tuban & Gresik SHE</span>
+                        </p>
                     </div>
                     <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
                         <table class="w-full border-collapse">
@@ -648,7 +652,15 @@
                                         >
                                             {{ $mcu->year }}
                                         </td>
-                                        <td class="px-3 py-2 text-gray-600 sm:px-4">{{ $mcu->result }}</td>
+                                        <td class="px-3 py-2 text-center">
+                                            @for ($i = 0; $i < $mcu->result; $i++)
+                                                <span class="inline-block text-2xl text-yellow-500">★</span>
+                                            @endfor
+
+                                            @for ($i = $mcu->result; $i < 5; $i++)
+                                                <span class="inline-block text-2xl text-gray-300">★</span>
+                                            @endfor
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>

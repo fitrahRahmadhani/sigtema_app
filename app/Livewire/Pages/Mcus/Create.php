@@ -159,7 +159,7 @@ class Create extends Component
         return [
             'company_id' => 'required|exists:companies,id',
             'employee_id' => 'required|exists:employees,id',
-            'result' => 'required|in:K1,K2,K3,K4,K5',
+            'result' => 'required|in:1,2,3,4,5',
             'year' => 'required|integer|min:2000|max:' . (date('Y') + 1),
         ];
     }
@@ -170,7 +170,7 @@ class Create extends Component
             'company_id.required' => 'Please select a company.',
             'employee_id.required' => 'Please select an employee.',
             'result.required' => 'MCU result is required.',
-            'result.in' => 'Please select a valid MCU result (K1-K5).',
+            'result.in' => 'Please select a valid MCU result (1-5).',
             'year.required' => 'Year is required.',
             'year.integer' => 'Year must be a valid number.',
             'year.min' => 'Year must be at least 2000.',

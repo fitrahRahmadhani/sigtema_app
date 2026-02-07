@@ -29,7 +29,7 @@ class Edit extends Component
     public function rules()
     {
         return [
-            'result' => 'required|in:K1,K2,K3,K4,K5',
+            'result' => 'required|in:1,2,3,4,5',
             'year' => 'required|integer|min:2000|max:' . (date('Y') + 1),
         ];
     }

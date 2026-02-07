@@ -881,7 +881,11 @@
                                         colspan="{{ $columnCount + 1 }}"
                                         class="left-0 px-6 py-3 font-semibold text-white"
                                     >
-                                        MCU History
+                                        <p class="inline">MCU History</p>
+                                        <p class="ml-2 inline text-sm text-white italic">
+                                            data powered by
+                                            <span class="font-bold">Unit of Tuban & Gresik SHE</span>
+                                        </p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -889,30 +893,31 @@
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->mcuResults && $selectedEmployees[$i]->mcuResults->count() > 0)
-                                                <div class="flex w-fit flex-col gap-2">
+                                                <div class="flex flex-col gap-1">
                                                     @foreach ($selectedEmployees[$i]->mcuResults as $mcu)
                                                         @php
-                                                            $resultColor = $mcu->result_color ?? 'gray';
-                                                            $colorClass =
-                                                                [
-                                                                    'green' => 'bg-green-100 text-green-800 border-green-200',
-                                                                    'blue' => 'bg-blue-100 text-blue-800 border-blue-200',
-                                                                    'yellow' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
-                                                                    'orange' => 'bg-orange-100 text-orange-800 border-orange-200',
-                                                                    'red' => 'bg-red-100 text-red-800 border-red-200',
-                                                                    'gray' => 'bg-gray-100 text-gray-800 border-gray-200',
-                                                                ][$resultColor] ?? 'bg-gray-100 text-gray-800 border-gray-200';
+                                                            $maxStars = 5;
+                                                            $filledStars = min($mcu->result ?? 0, $maxStars);
                                                         @endphp
 
-                                                        <div
-                                                            class="{{ $colorClass }} inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm"
-                                                        >
-                                                            <span class="font-semibold">•</span>
-                                                            <span class="font-medium">
-                                                                {{ $mcu->result ?? 'N/A' }}
+                                                        <div class="flex items-center justify-start gap-2">
+                                                            {{-- Tahun --}}
+                                                            <span
+                                                                class="rounded-full bg-gray-100 px-2 py-1 text-sm text-gray-800"
+                                                            >
+                                                                {{ $mcu->year }}
                                                             </span>
-                                                            <span>|</span>
-                                                            <span>{{ $mcu->year }}</span>
+
+                                                            {{-- Bintang --}}
+                                                            <div class="flex gap-1">
+                                                                @for ($s = 0; $s < $filledStars; $s++)
+                                                                    <span class="text-xl text-yellow-500">★</span>
+                                                                @endfor
+
+                                                                @for ($s = $filledStars; $s < $maxStars; $s++)
+                                                                    <span class="text-xl text-gray-300">★</span>
+                                                                @endfor
+                                                            </div>
                                                         </div>
                                                     @endforeach
                                                 </div>
