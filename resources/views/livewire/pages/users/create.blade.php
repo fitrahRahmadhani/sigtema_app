@@ -213,23 +213,35 @@
                     {{-- Band --}}
                     <div>
                         <label for="band" class="mb-2 block text-sm font-medium text-gray-700">Band</label>
-                        <div wire:ignore class="relative">
+                        <div class="relative">
                             <select
                                 id="band"
                                 wire:model="band"
-                                class="@error('band') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border bg-white px-4 py-2.5 text-sm text-gray-700 focus:outline-none"
+                                class="@error('band') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full appearance-none rounded-lg border bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:outline-none"
                             >
                                 <option value="">Select Band (optional)</option>
                                 @foreach ($bandOptions as $bandOption)
                                     <option value="{{ $bandOption }}">Band {{ $bandOption }}</option>
                                 @endforeach
                             </select>
+
+                            <svg
+                                class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
                         </div>
+
                         @error('band')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
 
-                        <p class="mt-1 text-xs text-gray-500">Band classification</p>
+                        <p class="mt-1 text-xs text-gray-500">Assign band for this position</p>
                     </div>
                 </div>
             </div>
@@ -239,19 +251,29 @@
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Company Assignment</h3>
                 <div>
                     <label for="company_id" class="mb-2 block text-sm font-medium text-gray-700">Company</label>
-                    <div wire:ignore class="relative">
+                    <div class="relative">
                         <select
                             id="company_id"
                             wire:model="company_id"
-                            class="@error('company_id') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border bg-white px-4 py-2.5 text-sm text-gray-700 focus:outline-none"
+                            class="@error('company_id') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         >
                             <option value="">Select a company (optional)</option>
                             @foreach ($companies as $company)
-                                <option value="{{ $company['value'] }}">
-                                    {{ $company['text'] }}
+                                <option value="{{ $company->id }}">
+                                    {{ $company->name }} ({{ $company->cocd }})
                                 </option>
                             @endforeach
                         </select>
+                        <svg
+                            class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
                     </div>
                     @error('company_id')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -374,204 +396,4 @@
             </div>
         </form>
     </div>
-
-    {{-- Scripts untuk Select2 --}}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            window.addEventListener('livewire:init', function() {
-                initializeSelect2();
-            });
-
-            if (window.Livewire) {
-                initializeSelect2();
-            }
-
-            function initializeSelect2() {
-                // Inisialisasi Select2 untuk Band
-                const $bandSelect = $('#band');
-                $bandSelect.select2({
-                    placeholder: 'Select Band (optional)',
-                    allowClear: true,
-                    width: '100%',
-                    theme: 'bootstrap-5',
-                    dropdownParent: $bandSelect.parent(),
-                    minimumResultsForSearch: -1
-                }).on('change', function(e) {
-                    @this.set('band', $(this).val());
-                });
-
-                // Inisialisasi Select2 untuk Company
-                const $companySelect = $('#company_id');
-                $companySelect.select2({
-                    placeholder: 'Select a company (optional)',
-                    allowClear: true,
-                    width: '100%',
-                    theme: 'bootstrap-5',
-                    dropdownParent: $companySelect.parent()
-                }).on('change', function(e) {
-                    @this.set('company_id', $(this).val());
-                });
-            }
-        });
-    </script>
-
-    {{-- CSS untuk styling Select2 --}}
-    <style>
-        .select2-container--bootstrap-5 {
-            display: block;
-            width: 100% !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection {
-            border: 1px solid #d1d5db !important;
-            border-radius: 0.5rem !important;
-            min-height: 44px !important;
-            background-color: white !important;
-            position: relative;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection:focus {
-            border-color: #721d21 !important;
-            box-shadow: 0 0 0 1px #721d21 !important;
-            outline: none !important;
-        }
-
-        .select2-container--bootstrap-5.select2-container--focus .select2-selection,
-        .select2-container--bootstrap-5.select2-container--open .select2-selection {
-            border-color: #721d21 !important;
-            box-shadow: 0 0 0 1px #721d21 !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
-            color: #374151 !important;
-            font-size: 0.875rem !important;
-            line-height: 1.25rem !important;
-            padding-left: 12px !important;
-            padding-right: 30px !important;
-            padding-top: 10px !important;
-            padding-bottom: 10px !important;
-            display: block !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-            white-space: nowrap !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__placeholder {
-            color: #9ca3af !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow {
-            height: 100% !important;
-            position: absolute !important;
-            top: 0 !important;
-            right: 8px !important;
-            width: 20px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow b {
-            border-color: #6b7280 transparent transparent transparent !important;
-            border-width: 5px 4px 0 4px !important;
-            border-style: solid !important;
-            margin-left: 0 !important;
-            margin-top: 0 !important;
-            position: relative !important;
-            left: 0 !important;
-            top: 0 !important;
-        }
-
-        .select2-container--bootstrap-5.select2-container--open .select2-selection--single .select2-selection__arrow b {
-            border-color: transparent transparent #6b7280 transparent !important;
-            border-width: 0 4px 5px 4px !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-dropdown {
-            border: 1px solid #e5e7eb !important;
-            border-radius: 0.5rem !important;
-            box-shadow:
-                0 10px 15px -3px rgb(0 0 0 / 0.1),
-                0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
-            margin-top: 0.25rem !important;
-            z-index: 1060 !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-search--dropdown .select2-search__field {
-            border: 1px solid #d1d5db !important;
-            border-radius: 0.375rem !important;
-            padding: 0.375rem 0.75rem !important;
-            font-size: 0.875rem !important;
-            margin: 8px !important;
-            width: calc(100% - 16px) !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-search__field:focus {
-            border-color: #721d21 !important;
-            box-shadow: 0 0 0 1px #721d21 !important;
-            outline: none !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-results__option {
-            padding: 0.5rem 0.75rem !important;
-            font-size: 0.875rem !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-results__option--selected {
-            background-color: #eff6ff !important;
-            color: #1d4ed8 !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-results__option--highlighted {
-            background-color: #f9fafb !important;
-            color: #111827 !important;
-        }
-
-        .select2-container--bootstrap-5.has-error .select2-selection {
-            border-color: #f87171 !important;
-            box-shadow: 0 0 0 1px #f87171 !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection__clear {
-            position: absolute !important;
-            right: 30px !important;
-            top: 50% !important;
-            transform: translateY(-50%) !important;
-            font-size: 1.25rem !important;
-            line-height: 1 !important;
-            color: #6b7280 !important;
-            width: 16px !important;
-            height: 16px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection__clear:hover {
-            color: #374151 !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection[aria-disabled='true'] {
-            background-color: #f9fafb !important;
-            cursor: not-allowed !important;
-        }
-
-        div[wire\:ignore].relative {
-            position: relative;
-        }
-
-        select {
-            padding-right: 2.5rem !important;
-        }
-
-        select[wire\:model] {
-            width: 100% !important;
-            appearance: none !important;
-            background-color: transparent !important;
-        }
-    </style>
 </div>
