@@ -176,7 +176,7 @@
                                 x-transition:leave="transition duration-75 ease-in"
                                 x-transition:leave-start="scale-100 transform opacity-100"
                                 x-transition:leave-end="scale-95 transform opacity-0"
-                                class="absolute z-50 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg"
+                                class="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg"
                                 style="display: none"
                             >
                                 <div class="max-h-60 overflow-y-auto">
