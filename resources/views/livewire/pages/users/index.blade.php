@@ -185,7 +185,8 @@
                 <div class="col-span-2 text-sm font-semibold">Name</div>
                 <div class="col-span-2 text-sm font-semibold">Email</div>
                 <div class="col-span-3 text-sm font-semibold">Company</div>
-                <div class="col-span-2 text-sm font-semibold">Role</div>
+                <div class="col-span-1 text-sm font-semibold">Band</div>
+                <div class="col-span-1 text-sm font-semibold">Role</div>
                 <div class="col-span-2 text-center text-sm font-semibold">Actions</div>
             </div>
 
@@ -292,8 +293,22 @@
                         @endif
                     </div>
 
+                    {{-- Band --}}
+                    <div class="col-span-1 flex flex-wrap items-center gap-1">
+                        @if ($user->band)
+                            <span
+                                class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800"
+                            >
+                                <span class="hidden lg:mr-1 lg:inline-block">Band</span>
+                                {{ $user->band }}
+                            </span>
+                        @else
+                            <span class="text-sm text-gray-400 italic">No Band</span>
+                        @endif
+                    </div>
+
                     {{-- Roles --}}
-                    <div class="col-span-2 flex flex-wrap items-center gap-1">
+                    <div class="col-span-1 flex flex-wrap items-center gap-1">
                         @forelse ($user->roles as $role)
                             <span
                                 class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800"

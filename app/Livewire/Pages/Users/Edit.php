@@ -67,16 +67,7 @@ class Edit extends Component
         $this->existing_profile_photo = $user->profile_path;
 
         // Load companies
-        $this->companies = Company::where('is_active', true)
-            ->orderBy('name')
-            ->get()
-            ->map(function ($company) {
-                return [
-                    'value' => $company->id,
-                    'text' => $company->name . ' (' . $company->cocd . ')'
-                ];
-            })
-            ->toArray();
+        $this->companies = Company::where('is_active', true)->get();
 
         // Band options
         $this->bandOptions = range(1, 5);
