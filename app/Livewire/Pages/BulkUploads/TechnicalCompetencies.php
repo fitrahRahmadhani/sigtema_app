@@ -27,6 +27,7 @@ class TechnicalCompetencies extends Component
     public $duplicateAction = 'skip';
     public $uploadErrors = [];
     public $isProcessing = false;
+    public $showDetailedErrors = false;
 
     public function mount()
     {
@@ -47,6 +48,8 @@ class TechnicalCompetencies extends Component
 
         try {
             $this->isProcessing = true;
+            $this->uploadErrors = [];
+            $this->showDetailedErrors = false;
 
             // Create import instance for preview
             $import = new TechnicalCompetenciesImport();
@@ -60,7 +63,12 @@ class TechnicalCompetencies extends Component
             $this->uploadErrors = $import->getErrors();
 
             if (empty($this->uploadedData) && empty($this->employeeNotFound)) {
-                Toaster::warning('Tidak ada data valid yang ditemukan. Pastikan Anda sudah menghapus baris contoh dan data telah diisi dengan benar.');
+                if (!empty($this->uploadErrors)) {
+                    Toaster::error('Tidak ada data valid yang ditemukan. Silakan periksa detail error.');
+                    $this->showDetailedErrors = true;
+                } else {
+                    Toaster::warning('Tidak ada data valid yang ditemukan. Pastikan Anda sudah menghapus baris contoh dan data telah diisi dengan benar.');
+                }
                 $this->isProcessing = false;
                 return;
             }
@@ -68,15 +76,22 @@ class TechnicalCompetencies extends Component
             $this->showPreview = true;
 
             $message = count($this->uploadedData) . ' data siap untuk diimport.';
+
             if (!empty($this->employeeNotFound)) {
                 $message .= ' Ditemukan ' . count($this->employeeNotFound) . ' employee_number yang tidak ditemukan.';
+            }
+
+            if (!empty($this->uploadErrors)) {
+                $message .= ' Ditemukan ' . count($this->uploadErrors) . ' error.';
             }
 
             Toaster::success($message);
             $this->isProcessing = false;
         } catch (\Exception $e) {
             $this->isProcessing = false;
-            Toaster::error('Error processing file: ' . $e->getMessage());
+            $this->uploadErrors[] = 'Error processing file: ' . $e->getMessage();
+            Toaster::error('Error processing file. Silakan periksa detail error.');
+            $this->showDetailedErrors = true;
         }
     }
 
@@ -84,6 +99,11 @@ class TechnicalCompetencies extends Component
     {
         if (!empty($this->employeeNotFound)) {
             Toaster::warning('Terdapat employee_number yang tidak ditemukan. Periksa kembali data Anda.');
+            return;
+        }
+
+        if (empty($this->uploadedData)) {
+            Toaster::warning('Tidak ada data untuk diimport.');
             return;
         }
 
@@ -100,6 +120,7 @@ class TechnicalCompetencies extends Component
             // Get results
             $results = $import->getResults();
             $this->importResults = $results;
+            $this->uploadErrors = $import->getErrors();
 
             // Hide preview
             $this->showPreview = false;
@@ -110,25 +131,34 @@ class TechnicalCompetencies extends Component
                 $parts[] = "{$results['success']} data berhasil diimport";
             }
             if ($results['skipped'] > 0) {
-                $parts[] = "{$results['skipped']} data diskip";
+                $parts[] = "{$results['skipped']} data diskip (duplikat)";
             }
             if ($results['failed'] > 0) {
                 $parts[] = "{$results['failed']} data gagal";
             }
             if ($results['employee_not_found'] > 0) {
-                $parts[] = "{$results['employee_not_found']} data dengan employee tidak ditemukan";
+                $parts[] = "{$results['employee_not_found']} employee tidak ditemukan";
             }
 
             if (empty($parts)) {
                 Toaster::info('Tidak ada data yang diproses.');
             } else {
-                Toaster::success('Import selesai! ' . implode(', ', $parts) . '.');
+                $message = 'Import selesai! ' . implode(', ', $parts) . '.';
+
+                if ($results['failed'] > 0 || $results['employee_not_found'] > 0) {
+                    Toaster::warning($message);
+                    $this->showDetailedErrors = true;
+                } else {
+                    Toaster::success($message);
+                }
             }
 
             $this->isProcessing = false;
         } catch (\Exception $e) {
             $this->isProcessing = false;
-            Toaster::error('Error during import: ' . $e->getMessage());
+            $this->uploadErrors[] = 'Error during import: ' . $e->getMessage();
+            Toaster::error('Error during import. Silakan periksa detail error.');
+            $this->showDetailedErrors = true;
         }
     }
 
@@ -141,10 +171,16 @@ class TechnicalCompetencies extends Component
             'showPreview',
             'importResults',
             'uploadErrors',
-            'isProcessing'
+            'isProcessing',
+            'showDetailedErrors'
         ]);
 
         $this->duplicateAction = 'skip';
+    }
+
+    public function toggleErrorDetails()
+    {
+        $this->showDetailedErrors = !$this->showDetailedErrors;
     }
 
     public function render()

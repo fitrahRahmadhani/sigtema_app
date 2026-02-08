@@ -399,7 +399,7 @@
                     </div>
 
                     {{-- Preview Table - Show All Data --}}
-                    <div class="overflow-x-auto rounded-lg border border-gray-200 shadow">
+                    <div class="h-screen overflow-x-auto overflow-y-auto rounded-lg border border-gray-200 shadow">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
