@@ -35,7 +35,7 @@ class Edit extends Component
     #[Validate('nullable|date')]
     public $birth_date = '';
 
-    #[Validate('required|in:male,female')]
+    #[Validate('required|in:Male,Female')]
     public $gender = '';
 
     #[Validate([

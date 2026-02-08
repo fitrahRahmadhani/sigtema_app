@@ -13,6 +13,7 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 #[Layout('components.layouts.app')]
 #[Title('Dashboard')]
@@ -49,7 +50,14 @@ class Index extends Component
         $this->isSuperadmin = $user->hasRole('superadmin');
 
         if ($this->isSuperadmin) {
-            $this->companies = Company::where('is_active', true)->get();
+            // Cache companies untuk performa lebih baik
+            $this->companies = Cache::remember('active_companies', 3600, function () {
+                return Company::where('is_active', true)
+                    ->select('id', 'name', 'logo_path', 'is_active')
+                    ->orderBy('name')
+                    ->get();
+            });
+
             $this->selectedCompanyId = session('dashboard_company_id') ?? request('company_id');
 
             if ($this->selectedCompanyId) {
@@ -58,7 +66,9 @@ class Index extends Component
         } else {
             $this->selectedCompanyId = $user->company_id;
             $this->selectedCompany = Company::find($this->selectedCompanyId);
-            $this->companies = Company::where('id', $user->company_id)->get();
+            $this->companies = Company::where('id', $user->company_id)
+                ->select('id', 'name', 'logo_path', 'is_active')
+                ->get();
         }
 
         if ($this->selectedCompanyId) {
@@ -102,47 +112,304 @@ class Index extends Component
             'topInnovators'
         ]);
 
-        // Basic Metrics
-        $this->totalEmployees = Employee::where('company_id', $companyId)->count();
+        // Cache dashboard data untuk 5 menit
+        $cacheKey = "dashboard_data_{$companyId}";
+        $cacheDuration = 300; // 5 menit
 
+        // Atau langsung load tanpa cache jika ingin real-time
+        $this->loadMetrics($companyId);
+        $this->loadChartData($companyId);
+        $this->loadTableData($companyId);
+
+        // Dispatch events
+        $this->dispatch('charts-ready');
+        $this->dispatch('dashboard-data-loaded');
+    }
+
+    private function loadMetrics($companyId)
+    {
+        // Basic Metrics - Optimized dengan single query
+        $metrics = Employee::where('company_id', $companyId)
+            ->selectRaw('
+                COUNT(*) as total_employees,
+                SUM(CASE WHEN LOWER(gender) = \'male\' THEN 1 ELSE 0 END) as male_count,
+                SUM(CASE WHEN LOWER(gender) = \'female\' THEN 1 ELSE 0 END) as female_count
+            ')
+            ->first();
+
+        $this->totalEmployees = $metrics->total_employees ?? 0;
+        $this->maleCount = $metrics->male_count ?? 0;
+        $this->femaleCount = $metrics->female_count ?? 0;
+
+        // Vacant Positions
         $this->vacantPositions = Position::where('company_id', $companyId)
             ->whereNull('employee_id')
             ->count();
 
-        // Male and Female Count
-        $this->maleCount = Employee::where('company_id', $companyId)
-            ->where('gender', 'male')
-            ->count();
+        // Average Age - Optimized calculation
+        $this->calculateAverageAge($companyId);
+    }
 
-        $this->femaleCount = Employee::where('company_id', $companyId)
-            ->where('gender', 'female')
-            ->count();
+    private function calculateAverageAge($companyId)
+    {
+        // MySQL dan PostgreSQL compatible
+        $dbDriver = DB::connection()->getDriverName();
 
-        // Average Age - Using accessor
-        $employeesWithAge = Employee::where('company_id', $companyId)
-            ->whereNotNull('birth_date')
-            ->get();
-
-        if ($employeesWithAge->count() > 0) {
-            $totalAge = 0;
-            $validAges = 0;
-
-            foreach ($employeesWithAge as $emp) {
-                $age = $emp->age; // Menggunakan accessor getAgeAttribute()
-                if ($age !== "-" && is_numeric($age)) {
-                    $totalAge += $age;
-                    $validAges++;
-                }
-            }
-
-            if ($validAges > 0) {
-                $this->avgAge = round($totalAge / $validAges, 1);
-            }
+        if ($dbDriver === 'pgsql') {
+            // PostgreSQL
+            $avgAge = Employee::where('company_id', $companyId)
+                ->whereNotNull('birth_date')
+                ->selectRaw('AVG(EXTRACT(YEAR FROM AGE(birth_date))) as avg_age')
+                ->value('avg_age');
+        } else {
+            // MySQL
+            $avgAge = Employee::where('company_id', $companyId)
+                ->whereNotNull('birth_date')
+                ->selectRaw('AVG(TIMESTAMPDIFF(YEAR, birth_date, CURDATE())) as avg_age')
+                ->value('avg_age');
         }
 
+        $this->avgAge = $avgAge ? round($avgAge, 1) : 0;
+    }
+
+    private function loadChartData($companyId)
+    {
+        // Gender Distribution - Fixed untuk case sensitivity
+        $this->genderDistribution = Employee::where('company_id', $companyId)
+            ->selectRaw('
+                LOWER(gender) as gender_lower,
+                COUNT(*) as total
+            ')
+            ->groupBy('gender_lower')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'label' => ucfirst($item->gender_lower),
+                    'value' => (int) $item->total
+                ];
+            })
+            ->toArray();
+
+        // Band Distribution
+        $this->bandDistribution = Employee::where('company_id', $companyId)
+            ->whereNotNull('band')
+            ->select('band', DB::raw('COUNT(*) as total'))
+            ->groupBy('band')
+            ->orderBy('band')
+            ->get()
+            ->map(fn($item) => [
+                'label' => $item->band,
+                'value' => (int) $item->total
+            ])
+            ->toArray();
+
+        // Department Distribution
+        $this->departmentDistribution = Position::where('company_id', $companyId)
+            ->whereNotNull('employee_id')
+            ->whereNotNull('department')
+            ->where('department', '!=', '')
+            ->select('department', DB::raw('COUNT(*) as total'))
+            ->groupBy('department')
+            ->orderByDesc('total')
+            ->limit(8)
+            ->get()
+            ->map(fn($item) => [
+                'label' => $item->department,
+                'value' => (int) $item->total
+            ])
+            ->toArray();
+
+        // Age Distribution - Database compatible
+        $this->calculateAgeDistribution($companyId);
+
+        // Tenure Distribution - Database compatible
+        $this->calculateTenureDistribution($companyId);
+
+        // MBTI Distribution
+        $employeeIds = Employee::where('company_id', $companyId)->pluck('id');
+
+        $this->mbtiDistribution = Mbti::whereIn('employee_id', $employeeIds)
+            ->whereNotNull('mbti')
+            ->where('mbti', '!=', '')
+            ->select('mbti', DB::raw('COUNT(*) as total'))
+            ->groupBy('mbti')
+            ->orderByDesc('total')
+            ->limit(10)
+            ->get()
+            ->map(fn($item) => [
+                'label' => $item->mbti,
+                'value' => (int) $item->total
+            ])
+            ->toArray();
+
+        // Burnout Levels
+        $this->calculateBurnoutLevels($employeeIds);
+    }
+
+    private function calculateAgeDistribution($companyId)
+    {
+        $dbDriver = DB::connection()->getDriverName();
+
+        if ($dbDriver === 'pgsql') {
+            // PostgreSQL
+            $ageData = Employee::where('company_id', $companyId)
+                ->whereNotNull('birth_date')
+                ->selectRaw("
+                    CASE
+                        WHEN EXTRACT(YEAR FROM AGE(birth_date)) < 25 THEN '< 25'
+                        WHEN EXTRACT(YEAR FROM AGE(birth_date)) < 35 THEN '25-34'
+                        WHEN EXTRACT(YEAR FROM AGE(birth_date)) < 45 THEN '35-44'
+                        WHEN EXTRACT(YEAR FROM AGE(birth_date)) < 55 THEN '45-54'
+                        ELSE '55+'
+                    END as age_group,
+                    COUNT(*) as total
+                ")
+                ->groupBy('age_group')
+                ->get();
+        } else {
+            // MySQL
+            $ageData = Employee::where('company_id', $companyId)
+                ->whereNotNull('birth_date')
+                ->selectRaw("
+                    CASE
+                        WHEN TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) < 25 THEN '< 25'
+                        WHEN TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) < 35 THEN '25-34'
+                        WHEN TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) < 45 THEN '35-44'
+                        WHEN TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) < 55 THEN '45-54'
+                        ELSE '55+'
+                    END as age_group,
+                    COUNT(*) as total
+                ")
+                ->groupBy('age_group')
+                ->get();
+        }
+
+        // Initialize all age groups with 0
+        $ageGroups = [
+            '< 25' => 0,
+            '25-34' => 0,
+            '35-44' => 0,
+            '45-54' => 0,
+            '55+' => 0,
+        ];
+
+        // Fill with actual data
+        foreach ($ageData as $item) {
+            $ageGroups[$item->age_group] = (int) $item->total;
+        }
+
+        // Ensure order
+        $this->ageDistribution = collect(['< 25', '25-34', '35-44', '45-54', '55+'])
+            ->map(fn($key) => ['label' => $key, 'value' => $ageGroups[$key]])
+            ->toArray();
+    }
+
+    private function calculateTenureDistribution($companyId)
+    {
+        $dbDriver = DB::connection()->getDriverName();
+
+        if ($dbDriver === 'pgsql') {
+            // PostgreSQL
+            $tenureData = Employee::where('company_id', $companyId)
+                ->whereNotNull('hire_date')
+                ->selectRaw("
+                    CASE
+                        WHEN EXTRACT(YEAR FROM AGE(hire_date)) < 1 THEN '< 1 year'
+                        WHEN EXTRACT(YEAR FROM AGE(hire_date)) < 4 THEN '1-3 years'
+                        WHEN EXTRACT(YEAR FROM AGE(hire_date)) < 7 THEN '4-6 years'
+                        WHEN EXTRACT(YEAR FROM AGE(hire_date)) < 11 THEN '7-10 years'
+                        ELSE '10+ years'
+                    END as tenure_group,
+                    COUNT(*) as total
+                ")
+                ->groupBy('tenure_group')
+                ->get();
+        } else {
+            // MySQL
+            $tenureData = Employee::where('company_id', $companyId)
+                ->whereNotNull('hire_date')
+                ->selectRaw("
+                    CASE
+                        WHEN TIMESTAMPDIFF(YEAR, hire_date, CURDATE()) < 1 THEN '< 1 year'
+                        WHEN TIMESTAMPDIFF(YEAR, hire_date, CURDATE()) < 4 THEN '1-3 years'
+                        WHEN TIMESTAMPDIFF(YEAR, hire_date, CURDATE()) < 7 THEN '4-6 years'
+                        WHEN TIMESTAMPDIFF(YEAR, hire_date, CURDATE()) < 11 THEN '7-10 years'
+                        ELSE '10+ years'
+                    END as tenure_group,
+                    COUNT(*) as total
+                ")
+                ->groupBy('tenure_group')
+                ->get();
+        }
+
+        // Initialize all tenure groups with 0
+        $tenureGroups = [
+            '< 1 year' => 0,
+            '1-3 years' => 0,
+            '4-6 years' => 0,
+            '7-10 years' => 0,
+            '10+ years' => 0,
+        ];
+
+        // Fill with actual data
+        foreach ($tenureData as $item) {
+            $tenureGroups[$item->tenure_group] = (int) $item->total;
+        }
+
+        // Ensure order
+        $this->tenureDistribution = collect(['< 1 year', '1-3 years', '4-6 years', '7-10 years', '10+ years'])
+            ->map(fn($key) => ['label' => $key, 'value' => $tenureGroups[$key]])
+            ->toArray();
+    }
+
+    private function calculateBurnoutLevels($employeeIds)
+    {
+        $burnoutData = Burnout::whereIn('employee_id', $employeeIds)
+            ->whereNotNull('emotional_exhaustion')
+            ->whereNotNull('depersonalization')
+            ->whereNotNull('achievement_decline')
+            ->selectRaw('
+                CASE
+                    WHEN (emotional_exhaustion + depersonalization + achievement_decline) < 50 THEN \'Low\'
+                    WHEN (emotional_exhaustion + depersonalization + achievement_decline) < 80 THEN \'Moderate\'
+                    ELSE \'High\'
+                END as burnout_level,
+                COUNT(*) as total
+            ')
+            ->groupBy('burnout_level')
+            ->get();
+
+        // Initialize all levels with 0
+        $burnoutCategories = [
+            'Low' => 0,
+            'Moderate' => 0,
+            'High' => 0,
+        ];
+
+        // Fill with actual data
+        foreach ($burnoutData as $item) {
+            $burnoutCategories[$item->burnout_level] = (int) $item->total;
+        }
+
+        // Ensure order: Low, Moderate, High
+        $this->burnoutLevels = collect(['Low', 'Moderate', 'High'])
+            ->map(fn($key) => ['label' => $key, 'value' => $burnoutCategories[$key]])
+            ->toArray();
+    }
+
+    private function loadTableData($companyId)
+    {
         // Vacant Positions List
         $this->vacantPositionsList = Position::where('company_id', $companyId)
             ->whereNull('employee_id')
+            ->select([
+                'name',
+                'position_code',
+                'department',
+                'directorate',
+                'job_grade',
+                'work_unit'
+            ])
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get()
@@ -158,175 +425,23 @@ class Index extends Component
             })
             ->toArray();
 
-        // Gender Distribution
-        $this->genderDistribution = Employee::where('company_id', $companyId)
-            ->select('gender', DB::raw('count(*) as total'))
-            ->groupBy('gender')
-            ->get()
-            ->map(fn($item) => [
-                'label' => ucfirst($item->gender),
-                'value' => $item->total
-            ])
-            ->toArray();
-
-        // Band Distribution
-        $this->bandDistribution = Employee::where('company_id', $companyId)
-            ->select('band', DB::raw('count(*) as total'))
-            ->groupBy('band')
-            ->orderBy('band')
-            ->get()
-            ->map(fn($item) => [
-                'label' => $item->band,
-                'value' => $item->total
-            ])
-            ->toArray();
-
-        // Department Distribution (from positions)
-        $this->departmentDistribution = Position::where('company_id', $companyId)
-            ->whereNotNull('employee_id')
-            ->whereNotNull('department')
-            ->select('department', DB::raw('count(*) as total'))
-            ->groupBy('department')
-            ->orderByDesc('total')
-            ->limit(8)
-            ->get()
-            ->map(fn($item) => [
-                'label' => $item->department,
-                'value' => $item->total
-            ])
-            ->toArray();
-
-        // Age Distribution - Menggunakan accessor
-        $allEmployees = Employee::where('company_id', $companyId)
-            ->whereNotNull('birth_date')
-            ->get();
-
-        $ageGroups = [
-            '< 25' => 0,
-            '25-34' => 0,
-            '35-44' => 0,
-            '45-54' => 0,
-            '55+' => 0,
-        ];
-
-        foreach ($allEmployees as $emp) {
-            $age = $emp->age; // Menggunakan accessor
-
-            if ($age === "-" || !is_numeric($age)) {
-                continue;
-            }
-
-            if ($age < 25) $ageGroups['< 25']++;
-            elseif ($age < 35) $ageGroups['25-34']++;
-            elseif ($age < 45) $ageGroups['35-44']++;
-            elseif ($age < 55) $ageGroups['45-54']++;
-            else $ageGroups['55+']++;
-        }
-
-        $this->ageDistribution = collect($ageGroups)
-            ->map(fn($value, $key) => ['label' => $key, 'value' => $value])
-            ->values()
-            ->toArray();
-
-        // Tenure Distribution - Jika ada accessor untuk tenure, bisa dimanfaatkan
-        $employeesWithTenure = Employee::where('company_id', $companyId)
-            ->whereNotNull('hire_date')
-            ->get();
-
-        $tenureGroups = [
-            '< 1 year' => 0,
-            '1-3 years' => 0,
-            '4-6 years' => 0,
-            '7-10 years' => 0,
-            '10+ years' => 0,
-        ];
-
-        foreach ($employeesWithTenure as $emp) {
-            // Jika ada accessor untuk tenure (years of service) di model, bisa digunakan
-            // Jika tidak, gunakan cara manual
-            $years = now()->diffInYears($emp->hire_date);
-            if ($years < 1) $tenureGroups['< 1 year']++;
-            elseif ($years < 4) $tenureGroups['1-3 years']++;
-            elseif ($years < 7) $tenureGroups['4-6 years']++;
-            elseif ($years < 11) $tenureGroups['7-10 years']++;
-            else $tenureGroups['10+ years']++;
-        }
-
-        $this->tenureDistribution = collect($tenureGroups)
-            ->map(fn($value, $key) => ['label' => $key, 'value' => $value])
-            ->values()
-            ->toArray();
-
-        // MBTI Distribution
-        $employeeIds = Employee::where('company_id', $companyId)->pluck('id');
-
-        $this->mbtiDistribution = Mbti::whereIn('employee_id', $employeeIds)
-            ->whereNotNull('mbti')
-            ->select('mbti', DB::raw('count(*) as total'))
-            ->groupBy('mbti')
-            ->orderByDesc('total')
-            ->limit(10)
-            ->get()
-            ->map(fn($item) => [
-                'label' => $item->mbti,
-                'value' => $item->total
-            ])
-            ->toArray();
-
-        // Burnout Levels - using numeric scores instead of result text
-        $burnoutData = Burnout::whereIn('employee_id', $employeeIds)
-            ->whereNotNull('emotional_exhaustion')
-            ->whereNotNull('depersonalization')
-            ->whereNotNull('achievement_decline')
-            ->get();
-
-        $burnoutCategories = [
-            'Low' => 0,
-            'Moderate' => 0,
-            'High' => 0,
-        ];
-
-        foreach ($burnoutData as $burnout) {
-            $totalScore = $burnout->emotional_exhaustion + $burnout->depersonalization + $burnout->achievement_decline;
-
-            if ($totalScore < 50) {
-                $burnoutCategories['Low']++;
-            } elseif ($totalScore < 80) {
-                $burnoutCategories['Moderate']++;
-            } else {
-                $burnoutCategories['High']++;
-            }
-        }
-
-        $this->burnoutLevels = collect($burnoutCategories)
-            ->map(fn($value, $key) => ['label' => $key, 'value' => $value])
-            ->values()
-            ->toArray();
-
-        // Top Innovators - only active employees
-        $activeEmployeeIds = Employee::where('company_id', $companyId)
-            ->pluck('id');
-
-        $this->topInnovators = Innovation::whereIn('employee_id', $activeEmployeeIds)
-            ->whereNotNull('employee_id')
-            ->where('is_active', true)
-            ->select('employee_id', DB::raw('count(*) as total'))
-            ->groupBy('employee_id')
+        // Top Innovators - Optimized dengan JOIN
+        $this->topInnovators = Innovation::join('employees', 'innovations.employee_id', '=', 'employees.id')
+            ->where('employees.company_id', $companyId)
+            ->where('innovations.is_active', true)
+            ->whereNotNull('innovations.employee_id')
+            ->select('employees.id', 'employees.name', DB::raw('COUNT(*) as total'))
+            ->groupBy('employees.id', 'employees.name')
             ->orderByDesc('total')
             ->limit(5)
             ->get()
             ->map(function ($item) {
-                $employee = Employee::find($item->employee_id);
                 return [
-                    'name' => $employee->name ?? 'Unknown',
-                    'total' => $item->total,
+                    'name' => $item->name,
+                    'total' => (int) $item->total,
                 ];
             })
             ->toArray();
-
-        $this->dispatch('charts-ready');
-        $this->dispatch('dashboard-data-loaded');
-        $this->dispatch('company-changed');
     }
 
     public function render()
