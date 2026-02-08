@@ -7,7 +7,7 @@ use App\Models\Employee;
 use HosseinHezami\LaravelGemini\Facades\Gemini;
 use Illuminate\Support\Facades\Log;
 
-class FileBasedAIRecommendationService
+class AIRecommendationService
 {
     public function analyzeWithFileUpload(Position $position, array $employeeIds, $progressCallback = null)
     {
@@ -158,11 +158,12 @@ class FileBasedAIRecommendationService
             })->toArray(),
             'medical_checkup' => $employee->mcuResults->map(function ($mcu) {
                 return [
-                    'year' => $mcu->year,
-                    'result' => $mcu->result,
+                    'year'   => $mcu->year,
+                    'result' => $mcu->result . ' /5 star',
                 ];
             })->toArray(),
             'burnout_status' => $employee->burnout?->result,
+            'current_position' => $employee->position?->name,
             'position_history' => $employee->positionHistories->map(function ($hist) {
                 return [
                     'position' => $hist->position_name,
@@ -245,11 +246,8 @@ class FileBasedAIRecommendationService
     {
         return <<<PROMPT
 You are an expert HR consultant and organizational psychologist with 20+ years experience in talent assessment and job matching. Your analysis must be CRITICAL and OBJECTIVE.
-
 TASK: Analyze candidates for this position and provide HONEST assessment.
-
 POSITION: {$position->name} (Band: {$position->band})
-
 CRITICAL EVALUATION GUIDELINES:
 1. Be STRICT and REALISTIC - if candidates are not suitable, give LOW scores (0-40)
 2. Consider MINIMUM requirements vs NICE-TO-HAVE
