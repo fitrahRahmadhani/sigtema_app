@@ -781,7 +781,10 @@
 
                         {{-- MCU HISTORY SECTION --}}
                         <tr class="color-gradient">
-                            <td colspan="{{ $columnCount + 1 }}" class="left-0 px-6 py-3 font-semibold text-white">
+                            <td
+                                colspan="{{ count($selectedEmployees) + 1 }}"
+                                class="left-0 px-6 py-3 font-semibold text-white"
+                            >
                                 <p class="inline">MCU History</p>
                                 <p class="ml-2 inline text-sm text-white italic">
                                     data powered by
@@ -791,11 +794,11 @@
                         </tr>
                         <tr>
                             <td class="left-0 w-[400px] bg-white px-6 py-4 font-medium text-gray-900"></td>
-                            @for ($i = 0; $i < $columnCount; $i++)
+                            @foreach ($selectedEmployees as $employee)
                                 <td class="px-6 py-4 align-top text-gray-700">
-                                    @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->mcuResults && $selectedEmployees[$i]->mcuResults->count() > 0)
+                                    @if ($employee->mcuResults && $employee->mcuResults->count() > 0)
                                         <div class="flex flex-col gap-1">
-                                            @foreach ($selectedEmployees[$i]->mcuResults as $mcu)
+                                            @foreach ($employee->mcuResults as $mcu)
                                                 @php
                                                     $maxStars = 5;
                                                     $filledStars = min($mcu->result ?? 0, $maxStars);
@@ -823,15 +826,14 @@
                                             @endforeach
                                         </div>
                                     @else
-                                        <span class="text-gray-400 italic">
-                                            {{ ! empty($selectedEmployees[$i]) ? 'No MCU data' : '-' }}
-                                        </span>
+                                        <span class="text-gray-400 italic">No MCU data</span>
                                     @endif
                                 </td>
-                            @endfor
+                            @endforeach
+
+                            {{-- BURNOUT SECTION --}}
                         </tr>
 
-                        {{-- BURNOUT SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
