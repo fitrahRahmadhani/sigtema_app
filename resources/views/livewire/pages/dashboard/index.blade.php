@@ -583,44 +583,30 @@
                     });
                 }
 
-                // Age Chart - Improved polar area chart
+                // Age Chart - Changed to horizontal bar chart like Department Chart
                 if (ageData.length > 0) {
                     createChart('ageChart', {
-                        type: 'polarArea',
+                        type: 'bar',
                         data: {
                             labels: ageData.map((d) => d.label),
                             datasets: [
                                 {
+                                    label: 'Employees',
                                     data: ageData.map((d) => d.value),
-                                    backgroundColor: [
-                                        'rgba(20, 184, 166, 0.85)',
-                                        'rgba(6, 182, 212, 0.85)',
-                                        'rgba(14, 165, 233, 0.85)',
-                                        'rgba(59, 130, 246, 0.85)',
-                                        'rgba(99, 102, 241, 0.85)',
-                                    ],
-                                    borderWidth: 3,
-                                    borderColor: '#fff',
-                                    hoverBorderWidth: 4,
+                                    backgroundColor: 'rgba(20, 184, 166, 0.85)',
+                                    borderRadius: 10,
+                                    borderSkipped: false,
+                                    hoverBackgroundColor: 'rgba(20, 184, 166, 1)',
                                 },
                             ],
                         },
                         options: {
+                            indexAxis: 'y',
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
                                 legend: {
-                                    position: 'bottom',
-                                    labels: {
-                                        padding: 15,
-                                        usePointStyle: true,
-                                        font: {
-                                            size: 12,
-                                            weight: '600',
-                                            family: "'Inter', sans-serif",
-                                        },
-                                        color: '#374151',
-                                    },
+                                    display: false,
                                 },
                                 tooltip: {
                                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -635,24 +621,50 @@
                                     },
                                 },
                                 datalabels: {
-                                    color: '#fff',
+                                    anchor: 'end',
+                                    align: 'end',
+                                    offset: 6,
+                                    color: '#14b8a6',
                                     font: {
                                         weight: 'bold',
-                                        size: 16,
+                                        size: 14,
                                         family: "'Inter', sans-serif",
                                     },
-                                    textStrokeColor: 'rgba(0, 0, 0, 0.4)',
-                                    textStrokeWidth: 2,
+                                    backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                                    borderRadius: 6,
+                                    padding: {
+                                        top: 4,
+                                        bottom: 4,
+                                        left: 8,
+                                        right: 8,
+                                    },
                                     formatter: (value) => value,
                                 },
                             },
                             scales: {
-                                r: {
+                                x: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(0,0,0,0.05)',
+                                    },
                                     ticks: {
+                                        font: {
+                                            size: 12,
+                                            weight: '500',
+                                        },
+                                        color: '#6B7280',
+                                    },
+                                },
+                                y: {
+                                    grid: {
                                         display: false,
                                     },
-                                    grid: {
-                                        color: 'rgba(0, 0, 0, 0.05)',
+                                    ticks: {
+                                        font: {
+                                            size: 12,
+                                            weight: '500',
+                                        },
+                                        color: '#374151',
                                     },
                                 },
                             },
