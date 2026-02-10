@@ -44,10 +44,10 @@ class RoleAndUserSeeder extends Seeder
 
         // 1. User for Superadmin
         $userSuperadmin = User::firstOrCreate(
-            ['email' => 'superadmin@example.com'],
+            ['email' => 'superadmin@sigtema.id'],
             [
                 'name' => 'Super Administrator',
-                'password' => Hash::make('password123'),
+                'password' => Hash::make('SuperADM@2025'),
                 'email_verified_at' => now(),
             ]
         );
@@ -55,10 +55,10 @@ class RoleAndUserSeeder extends Seeder
 
         // 2. User for Admin
         $userAdmin = User::firstOrCreate(
-            ['email' => 'admin@example.com'],
+            ['email' => 'admin@sigtema.id'],
             [
                 'name' => 'Administrator',
-                'password' => Hash::make('password123'),
+                'password' => Hash::make('ADMin@2025'),
                 'email_verified_at' => now(),
             ]
         );
@@ -66,10 +66,10 @@ class RoleAndUserSeeder extends Seeder
 
         // 3. User for Head of Unit
         $userHeadOfUnit = User::firstOrCreate(
-            ['email' => 'kepalaunit@example.com'],
+            ['email' => 'kepalaunit@esigtema.id'],
             [
                 'name' => 'Kepala Unit',
-                'password' => Hash::make('password123'),
+                'password' => Hash::make('@Password12345'),
                 'email_verified_at' => now(),
             ]
         );
@@ -77,10 +77,10 @@ class RoleAndUserSeeder extends Seeder
 
         // 4. User for HC Operator
         $userHcOperator = User::firstOrCreate(
-            ['email' => 'hcoperator@example.com'],
+            ['email' => 'hcoperator@sigtema.id'],
             [
                 'name' => 'HC Operator',
-                'password' => Hash::make('password123'),
+                'password' => Hash::make('@Password12345'),
                 'email_verified_at' => now(),
             ]
         );
