@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         @hasanyrole('superadmin|admin')
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
@@ -13,9 +13,9 @@
         <flux:breadcrumbs.item>AI Candidates Comparison</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl text-white">
@@ -55,9 +55,9 @@
             </button>
         </div>
 
-        <!-- AI Comparison Summary -->
+        {{-- AI Comparison Summary --}}
         @if (count($aiRecommendations) > 0)
-            <div class="mb-8 rounded-lg border border-gray-200 bg-gradient-to-r from-[#721d21]/5 to-[#8a252a]/5 p-6">
+            <div class="mb-4 rounded-lg border border-gray-200 bg-gradient-to-r from-[#721d21]/5 to-[#8a252a]/5 p-6">
                 <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                     <div class="flex items-center gap-4">
                         <div class="color-gradient flex h-12 w-12 items-center justify-center rounded-full text-white">
@@ -79,9 +79,26 @@
                     </div>
                 </div>
             </div>
+            {{-- Info Refresh Chart --}}
+            <div class="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+                <div class="flex items-center gap-2 text-sm text-yellow-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+                        <path
+                            fill-rule="evenodd"
+                            d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+                            clip-rule="evenodd"
+                        />
+                    </svg>
+
+                    <p>
+                        <span class="font-semibold">Jika chart (bagan) tidak muncul,</span>
+                        mohon untuk refresh halaman
+                    </p>
+                </div>
+            </div>
         @endif
 
-        <!-- Comparison Table -->
+        {{-- Comparison Table --}}
         <div class="overflow-x-auto">
             <div class="inline-block min-w-full align-middle">
                 <table class="min-w-full divide-y divide-gray-200">
@@ -94,9 +111,9 @@
                             </th>
                             @foreach ($selectedEmployees as $employee)
                                 <th class="w-[400px] bg-gray-50 px-6 py-4">
-                                    <div class="flex  gap-3 rounded-lg border border-gray-200 bg-white p-3">
+                                    <div class="flex gap-3 rounded-lg border border-gray-200 bg-white p-3">
                                         <div
-                                            class="bg-primary-text/20  text-primary-text flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg"
+                                            class="bg-primary-text/20 text-primary-text flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg"
                                         >
                                             @if ($employee->profile_path)
                                                 <img
@@ -159,7 +176,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 bg-white">
-                        <!-- AI RECOMMENDATION SECTION -->
+                        {{-- AI RECOMMENDATION SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -169,7 +186,7 @@
                             </td>
                         </tr>
 
-                        <!-- AI Match Score -->
+                        {{-- AI Match Score --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">AI Match Score</td>
                             @foreach ($selectedEmployees as $employee)
@@ -197,7 +214,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- AI Strengths -->
+                        {{-- AI Strengths --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 AI Strengths Analysis
@@ -237,7 +254,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- AI Development Areas -->
+                        {{-- AI Development Areas --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 AI Development Areas
@@ -277,7 +294,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- BASIC INFORMATION SECTION -->
+                        {{-- BASIC INFORMATION SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -287,7 +304,7 @@
                             </td>
                         </tr>
 
-                        <!-- Email -->
+                        {{-- Email --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Email</td>
                             @foreach ($selectedEmployees as $employee)
@@ -297,7 +314,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Phone -->
+                        {{-- Phone --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Phone</td>
                             @foreach ($selectedEmployees as $employee)
@@ -307,7 +324,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Personal Grade -->
+                        {{-- Personal Grade --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Personal Grade</td>
                             @foreach ($selectedEmployees as $employee)
@@ -317,7 +334,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Band -->
+                        {{-- Band --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Band</td>
                             @foreach ($selectedEmployees as $employee)
@@ -327,7 +344,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Hire Date -->
+                        {{-- Hire Date --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Hire Date</td>
                             @foreach ($selectedEmployees as $employee)
@@ -339,7 +356,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- PERSONALITY INFORMATION SECTION -->
+                        {{-- PERSONALITY INFORMATION SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -355,7 +372,7 @@
                             </td>
                         </tr>
 
-                        <!-- MBTI -->
+                        {{-- MBTI --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">MBTI</td>
                             @foreach ($selectedEmployees as $employee)
@@ -369,7 +386,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- PAPI KOSTICK SECTION -->
+                        {{-- PAPI KOSTICK SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -410,7 +427,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- DISC SECTION -->
+                        {{-- DISC SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -436,7 +453,7 @@
 
                                     @if (! empty($discData))
                                         <div class="flex w-[400px] flex-col space-y-6">
-                                            <!-- DISC 1 -->
+                                            {{-- DISC 1 --}}
                                             <div class="overflow-hidden rounded-lg border border-gray-300">
                                                 <div class="bg-red-500 px-3 py-2 text-center">
                                                     <p class="text-sm font-semibold text-white">DISC 1</p>
@@ -467,7 +484,7 @@
                                                 </div>
                                             </div>
 
-                                            <!-- DISC 2 -->
+                                            {{-- DISC 2 --}}
                                             <div class="overflow-hidden rounded-lg border border-gray-300">
                                                 <div class="bg-yellow-500 px-3 py-2 text-center">
                                                     <p class="text-sm font-semibold text-white">DISC 2</p>
@@ -498,7 +515,7 @@
                                                 </div>
                                             </div>
 
-                                            <!-- DISC 3 -->
+                                            {{-- DISC 3 --}}
                                             <div class="overflow-hidden rounded-lg border border-gray-300">
                                                 <div class="bg-green-500 px-3 py-2 text-center">
                                                     <p class="text-sm font-semibold text-white">DISC 3</p>
@@ -551,7 +568,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- SOFT COMPETENCIES SECTION -->
+                        {{-- SOFT COMPETENCIES SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -561,7 +578,7 @@
                             </td>
                         </tr>
 
-                        <!-- Strengths -->
+                        {{-- Strengths --}}
                         <tr>
                             <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 Strengths
@@ -585,7 +602,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Weaknesses -->
+                        {{-- Weaknesses --}}
                         <tr>
                             <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 Weaknesses
@@ -609,7 +626,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- TECHNICAL COMPETENCY SECTION -->
+                        {{-- TECHNICAL COMPETENCY SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -644,7 +661,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- INNOVATION SECTION -->
+                        {{-- INNOVATION SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -707,7 +724,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- POSITION HISTORY SECTION -->
+                        {{-- POSITION HISTORY SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -742,7 +759,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- EDUCATION SECTION -->
+                        {{-- EDUCATION SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -779,43 +796,49 @@
                             @endforeach
                         </tr>
 
-                        <!-- MCU HISTORY SECTION -->
+                        {{-- MCU HISTORY SECTION --}}
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
-                                class="left-0 px-6 py-4 font-semibold text-white"
+                                class="left-0 px-6 py-3 font-semibold text-white"
                             >
-                                MCU History
+                                <p class="inline">MCU History</p>
+                                <p class="ml-2 inline text-sm text-white italic">
+                                    data powered by
+                                    <span class="font-bold">Unit of Tuban & Gresik SHE</span>
+                                </p>
                             </td>
                         </tr>
-
                         <tr>
                             <td class="left-0 w-[400px] bg-white px-6 py-4 font-medium text-gray-900"></td>
                             @foreach ($selectedEmployees as $employee)
                                 <td class="px-6 py-4 align-top text-gray-700">
                                     @if ($employee->mcuResults && $employee->mcuResults->count() > 0)
-                                        <div class="flex w-fit flex-col gap-2">
+                                        <div class="flex flex-col gap-1">
                                             @foreach ($employee->mcuResults as $mcu)
                                                 @php
-                                                    $resultColor = $mcu->result_color ?? 'gray';
-                                                    $colorClass =
-                                                        [
-                                                            'green' => 'bg-green-100 text-green-800 border-green-200',
-                                                            'blue' => 'bg-blue-100 text-blue-800 border-blue-200',
-                                                            'yellow' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
-                                                            'orange' => 'bg-orange-100 text-orange-800 border-orange-200',
-                                                            'red' => 'bg-red-100 text-red-800 border-red-200',
-                                                            'gray' => 'bg-gray-100 text-gray-800 border-gray-200',
-                                                        ][$resultColor] ?? 'bg-gray-100 text-gray-800 border-gray-200';
+                                                    $maxStars = 5;
+                                                    $filledStars = min($mcu->result ?? 0, $maxStars);
                                                 @endphp
 
-                                                <div
-                                                    class="{{ $colorClass }} inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm"
-                                                >
-                                                    <span class="font-semibold">•</span>
-                                                    <span class="font-medium">{{ $mcu->result ?? 'N/A' }}</span>
-                                                    <span>|</span>
-                                                    <span>{{ $mcu->year }}</span>
+                                                <div class="flex items-center justify-start gap-2">
+                                                    {{-- Tahun --}}
+                                                    <span
+                                                        class="rounded-full bg-gray-100 px-2 py-1 text-sm text-gray-800"
+                                                    >
+                                                        {{ $mcu->year }}
+                                                    </span>
+
+                                                    {{-- Bintang --}}
+                                                    <div class="flex gap-1">
+                                                        @for ($s = 0; $s < $filledStars; $s++)
+                                                            <span class="text-xl text-yellow-500">★</span>
+                                                        @endfor
+
+                                                        @for ($s = $filledStars; $s < $maxStars; $s++)
+                                                            <span class="text-xl text-gray-300">★</span>
+                                                        @endfor
+                                                    </div>
                                                 </div>
                                             @endforeach
                                         </div>
@@ -824,9 +847,10 @@
                                     @endif
                                 </td>
                             @endforeach
+
+                            {{-- BURNOUT SECTION --}}
                         </tr>
 
-                        <!-- BURNOUT SECTION -->
                         <tr class="color-gradient">
                             <td
                                 colspan="{{ count($selectedEmployees) + 1 }}"
@@ -842,7 +866,7 @@
                             </td>
                         </tr>
 
-                        <!-- Kelalahan Emosional -->
+                        {{-- Kelalahan Emosional --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 Kelalahan Emosional
@@ -858,7 +882,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Depersonalisasi -->
+                        {{-- Depersonalisasi --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Depersonalisasi</td>
                             @foreach ($selectedEmployees as $employee)
@@ -872,7 +896,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Penurunan Prestasi -->
+                        {{-- Penurunan Prestasi --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 Penurunan Prestasi
@@ -888,7 +912,7 @@
                             @endforeach
                         </tr>
 
-                        <!-- Penafsiran -->
+                        {{-- Penafsiran --}}
                         <tr>
                             <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Penafsiran</td>
                             @foreach ($selectedEmployees as $employee)

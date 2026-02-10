@@ -1,14 +1,14 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('employees.index') }}">Employees</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Create Employee</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex items-center gap-4">
             <div
                 class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
@@ -21,7 +21,11 @@
                     stroke="currentColor"
                     class="h-6 w-6 text-white"
                 >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"
+                    />
                 </svg>
             </div>
             <div>
@@ -30,9 +34,9 @@
             </div>
         </div>
 
-        <!-- Form -->
+        {{-- Form --}}
         <form wire:submit="save" class="space-y-8">
-            <!-- Profile Photo -->
+            {{-- Profile Photo --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Profile Photo</h3>
                 <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
@@ -116,7 +120,7 @@
                 </div>
             </div>
 
-            <!-- Personal Information -->
+            {{-- Personal Information --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Personal Information</h3>
                 <div class="grid gap-6 md:grid-cols-2">
@@ -196,8 +200,8 @@
                                 class="@error('gender') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                             >
                                 <option value="">Select gender</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
                             </select>
                             <svg
                                 class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
@@ -217,7 +221,7 @@
                 </div>
             </div>
 
-            <!-- Employment Information -->
+            {{-- Employment Information --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Employment Information</h3>
                 <div class="grid gap-6 md:grid-cols-2">
@@ -280,11 +284,11 @@
                                 class="@error('band') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                             >
                                 <option value="">Select band</option>
-                                <option value="band 1">Band 1</option>
-                                <option value="band 2">Band 2</option>
-                                <option value="band 3">Band 3</option>
-                                <option value="band 4">Band 4</option>
-                                <option value="band 5">Band 5</option>
+                                <option value="1">Band 1</option>
+                                <option value="2">Band 2</option>
+                                <option value="3">Band 3</option>
+                                <option value="4">Band 4</option>
+                                <option value="5">Band 5</option>
                             </select>
                             <svg
                                 class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
@@ -304,26 +308,30 @@
                 </div>
             </div>
 
-            <!-- Account Security -->
+            {{-- Account Security --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Account Security</h3>
                 <div class="grid gap-6 md:grid-cols-2">
+                    {{-- Password --}}
                     <div>
                         <label for="password" class="mb-2 block text-sm font-medium text-gray-700">Password</label>
                         <input
                             type="password"
                             id="password"
-                            wire:model.blur="password"
-                            placeholder="••••••••"
-                            class="@error('password') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            wire:model.live="password"
+                            placeholder="••••••••••••"
+                            class="@error('password') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
                         />
                         @error('password')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
 
-                        <p class="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
+                        <p class="mt-1 text-xs text-gray-500">
+                            At least 12 characters with uppercase, lowercase, number, and symbol.
+                        </p>
                     </div>
 
+                    {{-- Password Confirmation --}}
                     <div>
                         <label for="password_confirmation" class="mb-2 block text-sm font-medium text-gray-700">
                             Confirm Password
@@ -331,9 +339,9 @@
                         <input
                             type="password"
                             id="password_confirmation"
-                            wire:model.blur="password_confirmation"
-                            placeholder="••••••••"
-                            class="@error('password_confirmation') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            wire:model.live="password_confirmation"
+                            placeholder="••••••••••••"
+                            class="@error('password_confirmation') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
                         />
                         @error('password_confirmation')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -343,7 +351,7 @@
             </div>
 
             @hasrole('superadmin')
-                <!-- Organization Assignment -->
+                {{-- Organization Assignment --}}
                 <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                     <h3 class="mb-4 text-lg font-semibold text-gray-900">Organization Assignment</h3>
                     <div class="space-y-6">
@@ -384,7 +392,7 @@
                 </div>
             @endhasrole
 
-            <!-- Form Actions -->
+            {{-- Form Actions --}}
             <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
                 <button
                     type="button"
@@ -419,11 +427,7 @@
                         stroke="currentColor"
                         class="h-5 w-5"
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-                        />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                     <svg
                         wire:loading

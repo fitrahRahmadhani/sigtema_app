@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('mcus', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained('employees');
-            $table->string('result');
+            $table->integer('result');
             $table->integer('year');
             $table->timestamps();
         });

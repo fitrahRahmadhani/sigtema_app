@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('positions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained('companies');
-            $table->foreignId('employee_id')->constrained('employees')->nullable();
+            $table->foreignId('employee_id')->nullable()->constrained('employees');
             $table->string('slug');
             $table->string('position_code');
             $table->string('name');

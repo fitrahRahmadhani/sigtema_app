@@ -1,13 +1,13 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Role Management</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -34,7 +34,7 @@
                 </div>
             </div>
 
-            <!-- Action Button -->
+            {{-- Action Button --}}
             <a
                 href="{{ route('role-permissions.create') }}"
                 class="color-gradient inline-flex items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
@@ -53,10 +53,10 @@
             </a>
         </div>
 
-        <!-- Search Section -->
+        {{-- Search Section --}}
         <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
             <div class="grid gap-4 md:grid-cols-3">
-                <!-- Search Input -->
+                {{-- Search Input --}}
                 <div class="md:col-span-3">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Search Roles</label>
                     <div class="relative">
@@ -86,7 +86,7 @@
                 </div>
             </div>
 
-            <!-- Results Info -->
+            {{-- Results Info --}}
             <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
                 Showing
                 <span class="font-semibold text-gray-900">{{ $roles->count() }}</span>
@@ -96,9 +96,9 @@
             </div>
         </div>
 
-        <!-- Roles Table -->
+        {{-- Roles Table --}}
         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white">
-            <!-- Table Header -->
+            {{-- Table Header --}}
             <div class="color-gradient grid grid-cols-12 gap-4 bg-gradient-to-r px-6 py-3 text-white">
                 <div class="col-span-4 text-sm font-semibold">Role Name</div>
                 <div class="col-span-4 text-sm font-semibold">Guard Name</div>
@@ -106,11 +106,11 @@
                 <div class="col-span-1 text-center text-sm font-semibold">Actions</div>
             </div>
 
-            <!-- Table Body -->
+            {{-- Table Body --}}
             <div class="divide-y divide-gray-200">
                 @forelse ($roles as $role)
                     <div class="grid grid-cols-12 gap-4 px-6 py-4 transition-colors hover:bg-gray-50">
-                        <!-- Role Name -->
+                        {{-- Role Name --}}
                         <div class="col-span-4 flex items-center">
                             <div class="flex items-center gap-3">
                                 <div
@@ -140,7 +140,7 @@
                             </div>
                         </div>
 
-                        <!-- Guard Name -->
+                        {{-- Guard Name --}}
                         <div class="col-span-4 flex items-center">
                             <span
                                 class="inline-flex items-center rounded-md bg-gray-100 px-3 py-1 text-sm font-medium text-gray-800"
@@ -149,7 +149,7 @@
                             </span>
                         </div>
 
-                        <!-- Users Count -->
+                        {{-- Users Count --}}
                         <div class="col-span-3 flex items-center">
                             <span
                                 class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-800"
@@ -158,9 +158,9 @@
                             </span>
                         </div>
 
-                        <!-- Actions -->
+                        {{-- Actions --}}
                         <div class="col-span-1 flex items-center justify-center gap-2">
-                            <!-- Edit Button -->
+                            {{-- Edit Button --}}
                             <a
                                 href="{{ route('role-permissions.edit', $role->id) }}"
                                 class="rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-[#721d21]"
@@ -182,7 +182,7 @@
                                 </svg>
                             </a>
 
-                            <!-- Delete Button (hanya untuk non-superadmin) -->
+                            {{-- Delete Button (hanya untuk non-superadmin) --}}
                             @if ($role->name !== 'superadmin')
                                 <button
                                     wire:click="confirmDelete({{ $role->id }}, '{{ $role->name }}')"
@@ -230,13 +230,13 @@
             </div>
         </div>
 
-        <!-- Pagination -->
+        {{-- Pagination --}}
         @if ($roles->hasPages())
             <div class="mt-6">
                 {{ $roles->links() }}
             </div>
         @endif
     </div>
-    <!-- Global Delete Confirmation Modal -->
+    {{-- Global Delete Confirmation Modal --}}
     <x-ui.modals.delete-confirmation />
 </div>

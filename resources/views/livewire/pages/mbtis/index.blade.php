@@ -6,7 +6,7 @@
     </flux:breadcrumbs>
 
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -33,9 +33,9 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
+            {{-- Action Buttons --}}
             <div class="flex items-center gap-2">
-                <!-- Sync Button -->
+                {{-- Sync Button --}}
                 <button
                     wire:click="syncFromApi"
                     wire:loading.attr="disabled"
@@ -93,7 +93,7 @@
             </div>
         </div>
 
-        <!-- Stats -->
+        {{-- Stats --}}
         <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
             <div class="rounded-lg border border-gray-200 bg-white p-4">
                 <div class="flex items-center">
@@ -197,7 +197,7 @@
             </div>
         </div>
 
-        <!-- Sync Status Panel -->
+        {{-- Sync Status Panel --}}
         @if ($syncStatus !== 'idle')
             <div class="animate-fade-in mb-6">
                 <div
@@ -290,7 +290,7 @@
                         @endif
                     </div>
 
-                    <!-- Progress Bar -->
+                    {{-- Progress Bar --}}
                     @if (in_array($syncStatus, ['queued', 'processing']))
                         <div class="mt-3">
                             <div class="mb-1 flex justify-between text-sm">
@@ -321,7 +321,7 @@
                         </div>
                     @endif
 
-                    <!-- Result Details -->
+                    {{-- Result Details --}}
                     @if ($lastSyncResult && ($syncStatus === 'completed' || $syncStatus === 'failed'))
                         <div class="mt-3 border-t border-gray-200 pt-3">
                             @if ($syncStatus === 'completed')
@@ -427,11 +427,11 @@
             </div>
         @endif
 
-        <!-- Filters -->
+        {{-- Filters --}}
         <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-            <!-- Search Row -->
+            {{-- Search Row --}}
             <div class="grid gap-4 md:grid-cols-12">
-                <!-- Search Input - Hanya untuk employee name/number -->
+                {{-- Search Input - Hanya untuk employee name/number --}}
                 <div class="md:col-span-6">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Search Employee</label>
                     <div class="relative">
@@ -460,7 +460,7 @@
                     </div>
                 </div>
 
-                <!-- Status Filter -->
+                {{-- Status Filter --}}
                 <div class="md:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Status</label>
                     <div class="relative">
@@ -487,7 +487,7 @@
                     </div>
                 </div>
 
-                <!-- MBTI Filter -->
+                {{-- MBTI Filter --}}
                 <div class="md:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-gray-700">MBTI Type</label>
                     <div class="relative">
@@ -515,7 +515,7 @@
                     </div>
                 </div>
 
-                <!-- Sort By -->
+                {{-- Sort By --}}
                 <div class="md:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Sort By</label>
                     <div class="relative">
@@ -544,7 +544,7 @@
                 </div>
             </div>
 
-            <!-- Results Info -->
+            {{-- Results Info --}}
             <div class="w-full">
                 <div class="flex items-center justify-start">
                     <div class="text-sm text-gray-600">
@@ -557,9 +557,9 @@
             </div>
         </div>
 
-        <!-- MBTI Table -->
+        {{-- MBTI Table --}}
         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-            <!-- Table Header - Desktop -->
+            {{-- Table Header - Desktop --}}
             <div class="color-gradient hidden grid-cols-12 gap-4 bg-gradient-to-r px-6 py-3 text-white md:grid">
                 <div class="col-span-3 text-sm font-semibold">Employee</div>
                 <div class="col-span-2 text-sm font-semibold">MBTI Type</div>
@@ -569,15 +569,15 @@
                 <div class="col-span-1 text-center text-sm font-semibold">Actions</div>
             </div>
 
-            <!-- Table Body -->
+            {{-- Table Body --}}
             <div class="divide-y divide-gray-200">
                 @forelse ($mbtis as $mbti)
-                    <!-- Desktop View -->
+                    {{-- Desktop View --}}
                     <div
                         class="{{ $mbti->is_active ? 'hover:bg-gray-50' : 'bg-gray-50 opacity-90 hover:bg-gray-100' }} hidden grid-cols-12 items-center gap-4 px-6 py-4 transition-colors duration-150 md:grid"
                         wire:key="mbti-{{ $mbti->id }}"
                     >
-                        <!-- Employee -->
+                        {{-- Employee --}}
                         <div class="col-span-3">
                             @if ($mbti->employee)
                                 <p class="font-medium text-gray-900">{{ $mbti->employee->name }}</p>
@@ -588,7 +588,7 @@
                             @endif
                         </div>
 
-                        <!-- MBTI Type -->
+                        {{-- MBTI Type --}}
                         <div class="col-span-2">
                             @if ($mbti->mbti)
                                 @php
@@ -623,7 +623,7 @@
                             @endif
                         </div>
 
-                        <!-- Status -->
+                        {{-- Status --}}
                         <div class="col-span-2">
                             @if ($mbti->is_active)
                                 <span
@@ -640,7 +640,7 @@
                             @endif
                         </div>
 
-                        <!-- Source -->
+                        {{-- Source --}}
                         <div class="col-span-2">
                             <div
                                 class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-800"
@@ -649,12 +649,12 @@
                             </div>
                         </div>
 
-                        <!-- Updated -->
+                        {{-- Updated --}}
                         <div class="col-span-2">
                             <p class="text-xs text-gray-500">Updated: {{ $mbti->updated_at->diffForHumans() }}</p>
                         </div>
 
-                        <!-- Actions - Hanya Delete -->
+                        {{-- Actions - Hanya Delete --}}
                         <div class="col-span-1">
                             <div class="flex items-start justify-center gap-2">
                                 <button
@@ -681,13 +681,13 @@
                         </div>
                     </div>
 
-                    <!-- Mobile View -->
+                    {{-- Mobile View --}}
                     <div
                         class="{{ $mbti->is_active ? '' : 'bg-gray-50 opacity-90' }} block p-4 md:hidden"
                         wire:key="mbti-mobile-{{ $mbti->id }}"
                     >
                         <div class="space-y-3">
-                            <!-- Header -->
+                            {{-- Header --}}
                             <div class="border-b border-gray-100 pb-3">
                                 <div class="flex items-start justify-between">
                                     @if ($mbti->employee)
@@ -714,7 +714,7 @@
                                 <p class="mt-1 text-sm text-gray-500">{{ $mbti->employee_number }}</p>
                             </div>
 
-                            <!-- MBTI Type -->
+                            {{-- MBTI Type --}}
                             <div>
                                 <p class="text-xs font-medium text-gray-500">MBTI Type</p>
                                 @if ($mbti->mbti)
@@ -750,7 +750,7 @@
                                 @endif
                             </div>
 
-                            <!-- Updated -->
+                            {{-- Updated --}}
                             <div class="border-t border-gray-100 pt-3">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs text-gray-500">Source: {{ $mbti->source }}</span>
@@ -758,7 +758,7 @@
                                 </div>
                             </div>
 
-                            <!-- Actions - Hanya Delete -->
+                            {{-- Actions - Hanya Delete --}}
                             <div class="border-t border-gray-100 pt-3">
                                 <div class="flex justify-end">
                                     <button
@@ -836,10 +836,10 @@
             </div>
         </div>
 
-        <!-- Delete Confirmation Modal -->
+        {{-- Delete Confirmation Modal --}}
         <x-ui.modals.delete-confirmation />
 
-        <!-- Pagination -->
+        {{-- Pagination --}}
         @if ($mbtis->hasPages())
             <div class="mt-6">
                 {{ $mbtis->onEachSide(1)->links(data: ['scrollTo' => false]) }}

@@ -14,7 +14,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use App\Services\FileBasedAIRecommendationService;
+use App\Services\AIRecommendationService;
 
 class ProcessAIRecommendationsJob implements ShouldQueue
 {
@@ -33,7 +33,7 @@ class ProcessAIRecommendationsJob implements ShouldQueue
         $this->selectedEmployeeIds = $selectedEmployeeIds;
     }
 
-    public function handle(FileBasedAIRecommendationService $service)
+    public function handle(AIRecommendationService $service)
     {
         $cacheKey = "ai_analysis_{$this->position->id}";
         $progressKey = "ai_progress_{$this->position->id}";

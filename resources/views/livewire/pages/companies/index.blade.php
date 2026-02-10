@@ -1,13 +1,13 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Companies</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -34,7 +34,7 @@
                 </div>
             </div>
 
-            <!-- Add Company Button -->
+            {{-- Add Company Button --}}
             <a
                 href="{{ route('companies.create') }}"
                 class="color-gradient inline-flex items-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:shadow-md focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
@@ -53,11 +53,11 @@
             </a>
         </div>
 
-        <!-- Search and Filter Section -->
+        {{-- Search and Filter Section --}}
         <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-            <!-- Desktop Layout: Search & Filter -->
+            {{-- Desktop Layout: Search & Filter --}}
             <div class="grid gap-4 md:grid-cols-3">
-                <!-- Search Input -->
+                {{-- Search Input --}}
                 <div class="md:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Search Company</label>
                     <div class="relative">
@@ -80,13 +80,13 @@
                         <input
                             type="text"
                             wire:model.live.debounce.300ms="search"
-                            placeholder="Search by name, code, or admin..."
+                            placeholder="Search by name or cocd"
                             class="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
                     </div>
                 </div>
 
-                <!-- Sort By -->
+                {{-- Sort By --}}
                 <div class="relative">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Sort By</label>
                     <div class="relative">
@@ -113,7 +113,7 @@
                 </div>
             </div>
 
-            <!-- Results Info -->
+            {{-- Results Info --}}
             <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
                 Showing
                 <span class="font-semibold text-gray-900">{{ $companies->count() }}</span>
@@ -123,9 +123,9 @@
             </div>
         </div>
 
-        <!-- Companies List Container -->
+        {{-- Companies List Container --}}
         <div class="space-y-3 overflow-x-auto">
-            <!-- Column Headers - Hidden on mobile -->
+            {{-- Column Headers - Hidden on mobile --}}
             <div
                 class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
             >
@@ -137,13 +137,13 @@
                 <div class="col-span-1 text-center text-sm font-semibold">Actions</div>
             </div>
 
-            <!-- List Items -->
+            {{-- List Items --}}
             @forelse ($companies as $company)
-                <!-- Desktop View -->
+                {{-- Desktop View --}}
                 <div
                     class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
                 >
-                    <!-- Logo -->
+                    {{-- Logo --}}
                     <div class="col-span-1 flex items-center">
                         @if ($company->logo_path)
                             <img
@@ -173,12 +173,12 @@
                         @endif
                     </div>
 
-                    <!-- Company Name -->
+                    {{-- Company Name --}}
                     <div class="col-span-3 flex flex-col justify-center">
                         <p class="line-clamp-2 text-sm font-semibold text-gray-900">{{ $company->name }}</p>
                     </div>
 
-                    <!-- Company Code -->
+                    {{-- Company Code --}}
                     <div class="col-span-2 flex flex-col justify-center">
                         <span
                             class="inline-flex w-fit items-center rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-800"
@@ -187,7 +187,7 @@
                         </span>
                     </div>
 
-                    <!-- Admin Info -->
+                    {{-- Admin Info --}}
                     <div class="col-span-3 flex items-center gap-3 overflow-hidden">
                         @if ($company->admin && $company->admin->first())
                             <div class="flex items-center gap-2">
@@ -218,7 +218,7 @@
                         @endif
                     </div>
 
-                    <!-- Status -->
+                    {{-- Status --}}
                     <div class="col-span-2 flex items-center">
                         @if ($company->is_active)
                             <span
@@ -237,7 +237,7 @@
                         @endif
                     </div>
 
-                    <!-- Actions -->
+                    {{-- Actions --}}
                     <div class="col-span-1 flex items-center justify-center gap-2">
                         <button
                             wire:click="edit({{ $company->id }})"
@@ -282,12 +282,12 @@
                     </div>
                 </div>
 
-                <!-- Mobile View -->
+                {{-- Mobile View --}}
                 <div
                     class="block rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
                 >
                     <div class="space-y-4">
-                        <!-- Company Header -->
+                        {{-- Company Header --}}
                         <div class="flex items-start gap-3 border-b border-gray-100 pb-4">
                             @if ($company->logo_path)
                                 <img
@@ -326,14 +326,14 @@
                             </div>
                         </div>
 
-                        <!-- Admin Info -->
+                        {{-- Admin Info --}}
                         <div>
                             <p class="text-xs font-medium text-gray-500 uppercase">Administrator</p>
                             @if ($company->admin && $company->admin->first())
                                 <div class="mt-2 flex items-center gap-3">
                                     @if ($company->admin->first()->profile_path)
                                         <img
-                                            src="{{ \Storage::url($company->admin->first()->profile_path) }}"
+                                            src="{{ asset('storage/' . $company->admin->first()->profile_path) }}"
                                             alt="{{ $company->admin->first()->name }}"
                                             class="h-10 w-10 rounded-full border-2 border-white shadow-sm"
                                         />
@@ -358,7 +358,7 @@
                             @endif
                         </div>
 
-                        <!-- Status & Actions -->
+                        {{-- Status & Actions --}}
                         <div class="flex items-center justify-between border-t border-gray-100 pt-4">
                             @if ($company->is_active)
                                 <span
@@ -442,7 +442,7 @@
             @endforelse
         </div>
 
-        <!-- Pagination -->
+        {{-- Pagination --}}
         @if ($companies->hasPages())
             <div class="mt-6">
                 {{ $companies->links() }}

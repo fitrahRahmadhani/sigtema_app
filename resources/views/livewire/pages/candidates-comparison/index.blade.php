@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         @hasanyrole('superadmin|admin')
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
@@ -9,9 +9,9 @@
         <flux:breadcrumbs.item>Employee Comparison</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex items-center justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -35,7 +35,7 @@
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Employee Comparison</h1>
 
-                    <!-- Company Info with Change Button -->
+                    {{-- Company Info with Change Button --}}
                     @if ($isSuperadmin && $selectedCompany)
                         <div class="mt-1 flex items-center gap-2">
                             <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
@@ -58,7 +58,7 @@
                 </div>
             </div>
 
-            <!-- Add Column Button -->
+            {{-- Add Column Button --}}
             @if (! $showCompanySelection && $columnCount < 5)
                 <button
                     wire:click="addColumn"
@@ -79,7 +79,7 @@
             @endif
         </div>
 
-        <!-- COMPANY SELECTION SECTION -->
+        {{-- COMPANY SELECTION SECTION --}}
         @if ($showCompanySelection)
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
@@ -99,7 +99,7 @@
                 <h3 class="mt-4 text-xl font-semibold text-gray-700">Pilih Perusahaan</h3>
                 <p class="mt-2 text-gray-500">Silakan pilih perusahaan untuk membandingkan karyawan</p>
 
-                <!-- Company List -->
+                {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($companies as $company)
                         <button
@@ -142,10 +142,10 @@
             </div>
         @endif
 
-        <!-- COMPARISON TABLE SECTION -->
+        {{-- COMPARISON TABLE SECTION --}}
         @if (! $showCompanySelection)
             @if ($selectedCompany)
-                <!-- Info Box -->
+                {{-- Info Box --}}
                 <div class="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
                     <div class="text-sm text-gray-600">
                         Membandingkan karyawan di
@@ -153,7 +153,25 @@
                     </div>
                 </div>
 
-                <!-- Comparison Table -->
+                {{-- Info Refresh Chart --}}
+                <div class="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+                    <div class="flex items-center gap-2 text-sm text-yellow-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+                            <path
+                                fill-rule="evenodd"
+                                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+
+                        <p>
+                            <span class="font-semibold">Jika chart (bagan) tidak muncul,</span>
+                            mohon untuk refresh halaman
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Comparison Table --}}
                 <div class="overflow-x-auto">
                     <div class="inline-block min-w-full align-middle">
                         <table class="min-w-full divide-y divide-gray-200">
@@ -165,7 +183,7 @@
                                     ></th>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <th scope="col" class="relative w-[400px] content-start bg-gray-50 px-6 py-3">
-                                            <!-- Remove Column Button -->
+                                            {{-- Remove Column Button --}}
                                             @if ($columnCount > 3)
                                                 <button
                                                     wire:click="removeColumn({{ $i }})"
@@ -190,7 +208,7 @@
                                             @endif
 
                                             <div class="relative">
-                                                <!-- Search Input -->
+                                                {{-- Search Input --}}
                                                 <div class="relative w-[400px]">
                                                     <input
                                                         type="text"
@@ -240,7 +258,7 @@
                                                     @endif
                                                 </div>
 
-                                                <!-- Search Dropdown -->
+                                                {{-- Search Dropdown --}}
                                                 @if ($showSearchDropdown[$i] && ! empty($searchResults[$i]))
                                                     <div
                                                         class="absolute top-full right-0 left-0 mt-1 max-h-60 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg"
@@ -266,7 +284,7 @@
                                                     </div>
                                                 @endif
 
-                                                <!-- Selected Employee Info -->
+                                                {{-- Selected Employee Info --}}
                                                 @if (! empty($selectedEmployees[$i]))
                                                     <div
                                                         class="border-primary-text bg-primary-text/10 mt-3 flex w-[400px] items-center gap-3 rounded-lg border p-3"
@@ -313,7 +331,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
-                                <!-- Basic Information Section -->
+                                {{-- Basic Information Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -323,7 +341,7 @@
                                     </td>
                                 </tr>
 
-                                <!-- Email -->
+                                {{-- Email --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Email</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -337,7 +355,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Phone -->
+                                {{-- Phone --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Phone</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -351,7 +369,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Personal Grade -->
+                                {{-- Personal Grade --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Personal Grade
@@ -369,7 +387,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Band -->
+                                {{-- Band --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Band</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -383,7 +401,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Hire Date -->
+                                {{-- Hire Date --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Hire Date</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -399,7 +417,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Personality Information Section -->
+                                {{-- Personality Information Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -415,7 +433,7 @@
                                     </td>
                                 </tr>
 
-                                <!-- MBTI -->
+                                {{-- MBTI --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">MBTI</td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -431,7 +449,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- PAPI Kostick Section -->
+                                {{-- PAPI Kostick Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -451,7 +469,7 @@
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top">
                                             <div class="flex w-[400px] flex-col items-center justify-start">
-                                                <!-- PAPI Chart Container -->
+                                                {{-- PAPI Chart Container --}}
                                                 <div
                                                     class="relative aspect-square w-[400px] rounded-full border-2 border-dashed border-gray-300"
                                                 >
@@ -464,7 +482,7 @@
                                                             data-employee-name="{{ $selectedEmployees[$i]->name ?? 'Employee' }}"
                                                         ></canvas>
                                                     @else
-                                                        <!-- Placeholder ketika tidak ada karyawan yang dipilih -->
+                                                        {{-- Placeholder ketika tidak ada karyawan yang dipilih --}}
                                                         <div
                                                             class="flex h-full w-full flex-col items-center justify-center"
                                                         >
@@ -495,7 +513,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- DISC Section -->
+                                {{-- DISC Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -516,7 +534,7 @@
                                         <td class="px-6 py-4 align-top">
                                             @if (! empty($selectedEmployees[$i]) && ! empty($discChartData[$i]))
                                                 <div class="flex w-[400px] flex-col space-y-6">
-                                                    <!-- DISC 1 -->
+                                                    {{-- DISC 1 --}}
                                                     <div class="overflow-hidden rounded-lg border border-gray-300">
                                                         <div class="bg-red-500 px-3 py-2 text-center">
                                                             <p class="text-sm font-semibold text-white">DISC 1</p>
@@ -549,7 +567,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <!-- DISC 2 -->
+                                                    {{-- DISC 2 --}}
                                                     <div class="overflow-hidden rounded-lg border border-gray-300">
                                                         <div class="bg-yellow-500 px-3 py-2 text-center">
                                                             <p class="text-sm font-semibold text-white">DISC 2</p>
@@ -582,7 +600,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <!-- DISC 3 -->
+                                                    {{-- DISC 3 --}}
                                                     <div class="overflow-hidden rounded-lg border border-gray-300">
                                                         <div class="bg-green-500 px-3 py-2 text-center">
                                                             <p class="text-sm font-semibold text-white">DISC 3</p>
@@ -637,7 +655,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Soft Competencies Section -->
+                                {{-- Soft Competencies Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -647,7 +665,7 @@
                                     </td>
                                 </tr>
 
-                                <!-- Strengths -->
+                                {{-- Strengths --}}
                                 <tr>
                                     <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Strengths
@@ -671,7 +689,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Weaknesses -->
+                                {{-- Weaknesses --}}
                                 <tr>
                                     <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Weaknesses
@@ -695,7 +713,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Technical Competency Section -->
+                                {{-- Technical Competency Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -735,7 +753,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Innovation Section -->
+                                {{-- Innovation Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -801,7 +819,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Position History Section -->
+                                {{-- Position History Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -837,7 +855,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Education Section -->
+                                {{-- Education Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -875,13 +893,17 @@
                                     @endfor
                                 </tr>
 
-                                <!-- MCU History Section -->
+                                {{-- MCU History Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
                                         class="left-0 px-6 py-3 font-semibold text-white"
                                     >
-                                        MCU History
+                                        <p class="inline">MCU History</p>
+                                        <p class="ml-2 inline text-sm text-white italic">
+                                            data powered by
+                                            <span class="font-bold">Unit of Tuban & Gresik SHE</span>
+                                        </p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -889,30 +911,31 @@
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->mcuResults && $selectedEmployees[$i]->mcuResults->count() > 0)
-                                                <div class="flex w-fit flex-col gap-2">
+                                                <div class="flex flex-col gap-1">
                                                     @foreach ($selectedEmployees[$i]->mcuResults as $mcu)
                                                         @php
-                                                            $resultColor = $mcu->result_color ?? 'gray';
-                                                            $colorClass =
-                                                                [
-                                                                    'green' => 'bg-green-100 text-green-800 border-green-200',
-                                                                    'blue' => 'bg-blue-100 text-blue-800 border-blue-200',
-                                                                    'yellow' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
-                                                                    'orange' => 'bg-orange-100 text-orange-800 border-orange-200',
-                                                                    'red' => 'bg-red-100 text-red-800 border-red-200',
-                                                                    'gray' => 'bg-gray-100 text-gray-800 border-gray-200',
-                                                                ][$resultColor] ?? 'bg-gray-100 text-gray-800 border-gray-200';
+                                                            $maxStars = 5;
+                                                            $filledStars = min($mcu->result ?? 0, $maxStars);
                                                         @endphp
 
-                                                        <div
-                                                            class="{{ $colorClass }} inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm"
-                                                        >
-                                                            <span class="font-semibold">•</span>
-                                                            <span class="font-medium">
-                                                                {{ $mcu->result ?? 'N/A' }}
+                                                        <div class="flex items-center justify-start gap-2">
+                                                            {{-- Tahun --}}
+                                                            <span
+                                                                class="rounded-full bg-gray-100 px-2 py-1 text-sm text-gray-800"
+                                                            >
+                                                                {{ $mcu->year }}
                                                             </span>
-                                                            <span>|</span>
-                                                            <span>{{ $mcu->year }}</span>
+
+                                                            {{-- Bintang --}}
+                                                            <div class="flex gap-1">
+                                                                @for ($s = 0; $s < $filledStars; $s++)
+                                                                    <span class="text-xl text-yellow-500">★</span>
+                                                                @endfor
+
+                                                                @for ($s = $filledStars; $s < $maxStars; $s++)
+                                                                    <span class="text-xl text-gray-300">★</span>
+                                                                @endfor
+                                                            </div>
                                                         </div>
                                                     @endforeach
                                                 </div>
@@ -925,7 +948,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Burnout Section -->
+                                {{-- Burnout Section --}}
                                 <tr class="color-gradient">
                                     <td
                                         colspan="{{ $columnCount + 1 }}"
@@ -941,7 +964,7 @@
                                     </td>
                                 </tr>
 
-                                <!-- Kelalahan Emosional -->
+                                {{-- Kelalahan Emosional --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Kelalahan Emosional
@@ -959,7 +982,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Depersonalisasi -->
+                                {{-- Depersonalisasi --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Depersonalisasi
@@ -977,7 +1000,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Penurunan Prestasi -->
+                                {{-- Penurunan Prestasi --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Penurunan Prestasi
@@ -995,7 +1018,7 @@
                                     @endfor
                                 </tr>
 
-                                <!-- Penafsiran -->
+                                {{-- Penafsiran --}}
                                 <tr>
                                     <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Penafsiran
@@ -1019,6 +1042,7 @@
             @endif
         @endif
     </div>
+
     <script>
         // Konfigurasi PAPI
         const papiSegments = [
@@ -1070,7 +1094,14 @@
                 color: '#d1d5db',
                 colorSolid: '#6b7280',
             },
-            { code: 'T', angle: 108, cat: 'AKTIVITAS', desc: 'Tempo Kerja', color: '#bfdbfe', colorSolid: '#3b82f6' },
+            {
+                code: 'T',
+                angle: 108,
+                cat: 'AKTIVITAS',
+                desc: 'Tempo Kerja',
+                color: '#bfdbfe',
+                colorSolid: '#3b82f6',
+            },
             { code: 'V', angle: 126, cat: 'AKTIVITAS', desc: 'Stamina', color: '#bfdbfe', colorSolid: '#3b82f6' },
             {
                 code: 'S',
@@ -1181,9 +1212,12 @@
             disc3: {},
         };
 
+        // CRITICAL: Chart.js dan libraries check
+        let chartJSReady = false;
+        let initializationQueue = [];
+
         // Fungsi untuk menghapus semua chart
         function destroyAllCharts() {
-            // Hapus PAPI charts
             Object.values(chartInstances.papi).forEach((chart) => {
                 if (chart && typeof chart.destroy === 'function') {
                     chart.destroy();
@@ -1191,7 +1225,6 @@
             });
             chartInstances.papi = {};
 
-            // Hapus DISC charts
             Object.values(chartInstances.disc1).forEach((chart) => {
                 if (chart && typeof chart.destroy === 'function') {
                     chart.destroy();
@@ -1214,7 +1247,7 @@
             chartInstances.disc3 = {};
         }
 
-        // Fungsi untuk menggambar teks melengkung (FIXED)
+        // Fungsi untuk menggambar teks melengkung
         function drawArcText(ctx, text, cx, cy, radius, centerDeg, letterSpacing = 0.6) {
             ctx.save();
             ctx.font = 'bold 12px Arial';
@@ -1232,7 +1265,7 @@
                 const w = widths[i] / radius;
                 const mid = angle + w / 2;
                 const x = cx + radius * Math.cos(mid);
-                const y = cy + radius * Math.sin(mid); // FIXED: sebelumnya typo 'rad'
+                const y = cy + radius * Math.sin(mid);
 
                 ctx.save();
                 ctx.translate(x, y);
@@ -1246,17 +1279,13 @@
             ctx.restore();
         }
 
-        // Fungsi menggambar chart PAPI (FIXED VERSION)
+        // Fungsi menggambar chart PAPI
         function drawPAPIChart(canvasId, papiData, employeeName = 'Employee') {
-            console.log(`Drawing PAPI chart ${canvasId}`, papiData);
-
             const canvas = document.getElementById(canvasId);
             if (!canvas) {
-                console.log(`Canvas ${canvasId} not found`);
                 return null;
             }
 
-            // Hapus chart sebelumnya jika ada
             if (chartInstances.papi[canvasId]) {
                 chartInstances.papi[canvasId].destroy();
                 delete chartInstances.papi[canvasId];
@@ -1265,15 +1294,12 @@
             const ctx = canvas.getContext('2d');
             const container = canvas.parentElement;
 
-            // Set canvas size berdasarkan container
             const containerWidth = container.offsetWidth;
-            const size = Math.min(containerWidth, 400); // Max 400px
+            const size = Math.min(containerWidth, 400);
 
-            // Set canvas dimensions
             canvas.width = size;
             canvas.height = size;
 
-            // Set display size
             canvas.style.width = size + 'px';
             canvas.style.height = size + 'px';
 
@@ -1289,7 +1315,6 @@
             const subDescInner = size * 0.28;
             const radarR = size * 0.28;
 
-            // Clear canvas
             ctx.clearRect(0, 0, size, size);
 
             function getCategoryCenter(start, end) {
@@ -1412,7 +1437,6 @@
             // Draw radar chart
             const radarChart = drawRadarChart(canvas, papiData, cx, cy, radarR);
 
-            // Simpan instance chart
             if (radarChart) {
                 chartInstances.papi[canvasId] = radarChart;
             }
@@ -1420,11 +1444,10 @@
             return radarChart;
         }
 
-        // Fungsi untuk menggambar radar chart menggunakan Chart.js (FIXED)
+        // Fungsi untuk menggambar radar chart
         function drawRadarChart(canvas, papiData, cx, cy, r) {
             const parent = canvas.parentElement;
 
-            // Hapus radar chart sebelumnya jika ada
             const existingRadar = parent.querySelector('.radar-chart-container');
             if (existingRadar) {
                 existingRadar.remove();
@@ -1445,9 +1468,7 @@
 
             parent.appendChild(radarDiv);
 
-            // Ensure Chart.js is loaded
             if (typeof Chart === 'undefined') {
-                console.error('Chart.js not loaded');
                 return null;
             }
 
@@ -1504,23 +1525,19 @@
 
                 return chart;
             } catch (error) {
-                console.error('Error creating radar chart:', error);
                 return null;
             }
         }
 
-        // Fungsi untuk menggambar chart DISC (sama seperti di employee profile)
+        // Fungsi untuk menggambar chart DISC
         function drawDISCChart(canvasId, discData, chartType = 1) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return null;
 
-            // Ensure Chart.js is loaded
             if (typeof Chart === 'undefined') {
-                console.error('Chart.js not loaded');
                 return null;
             }
 
-            // Destroy existing chart if exists
             const existingChart = Chart.getChart(canvas);
             if (existingChart) {
                 existingChart.destroy();
@@ -1622,7 +1639,6 @@
                     },
                 });
 
-                // Simpan instance chart
                 const chartKey = canvasId;
                 if (chartType === 1) {
                     chartInstances.disc1[chartKey] = chart;
@@ -1634,16 +1650,18 @@
 
                 return chart;
             } catch (error) {
-                console.error('Error creating DISC chart:', error);
                 return null;
             }
         }
 
-        // Fungsi untuk menginisialisasi semua charts (FIXED)
+        // CRITICAL: Fungsi untuk menginisialisasi semua charts
         function initializeCharts() {
-            console.log('Initializing charts...');
+            if (!chartJSReady) {
+                initializationQueue.push(() => initializeCharts());
+                return;
+            }
 
-            // Initialize PAPI charts for each column
+            // Initialize PAPI charts
             for (let i = 0; i < 5; i++) {
                 const canvasId = `papiChart-${i}`;
                 const canvas = document.getElementById(canvasId);
@@ -1653,177 +1671,123 @@
                         const papiDataAttr = canvas.getAttribute('data-papi-data');
                         if (papiDataAttr && papiDataAttr !== '[]') {
                             const papiData = JSON.parse(papiDataAttr);
-                            console.log(`PAPI Data for ${canvasId}:`, papiData);
                             drawPAPIChart(canvasId, papiData, canvas.dataset.employeeName);
-                        } else {
-                            console.log(`No PAPI data attribute for ${canvasId}`);
                         }
-                    } catch (error) {
-                        console.error(`Error parsing PAPI data for ${canvasId}:`, error);
-                        const ctx = canvas.getContext('2d');
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    }
+                    } catch (error) {}
                 }
             }
 
-            // Initialize DISC charts for each column
+            // Initialize DISC charts
             for (let i = 0; i < 5; i++) {
-                // DISC 1
-                const disc1Canvas = document.getElementById(`disc1Chart-${i}`);
-                if (disc1Canvas) {
-                    try {
-                        const discDataAttr = disc1Canvas.getAttribute('data-disc-data');
-                        if (discDataAttr && discDataAttr !== '{}') {
-                            const discData = JSON.parse(discDataAttr);
-                            console.log(`DISC 1 Data for ${i}:`, discData);
+                ['disc1', 'disc2', 'disc3'].forEach((discType, index) => {
+                    const canvasId = `${discType}Chart-${i}`;
+                    const canvas = document.getElementById(canvasId);
 
-                            if (discData && typeof discData === 'object' && Object.keys(discData).length > 0) {
-                                drawDISCChart(`disc1Chart-${i}`, discData, 1);
-                            } else {
-                                const chart = Chart.getChart(disc1Canvas);
-                                if (chart) chart.destroy();
+                    if (canvas) {
+                        try {
+                            const discDataAttr = canvas.getAttribute('data-disc-data');
+                            if (discDataAttr && discDataAttr !== '{}') {
+                                const discData = JSON.parse(discDataAttr);
+                                if (discData && typeof discData === 'object' && Object.keys(discData).length > 0) {
+                                    drawDISCChart(canvasId, discData, index + 1);
+                                }
                             }
-                        }
-                    } catch (error) {
-                        console.error('Error parsing DISC 1 data:', error);
+                        } catch (error) {}
                     }
-                }
-
-                // DISC 2
-                const disc2Canvas = document.getElementById(`disc2Chart-${i}`);
-                if (disc2Canvas) {
-                    try {
-                        const discDataAttr = disc2Canvas.getAttribute('data-disc-data');
-                        if (discDataAttr && discDataAttr !== '{}') {
-                            const discData = JSON.parse(discDataAttr);
-                            if (discData && typeof discData === 'object' && Object.keys(discData).length > 0) {
-                                drawDISCChart(`disc2Chart-${i}`, discData, 2);
-                            } else {
-                                const chart = Chart.getChart(disc2Canvas);
-                                if (chart) chart.destroy();
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Error parsing DISC 2 data:', error);
-                    }
-                }
-
-                // DISC 3
-                const disc3Canvas = document.getElementById(`disc3Chart-${i}`);
-                if (disc3Canvas) {
-                    try {
-                        const discDataAttr = disc3Canvas.getAttribute('data-disc-data');
-                        if (discDataAttr && discDataAttr !== '{}') {
-                            const discData = JSON.parse(discDataAttr);
-                            if (discData && typeof discData === 'object' && Object.keys(discData).length > 0) {
-                                drawDISCChart(`disc3Chart-${i}`, discData, 3);
-                            } else {
-                                const chart = Chart.getChart(disc3Canvas);
-                                if (chart) chart.destroy();
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Error parsing DISC 3 data:', error);
-                    }
-                }
+                });
             }
         }
 
-        // Load Chart.js dan plugins jika belum dimuat
+        // CRITICAL: Load Chart.js dan plugins
         function loadChartJS() {
             return new Promise((resolve) => {
+                if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
+                    chartJSReady = true;
+                    resolve();
+                    return;
+                }
+
                 if (typeof Chart !== 'undefined') {
-                    // Load ChartDataLabels plugin
                     if (typeof ChartDataLabels === 'undefined') {
                         const script = document.createElement('script');
                         script.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2';
-                        script.onload = resolve;
+                        script.onload = () => {
+                            chartJSReady = true;
+                            resolve();
+                        };
                         document.head.appendChild(script);
                     } else {
+                        chartJSReady = true;
                         resolve();
                     }
                     return;
                 }
 
-                // Load Chart.js terlebih dahulu
                 const chartScript = document.createElement('script');
                 chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
                 chartScript.onload = () => {
-                    // Load ChartDataLabels plugin setelah Chart.js
                     const datalabelsScript = document.createElement('script');
                     datalabelsScript.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2';
-                    datalabelsScript.onload = resolve;
+                    datalabelsScript.onload = () => {
+                        chartJSReady = true;
+                        resolve();
+                    };
                     document.head.appendChild(datalabelsScript);
                 };
                 document.head.appendChild(chartScript);
             });
         }
 
-        // Event listener untuk DOM ready
-        document.addEventListener('DOMContentLoaded', async function () {
-            console.log('DOM loaded, initializing charts...');
+        // CRITICAL: Initialize on page load
+        (async function () {
+            await loadChartJS();
 
-            try {
-                // Tunggu hingga Chart.js dan plugins dimuat
-                await loadChartJS();
-                console.log('Chart.js loaded');
-
-                // Tunggu sedikit untuk memastikan DOM siap
-                setTimeout(() => {
-                    initializeCharts();
-                }, 100);
-
-                // Tambahkan event listener untuk resize dengan debounce
-                let resizeTimer;
-                window.addEventListener('resize', function () {
-                    clearTimeout(resizeTimer);
-                    resizeTimer = setTimeout(() => {
-                        console.log('Window resized, reinitializing charts');
-                        initializeCharts();
-                    }, 250);
-                });
-            } catch (error) {
-                console.error('Error initializing charts:', error);
+            // Process queue
+            while (initializationQueue.length > 0) {
+                const fn = initializationQueue.shift();
+                fn();
             }
-        });
 
-        // Event listener untuk Livewire events
+            // Initialize charts
+            setTimeout(() => {
+                initializeCharts();
+            }, 100);
+        })();
+
+        // CRITICAL: Gunakan Livewire hook untuk memastikan DOM sudah update
         document.addEventListener('livewire:init', () => {
-            console.log('Livewire initialized');
+            // Hook ke Livewire lifecycle - ini yang paling penting!
+            Livewire.hook('morph.updated', ({ el, component }) => {
+                setTimeout(() => initializeCharts(), 200);
+            });
 
+            Livewire.hook('message.processed', (message, component) => {
+                setTimeout(() => initializeCharts(), 150);
+            });
+
+            // Event dari component yang sudah ada
             Livewire.on('charts-loaded', () => {
-                console.log('Charts-loaded event received');
-                // Tunggu sedikit agar DOM diperbarui
-                setTimeout(() => {
-                    initializeCharts();
-                }, 300);
+                setTimeout(() => initializeCharts(), 300);
             });
 
-            Livewire.on('employee-selected', (data) => {
-                console.log('Employee selected event:', data);
-                setTimeout(() => {
-                    initializeCharts();
-                }, 400);
+            Livewire.on('employee-selected', (event) => {
+                setTimeout(() => initializeCharts(), 350);
             });
 
-            Livewire.on('employee-cleared', (data) => {
-                console.log('Employee cleared event:', data);
-                const index = data.index;
+            Livewire.on('employee-cleared', (event) => {
+                const index = event.index;
 
-                // Hapus PAPI chart
                 const papiCanvas = document.getElementById(`papiChart-${index}`);
                 if (papiCanvas) {
                     const ctx = papiCanvas.getContext('2d');
                     ctx.clearRect(0, 0, papiCanvas.width, papiCanvas.height);
 
-                    // Hapus radar chart container
                     const radarContainer = papiCanvas.parentElement.querySelector('.radar-chart-container');
                     if (radarContainer) {
                         radarContainer.remove();
                     }
                 }
 
-                // Hapus DISC charts
                 ['disc1', 'disc2', 'disc3'].forEach((discType) => {
                     const discCanvas = document.getElementById(`${discType}Chart-${index}`);
                     if (discCanvas) {
@@ -1831,21 +1795,29 @@
                         if (chart) chart.destroy();
                     }
                 });
+
+                // Re-initialize after clearing
+                setTimeout(() => initializeCharts(), 250);
             });
         });
 
-        // Livewire navigation event
+        // Livewire navigation
         document.addEventListener('livewire:navigated', () => {
-            console.log('Livewire navigated, reinitializing charts');
-            setTimeout(() => {
-                initializeCharts();
-            }, 500);
+            setTimeout(() => initializeCharts(), 400);
         });
 
-        // Cleanup ketika komponen di-unmount
+        // Cleanup
         document.addEventListener('livewire:before-unload', function () {
-            console.log('Cleaning up charts before unmount');
             destroyAllCharts();
+        });
+
+        // Window resize
+        let resizeTimer;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                initializeCharts();
+            }, 250);
         });
     </script>
 </div>

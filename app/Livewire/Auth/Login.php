@@ -59,7 +59,7 @@ class Login extends Component
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-        if (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin')) {
+        if (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin') ||  Auth::user()->hasRole('hc-operator')) {
 
             $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
         } elseif (Auth::user()->hasRole('head-of-unit')) {

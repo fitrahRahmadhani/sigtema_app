@@ -13,7 +13,7 @@
         </header>
 
         <main class="bg-primary-gray relative flex flex-1 items-center justify-center overflow-hidden">
-            <!-- Background Image -->
+            {{-- Background Image --}}
             <div class="absolute inset-0 h-full w-full">
                 <img
                     src="{{ asset('assets/background/bg-auth.png') }}"
@@ -22,7 +22,7 @@
                 />
             </div>
 
-            <!-- Content -->
+            {{-- Content --}}
             <div class="relative z-10 w-full px-4">
                 {{ $slot }}
             </div>
@@ -35,5 +35,6 @@
         </footer>
 
         @fluxScripts
+        <x-toaster-hub />
     </body>
 </html>

@@ -3,6 +3,8 @@
 namespace App\Livewire\Pages\TechnicalCompetencies;
 
 use App\Models\TechnicalCompetency;
+use App\Models\Employee;
+use App\Models\Company;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -14,32 +16,37 @@ use Exception;
 #[Title('Edit Technical Competency')]
 class Edit extends Component
 {
-    public TechnicalCompetency $competency;
+    public TechnicalCompetency $technicalCompetency;
+
+    public $employee_id;
     public $name;
     public $issued_by;
     public $year;
 
-    // Tambahkan property untuk superadmin
-    public $selectedCompanyId = null;
     public $selectedCompany = null;
+    public $selectedEmployee = null;
     public $isSuperadmin = false;
 
     public function mount(TechnicalCompetency $technical_competency)
     {
-        $this->competency = $technical_competency;
+        $this->technicalCompetency = $technical_competency;
 
-        // Set nilai dari competency yang akan diedit
+        // Load data ke form
+        $this->employee_id = $technical_competency->employee_id;
         $this->name = $technical_competency->name;
         $this->issued_by = $technical_competency->issued_by;
         $this->year = $technical_competency->year;
 
-        // Cek role user
         $user = Auth::user();
         $this->isSuperadmin = $user->hasRole('superadmin');
 
-        if ($this->competency->employee && $this->competency->employee->company) {
-            $this->selectedCompanyId = $this->competency->employee->company_id;
-            $this->selectedCompany = $this->competency->employee->company;
+        // Load employee dan company (read-only)
+        $this->selectedEmployee = Employee::find($this->employee_id);
+        $this->selectedCompany = $this->selectedEmployee->company;
+
+        // Validasi akses
+        if (!$this->isSuperadmin && $this->selectedEmployee->company_id !== $user->company_id) {
+            abort(403, 'Unauthorized access to this technical competency.');
         }
     }
 
@@ -64,18 +71,18 @@ class Edit extends Component
         ];
     }
 
-    public function update()
+    public function save()
     {
         try {
             $this->validate();
 
-            $this->competency->update([
+            $this->technicalCompetency->update([
                 'name' => $this->name,
                 'issued_by' => $this->issued_by,
                 'year' => $this->year,
             ]);
 
-            return redirect()->route('technical-competencies.index', ['company_id' => $this->selectedCompanyId])
+            return redirect()->route('technical-competencies.index')
                 ->success('Technical competency has been updated successfully.');
         } catch (Exception $e) {
             Toaster::error('Failed to update technical competency. Please try again.');
@@ -84,7 +91,7 @@ class Edit extends Component
 
     public function cancel()
     {
-        return redirect()->route('technical-competencies.index', ['company_id' => $this->selectedCompanyId]);
+        return redirect()->route('technical-competencies.index');
     }
 
     public function render()

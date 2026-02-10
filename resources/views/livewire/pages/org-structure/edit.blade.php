@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('organization-structure.index') }}">
@@ -11,9 +11,9 @@
         <flux:breadcrumbs.item>Edit Hierarchy</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-4 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl">
@@ -39,9 +39,9 @@
             </div>
         </div>
 
-        <!-- Form -->
+        {{-- Form --}}
         <form wire:submit="save" class="space-y-6">
-            <!-- Company Selection -->
+            {{-- Company Selection --}}
             <div>
                 <label for="company_id" class="mb-2 block text-sm font-medium text-gray-700">
                     Company
@@ -77,7 +77,7 @@
             </div>
 
             @if ($company_id)
-                <!-- Position Selection -->
+                {{-- Position Selection --}}
                 <div>
                     <label for="position_id" class="mb-2 block text-sm font-medium text-gray-700">
                         Position
@@ -114,7 +114,7 @@
                     <p class="mt-1 text-xs text-gray-500">The subordinate position in this relationship</p>
                 </div>
 
-                <!-- Superior Selection -->
+                {{-- Superior Selection --}}
                 <div>
                     <label for="superior_id" class="mb-2 block text-sm font-medium text-gray-700">
                         Reports To (Superior)
@@ -152,7 +152,7 @@
                     <p class="mt-1 text-xs text-gray-500">The manager or supervisor for this position</p>
                 </div>
 
-                <!-- Relation Type Selection -->
+                {{-- Relation Type Selection --}}
                 <div>
                     <label for="relation_type" class="mb-2 block text-sm font-medium text-gray-700">
                         Relation Type
@@ -187,7 +187,7 @@
                     <p class="mt-1 text-xs text-gray-500">Define the nature of the reporting relationship</p>
                 </div>
 
-                <!-- Hierarchy Preview -->
+                {{-- Hierarchy Preview --}}
                 @if ($position_id && $superior_id)
                     <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                         <h3 class="mb-4 text-sm font-medium text-gray-700">Hierarchy Preview</h3>
@@ -260,7 +260,7 @@
                 </div>
             @endif
 
-            <!-- Form Actions -->
+            {{-- Form Actions --}}
             <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
                 <a
                     href="{{ route('organization-structure.table') }}"

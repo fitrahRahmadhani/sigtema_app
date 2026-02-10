@@ -16,7 +16,7 @@
         </tr>
     </thead>
     <tbody>
-        <!-- BARIS CONTOH - HAPUS SEBELUM UPLOAD -->
+        {{-- BARIS CONTOH - HAPUS SEBELUM UPLOAD --}}
         <tr style="background-color: #fed7d7">
             <td>CONTOH: {{ $companyId ?? '1' }}</td>
             <td>CONTOH: EMP001</td>
@@ -27,7 +27,7 @@
             <td>CONTOH: Male</td>
             <td>CONTOH: (kosongkan)</td>
             <td>CONTOH: 12</td>
-            <td>CONTOH: Band 1</td>
+            <td>CONTOH: 1</td>
             <td>CONTOH: 2024-01-01</td>
             <td>CONTOH: (kosongkan)</td>
         </tr>
@@ -41,11 +41,11 @@
             <td>CONTOH: Female</td>
             <td>CONTOH: mypassword</td>
             <td>CONTOH: 10</td>
-            <td>CONTOH: Band 2</td>
+            <td>CONTOH: 2</td>
             <td>CONTOH: 2024-02-01</td>
             <td>CONTOH: (kosongkan)</td>
         </tr>
-        <!-- ISI DATA ANDA MULAI DARI BARIS INI -->
+        {{-- ISI DATA ANDA MULAI DARI BARIS INI --}}
 
         <tr>
             <td colspan="12" style="height: 10px"></td>
@@ -82,7 +82,7 @@
             </tr>
             <tr>
                 <td colspan="12" style="background-color: #d1fae5; color: #065f46; padding: 8px">
-                    Anda tidak perlu mengisi kolom company_id. Langsung isi data employee Anda saja.
+                    Gunakan company id tersebut untuk mengisi kolom employee_id.
                 </td>
             </tr>
         @endif

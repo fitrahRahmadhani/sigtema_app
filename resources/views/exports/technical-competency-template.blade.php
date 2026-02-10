@@ -8,7 +8,7 @@
         </tr>
     </thead>
     <tbody>
-        <!-- BARIS CONTOH - HAPUS SEBELUM UPLOAD -->
+        {{-- BARIS CONTOH - HAPUS SEBELUM UPLOAD --}}
         <tr style="background-color: #fed7d7">
             <td>CONTOH: EMP001</td>
             <td>CONTOH: AWS Certified Solutions Architect</td>
@@ -33,7 +33,7 @@
             <td>CONTOH: Badan Nasional Sertifikasi Profesi</td>
             <td>CONTOH: {{ $currentYear - 1 }}</td>
         </tr>
-        <!-- ISI DATA ANDA MULAI DARI BARIS INI -->
+        {{-- ISI DATA ANDA MULAI DARI BARIS INI --}}
 
         <tr>
             <td colspan="4" style="height: 10px"></td>
@@ -44,10 +44,12 @@
                 ⚠️ INFORMASI PENTING
             </td>
         </tr>
-        @if (!$isSuperadmin)
+
+        @if (! $isSuperadmin)
             <tr>
                 <td colspan="4" style="background-color: #fef3c7; color: #92400e; padding: 8px">
-                    Anda hanya dapat menginput data technical competency untuk karyawan di company Anda: {{ $companyName }}
+                    Anda hanya dapat menginput data technical competency untuk karyawan di company Anda:
+                    {{ $companyName }}
                 </td>
             </tr>
         @else
@@ -119,7 +121,9 @@
         </tr>
         <tr>
             <td colspan="4" style="background-color: #dbeafe; color: #1e40af; padding: 8px">
-                8. <strong>Semua kolom wajib diisi</strong> (tidak boleh kosong)
+                8.
+                <strong>Semua kolom wajib diisi</strong>
+                (tidak boleh kosong)
             </td>
         </tr>
         <tr>

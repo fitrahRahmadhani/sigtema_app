@@ -1,17 +1,17 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Position Requirements</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
-                    class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
+                    class="color-gradient flex h-12 w-12 items-center justify-center self-start rounded-xl bg-gradient-to-br shadow-sm"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -32,7 +32,7 @@
                     <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Position Requirements</h1>
                     <p class="mt-1 text-sm text-gray-500">Manage requirements for each position</p>
 
-                    <!-- Company Info with Change Button -->
+                    {{-- Company Info with Change Button --}}
                     @if ($isSuperadmin && $selectedCompany)
                         <div class="mt-1 flex items-center gap-2">
                             <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <!-- Add Requirements Button -->
+            {{-- Add Requirements Button --}}
             @if (! $showCompanySelection && $selectedCompany)
                 <a
                     href="{{ route('requirements.position.create') }}"
@@ -76,7 +76,7 @@
             @endif
         </div>
 
-        <!-- COMPANY SELECTION SECTION -->
+        {{-- COMPANY SELECTION SECTION --}}
         @if ($showCompanySelection)
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
@@ -96,7 +96,7 @@
                 <h3 class="mt-4 text-xl font-semibold text-gray-700">Select Company</h3>
                 <p class="mt-2 text-gray-500">Please select a company to manage position requirements</p>
 
-                <!-- Company List -->
+                {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($companies as $company)
                         <button
@@ -142,18 +142,18 @@
             </div>
         @endif
 
-        <!-- MAIN CONTENT SECTION -->
+        {{-- MAIN CONTENT SECTION --}}
         @if (! $showCompanySelection)
             @if ($selectedCompany)
-                <!-- Search and Filter Section -->
+                {{-- Search and Filter Section --}}
                 <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                    <!-- Results Info -->
+                    {{-- Results Info --}}
                     <div class="text-sm text-gray-600">
                         Managing position requirements for
                         <span class="font-semibold">{{ $selectedCompany->name }}</span>
                     </div>
 
-                    <!-- Search Input -->
+                    {{-- Search Input --}}
                     <div>
                         <label class="mb-2 block text-sm font-medium text-gray-700">Search Position</label>
                         <div class="relative">
@@ -182,7 +182,7 @@
                         </div>
                     </div>
 
-                    <!-- Results Count -->
+                    {{-- Results Count --}}
                     <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
                         Showing
                         <span class="font-semibold text-gray-900">{{ $positions->count() }}</span>
@@ -192,9 +192,9 @@
                     </div>
                 </div>
 
-                <!-- Positions List Container -->
+                {{-- Positions List Container --}}
                 <div class="space-y-3 overflow-x-auto">
-                    <!-- Column Headers - Hidden on mobile -->
+                    {{-- Column Headers - Hidden on mobile --}}
                     <div
                         class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
                     >
@@ -206,13 +206,13 @@
                         <div class="col-span-1 text-center text-sm font-semibold">Actions</div>
                     </div>
 
-                    <!-- List Items -->
+                    {{-- List Items --}}
                     @forelse ($positions as $position)
-                        <!-- Desktop View -->
+                        {{-- Desktop View --}}
                         <div
                             class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
                         >
-                            <!-- Position Name & Code -->
+                            {{-- Position Name & Code --}}
                             <div class="col-span-3 flex items-center gap-3">
                                 <div class="min-w-0 flex-1">
                                     <p class="truncate text-sm font-semibold text-gray-900">{{ $position->name }}</p>
@@ -224,7 +224,7 @@
                                 </div>
                             </div>
 
-                            <!-- Employee -->
+                            {{-- Employee --}}
                             <div class="col-span-2 overflow-hidden">
                                 @if ($position->employee_id)
                                     <p class="truncate text-sm font-medium text-gray-900">
@@ -245,7 +245,7 @@
                                 @endif
                             </div>
 
-                            <!-- Organizational Unit -->
+                            {{-- Organizational Unit --}}
                             <div class="col-span-2 overflow-hidden">
                                 @if ($position->department)
                                     <p class="truncate text-sm font-medium text-gray-900">
@@ -259,7 +259,7 @@
                                 @endif
                             </div>
 
-                            <!-- Job Grade & Band -->
+                            {{-- Job Grade & Band --}}
                             <div class="col-span-2">
                                 <div class="flex flex-wrap gap-2">
                                     <span
@@ -271,13 +271,13 @@
                                         <span
                                             class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-800"
                                         >
-                                            {{ $position->band }}
+                                            Band: {{ $position->band }}
                                         </span>
                                     @endif
                                 </div>
                             </div>
 
-                            <!-- Requirements -->
+                            {{-- Requirements --}}
                             <div class="col-span-2">
                                 @php
                                     $requirementCount = $requirementsCounts[$position->id] ?? 0;
@@ -328,9 +328,9 @@
                                 @endif
                             </div>
 
-                            <!-- Actions -->
+                            {{-- Actions --}}
                             <div class="col-span-1 flex items-center justify-center gap-2">
-                                <!-- View/Edit Requirements Button -->
+                                {{-- View/Edit Requirements Button --}}
 
                                 @if ($requirementCount > 0)
                                     <a
@@ -378,12 +378,12 @@
                             </div>
                         </div>
 
-                        <!-- Mobile View -->
+                        {{-- Mobile View --}}
                         <div
                             class="block rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
                         >
                             <div class="space-y-4">
-                                <!-- Position Header -->
+                                {{-- Position Header --}}
                                 <div class="flex items-start gap-3 border-b border-gray-100 pb-4">
                                     <div class="min-w-0 flex-1">
                                         <p class="text-xs font-medium text-gray-500 uppercase">Position</p>
@@ -394,7 +394,7 @@
                                             {{ $position->position_code }}
                                         </span>
                                     </div>
-                                    <!-- Requirements Badge Mobile -->
+                                    {{-- Requirements Badge Mobile --}}
                                     <div>
                                         @php
                                             $requirementCount = $requirementsCounts[$position->id] ?? 0;
@@ -416,7 +416,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Employee -->
+                                {{-- Employee --}}
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase">Employee</p>
                                     @if ($position->employee_id)
@@ -437,7 +437,7 @@
                                     @endif
                                 </div>
 
-                                <!-- Organizational Unit & Job Grade -->
+                                {{-- Organizational Unit & Job Grade --}}
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <p class="text-xs font-medium text-gray-500 uppercase">Organizational Unit</p>
@@ -465,16 +465,16 @@
                                                 <span
                                                     class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-800"
                                                 >
-                                                    {{ $position->band }}
+                                                    Band: {{ $position->band }}
                                                 </span>
                                             @endif
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Actions -->
+                                {{-- Actions --}}
                                 <div class="flex items-center justify-end gap-2 border-t border-gray-100 pt-4">
-                                    <!-- View/Edit Requirements Button -->
+                                    {{-- View/Edit Requirements Button --}}
 
                                     @if ($requirementCount > 0)
                                         <a
@@ -518,7 +518,7 @@
                     @endforelse
                 </div>
 
-                <!-- Pagination -->
+                {{-- Pagination --}}
                 @if ($positions->hasPages())
                     <div class="mt-6">
                         {{ $positions->links() }}

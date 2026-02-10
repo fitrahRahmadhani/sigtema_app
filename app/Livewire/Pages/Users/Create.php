@@ -26,11 +26,19 @@ class Create extends Component
     #[Validate('required|email|max:255|unique:users,email')]
     public $email = '';
 
-    #[Validate('required|string|min:8')]
+    #[Validate([
+        'required',
+        'string',
+        'min:12',
+        'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/'
+    ])]
     public $password = '';
 
     #[Validate('required|same:password')]
     public $password_confirmation = '';
+
+    #[Validate('nullable|numeric|min:1|max:5')]
+    public $band = '';
 
     #[Validate('nullable|exists:companies,id')]
     public $company_id = '';
@@ -42,10 +50,11 @@ class Create extends Component
     public $profile_photo;
 
     public $profile_photo_preview = null;
+    public $bandOptions = [];
 
     public function mount()
     {
-        // Set default values if needed
+        $this->bandOptions = range(1, 5);
     }
 
     public function updatedProfilePhoto()
@@ -76,6 +85,8 @@ class Create extends Component
                 'email' => $this->email,
                 'password' => Hash::make($this->password),
                 'company_id' => $this->company_id ?: null,
+                'email_verified_at' => now(),
+                'band' => $this->band ?: null,
             ]);
 
             // Upload profile photo if exists
@@ -89,9 +100,7 @@ class Create extends Component
                 $user->syncRoles($this->selectedRoles);
             }
 
-            Toaster::success('User created successfully!');
-
-            return $this->redirect(route('users.index'), navigate: true);
+            return redirect()->route('users.index')->success('User created successfully!');
         } catch (\Exception $e) {
             Toaster::error('Failed to create user: ' . $e->getMessage());
         }
