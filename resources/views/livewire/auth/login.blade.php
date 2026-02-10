@@ -34,7 +34,7 @@
                     />
                 </label>
                 @error('email')
-                    <span class="px-2 text-sm text-red-500">{{ $message }}</span>
+                    <p class="w-80 px-2 text-sm text-wrap text-red-500">{{ $message }}</p>
                 @enderror
             </div>
 
@@ -72,7 +72,7 @@
                         @click="showPassword = !showPassword"
                         class="absolute right-4 text-gray-300 transition duration-300 hover:text-gray-500"
                     >
-                        <!-- Eye Icon (Show) -->
+                        {{-- Eye Icon (Show) --}}
                         <svg
                             x-show="!showPassword"
                             xmlns="http://www.w3.org/2000/svg"
@@ -87,7 +87,7 @@
                                 clip-rule="evenodd"
                             />
                         </svg>
-                        <!-- Eye Slash Icon (Hide) -->
+                        {{-- Eye Slash Icon (Hide) --}}
                         <svg
                             x-show="showPassword"
                             xmlns="http://www.w3.org/2000/svg"
@@ -111,14 +111,12 @@
                     <span class="px-2 text-sm text-red-500">{{ $message }}</span>
                 @enderror
 
-                {{--
-                    <a
+                <a
                     href="{{ route('password.request') }}"
                     class="w-full text-right text-sm text-gray-500 underline transition duration-300 hover:font-semibold"
-                    >
+                >
                     Lupa Password?
-                    </a>
-                --}}
+                </a>
             </div>
 
             {{-- reCAPTCHA Mobile --}}

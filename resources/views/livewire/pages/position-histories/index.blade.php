@@ -1,17 +1,17 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Position Histories</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
-                    class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
+                    class="color-gradient flex h-12 w-12 items-center justify-center self-start rounded-xl bg-gradient-to-br shadow-sm"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -32,7 +32,7 @@
                     <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Position Histories</h1>
                     <p class="mt-1 text-sm text-gray-500">Manage employee position history and career progression</p>
 
-                    <!-- Company Info with Change Button -->
+                    {{-- Company Info with Change Button --}}
                     @if ($isSuperadmin && $selectedCompany)
                         <div class="mt-1 flex items-center gap-2">
                             <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <!-- Add Position History Button -->
+            {{-- Add Position History Button --}}
             @if (! $showCompanySelection && $selectedCompany)
                 <a
                     href="{{ route('position-histories.create') }}"
@@ -76,7 +76,7 @@
             @endif
         </div>
 
-        <!-- COMPANY SELECTION SECTION -->
+        {{-- COMPANY SELECTION SECTION --}}
         @if ($showCompanySelection)
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
@@ -96,7 +96,7 @@
                 <h3 class="mt-4 text-xl font-semibold text-gray-700">Pilih Perusahaan</h3>
                 <p class="mt-2 text-gray-500">Silakan pilih perusahaan untuk mengelola data Position Histories</p>
 
-                <!-- Company List -->
+                {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($companies as $company)
                         <button
@@ -146,17 +146,17 @@
             </div>
         @endif
 
-        <!-- MAIN CONTENT SECTION -->
+        {{-- MAIN CONTENT SECTION --}}
         @if (! $showCompanySelection)
             @if ($selectedCompany)
-                <!-- Search and Results Info -->
+                {{-- Search and Results Info --}}
                 <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
                     <div class="text-sm text-gray-600">
                         Mengelola data Position Histories di
                         <span class="font-semibold">{{ $selectedCompany->name }}</span>
                     </div>
 
-                    <!-- Search Input -->
+                    {{-- Search Input --}}
                     <div>
                         <label class="mb-2 block text-sm font-medium text-gray-700">Search Employee</label>
                         <div class="relative">
@@ -185,7 +185,7 @@
                         </div>
                     </div>
 
-                    <!-- Results Count -->
+                    {{-- Results Count --}}
                     <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
                         Showing
                         <span class="font-semibold text-gray-900">{{ $histories->count() }}</span>
@@ -195,9 +195,9 @@
                     </div>
                 </div>
 
-                <!-- Position Histories List Container -->
+                {{-- Position Histories List Container --}}
                 <div class="space-y-3 overflow-x-auto">
-                    <!-- Column Headers - Hidden on mobile -->
+                    {{-- Column Headers - Hidden on mobile --}}
                     <div
                         class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
                     >
@@ -208,13 +208,13 @@
                         <div class="col-span-2 text-center text-sm font-semibold">Actions</div>
                     </div>
 
-                    <!-- List Items -->
+                    {{-- List Items --}}
                     @forelse ($histories as $history)
-                        <!-- Desktop View -->
+                        {{-- Desktop View --}}
                         <div
                             class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
                         >
-                            <!-- Employee Info -->
+                            {{-- Employee Info --}}
                             <div class="col-span-3 flex gap-2 overflow-hidden">
                                 <div class="flex flex-col justify-center">
                                     @if ($history->employee)
@@ -232,24 +232,24 @@
                                 </div>
                             </div>
 
-                            <!-- Position -->
+                            {{-- Position --}}
                             <div class="col-span-3 flex flex-col justify-center">
                                 <p class="line-clamp-1 text-sm font-semibold text-gray-900">
                                     {{ $history->position_name }}
                                 </p>
                             </div>
 
-                            <!-- Work Unit -->
+                            {{-- Work Unit --}}
                             <div class="col-span-2 flex flex-col justify-center">
                                 <p class="line-clamp-1 text-sm text-gray-600">{{ $history->work_unit }}</p>
                             </div>
 
-                            <!-- Period -->
+                            {{-- Period --}}
                             <div class="col-span-2 flex flex-col justify-center">
                                 <p class="text-sm text-gray-900">{{ $history->formatted_period }}</p>
                             </div>
 
-                            <!-- Actions -->
+                            {{-- Actions --}}
                             <div class="col-span-2 flex items-center justify-center gap-2">
                                 <button
                                     wire:click="edit({{ $history->id }})"
@@ -294,12 +294,12 @@
                             </div>
                         </div>
 
-                        <!-- Mobile View -->
+                        {{-- Mobile View --}}
                         <div
                             class="block rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
                         >
                             <div class="space-y-4">
-                                <!-- Employee Header -->
+                                {{-- Employee Header --}}
                                 <div class="flex items-start gap-3 border-b border-gray-100 pb-4">
                                     <div class="min-w-0 flex-1">
                                         <p class="text-xs font-medium text-gray-500 uppercase">Employee</p>
@@ -320,20 +320,20 @@
                                     </div>
                                 </div>
 
-                                <!-- Position Details -->
+                                {{-- Position Details --}}
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase">Position Details</p>
                                     <p class="mt-1 font-semibold text-gray-900">{{ $history->position_name }}</p>
                                     <p class="mt-1 text-sm text-gray-600">{{ $history->work_unit }}</p>
                                 </div>
 
-                                <!-- Period -->
+                                {{-- Period --}}
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase">Period</p>
                                     <p class="mt-1 text-sm text-gray-900">{{ $history->formatted_period }}</p>
                                 </div>
 
-                                <!-- Actions -->
+                                {{-- Actions --}}
                                 <div class="flex items-center justify-end gap-2 border-t border-gray-100 pt-4">
                                     <button
                                         wire:click="edit({{ $history->id }})"
@@ -402,7 +402,7 @@
                     @endforelse
                 </div>
 
-                <!-- Pagination -->
+                {{-- Pagination --}}
                 @if ($histories->hasPages())
                     <div class="mt-6">
                         {{ $histories->links() }}

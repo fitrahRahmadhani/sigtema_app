@@ -155,8 +155,7 @@ class Index extends Component
             ->pluck('year')
             ->toArray();
 
-        // Result options K1-K5
-        $resultOptions = ['K1', 'K2', 'K3', 'K4', 'K5'];
+        $resultOptions = ['1', '2', '3', '4', '5'];
 
         return view('livewire.pages.mcus.index', [
             'showCompanySelection' => false,

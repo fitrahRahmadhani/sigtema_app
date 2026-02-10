@@ -1,14 +1,14 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('educations.index') }}">Educations</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Edit Education</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8">
             <div class="flex items-center gap-4">
                 <div
@@ -36,27 +36,27 @@
             </div>
         </div>
 
-        <!-- Form -->
+        {{-- Form --}}
         <form wire:submit="update" class="space-y-6">
-            <!-- Employee Selection -->
+            {{-- Employee Selection --}}
             <div class="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h2 class="text-lg font-semibold text-gray-900">Employee Information</h2>
-                <div class="grid gap-4 md:grid-cols-2">
-                    <!-- Company Selection -->
+                <div class="grid gap-4 lg:grid-cols-2">
+                    {{-- Company Selection --}}
                     <div>
                         <label class="mb-2 block text-sm font-medium text-gray-700">Company</label>
                         <div
-                            class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700"
+                            class="w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-sm text-gray-700"
                         >
                             {{ $employee->company->name }} ({{ $employee->company->cocd }})
                         </div>
                     </div>
 
-                    <!-- Employee Selection -->
+                    {{-- Employee Selection --}}
                     <div>
-                        <label class="mb-2 block text-sm font-medium text-gray-700">Company</label>
+                        <label class="mb-2 block text-sm font-medium text-gray-700">Employee</label>
                         <div
-                            class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700"
+                            class="w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-sm text-gray-700"
                         >
                             {{ $employee->name }} ({{ $employee->employee_number }})
                         </div>
@@ -64,11 +64,11 @@
                 </div>
             </div>
 
-            <!-- Education Details -->
+            {{-- Education Details --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Education Details</h3>
                 <div class="grid gap-6 md:grid-cols-3">
-                    <!-- Institution Name -->
+                    {{-- Institution Name --}}
                     <div>
                         <label for="institution_name" class="mb-2 block text-sm font-medium text-gray-700">
                             Institution Name
@@ -86,7 +86,7 @@
                         @enderror
                     </div>
 
-                    <!-- Major -->
+                    {{-- Major --}}
                     <div>
                         <label for="major" class="mb-2 block text-sm font-medium text-gray-700">
                             Major / Field of Study
@@ -104,7 +104,7 @@
                         @enderror
                     </div>
 
-                    <!-- Degree -->
+                    {{-- Degree --}}
                     <div>
                         <label for="degree" class="mb-2 block text-sm font-medium text-gray-700">
                             Degree Level
@@ -143,7 +143,7 @@
                         @enderror
                     </div>
 
-                    <!-- Start Date -->
+                    {{-- Start Date --}}
                     <div>
                         <label for="start_date" class="mb-2 block text-sm font-medium text-gray-700">
                             Start Date
@@ -160,7 +160,7 @@
                         @enderror
                     </div>
 
-                    <!-- End Date -->
+                    {{-- End Date --}}
                     <div>
                         <label for="end_date" class="mb-2 block text-sm font-medium text-gray-700">End Date</label>
                         <input
@@ -176,7 +176,7 @@
                 </div>
             </div>
 
-            <!-- Form Actions -->
+            {{-- Form Actions --}}
             <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-6">
                 <a
                     href="{{ route('educations.index') }}"
@@ -224,7 +224,7 @@
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                            d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
                         />
                     </svg>
                     <span wire:loading.remove wire:target="update">Update Education</span>

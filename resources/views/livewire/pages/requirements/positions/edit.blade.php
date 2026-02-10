@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('requirements.position') }}">
@@ -8,13 +8,13 @@
         <flux:breadcrumbs.item>Edit Requirements</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
-                    class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
+                    class="color-gradient flex h-12 w-12 items-center justify-center self-start rounded-xl bg-gradient-to-br shadow-sm"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -27,7 +27,7 @@
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                            d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"
                         />
                     </svg>
                 </div>
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <!-- Position Information -->
+        {{-- Position Information --}}
         <div class="mb-8 rounded-lg border border-green-200 bg-green-50 p-6">
             <div class="flex items-start">
                 <svg class="mt-0.5 mr-3 h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
@@ -85,7 +85,7 @@
             </div>
         </div>
 
-        <!-- Existing Requirements -->
+        {{-- Existing Requirements --}}
         <div class="mb-8 rounded-lg border border-gray-200 bg-gray-50 p-6">
             <div class="mb-6 flex items-center justify-between">
                 <div>
@@ -120,7 +120,7 @@
                     <p class="mt-1 text-sm text-gray-400">Add new requirements using the form below</p>
                 </div>
             @else
-                <!-- Requirements Table -->
+                {{-- Requirements Table --}}
                 <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -158,7 +158,7 @@
                                         <input
                                             type="text"
                                             wire:model.lazy="requirements.{{ $index }}.name"
-                                            wire:change.debounce.500ms="updateRequirement({{ $index }})"
+                                            wire:change.debounce.5000ms="updateRequirement({{ $index }})"
                                             placeholder="Requirement name"
                                             class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                                         />
@@ -166,7 +166,7 @@
                                     <td class="px-4 py-3">
                                         <textarea
                                             wire:model.lazy="requirements.{{ $index }}.value"
-                                            wire:change.debounce.500ms="updateRequirement({{ $index }})"
+                                            wire:change.debounce.5000ms="updateRequirement({{ $index }})"
                                             rows="2"
                                             placeholder="Requirement value"
                                             class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
@@ -251,7 +251,7 @@
                     </table>
                 </div>
 
-                <!-- Auto-save Notice -->
+                {{-- Auto-save Notice --}}
                 <div class="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-3">
                     <div class="flex items-center">
                         <svg class="mr-2 h-4 w-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
@@ -263,7 +263,7 @@
                         </svg>
                         <p class="text-sm text-blue-700">
                             <strong>Auto-save enabled:</strong>
-                            Changes are automatically saved 0.5 seconds after you stop typing. You can also click the
+                            Changes are automatically saved 5 seconds after you stop typing. You can also click the
                             "Save" button next to each requirement.
                         </p>
                     </div>
@@ -271,7 +271,7 @@
             @endif
         </div>
 
-        <!-- Add New Requirements -->
+        {{-- Add New Requirements --}}
         <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
             <div class="mb-4 flex items-center justify-between">
                 <div>
@@ -299,7 +299,7 @@
                 </button>
             </div>
 
-            <!-- Dynamic Form for New Requirements -->
+            {{-- Dynamic Form for New Requirements --}}
             @if (count($newRequirements) === 0)
                 <div class="rounded-lg border border-dashed border-gray-300 bg-white p-8 text-center">
                     <svg
@@ -315,7 +315,7 @@
                     <p class="mt-4 font-medium text-gray-500">Click "Add Row" to start adding new requirements</p>
                 </div>
             @else
-                <!-- New Requirements Table -->
+                {{-- New Requirements Table --}}
                 <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -398,7 +398,7 @@
                     </table>
                 </div>
 
-                <!-- Add Button -->
+                {{-- Add Button --}}
                 <div class="mt-6">
                     <button
                         type="button"
@@ -449,7 +449,7 @@
                 </div>
             @endif
         </div>
-        <!-- Form Actions -->
+        {{-- Form Actions --}}
         <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
             <button
                 type="button"
@@ -487,7 +487,7 @@
                     <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                        d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
                     />
                 </svg>
                 <svg

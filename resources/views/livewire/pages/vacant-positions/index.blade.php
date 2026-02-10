@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         @hasanyrole('superadmin|admin')
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
@@ -9,9 +9,9 @@
         <flux:breadcrumbs.item>Vacant Positions</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex items-start justify-between gap-4">
             <div class="flex items-center gap-4">
                 <div
@@ -38,7 +38,7 @@
                         <img src="{{ asset('assets/icon/logo-ai.svg') }}" class="mb-2 ml-2 inline h-8" alt="Logo AI" />
                     </h1>
 
-                    <!-- Company Info with Change Button -->
+                    {{-- Company Info with Change Button --}}
                     @if ($isSuperadmin && $selectedCompany)
                         <div class="mt-1 flex items-center gap-2">
                             <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
@@ -61,10 +61,10 @@
                 </div>
             </div>
 
-            <!-- Stats Summary Cards -->
+            {{-- Stats Summary Cards --}}
             @if ($selectedCompany && ! $showCompanySelection)
                 <div class="flex flex-col items-end gap-3">
-                    <!-- Tabs -->
+                    {{-- Tabs --}}
                     <div class="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1">
                         <button
                             wire:click="setTab('vacant')"
@@ -103,7 +103,7 @@
             @endif
         </div>
 
-        <!-- COMPANY SELECTION SECTION -->
+        {{-- COMPANY SELECTION SECTION --}}
         @if ($showCompanySelection)
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
@@ -123,7 +123,7 @@
                 <h3 class="mt-4 text-xl font-semibold text-gray-700">Pilih Perusahaan</h3>
                 <p class="mt-2 text-gray-500">Silakan pilih perusahaan untuk melihat posisi kosong</p>
 
-                <!-- Company List -->
+                {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($companies as $company)
                         <button
@@ -169,12 +169,12 @@
             </div>
         @endif
 
-        <!-- MAIN CONTENT SECTION -->
+        {{-- MAIN CONTENT SECTION --}}
         @if (! $showCompanySelection)
             @if ($selectedCompany)
-                <!-- Search and Filter Section -->
+                {{-- Search and Filter Section --}}
                 <div class="mb-8 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                    <!-- Results Info -->
+                    {{-- Results Info --}}
                     <div class="text-sm text-gray-600">
                         @if ($activeTab === 'vacant')
                             Menampilkan posisi kosong di
@@ -184,9 +184,9 @@
                         <span class="font-semibold">{{ $selectedCompany->name }}</span>
                     </div>
 
-                    <!-- Desktop Layout: Search & Filter -->
+                    {{-- Desktop Layout: Search & Filter --}}
                     <div class="hidden gap-4 md:grid md:grid-cols-4">
-                        <!-- Search Input-->
+                        {{-- Search Input --}}
                         <div class="md:col-span-2">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Cari Posisi atau Kode</label>
                             <input
@@ -197,7 +197,7 @@
                             />
                         </div>
 
-                        <!-- Filter Departemen -->
+                        {{-- Filter Departemen --}}
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Departemen</label>
                             <div class="relative">
@@ -223,7 +223,7 @@
                             </div>
                         </div>
 
-                        <!-- Filter Unit -->
+                        {{-- Filter Unit --}}
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Unit Kerja</label>
                             <div class="relative">
@@ -250,9 +250,9 @@
                         </div>
                     </div>
 
-                    <!-- Mobile Layout: Stacked -->
+                    {{-- Mobile Layout: Stacked --}}
                     <div class="space-y-4 md:hidden">
-                        <!-- Search Input -->
+                        {{-- Search Input --}}
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-700">Cari Posisi atau Kode</label>
                             <input
@@ -263,9 +263,9 @@
                             />
                         </div>
 
-                        <!-- Filter Row -->
+                        {{-- Filter Row --}}
                         <div class="grid grid-cols-2 gap-4">
-                            <!-- Departemen -->
+                            {{-- Departemen --}}
                             <div class="relative">
                                 <label class="mb-2 block text-sm font-medium text-gray-700">Departemen</label>
                                 <div class="relative">
@@ -291,7 +291,7 @@
                                 </div>
                             </div>
 
-                            <!-- Unit Kerja -->
+                            {{-- Unit Kerja --}}
                             <div class="relative">
                                 <label class="mb-2 block text-sm font-medium text-gray-700">Unit Kerja</label>
                                 <div class="relative">
@@ -319,7 +319,7 @@
                         </div>
                     </div>
 
-                    <!-- Results Count -->
+                    {{-- Results Count --}}
                     <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
                         Menampilkan
                         <span class="font-semibold">{{ $positions->count() }}</span>
@@ -329,9 +329,9 @@
                     </div>
                 </div>
 
-                <!-- List Container -->
+                {{-- List Container --}}
                 <div class="space-y-3 overflow-x-auto">
-                    <!-- Column Headers - Hidden on mobile -->
+                    {{-- Column Headers - Hidden on mobile --}}
                     <div
                         class="color-gradient hidden place-items-center justify-items-start gap-4 rounded-lg px-4 py-3 text-white md:grid md:grid-cols-12"
                     >
@@ -342,9 +342,9 @@
                         <div class="col-span-2 text-sm font-semibold">Status</div>
                     </div>
 
-                    <!-- List Items -->
+                    {{-- List Items --}}
                     @forelse ($positions as $position)
-                        <!-- Desktop View -->
+                        {{-- Desktop View --}}
                         <a
                             href="{{ route('vacant-positions.show', $position->slug) }}"
                             class="hidden rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid md:grid-cols-12 md:gap-4"
@@ -398,7 +398,7 @@
                             </div>
                         </a>
 
-                        <!-- Mobile View -->
+                        {{-- Mobile View --}}
                         <a
                             href="{{ route('vacant-positions.show', $position->slug) }}"
                             class="block rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
@@ -493,7 +493,7 @@
                     @endforelse
                 </div>
 
-                <!-- Pagination -->
+                {{-- Pagination --}}
                 @if ($positions->hasPages())
                     <div class="mt-6">
                         {{ $positions->links() }}

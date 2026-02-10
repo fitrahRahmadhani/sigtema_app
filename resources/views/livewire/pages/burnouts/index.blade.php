@@ -6,7 +6,7 @@
     </flux:breadcrumbs>
 
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -33,9 +33,9 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
+            {{-- Action Buttons --}}
             <div class="flex items-center gap-2">
-                <!-- Sync Button -->
+                {{-- Sync Button --}}
                 <button
                     wire:click="syncFromApi"
                     wire:loading.attr="disabled"
@@ -93,7 +93,7 @@
             </div>
         </div>
 
-        <!-- Stats -->
+        {{-- Stats --}}
         <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
             <div class="rounded-lg border border-gray-200 bg-white p-4">
                 <div class="flex items-center">
@@ -197,7 +197,7 @@
             </div>
         </div>
 
-        <!-- Sync Status Panel -->
+        {{-- Sync Status Panel --}}
         @if ($syncStatus !== 'idle')
             <div class="animate-fade-in mb-6">
                 <div
@@ -290,7 +290,7 @@
                         @endif
                     </div>
 
-                    <!-- Progress Bar -->
+                    {{-- Progress Bar --}}
                     @if (in_array($syncStatus, ['queued', 'processing']))
                         <div class="mt-3">
                             <div class="mb-1 flex justify-between text-sm">
@@ -321,7 +321,7 @@
                         </div>
                     @endif
 
-                    <!-- Result Details -->
+                    {{-- Result Details --}}
                     @if ($lastSyncResult && ($syncStatus === 'completed' || $syncStatus === 'failed'))
                         <div class="mt-3 border-t border-gray-200 pt-3">
                             @if ($syncStatus === 'completed')
@@ -427,11 +427,11 @@
             </div>
         @endif
 
-        <!-- Filters -->
+        {{-- Filters --}}
         <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm">
-            <!-- Search Row -->
+            {{-- Search Row --}}
             <div class="grid gap-4 md:grid-cols-8">
-                <!-- Search Input - Hanya untuk employee name/number -->
+                {{-- Search Input - Hanya untuk employee name/number --}}
                 <div class="md:col-span-4">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Search Employee</label>
                     <div class="relative">
@@ -460,7 +460,7 @@
                     </div>
                 </div>
 
-                <!-- Status Filter -->
+                {{-- Status Filter --}}
                 <div class="md:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Status</label>
                     <div class="relative">
@@ -487,7 +487,7 @@
                     </div>
                 </div>
 
-                <!-- Sort By -->
+                {{-- Sort By --}}
                 <div class="md:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Sort By</label>
                     <div class="relative">
@@ -522,9 +522,9 @@
                 </div>
             </div>
 
-            <!-- Filter Row -->
+            {{-- Filter Row --}}
             <div class="w-full">
-                <!-- Results Info -->
+                {{-- Results Info --}}
                 <div class="md:col-span-2">
                     <div class="flex items-center justify-end">
                         <div class="text-sm text-gray-600">
@@ -538,9 +538,9 @@
             </div>
         </div>
 
-        <!-- Burnouts Table -->
+        {{-- Burnouts Table --}}
         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-            <!-- Table Header - Desktop -->
+            {{-- Table Header - Desktop --}}
             <div class="color-gradient hidden grid-cols-12 gap-4 bg-gradient-to-r px-6 py-3 text-white md:grid">
                 <div class="col-span-2 text-sm font-semibold">Employee</div>
                 <div class="col-span-2 text-sm font-semibold">Scores</div>
@@ -550,15 +550,15 @@
                 <div class="col-span-1 text-center text-sm font-semibold">Actions</div>
             </div>
 
-            <!-- Table Body -->
+            {{-- Table Body --}}
             <div class="divide-y divide-gray-200">
                 @forelse ($burnouts as $burnout)
-                    <!-- Desktop View -->
+                    {{-- Desktop View --}}
                     <div
                         class="{{ $burnout->is_active ? 'hover:bg-gray-50' : 'bg-gray-50 opacity-90 hover:bg-gray-100' }} hidden grid-cols-12 items-center gap-4 px-6 py-4 transition-colors duration-150 md:grid"
                         wire:key="burnout-{{ $burnout->id }}"
                     >
-                        <!-- Employee -->
+                        {{-- Employee --}}
                         <div class="col-span-2">
                             @if ($burnout->employee)
                                 <p class="font-medium text-gray-900">{{ $burnout->employee->name }}</p>
@@ -569,7 +569,7 @@
                             @endif
                         </div>
 
-                        <!-- Scores -->
+                        {{-- Scores --}}
                         <div class="col-span-2">
                             <div class="grid grid-cols-3 gap-2 text-center">
                                 <div>
@@ -587,7 +587,7 @@
                             </div>
                         </div>
 
-                        <!-- Result - Kolom Terpisah -->
+                        {{-- Result - Kolom Terpisah --}}
                         <div class="col-span-4">
                             @if ($burnout->result)
                                 <p class="line-clamp-2 text-xs font-medium">
@@ -598,7 +598,7 @@
                             @endif
                         </div>
 
-                        <!-- Status - Kolom Terpisah -->
+                        {{-- Status - Kolom Terpisah --}}
                         <div class="col-span-1">
                             @if ($burnout->is_active)
                                 <span
@@ -615,7 +615,7 @@
                             @endif
                         </div>
 
-                        <!-- Source & Updated -->
+                        {{-- Source & Updated --}}
                         <div class="col-span-2 space-y-1">
                             <div>
                                 <span
@@ -629,7 +629,7 @@
                             </div>
                         </div>
 
-                        <!-- Actions - Hanya Delete -->
+                        {{-- Actions - Hanya Delete --}}
                         <div class="col-span-1 flex items-center justify-center gap-2">
                             <button
                                 wire:click="confirmDelete({{ $burnout->id }}, '{{ addslashes($burnout->employee ? $burnout->employee->name : $burnout->employee_number) }}')"
@@ -654,13 +654,13 @@
                         </div>
                     </div>
 
-                    <!-- Mobile View -->
+                    {{-- Mobile View --}}
                     <div
                         class="{{ $burnout->is_active ? '' : 'bg-gray-50 opacity-90' }} block p-4 md:hidden"
                         wire:key="burnout-mobile-{{ $burnout->id }}"
                     >
                         <div class="space-y-3">
-                            <!-- Header -->
+                            {{-- Header --}}
                             <div class="border-b border-gray-100 pb-3">
                                 <div class="flex items-start justify-between">
                                     @if ($burnout->employee)
@@ -687,7 +687,7 @@
                                 <p class="mt-1 text-sm text-gray-500">{{ $burnout->employee_number }}</p>
                             </div>
 
-                            <!-- Scores Grid -->
+                            {{-- Scores Grid --}}
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="text-center">
                                     <p class="text-xs font-medium text-gray-500">EE</p>
@@ -703,7 +703,7 @@
                                 </div>
                             </div>
 
-                            <!-- Result -->
+                            {{-- Result --}}
                             <div>
                                 <p class="text-xs font-medium text-gray-500">Result</p>
                                 @if ($burnout->result)
@@ -715,7 +715,7 @@
                                 @endif
                             </div>
 
-                            <!-- Updated -->
+                            {{-- Updated --}}
                             <div class="border-t border-gray-100 pt-3">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs text-gray-500">Source: {{ $burnout->source }}</span>
@@ -725,7 +725,7 @@
                                 </div>
                             </div>
 
-                            <!-- Actions - Hanya Delete -->
+                            {{-- Actions - Hanya Delete --}}
                             <div class="border-t border-gray-100 pt-3">
                                 <div class="flex justify-end">
                                     <button
@@ -804,10 +804,10 @@
             </div>
         </div>
 
-        <!-- Delete Confirmation Modal -->
+        {{-- Delete Confirmation Modal --}}
         <x-ui.modals.delete-confirmation />
 
-        <!-- Pagination -->
+        {{-- Pagination --}}
         @if ($burnouts->hasPages())
             <div class="mt-6">
                 {{ $burnouts->onEachSide(1)->links(data: ['scrollTo' => false]) }}

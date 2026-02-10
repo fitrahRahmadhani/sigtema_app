@@ -1,5 +1,5 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         @hasanyrole('superadmin|admin')
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
@@ -12,7 +12,24 @@
 
     {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-4 md:p-6 lg:p-10">
-        <!-- Header -->
+        {{-- Info Refresh Chart --}}
+        <div class="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+            <div class="flex items-center gap-2 text-sm text-yellow-600">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+                    <path
+                        fill-rule="evenodd"
+                        d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+                        clip-rule="evenodd"
+                    />
+                </svg>
+
+                <p>
+                    <span class="font-semibold">Jika chart (bagan) tidak muncul,</span>
+                    mohon untuk refresh halaman
+                </p>
+            </div>
+        </div>
+        {{-- Header --}}
         <div class="mb-8 flex flex-col items-start gap-6 lg:flex-row lg:gap-8">
             <div
                 class="flex h-32 w-28 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gray-300 bg-gray-100 sm:h-44 sm:w-40"
@@ -99,7 +116,7 @@
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Contract Type</p>
-                        <p class="">{{ $employee->band ?? '-' }}</p>
+                        <p class="">{{ $employee->band ? 'Band ' . $employee->band : '-' }}</p>
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Age</p>
@@ -126,7 +143,7 @@
 
         {{-- Content --}}
         <div class="w-full space-y-6 md:space-y-8">
-            <!-- Two Column Section: PAPI Kostick & DISC -->
+            {{-- Two Column Section: PAPI Kostick & DISC --}}
             <div class="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
                 {{-- PAPI Kostick --}}
                 <div class="flex w-full flex-col">
@@ -193,7 +210,7 @@
                     <div class="flex grow flex-col rounded-b-lg border border-t-0 border-gray-300 bg-white p-2 md:p-4">
                         @if ($discData)
                             <div class="grid h-full grid-cols-1 gap-4 sm:grid-cols-3" wire:ignore>
-                                <!-- DISC 1 -->
+                                {{-- DISC 1 --}}
                                 <div class="flex h-full flex-col">
                                     <div class="rounded-t-md bg-red-500 px-3 py-2 text-center">
                                         <p class="text-sm font-semibold text-white">DISC 1</p>
@@ -213,7 +230,7 @@
                                     </div>
                                 </div>
 
-                                <!-- DISC 2 -->
+                                {{-- DISC 2 --}}
                                 <div class="flex h-full flex-col">
                                     <div class="rounded-t-md bg-yellow-500 px-3 py-2 text-center">
                                         <p class="text-sm font-semibold text-white">DISC 2</p>
@@ -233,7 +250,7 @@
                                     </div>
                                 </div>
 
-                                <!-- DISC 3 -->
+                                {{-- DISC 3 --}}
                                 <div class="flex h-full flex-col">
                                     <div class="rounded-t-md bg-green-500 px-3 py-2 text-center">
                                         <p class="text-sm font-semibold text-white">DISC 3</p>
@@ -274,7 +291,7 @@
                     </div>
                 </div>
 
-                <!-- Soft Competencies -->
+                {{-- Soft Competencies --}}
                 <div class="w-full lg:col-span-1">
                     <div class="color-gradient w-full rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">Soft Competencies</p>
@@ -325,7 +342,7 @@
                     </div>
                 </div>
 
-                <!-- Technical Competencies -->
+                {{-- Technical Competencies --}}
                 <div class="w-full lg:col-span-1">
                     <div class="color-gradient flex w-full items-baseline rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">Technical Competencies</p>
@@ -621,12 +638,16 @@
                 </div>
             </div>
 
-            <!-- Two Column Section: MCU Result, Burnout -->
+            {{-- Two Column Section: MCU Result, Burnout --}}
             <div class="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
-                <!-- MCU Result -->
+                {{-- MCU Result --}}
                 <div class="w-full lg:col-span-1">
-                    <div class="color-gradient w-full rounded-t-lg px-4 py-3">
+                    <div class="color-gradient flex w-full items-baseline rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">MCU Results</p>
+                        <p class="ml-2 text-sm text-white italic">
+                            data powered by
+                            <span class="font-bold">Unit of Tuban & Gresik SHE</span>
+                        </p>
                     </div>
                     <div class="overflow-x-auto rounded-b-lg border border-t-0 border-gray-300">
                         <table class="w-full border-collapse">
@@ -648,7 +669,15 @@
                                         >
                                             {{ $mcu->year }}
                                         </td>
-                                        <td class="px-3 py-2 text-gray-600 sm:px-4">{{ $mcu->result }}</td>
+                                        <td class="px-3 py-2 text-center">
+                                            @for ($i = 0; $i < $mcu->result; $i++)
+                                                <span class="inline-block text-2xl text-yellow-500">★</span>
+                                            @endfor
+
+                                            @for ($i = $mcu->result; $i < 5; $i++)
+                                                <span class="inline-block text-2xl text-gray-300">★</span>
+                                            @endfor
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -676,9 +705,12 @@
                             </tbody>
                         </table>
                     </div>
+                    <p class="p-2 text-gray-400 italic">
+                        *Jika ada pertanyaan terkait MCU, silahkan hubungi Dokter Perusahaan
+                    </p>
                 </div>
 
-                <!-- Burnout -->
+                {{-- Burnout --}}
                 <div class="w-full lg:col-span-1">
                     <div class="color-gradient flex w-full items-baseline rounded-t-lg px-4 py-3">
                         <p class="text-base font-semibold text-white sm:text-lg">Burnout Test Result</p>

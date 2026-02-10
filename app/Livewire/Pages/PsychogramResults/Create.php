@@ -25,52 +25,195 @@ class Create extends Component
 
     public $aspects = [];
     public $availableAspects = [];
-
-    public $selectedCompanyId = null;
     public $selectedCompany = null;
-    public $companies;
-    public $employees = [];
     public $isSuperadmin = false;
-    public $showCompanySelection = false;
+
+    // Employee search properties
+    public $employeeSearch = '';
+    public $showEmployeeDropdown = false;
+    public $selectedEmployee = null;
+    public $highlightedIndex = 0;
+
+    // Minimum karakter untuk pencarian
+    private $minSearchLength = 5;
 
     public function mount()
     {
         $user = Auth::user();
         $this->isSuperadmin = $user->hasRole('superadmin');
 
+        // Set company_id based on user role
         if ($this->isSuperadmin) {
-            $this->companies = Company::where('is_active', true)->get();
-            $this->selectedCompanyId = session('psychogram_results_company_id');
+            $companyId = session('psychogram_results_company_id');
 
-            if ($this->selectedCompanyId) {
-                $this->selectedCompany = Company::find($this->selectedCompanyId);
-                $this->company_id = $this->selectedCompanyId;
-                $this->loadEmployees();
-            } else {
-                $this->showCompanySelection = true;
+            if (!$companyId) {
+                Toaster::error('Please select a company first.');
+                return redirect()->route('psychogram-results.index');
             }
         } else {
-            // Admin biasa hanya bisa akses perusahaan mereka sendiri
-            $this->selectedCompanyId = $user->company_id;
-            $this->selectedCompany = Company::find($this->selectedCompanyId);
-            $this->company_id = $this->selectedCompanyId;
-            $this->companies = Company::where('id', $user->company_id)->get();
-            $this->loadEmployees();
+            // Admin uses their assigned company
+            $companyId = $user->company_id;
         }
 
+        // Load selected company
+        $this->selectedCompany = Company::find($companyId);
+
+        if (!$this->selectedCompany) {
+            Toaster::error('Company not found.');
+            return redirect()->route('psychogram-results.index');
+        }
+
+        $this->company_id = $companyId;
+
+        // Initialize aspects with default row
         $this->aspects = [
-            ['aspect_id' => '', 'score' => 3] // Default satu row dengan score 3
+            ['aspect_id' => '', 'score' => 3]
         ];
     }
 
-    private function loadEmployees()
+    public function updatedEmployeeSearch($value)
     {
-        if ($this->selectedCompanyId) {
-            $this->employees = Employee::where('company_id', $this->selectedCompanyId)
-                ->orderBy('name')
+        // Reset highlight
+        $this->highlightedIndex = 0;
+
+        // Tampilkan dropdown hanya jika ada input minimal 5 karakter
+        if (strlen(trim($value)) >= $this->minSearchLength) {
+            $this->showEmployeeDropdown = true;
+        } else {
+            $this->showEmployeeDropdown = false;
+        }
+    }
+
+    public function getFilteredEmployeesProperty()
+    {
+        if (!$this->company_id) {
+            return collect();
+        }
+
+        $searchTerm = trim($this->employeeSearch);
+
+        // Hanya lakukan pencarian jika input >= 5 karakter
+        if (strlen($searchTerm) < $this->minSearchLength) {
+            return collect();
+        }
+
+        // Pencarian dengan minimal 5 karakter
+        $searchTermLower = strtolower($searchTerm);
+
+        return Employee::where('company_id', $this->company_id)
+            ->where(function ($query) use ($searchTermLower) {
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . $searchTermLower . '%'])
+                    ->orWhereRaw('LOWER(employee_number) LIKE ?', ['%' . $searchTermLower . '%']);
+            })
+            ->orderBy('name')
+            ->limit(20)
+            ->get();
+    }
+
+    public function selectEmployee($employeeId)
+    {
+        $employee = Employee::find($employeeId);
+
+        if ($employee) {
+            $this->selectedEmployee = $employee;
+            $this->employee_id = $employee->id;
+            $this->employeeSearch = $employee->name . ' (' . $employee->employee_number . ')';
+            $this->showEmployeeDropdown = false;
+            $this->highlightedIndex = 0;
+            $this->loadAvailableAspects();
+        }
+    }
+
+    public function clearEmployeeSelection()
+    {
+        $this->resetEmployeeSelection();
+    }
+
+    private function resetEmployeeSelection()
+    {
+        $this->selectedEmployee = null;
+        $this->employee_id = null;
+        $this->employeeSearch = '';
+        $this->showEmployeeDropdown = false;
+        $this->highlightedIndex = 0;
+        $this->aspects = [['aspect_id' => '', 'score' => 3]];
+        $this->availableAspects = [];
+    }
+
+    public function incrementHighlight()
+    {
+        $count = $this->filteredEmployees->count();
+        if ($count > 0) {
+            $this->highlightedIndex = min($this->highlightedIndex + 1, $count - 1);
+        }
+    }
+
+    public function decrementHighlight()
+    {
+        $this->highlightedIndex = max($this->highlightedIndex - 1, 0);
+    }
+
+    public function selectHighlighted()
+    {
+        $employees = $this->filteredEmployees;
+
+        if ($employees->count() > 0 && isset($employees[$this->highlightedIndex])) {
+            $this->selectEmployee($employees[$this->highlightedIndex]->id);
+        }
+    }
+
+    public function closeDropdown()
+    {
+        $this->showEmployeeDropdown = false;
+    }
+
+    public function openDropdown()
+    {
+        if ($this->company_id && !$this->selectedEmployee && strlen(trim($this->employeeSearch)) >= $this->minSearchLength) {
+            $this->showEmployeeDropdown = true;
+        }
+    }
+
+    private function loadAvailableAspects()
+    {
+        if (!$this->employee_id) {
+            $this->availableAspects = [];
+            return;
+        }
+
+        $employee = Employee::find($this->employee_id);
+
+        if ($employee && $employee->company_id) {
+            $this->availableAspects = PsychogramAspect::where('is_active', true)
+                ->where(function ($query) use ($employee) {
+                    $query->whereNull('company_id')
+                        ->orWhere('company_id', $employee->company_id);
+                })
+                ->orderBy('aspect_name')
                 ->get();
         } else {
-            $this->employees = collect();
+            $this->availableAspects = PsychogramAspect::where('is_active', true)
+                ->whereNull('company_id')
+                ->orderBy('aspect_name')
+                ->get();
+        }
+    }
+
+    public function addAspect()
+    {
+        if (!$this->employee_id) {
+            Toaster::warning('Please select an employee first.');
+            return;
+        }
+
+        $this->aspects[] = ['aspect_id' => '', 'score' => 3];
+    }
+
+    public function removeAspect($index)
+    {
+        if (count($this->aspects) > 1) {
+            unset($this->aspects[$index]);
+            $this->aspects = array_values($this->aspects);
         }
     }
 
@@ -80,47 +223,51 @@ class Create extends Component
             'company_id' => 'required|exists:companies,id',
             'employee_id' => 'required|exists:employees,id',
             'aspects' => 'required|array|min:1',
-            'aspects.*.aspect_id' => 'required|exists:psychogram_aspects,id',
+            'aspects.*.aspect_id' => 'required|exists:psychogram_aspects,id|distinct',
             'aspects.*.score' => 'required|integer|min:1|max:5',
+        ], [
+            'aspects.*.aspect_id.distinct' => 'Each aspect can only be selected once.',
+            'aspects.*.aspect_id.required' => 'Please select an aspect.',
+            'aspects.*.score.required' => 'Please provide a score.',
+            'aspects.*.score.min' => 'Score must be at least 1.',
+            'aspects.*.score.max' => 'Score must not exceed 5.',
         ]);
 
         try {
             $employee = Employee::find($this->employee_id);
-            $existingAspects = [];
             $errors = [];
 
+            // Validate each aspect
             foreach ($this->aspects as $index => $aspectData) {
-                // Cek apakah aspect sudah dipilih di row lain
-                if (in_array($aspectData['aspect_id'], $existingAspects)) {
-                    $errors[] = "Aspect sudah dipilih di baris lain.";
-                    $this->addError("aspects.{$index}.aspect_id", 'Aspect ini sudah dipilih di baris lain.');
-                    continue;
-                }
-                $existingAspects[] = $aspectData['aspect_id'];
-
-                // Cek apakah kombinasi employee_id dan aspect_id sudah ada
+                // Check if combination already exists
                 $exists = PsychogramResult::where('employee_id', $this->employee_id)
                     ->where('aspect_id', $aspectData['aspect_id'])
                     ->exists();
 
                 if ($exists) {
-                    $errors[] = "Score untuk aspect ini sudah ada.";
-                    $this->addError("aspects.{$index}.aspect_id", 'Score untuk aspect ini sudah ada untuk employee ini.');
+                    $this->addError(
+                        "aspects.{$index}.aspect_id",
+                        'A score for this aspect already exists for this employee.'
+                    );
+                    $errors[] = true;
                     continue;
                 }
 
-                // Validasi aspect availability untuk employee's company
+                // Validate aspect availability
                 $aspect = PsychogramAspect::find($aspectData['aspect_id']);
 
                 if ($aspect->company_id && $aspect->company_id != $employee->company_id) {
-                    $errors[] = "Aspect tidak tersedia untuk company employee ini.";
-                    $this->addError("aspects.{$index}.aspect_id", 'Aspect ini tidak tersedia untuk company employee ini.');
+                    $this->addError(
+                        "aspects.{$index}.aspect_id",
+                        'This aspect is not available for this employee\'s company.'
+                    );
+                    $errors[] = true;
                     continue;
                 }
             }
 
             if (!empty($errors)) {
-                Toaster::error('Terdapat error dalam data input.');
+                Toaster::error('Please fix the errors before submitting.');
                 return;
             }
 
@@ -133,7 +280,8 @@ class Create extends Component
                 ]);
             }
 
-            return redirect()->route('psychogram-results.index')->success('Psychogram results created successfully');
+            Toaster::success('Psychogram results created successfully.');
+            return redirect()->route('psychogram-results.index');
         } catch (\Exception $e) {
             Toaster::error('Failed to create psychogram results: ' . $e->getMessage());
         }
@@ -144,92 +292,8 @@ class Create extends Component
         return redirect()->route('psychogram-results.index');
     }
 
-    public function addAspect()
-    {
-        $this->aspects[] = ['aspect_id' => '', 'score' => 3];
-    }
-
-    public function removeAspect($index)
-    {
-        if (count($this->aspects) > 1) {
-            unset($this->aspects[$index]);
-            $this->aspects = array_values($this->aspects); // Reset array keys
-        }
-    }
-
-    public function updatedCompanyId($value)
-    {
-        $this->employee_id = '';
-        $this->aspects = [['aspect_id' => '', 'score' => 3]];
-        $this->availableAspects = [];
-
-        if ($value) {
-            $this->employees = Employee::where('company_id', $value)
-                ->orderBy('name')
-                ->get();
-        } else {
-            $this->employees = collect();
-        }
-    }
-
-    public function updatedEmployeeId($value)
-    {
-        $this->aspects = [['aspect_id' => '', 'score' => 3]];
-
-        if ($value) {
-            $employee = Employee::find($value);
-            if ($employee && $employee->company_id) {
-                $this->availableAspects = PsychogramAspect::where('is_active', true)
-                    ->where(function ($query) use ($employee) {
-                        $query->whereNull('company_id')
-                            ->orWhere('company_id', $employee->company_id);
-                    })
-                    ->orderBy('aspect_name')
-                    ->get();
-            } else {
-                $this->availableAspects = PsychogramAspect::where('is_active', true)
-                    ->whereNull('company_id')
-                    ->orderBy('aspect_name')
-                    ->get();
-            }
-        } else {
-            $this->availableAspects = [];
-        }
-    }
-
     public function render()
     {
-        // Jika superadmin belum pilih company
-        if ($this->showCompanySelection) {
-            // Hitung jumlah data psychogram per perusahaan
-            $companiesWithCount = $this->companies->map(function ($company) {
-                $count = PsychogramResult::whereHas('employee', function ($query) use ($company) {
-                    $query->where('company_id', $company->id);
-                })->count();
-
-                return [
-                    'company' => $company,
-                    'count' => $count
-                ];
-            });
-
-            return view('livewire.pages.psychogram-results.create', [
-                'showCompanySelection' => true,
-                'companiesWithCount' => $companiesWithCount,
-                'isSuperadmin' => $this->isSuperadmin,
-                'selectedCompany' => null,
-            ]);
-        }
-
-        $selectedEmployee = $this->employee_id ? Employee::find($this->employee_id) : null;
-
-        return view('livewire.pages.psychogram-results.create', [
-            'showCompanySelection' => false,
-            'selectedCompany' => $this->selectedCompany,
-            'isSuperadmin' => $this->isSuperadmin,
-            'companies' => $this->companies,
-            'employees' => $this->employees,
-            'selectedEmployee' => $selectedEmployee,
-        ]);
+        return view('livewire.pages.psychogram-results.create');
     }
 }

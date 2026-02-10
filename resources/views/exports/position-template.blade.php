@@ -18,14 +18,14 @@
         </tr>
     </thead>
     <tbody>
-        <!-- BARIS CONTOH - HAPUS SEBELUM UPLOAD -->
+        {{-- BARIS CONTOH - HAPUS SEBELUM UPLOAD --}}
         <tr style="background-color: #fed7d7">
             <td>CONTOH: {{ $companyId ?? '1' }}</td>
             <td>CONTOH: EMP001</td>
             <td>CONTOH: POS001</td>
             <td>CONTOH: Software Engineer</td>
             <td>CONTOH: 12</td>
-            <td>CONTOH: Band 3</td>
+            <td>CONTOH: 3</td>
             <td>CONTOH: Software Development</td>
             <td>CONTOH: Technology Directorate</td>
             <td>CONTOH: IT Department</td>
@@ -41,7 +41,7 @@
             <td>CONTOH: POS002</td>
             <td>CONTOH: Product Manager</td>
             <td>CONTOH: 14</td>
-            <td>CONTOH: Band 4</td>
+            <td>CONTOH: 4</td>
             <td>CONTOH: Product Management</td>
             <td>CONTOH: Business Directorate</td>
             <td>CONTOH: Product Department</td>
@@ -51,7 +51,7 @@
             <td>CONTOH: E-commerce Section</td>
             <td>CONTOH: Bandung Branch</td>
         </tr>
-        <!-- ISI DATA ANDA MULAI DARI BARIS INI -->
+        {{-- ISI DATA ANDA MULAI DARI BARIS INI --}}
 
         <tr>
             <td colspan="14" style="height: 10px"></td>
@@ -144,7 +144,7 @@
         </tr>
         <tr>
             <td colspan="14" style="background-color: #dbeafe; color: #1e40af; padding: 8px">
-                6. band: Band classification (pilih: Band 1, Band 2, Band 3, Band 4, Band 5) (boleh kosong)
+                6. band: Band classification (pilih: 1, 2, 3, 4, 5) (boleh kosong)
             </td>
         </tr>
         <tr>

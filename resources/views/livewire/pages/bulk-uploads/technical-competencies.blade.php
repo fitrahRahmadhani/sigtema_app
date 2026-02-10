@@ -1,14 +1,14 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Bulk Upload</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Technical Competencies</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -52,9 +52,9 @@
             </button>
         </div>
 
-        <!-- Upload Section -->
+        {{-- Upload Section --}}
         @if (! $showPreview && empty($importResults))
-            <!-- Important Notice -->
+            {{-- Important Notice --}}
             <div class="mb-6 rounded-lg border-l-4 border-red-500 bg-red-50 p-4">
                 <div class="flex items-start">
                     <div class="flex-shrink-0">
@@ -107,7 +107,7 @@
                 </div>
             </div>
 
-            <!-- Processing Indicator -->
+            {{-- Processing Indicator --}}
             <div wire:loading wire:target="uploadFile" class="mb-6 w-full">
                 <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
                     <div class="flex items-center">
@@ -134,7 +134,7 @@
                 </div>
             </div>
 
-            <!-- Upload Area -->
+            {{-- Upload Area --}}
             <div
                 class="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center transition hover:border-blue-400 hover:bg-blue-50"
             >
@@ -154,7 +154,7 @@
                     </label>
                     <p class="mt-1 text-xs text-gray-400">XLSX, XLS (Max 10MB)</p>
 
-                    <!-- Upload Progress -->
+                    {{-- Upload Progress --}}
                     <div wire:loading wire:target="excelFile" class="mt-4 w-full max-w-md">
                         <div class="mb-2 flex items-center justify-between text-sm">
                             <span class="text-gray-600">Uploading file...</span>
@@ -230,7 +230,7 @@
             </div>
         @endif
 
-        <!-- Preview Section -->
+        {{-- Preview Section --}}
         @if ($showPreview)
             <div class="mb-6">
                 <div class="mb-4 flex items-center justify-between">
@@ -242,7 +242,7 @@
                     </h2>
                 </div>
 
-                <!-- Import Progress Indicator -->
+                {{-- Import Progress Indicator --}}
                 <div wire:loading wire:target="confirmImport" class="mb-6 w-full">
                     <div class="rounded-lg border border-green-200 bg-green-50 p-4">
                         <div class="flex items-center">
@@ -351,7 +351,7 @@
                         </div>
                     </div>
                 @else
-                    <!-- Duplicate Handling -->
+                    {{-- Duplicate Handling --}}
                     <div class="mb-4 rounded-lg border border-yellow-300 bg-yellow-50 p-4">
                         <div class="flex">
                             <div class="flex-shrink-0">
@@ -401,8 +401,8 @@
                         </div>
                     </div>
 
-                    <!-- Preview Table - Show All Data -->
-                    <div class="overflow-x-auto rounded-lg border border-gray-200 shadow">
+                    {{-- Preview Table - Show All Data --}}
+                    <div class="h-screen overflow-x-auto overflow-y-scroll rounded-lg border border-gray-200 shadow">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
@@ -463,7 +463,7 @@
                         </table>
                     </div>
 
-                    <!-- Action Buttons -->
+                    {{-- Action Buttons --}}
                     <div class="mt-6 flex gap-3">
                         @if (empty($employeeNotFound))
                             <button
@@ -539,7 +539,7 @@
             </div>
         @endif
 
-        <!-- Results Section -->
+        {{-- Results Section --}}
         @if (! empty($importResults))
             <div class="mb-6">
                 <div class="rounded-lg border border-green-200 bg-green-50 p-6">

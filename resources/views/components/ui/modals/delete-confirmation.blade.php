@@ -10,7 +10,7 @@
     role="dialog"
     aria-modal="true"
 >
-    <!-- Backdrop -->
+    {{-- Backdrop --}}
     <div
         x-show="show"
         x-transition:enter="duration-300 ease-out"
@@ -23,10 +23,10 @@
         aria-hidden="true"
     ></div>
 
-    <!-- Modal Container -->
+    {{-- Modal Container --}}
     <div class="fixed inset-0 z-50 overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4">
-            <!-- Modal Panel -->
+            {{-- Modal Panel --}}
             <div
                 x-show="show"
                 x-transition:enter="duration-300 ease-out"
@@ -38,7 +38,7 @@
                 @click.away="$wire.cancelDelete()"
                 class="relative w-full max-w-lg transform overflow-hidden rounded-xl bg-white shadow-2xl transition-all"
             >
-                <!-- Close Button -->
+                {{-- Close Button --}}
                 <button
                     type="button"
                     wire:click="cancelDelete"
@@ -50,10 +50,10 @@
                     </svg>
                 </button>
 
-                <!-- Content -->
+                {{-- Content --}}
                 <div class="bg-white px-6 pt-6 pb-4">
                     <div class="sm:flex sm:items-start">
-                        <!-- Icon -->
+                        {{-- Icon --}}
                         <div
                             class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
                         >
@@ -72,7 +72,7 @@
                             </svg>
                         </div>
 
-                        <!-- Text Content -->
+                        {{-- Text Content --}}
                         <div class="mt-3 flex-1 text-center sm:mt-0 sm:ml-4 sm:text-left">
                             <h3
                                 class="text-lg leading-6 font-semibold text-gray-900"
@@ -95,7 +95,7 @@
                     </div>
                 </div>
 
-                <!-- Actions -->
+                {{-- Actions --}}
                 <div class="bg-gray-50 px-6 py-4 sm:flex sm:flex-row-reverse sm:gap-3">
                     <button
                         type="button"

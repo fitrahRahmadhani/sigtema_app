@@ -1,14 +1,14 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('positions.index') }}">Positions</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Create Position</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -22,24 +22,33 @@
                         stroke="currentColor"
                         class="h-6 w-6 text-white"
                     >
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"
+                        />
                     </svg>
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Create New Position</h1>
                     <p class="mt-1 text-sm text-gray-500">Add a new position with organizational details</p>
+                    @if ($selectedCompany)
+                        <div class="mt-1 flex items-center gap-2">
+                            <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
 
-        <!-- Form -->
+        {{-- Form --}}
         <form wire:submit="save" class="space-y-8">
-            <!-- Position Information -->
+            {{-- Position Information --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Position Information</h3>
-                <div class="grid gap-6 md:grid-cols-2">
-                    <!-- Position Name -->
-                    <div class="md:col-span-2">
+                <div class="space-y-6">
+                    {{-- Position Name --}}
+                    <div>
                         <label for="name" class="mb-2 block text-sm font-medium text-gray-700">
                             Position Name
                             <span class="text-red-600">*</span>
@@ -48,108 +57,65 @@
                             type="text"
                             id="name"
                             wire:model.live="name"
-                            placeholder="e.g., Senior Manager, Software Engineer, HR Specialist"
-                            class="@error('name') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            placeholder="e.g., CSR Officer"
+                            class="@error('name') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                         />
                         @error('name')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- Position Code -->
-                    <div>
-                        <label for="position_code" class="mb-2 block text-sm font-medium text-gray-700">
-                            Position Code
-                            <span class="text-red-600">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="position_code"
-                            wire:model.blur="position_code"
-                            placeholder="e.g., 50057460, 50059476, 50059654"
-                            class="@error('position_code') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                        />
-                        @error('position_code')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Job Grade -->
-                    <div>
-                        <label for="job_grade" class="mb-2 block text-sm font-medium text-gray-700">
-                            Job Grade
-                            <span class="text-red-600">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="job_grade"
-                            wire:model.blur="job_grade"
-                            placeholder="e.g., 11, 12, 13, 14, 15"
-                            class="@error('job_grade') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                        />
-                        @error('job_grade')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-
-                        <p class="mt-1 text-xs text-gray-500">Job grade classification</p>
-                    </div>
-
-                    <!-- Band -->
-                    <div>
-                        <label for="band" class="mb-2 block text-sm font-medium text-gray-700">Band</label>
-                        <div class="relative">
-                            <select
-                                id="band"
-                                wire:model="band"
-                                class="@error('band') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                            >
-                                <option value="">Select Band</option>
-                                @foreach ($bandOptions as $bandOption)
-                                    <option value="{{ $bandOption }}">{{ $bandOption }}</option>
-                                @endforeach
-                            </select>
-                            <svg
-                                class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
-                        @error('band')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-
-                        <p class="mt-1 text-xs text-gray-500">Band classification</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Company Assignment -->
-            <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
-                <h3 class="mb-4 text-lg font-semibold text-gray-900">Company Assignment</h3>
-                <div class="mb-6 grid gap-6">
-                    <!-- Company Selection -->
-                    @hasrole('superadmin')
-                        <div class="md:col-span-2">
-                            <label for="company_id" class="mb-2 block text-sm font-medium text-gray-700">
-                                Company
+                    <div class="grid gap-6 md:grid-cols-3">
+                        {{-- Position Code --}}
+                        <div>
+                            <label for="position_code" class="mb-2 block text-sm font-medium text-gray-700">
+                                Position Code
                                 <span class="text-red-600">*</span>
                             </label>
+                            <input
+                                type="text"
+                                id="position_code"
+                                wire:model.blur="position_code"
+                                placeholder="e.g., 50066627"
+                                class="@error('position_code') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            />
+                            @error('position_code')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Job Grade --}}
+                        <div>
+                            <label for="job_grade" class="mb-2 block text-sm font-medium text-gray-700">
+                                Job Grade
+                                <span class="text-red-600">*</span>
+                            </label>
+                            <input
+                                type="number"
+                                id="job_grade"
+                                wire:model.blur="job_grade"
+                                placeholder="e.g., 11"
+                                class="@error('job_grade') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            />
+                            @error('job_grade')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+
+                            <p class="mt-1 text-xs text-gray-500">Job grade classification</p>
+                        </div>
+
+                        {{-- Band --}}
+                        <div>
+                            <label for="band" class="mb-2 block text-sm font-medium text-gray-700">Band</label>
                             <div class="relative">
                                 <select
-                                    id="company_id"
-                                    wire:model.live="company_id"
-                                    class="@error('company_id') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                    id="band"
+                                    wire:model="band"
+                                    class="@error('band') border-red-500 @else border-gray-300 @enderror w-full appearance-none rounded-lg border bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                                 >
-                                    <option value="">Select a company</option>
-                                    @foreach ($companies as $company)
-                                        <option value="{{ $company->id }}">
-                                            {{ $company->name }} ({{ $company->cocd }})
-                                        </option>
+                                    <option value="">Select Band</option>
+                                    @foreach ($bandOptions as $bandOption)
+                                        <option value="{{ $bandOption }}">Band {{ $bandOption }}</option>
                                     @endforeach
                                 </select>
                                 <svg
@@ -163,18 +129,46 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </div>
-                            @error('company_id')
+                            @error('band')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
+
+                            <p class="mt-1 text-xs text-gray-500">Band classification</p>
                         </div>
-                    @endhasrole
+                    </div>
+                </div>
+            </div>
+
+            {{-- Company Assignment --}}
+            <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
+                <h3 class="mb-4 text-lg font-semibold text-gray-900">Company Assignment</h3>
+                <div class="mb-6">
+                    {{-- Company (Read-only, from session) --}}
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-gray-700">
+                            Company
+                            <span class="text-red-600">*</span>
+                        </label>
+                        <div
+                            class="w-full cursor-not-allowed rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-sm text-gray-700"
+                        >
+                            <p>{{ $selectedCompany->name }} ({{ $selectedCompany->cocd }})</p>
+                        </div>
+                        <p class="mt-1 text-sm text-gray-500">
+                            @if ($isSuperadmin)
+                                Company from your current session
+                            @else
+                                Your assigned company
+                            @endif
+                        </p>
+                    </div>
                 </div>
 
-                <!-- Organizational Structure -->
+                {{-- Organizational Structure --}}
                 <div class="mb-6">
                     <h4 class="text-md mb-4 font-medium text-gray-700">Organizational Structure</h4>
                     <div class="grid gap-6 md:grid-cols-2">
-                        <!-- Directorate -->
+                        {{-- Directorate --}}
                         <div>
                             <label for="directorate" class="mb-2 block text-sm font-medium text-gray-700">
                                 Directorate
@@ -183,15 +177,30 @@
                                 type="text"
                                 id="directorate"
                                 wire:model="directorate"
-                                placeholder="e.g., Technology Directorate, Finance Directorate"
-                                class="@error('directorate') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                placeholder="e.g., Finance & Human Capital Directorate"
+                                class="@error('directorate') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                             />
                             @error('directorate')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Department -->
+                        {{-- KOMP --}}
+                        <div>
+                            <label for="komp" class="mb-2 block text-sm font-medium text-gray-700">KOMP</label>
+                            <input
+                                type="text"
+                                id="komp"
+                                wire:model="komp"
+                                placeholder="e.g., Sub Group of Production"
+                                class="@error('komp') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            />
+                            @error('komp')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Department --}}
                         <div>
                             <label for="department" class="mb-2 block text-sm font-medium text-gray-700">
                                 Department
@@ -200,51 +209,60 @@
                                 type="text"
                                 id="department"
                                 wire:model="department"
-                                placeholder="e.g., IT Department, HR Department"
-                                class="@error('department') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                placeholder="e.g., Departement of IT"
+                                class="@error('department') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                             />
                             @error('department')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Biro -->
+                        {{-- Biro --}}
                         <div>
                             <label for="biro" class="mb-2 block text-sm font-medium text-gray-700">Biro</label>
                             <input
                                 type="text"
                                 id="biro"
                                 wire:model="biro"
-                                placeholder="e.g., Finance Biro, Operations Biro"
-                                class="@error('biro') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                placeholder="e.g., Unit of Communication & CSR"
+                                class="@error('biro') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                             />
                             @error('biro')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Section -->
+                        {{-- Group --}}
+                        <div>
+                            <label for="group" class="mb-2 block text-sm font-medium text-gray-700">Group</label>
+                            <input
+                                type="text"
+                                id="group"
+                                wire:model="group"
+                                placeholder="e.g., Group of Water Treatment Operation"
+                                class="@error('group') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            />
+                            @error('group')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Section --}}
                         <div>
                             <label for="section" class="mb-2 block text-sm font-medium text-gray-700">Section</label>
                             <input
                                 type="text"
                                 id="section"
                                 wire:model="section"
-                                placeholder="e.g., Development Section, Recruitment Section"
-                                class="@error('section') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                placeholder="e.g., Section of Utility Operation"
+                                class="@error('section') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                             />
                             @error('section')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
-                    </div>
-                </div>
 
-                <!-- Additional Organizational Details -->
-                <div>
-                    <h4 class="text-md mb-4 font-medium text-gray-700">Additional Details</h4>
-                    <div class="grid gap-6 md:grid-cols-2">
-                        <!-- Work Unit -->
+                        {{-- Work Unit --}}
                         <div>
                             <label for="work_unit" class="mb-2 block text-sm font-medium text-gray-700">
                                 Work Unit
@@ -253,53 +271,23 @@
                                 type="text"
                                 id="work_unit"
                                 wire:model="work_unit"
-                                placeholder="e.g., Software Development, Human Resources"
-                                class="@error('work_unit') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                placeholder="e.g., Unit of Energy Procurement"
+                                class="@error('work_unit') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                             />
                             @error('work_unit')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Group -->
-                        <div>
-                            <label for="group" class="mb-2 block text-sm font-medium text-gray-700">Group</label>
-                            <input
-                                type="text"
-                                id="group"
-                                wire:model="group"
-                                placeholder="e.g., Engineering Group, Administration Group"
-                                class="@error('group') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                            />
-                            @error('group')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- KOMP -->
-                        <div>
-                            <label for="komp" class="mb-2 block text-sm font-medium text-gray-700">KOMP</label>
-                            <input
-                                type="text"
-                                id="komp"
-                                wire:model="komp"
-                                placeholder="e.g., KOMP-001, KOMP-002"
-                                class="@error('komp') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                            />
-                            @error('komp')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Location -->
+                        {{-- Location --}}
                         <div>
                             <label for="location" class="mb-2 block text-sm font-medium text-gray-700">Location</label>
                             <input
                                 type="text"
                                 id="location"
                                 wire:model="location"
-                                placeholder="e.g., Jakarta Head Office, Bandung Branch"
-                                class="@error('location') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                placeholder="e.g., Jakarta"
+                                class="@error('location') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                             />
                             @error('location')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -309,53 +297,267 @@
                 </div>
             </div>
 
-            <!-- Employee Assignment -->
+            {{-- Employee Assignment --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
-                <div class="flex items-center justify-between">
-                    <h3 class="mb-4 text-lg font-semibold text-gray-900">Employee Assignment</h3>
+                <div class="mb-4 flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">Employee Assignment</h3>
                     <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">Optional</span>
                 </div>
-                <div class="mb-6">
-                    <!-- Employee Selection -->
-                    <div class="w-full">
-                        <label for="employee_id" class="mb-2 block text-sm font-medium text-gray-700">Employee</label>
+
+                {{-- Employee Selection with Search --}}
+                <div
+                    x-data="{
+                        open: @entangle('showEmployeeDropdown').live,
+                        searchLength: @entangle('employeeSearch').live.length,
+                    }"
+                    @click.outside="$wire.closeDropdown()"
+                >
+                    <label for="employee_search" class="mb-2 block text-sm font-medium text-gray-700">Employee</label>
+
+                    <div class="relative">
+                        {{-- Search Input --}}
                         <div class="relative">
-                            <select
-                                id="employee_id"
-                                wire:model.live="employee_id"
-                                class="@error('employee_id') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
-                                @if (!$company_id) disabled @endif
-                            >
-                                <option value="">
-                                    {{ $company_id ? 'Select employee (optional)' : 'Select company first' }}
-                                </option>
-                                @foreach ($employees as $employee)
-                                    <option value="{{ $employee->id }}">{{ $employee->name }}</option>
-                                @endforeach
-                            </select>
+                            <input
+                                type="text"
+                                id="employee_search"
+                                wire:model.live.debounce.500ms="employeeSearch"
+                                @focus="$wire.openDropdown()"
+                                @keydown.arrow-down.prevent="$wire.incrementHighlight()"
+                                @keydown.arrow-up.prevent="$wire.decrementHighlight()"
+                                @keydown.enter.prevent="$wire.selectHighlighted()"
+                                @keydown.escape="$wire.closeDropdown()"
+                                placeholder="Type at least 5 characters to search..."
+                                class="@error('employee_id') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border bg-white px-4 py-2.5 pr-20 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                autocomplete="off"
+                            />
+
+                            {{-- Icons --}}
+                            <div class="absolute top-5 right-3 flex -translate-y-1/2 items-center gap-2">
+                                {{-- Loading Indicator --}}
+                                <div wire:loading wire:target="employeeSearch" class="text-gray-400">
+                                    <svg
+                                        class="h-4 w-4 animate-spin"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <circle
+                                            class="opacity-25"
+                                            cx="12"
+                                            cy="12"
+                                            r="10"
+                                            stroke="currentColor"
+                                            stroke-width="4"
+                                        ></circle>
+                                        <path
+                                            class="opacity-75"
+                                            fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                        ></path>
+                                    </svg>
+                                </div>
+
+                                {{-- Clear Button --}}
+                                @if ($selectedEmployee)
+                                    <button
+                                        type="button"
+                                        wire:click="clearEmployeeSelection"
+                                        class="text-gray-400 transition hover:text-gray-600"
+                                    >
+                                        <svg
+                                            class="h-4 w-4"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12"
+                                            />
+                                        </svg>
+                                    </button>
+                                @endif
+
+                                {{-- Search Icon --}}
+                                <svg
+                                    wire:loading.remove
+                                    wire:target="employeeSearch"
+                                    class="h-4 w-4 text-gray-500"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                    />
+                                </svg>
+                            </div>
+
+                            {{-- Character Counter (Optional) --}}
+                            @if (! $selectedEmployee && strlen($employeeSearch) > 0 && strlen($employeeSearch) < 5)
+                                <div class="mt-1 text-xs text-gray-500">
+                                    {{ 5 - strlen($employeeSearch) }} more
+                                    character{{ 5 - strlen($employeeSearch) > 1 ? 's' : '' }} needed
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- Dropdown Results --}}
+                        <div
+                            x-show="open"
+                            x-transition:enter="transition duration-100 ease-out"
+                            x-transition:enter-start="scale-95 transform opacity-0"
+                            x-transition:enter-end="scale-100 transform opacity-100"
+                            x-transition:leave="transition duration-75 ease-in"
+                            x-transition:leave-start="scale-100 transform opacity-100"
+                            x-transition:leave-end="scale-95 transform opacity-0"
+                            class="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg"
+                            style="display: none"
+                        >
+                            <div class="max-h-60 overflow-y-auto">
+                                @if ($this->filteredEmployees->count() > 0)
+                                    <ul class="py-1">
+                                        @foreach ($this->filteredEmployees as $index => $employee)
+                                            <li>
+                                                <button
+                                                    type="button"
+                                                    wire:click="selectEmployee({{ $employee->id }})"
+                                                    class="{{ $highlightedIndex === $index ? 'bg-[#721d21] text-white' : 'text-gray-700 hover:bg-gray-100' }} flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition"
+                                                >
+                                                    {{-- Avatar --}}
+                                                    <div
+                                                        class="{{ $highlightedIndex === $index ? 'bg-white/20' : 'bg-gray-200' }} flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full"
+                                                    >
+                                                        <svg
+                                                            class="{{ $highlightedIndex === $index ? 'text-white' : 'text-gray-600' }} h-4 w-4"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                            stroke="currentColor"
+                                                        >
+                                                            <path
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                                            />
+                                                        </svg>
+                                                    </div>
+
+                                                    {{-- Employee Info --}}
+                                                    <div class="min-w-0 flex-1">
+                                                        <div class="font-medium">{{ $employee->name }}</div>
+                                                        <div
+                                                            class="{{ $highlightedIndex === $index ? 'text-white/80' : 'text-gray-500' }} text-xs"
+                                                        >
+                                                            {{ $employee->employee_number }}
+                                                            @if ($employee->position)
+                                                                    • {{ $employee->position }}
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <div class="px-4 py-8 text-center">
+                                        <svg
+                                            class="mx-auto h-12 w-12 text-gray-400"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                                            />
+                                        </svg>
+                                        <p class="mt-2 text-sm font-medium text-gray-700">No employees found</p>
+                                        <p class="mt-1 text-xs text-gray-500">
+                                            No results matching "{{ $employeeSearch }}"
+                                        </p>
+                                    </div>
+                                @endif
+                            </div>
+
+                            {{-- Footer Hint --}}
+                            @if ($this->filteredEmployees->count() > 0)
+                                <div class="border-t border-gray-200 bg-gray-50 px-4 py-2">
+                                    <p class="text-xs text-gray-500">
+                                        <span class="font-medium">{{ $this->filteredEmployees->count() }}</span>
+                                        result{{ $this->filteredEmployees->count() > 1 ? 's' : '' }} found • Use ↑ ↓ to
+                                        navigate, Enter to select
+                                    </p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    @error('employee_id')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+
+                    {{-- Search Hint --}}
+                    @if (! $selectedEmployee && strlen($employeeSearch) == 0)
+                        <p class="mt-1 text-sm text-gray-500">
                             <svg
-                                class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                class="mr-1 inline-block h-4 w-4"
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
-                                stroke-width="2"
                             >
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
                             </svg>
-                        </div>
-                        @error('employee_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-
-                        <p class="mt-1 text-xs text-gray-500">
-                            You can assign an employee to this position now or later
+                            Type at least 5 characters to search for employees
                         </p>
-                    </div>
+                    @endif
+
+                    {{-- Selected Employee Display --}}
+                    @if ($selectedEmployee)
+                        <div class="mt-2 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
+                            <svg
+                                class="h-5 w-5 flex-shrink-0 text-green-600"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                            </svg>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-sm font-medium text-green-900">{{ $selectedEmployee->name }}</p>
+                                <p class="text-xs text-green-700">{{ $selectedEmployee->employee_number }}</p>
+                            </div>
+                        </div>
+                    @endif
                 </div>
+
+                <p class="mt-2 text-xs text-gray-500">You can assign an employee to this position now or later</p>
             </div>
 
-            <!-- Form Actions -->
+            {{-- Form Actions --}}
             <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
                 <button
                     type="button"
@@ -390,11 +592,7 @@
                         stroke="currentColor"
                         class="h-5 w-5"
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-                        />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                     <svg
                         wire:loading

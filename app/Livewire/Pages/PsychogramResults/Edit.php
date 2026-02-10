@@ -22,8 +22,6 @@ class Edit extends Component
     #[Validate('required|integer|min:1|max:5')]
     public $score;
 
-    public $selectedCompanyId = null;
-    public $selectedCompany = null;
     public $isSuperadmin = false;
 
     public function mount(PsychogramResult $psychogram_result)
@@ -41,12 +39,6 @@ class Edit extends Component
 
         $this->result = $psychogram_result;
         $this->score = $psychogram_result->score;
-
-        // Set selected company for display
-        if ($psychogram_result->employee->company) {
-            $this->selectedCompanyId = $psychogram_result->employee->company_id;
-            $this->selectedCompany = $psychogram_result->employee->company;
-        }
     }
 
     public function update()
@@ -56,14 +48,16 @@ class Edit extends Component
         try {
             // Check if score actually changed
             if ($this->result->score == $this->score) {
-                return redirect()->route('psychogram-results.index')->warning('No changes were made.');
+                Toaster::warning('No changes were made.');
+                return redirect()->route('psychogram-results.index');
             }
 
             $this->result->update([
                 'score' => $this->score,
             ]);
 
-            return redirect()->route('psychogram-results.index')->success('Psychogram result updated successfully');
+            Toaster::success('Psychogram result updated successfully.');
+            return redirect()->route('psychogram-results.index');
         } catch (\Exception $e) {
             Toaster::error('Failed to update psychogram result: ' . $e->getMessage());
         }
@@ -76,10 +70,6 @@ class Edit extends Component
 
     public function render()
     {
-        return view('livewire.pages.psychogram-results.edit', [
-            'result' => $this->result,
-            'selectedCompany' => $this->selectedCompany,
-            'isSuperadmin' => $this->isSuperadmin,
-        ]);
+        return view('livewire.pages.psychogram-results.edit');
     }
 }

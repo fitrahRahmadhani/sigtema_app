@@ -1,14 +1,14 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('companies.index') }}">Companies</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Edit Company</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-4 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl">
@@ -34,9 +34,9 @@
             </div>
         </div>
 
-        <!-- Form -->
+        {{-- Form --}}
         <form wire:submit="save" class="space-y-6">
-            <!-- Logo Upload -->
+            {{-- Logo Upload --}}
             <div class="space-y-2">
                 <label class="block text-sm font-medium text-gray-700">
                     Company Logo
@@ -44,7 +44,7 @@
                 </label>
 
                 <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-                    <!-- Preview -->
+                    {{-- Preview --}}
                     <div
                         class="flex h-32 w-32 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-gray-300 bg-gray-50"
                     >
@@ -78,7 +78,7 @@
                         @endif
                     </div>
 
-                    <!-- Upload Button & Info -->
+                    {{-- Upload Button & Info --}}
                     <div class="flex-1 space-y-3">
                         <div class="flex flex-wrap items-center gap-3">
                             <label class="cursor-pointer">
@@ -159,7 +159,7 @@
                 </div>
             </div>
 
-            <!-- Company Name -->
+            {{-- Company Name --}}
             <div class="space-y-2">
                 <label for="name" class="block text-sm font-medium text-gray-700">
                     Company Name
@@ -177,7 +177,7 @@
                 @enderror
             </div>
 
-            <!-- Company Code -->
+            {{-- Company Code --}}
             <div class="space-y-2">
                 <label for="cocd" class="block text-sm font-medium text-gray-700">
                     Company Code
@@ -195,7 +195,7 @@
                 @enderror
             </div>
 
-            <!-- Is Active Toggle -->
+            {{-- Is Active Toggle --}}
             <div class="space-y-2">
                 <label class="flex cursor-pointer items-center gap-3">
                     <input
@@ -208,7 +208,7 @@
                 <p class="text-xs text-gray-500">Set whether this company is currently active</p>
             </div>
 
-            <!-- Form Actions -->
+            {{-- Form Actions --}}
             <div class="flex flex-col-reverse gap-3 border-t pt-6 sm:flex-row sm:justify-end">
                 <a
                     href="{{ route('companies.index') }}"
@@ -234,7 +234,7 @@
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                            d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
                         />
                     </svg>
                     <svg

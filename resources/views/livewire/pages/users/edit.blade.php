@@ -1,14 +1,14 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('users.index') }}">Users</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Edit User</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -36,19 +36,19 @@
             </div>
         </div>
 
-        <!-- Form -->
+        {{-- Form --}}
         <form wire:submit="save" class="space-y-8">
-            <!-- Profile Photo Section -->
+            {{-- Profile Photo Section --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Profile Photo</h3>
                 <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-                    <!-- Photo Preview -->
+                    {{-- Photo Preview --}}
                     <div
                         class="flex h-32 w-32 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-gray-300 bg-gray-50"
                     >
-                        @if ($profile_photo)
+                        @if ($profile_photo_preview)
                             <img
-                                src="{{ $profile_photo->temporaryUrl() }}"
+                                src="{{ $profile_photo_preview }}"
                                 alt="Profile Preview"
                                 class="h-full w-full object-contain"
                             />
@@ -76,7 +76,7 @@
                         @endif
                     </div>
 
-                    <!-- Upload Controls -->
+                    {{-- Upload Controls --}}
                     <div class="flex-1 space-y-3">
                         <div class="flex flex-wrap items-center gap-3">
                             <label class="cursor-pointer">
@@ -102,10 +102,10 @@
                                 </span>
                             </label>
 
-                            @if ($profile_photo)
+                            @if ($profile_photo_preview)
                                 <button
                                     type="button"
-                                    wire:click="$set('profile_photo', null)"
+                                    wire:click="removeProfilePhoto"
                                     class="inline-flex items-center gap-2 rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
                                 >
                                     <svg
@@ -157,11 +157,11 @@
                 </div>
             </div>
 
-            <!-- Personal Information -->
+            {{-- Personal Information --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Personal Information</h3>
                 <div class="grid gap-6 md:grid-cols-2">
-                    <!-- Name -->
+                    {{-- Name --}}
                     <div class="md:col-span-2">
                         <label for="name" class="mb-2 block text-sm font-medium text-gray-700">
                             Full Name
@@ -170,16 +170,16 @@
                         <input
                             type="text"
                             id="name"
-                            wire:model.live.debounce.500ms="name"
+                            wire:model.live="name"
                             placeholder="Enter full name"
-                            class="@error('name') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="@error('name') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
                         />
                         @error('name')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- Email -->
+                    {{-- Email --}}
                     <div class="md:col-span-2">
                         <label for="email" class="mb-2 block text-sm font-medium text-gray-700">
                             Email Address
@@ -188,18 +188,52 @@
                         <input
                             type="email"
                             id="email"
-                            wire:model.live.debounce.500ms="email"
+                            wire:model.live="email"
                             placeholder="user@example.com"
-                            class="@error('email') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="@error('email') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
                         />
                         @error('email')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    {{-- Band --}}
+                    <div>
+                        <label for="band" class="mb-2 block text-sm font-medium text-gray-700">Band</label>
+                        <div class="relative">
+                            <select
+                                id="band"
+                                wire:model="band"
+                                class="@error('band') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full appearance-none rounded-lg border bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:outline-none"
+                            >
+                                <option value="">Select Band (optional)</option>
+                                @foreach ($bandOptions as $bandOption)
+                                    <option value="{{ $bandOption }}">Band {{ $bandOption }}</option>
+                                @endforeach
+                            </select>
+
+                            <svg
+                                class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+
+                        @error('band')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+
+                        <p class="mt-1 text-xs text-gray-500">Assign band for this position</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Change Password Section -->
+            {{-- Change Password Section --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <div class="mb-4 flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-900">Change Password</h3>
@@ -207,24 +241,26 @@
                 </div>
                 <p class="mb-4 text-sm text-gray-600">Leave blank to keep the current password</p>
                 <div class="grid gap-6 md:grid-cols-2">
-                    <!-- Password -->
+                    {{-- Password --}}
                     <div>
                         <label for="password" class="mb-2 block text-sm font-medium text-gray-700">New Password</label>
                         <input
                             type="password"
                             id="password"
-                            wire:model.live.debounce.500ms="password"
+                            wire:model.live="password"
                             placeholder="••••••••"
-                            class="@error('password') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="@error('password') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
                         />
                         @error('password')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
 
-                        <p class="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
+                        <p class="mt-1 text-xs text-gray-500">
+                            At least 12 characters with uppercase, lowercase, number, and symbol.
+                        </p>
                     </div>
 
-                    <!-- Password Confirmation -->
+                    {{-- Password Confirmation --}}
                     <div>
                         <label for="password_confirmation" class="mb-2 block text-sm font-medium text-gray-700">
                             Confirm New Password
@@ -232,9 +268,9 @@
                         <input
                             type="password"
                             id="password_confirmation"
-                            wire:model.live.debounce.500ms="password_confirmation"
+                            wire:model.live="password_confirmation"
                             placeholder="••••••••"
-                            class="@error('password_confirmation') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="@error('password_confirmation') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
                         />
                         @error('password_confirmation')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -243,7 +279,7 @@
                 </div>
             </div>
 
-            <!-- Company Assignment -->
+            {{-- Company Assignment --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Company Assignment</h3>
                 <div>
@@ -280,7 +316,7 @@
                 </div>
             </div>
 
-            <!-- Role Assignment -->
+            {{-- Role Assignment --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Role Assignment</h3>
                 <div>
@@ -328,7 +364,7 @@
                 </div>
             </div>
 
-            <!-- Form Actions -->
+            {{-- Form Actions --}}
             <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
                 <button
                     type="button"

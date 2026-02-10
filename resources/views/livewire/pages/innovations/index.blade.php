@@ -1,13 +1,13 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Innovations</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
@@ -42,9 +42,9 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
+            {{-- Action Buttons --}}
             <div class="flex items-center gap-2">
-                <!-- Sync Button -->
+                {{-- Sync Button --}}
                 <button
                     wire:click="syncFromApi"
                     wire:loading.attr="disabled"
@@ -102,7 +102,7 @@
             </div>
         </div>
 
-        <!-- Stats -->
+        {{-- Stats --}}
         <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
             <div class="rounded-lg border border-gray-200 bg-white p-4">
                 <div class="flex items-center">
@@ -206,7 +206,7 @@
             </div>
         </div>
 
-        <!-- Sync Status Panel -->
+        {{-- Sync Status Panel --}}
         @if ($syncStatus !== 'idle')
             <div class="animate-fade-in mb-6">
                 <div
@@ -297,7 +297,7 @@
                         @endif
                     </div>
 
-                    <!-- Progress Bar -->
+                    {{-- Progress Bar --}}
                     @if (in_array($syncStatus, ['queued', 'processing']))
                         <div class="mt-3">
                             <div class="mb-1 flex justify-between text-sm">
@@ -328,7 +328,7 @@
                         </div>
                     @endif
 
-                    <!-- Result Details -->
+                    {{-- Result Details --}}
                     @if ($lastSyncResult && ($syncStatus === 'completed' || $syncStatus === 'failed'))
                         <div class="mt-3 border-t border-gray-200 pt-3">
                             @if ($syncStatus === 'completed')
@@ -434,11 +434,11 @@
             </div>
         @endif
 
-        <!-- Filters -->
+        {{-- Filters --}}
         <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm">
-            <!-- Search Row -->
+            {{-- Search Row --}}
             <div class="grid gap-4 md:grid-cols-3">
-                <!-- Search Input -->
+                {{-- Search Input --}}
                 <div class="md:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-gray-700">Search</label>
                     <div class="relative">
@@ -467,7 +467,7 @@
                     </div>
                 </div>
 
-                <!-- Status Filter -->
+                {{-- Status Filter --}}
                 <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700">Status</label>
                     <div class="relative">
@@ -495,9 +495,9 @@
                 </div>
             </div>
 
-            <!-- Filter Row -->
+            {{-- Filter Row --}}
             <div class="grid gap-4 md:grid-cols-4">
-                <!-- Team Filter -->
+                {{-- Team Filter --}}
                 <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700">Team</label>
                     <div class="relative">
@@ -525,7 +525,7 @@
                     </div>
                 </div>
 
-                <!-- Category Filter -->
+                {{-- Category Filter --}}
                 <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700">Category</label>
                     <div class="relative">
@@ -553,7 +553,7 @@
                     </div>
                 </div>
 
-                <!-- Replication Filter -->
+                {{-- Replication Filter --}}
                 <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700">Replication</label>
                     <div class="relative">
@@ -581,7 +581,7 @@
                     </div>
                 </div>
 
-                <!-- Sort By -->
+                {{-- Sort By --}}
                 <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700">Sort By</label>
                     <div class="relative">
@@ -610,7 +610,7 @@
                 </div>
             </div>
 
-            <!-- Results Info -->
+            {{-- Results Info --}}
             <div class="border-t border-gray-200 pt-4">
                 <div class="flex items-center justify-between">
                     <div class="text-sm text-gray-600">
@@ -620,7 +620,7 @@
                         @endif
                     </div>
                     <div class="flex items-center gap-2">
-                        <!-- Bulk Actions Dropdown -->
+                        {{-- Bulk Actions Dropdown --}}
                         <div class="relative" x-data="{ open: false }">
                             <button
                                 @click="open = !open"
@@ -721,9 +721,9 @@
             </div>
         </div>
 
-        <!-- Innovations Table -->
+        {{-- Innovations Table --}}
         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-            <!-- Table Header - Desktop -->
+            {{-- Table Header - Desktop --}}
             <div class="color-gradient hidden grid-cols-12 gap-4 bg-gradient-to-r px-6 py-3 text-white md:grid">
                 <div class="col-span-4 text-sm font-semibold">Innovation & Employee</div>
                 <div class="col-span-2 text-sm font-semibold">Team & Category</div>
@@ -733,15 +733,15 @@
                 <div class="col-span-1 text-center text-sm font-semibold">Actions</div>
             </div>
 
-            <!-- Table Body -->
+            {{-- Table Body --}}
             <div class="divide-y divide-gray-200">
                 @forelse ($innovations as $innovation)
-                    <!-- Desktop View -->
+                    {{-- Desktop View --}}
                     <div
                         class="{{ $innovation->is_active ? 'hover:bg-gray-50' : 'bg-gray-50 opacity-90 hover:bg-gray-100' }} hidden grid-cols-12 items-center gap-4 px-6 py-4 transition-colors duration-150 md:grid"
                         wire:key="innovation-{{ $innovation->id }}"
                     >
-                        <!-- Innovation & Employee -->
+                        {{-- Innovation & Employee --}}
                         <div class="col-span-4">
                             <p class="line-clamp-2 text-sm font-semibold text-gray-900">{{ $innovation->title }}</p>
                             <div class="mt-1 flex flex-wrap items-center gap-2">
@@ -797,7 +797,7 @@
                             </div>
                         </div>
 
-                        <!-- Team & Category -->
+                        {{-- Team & Category --}}
                         <div class="col-span-2 space-y-1">
                             <div class="flex items-center">
                                 <svg
@@ -835,7 +835,7 @@
                             </div>
                         </div>
 
-                        <!-- Theme & Event -->
+                        {{-- Theme & Event --}}
                         <div class="col-span-2 space-y-1">
                             <div class="flex items-center">
                                 <svg
@@ -873,7 +873,7 @@
                             </div>
                         </div>
 
-                        <!-- Achievement -->
+                        {{-- Achievement --}}
                         <div class="col-span-2">
                             <div class="mb-2">
                                 @if ($innovation->status)
@@ -918,7 +918,7 @@
                             </div>
                         </div>
 
-                        <!-- Active Status -->
+                        {{-- Active Status --}}
                         <div class="col-span-1">
                             <button
                                 wire:click="toggleStatus({{ $innovation->id }})"
@@ -955,7 +955,7 @@
                             </button>
                         </div>
 
-                        <!-- Actions -->
+                        {{-- Actions --}}
                         <div class="col-span-1 flex items-center justify-center gap-2">
                             <button
                                 wire:click="confirmDelete({{ $innovation->id }}, '{{ addslashes($innovation->title) }}')"
@@ -980,13 +980,13 @@
                         </div>
                     </div>
 
-                    <!-- Mobile View -->
+                    {{-- Mobile View --}}
                     <div
                         class="{{ $innovation->is_active ? '' : 'bg-gray-50 opacity-90' }} block p-4 md:hidden"
                         wire:key="innovation-mobile-{{ $innovation->id }}"
                     >
                         <div class="space-y-3">
-                            <!-- Header -->
+                            {{-- Header --}}
                             <div class="border-b border-gray-100 pb-3">
                                 <div class="flex items-start justify-between">
                                     <h3 class="line-clamp-2 font-semibold text-gray-900">{{ $innovation->title }}</h3>
@@ -1067,7 +1067,7 @@
                                 </div>
                             </div>
 
-                            <!-- Details Grid -->
+                            {{-- Details Grid --}}
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="space-y-1">
                                     <p class="text-xs font-medium text-gray-500">Team</p>
@@ -1151,7 +1151,7 @@
                                 </div>
                             </div>
 
-                            <!-- Status & Achievement -->
+                            {{-- Status & Achievement --}}
                             <div class="space-y-2">
                                 @if ($innovation->status)
                                     <div>
@@ -1202,7 +1202,7 @@
                                 </div>
                             </div>
 
-                            <!-- Actions -->
+                            {{-- Actions --}}
                             <div class="flex items-center justify-end gap-2 border-t border-gray-100 pt-3">
                                 <button
                                     wire:click="confirmDelete({{ $innovation->id }}, '{{ addslashes($innovation->title) }}')"
@@ -1278,10 +1278,10 @@
             </div>
         </div>
 
-        <!-- Delete Confirmation Modal -->
+        {{-- Delete Confirmation Modal --}}
         <x-ui.modals.delete-confirmation />
 
-        <!-- Pagination -->
+        {{-- Pagination --}}
         @if ($innovations->hasPages())
             <div class="mt-6">
                 {{ $innovations->onEachSide(1)->links(data: ['scrollTo' => false]) }}
@@ -1289,7 +1289,7 @@
         @endif
     </div>
 
-        <script>
+    <script>
         document.addEventListener('livewire:init', () => {
             // Setup Echo/Pusher listeners
             @if(auth()->check())

@@ -18,12 +18,12 @@ return new class extends Migration
             $table->string('employee_number');
             $table->string('name');
             $table->string('email');
-            $table->string('phone');
+            $table->string('phone')->nullable();
             $table->date('birth_date')->nullable();
             $table->string('gender');
             $table->string('password')->nullable();
             $table->string('personal_grade');
-            $table->string('band');
+            $table->integer('band');
             $table->date('hire_date')->nullable();
             $table->string('profile_path')->nullable();
             $table->timestamps();

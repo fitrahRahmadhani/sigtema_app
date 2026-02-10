@@ -7,7 +7,7 @@ use App\Models\Employee;
 use HosseinHezami\LaravelGemini\Facades\Gemini;
 use Illuminate\Support\Facades\Log;
 
-class FileBasedAIRecommendationService
+class AIRecommendationService
 {
     public function analyzeWithFileUpload(Position $position, array $employeeIds, $progressCallback = null)
     {
@@ -158,12 +158,12 @@ class FileBasedAIRecommendationService
             })->toArray(),
             'medical_checkup' => $employee->mcuResults->map(function ($mcu) {
                 return [
-                    'year' => $mcu->year,
-                    'result' => $mcu->result,
-                    'recommendation' => $mcu->recommendation
+                    'year'   => $mcu->year,
+                    'result' => $mcu->result . ' /5 star',
                 ];
             })->toArray(),
             'burnout_status' => $employee->burnout?->result,
+            'current_position' => $employee->position?->name,
             'position_history' => $employee->positionHistories->map(function ($hist) {
                 return [
                     'position' => $hist->position_name,
@@ -246,11 +246,8 @@ class FileBasedAIRecommendationService
     {
         return <<<PROMPT
 You are an expert HR consultant and organizational psychologist with 20+ years experience in talent assessment and job matching. Your analysis must be CRITICAL and OBJECTIVE.
-
 TASK: Analyze candidates for this position and provide HONEST assessment.
-
 POSITION: {$position->name} (Band: {$position->band})
-
 CRITICAL EVALUATION GUIDELINES:
 1. Be STRICT and REALISTIC - if candidates are not suitable, give LOW scores (0-40)
 2. Consider MINIMUM requirements vs NICE-TO-HAVE
@@ -287,9 +284,9 @@ OUTPUT REQUIREMENTS:
 1. For EACH candidate, provide:
    - match_score: 0-100 based on CRITICAL assessment
    - reason: BRIEF explanation in English (2-3 sentences max)
-   - strengths: 0-3 key strengths relevant to THIS position
-   - weaknesses: 0-2 critical gaps/concerns
-   - recommendation: "Highly Recommended", "Recommended", "Consider", or "Not Recommended" based on score
+   - strengths: 0-5 key strengths relevant to THIS position
+   - weaknesses: 0-5 critical gaps/concerns
+   - recommendation: "Highly Recommended", "Recommended", or "Not Recommended" based on score
 
 2. Sort by match_score descending
 3. If NO candidate scores above 50, return empty array

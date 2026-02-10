@@ -1,17 +1,17 @@
 <div class="space-y-4 p-2">
-    <!-- Breadcrumbs -->
+    {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Psychogram Results</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <!-- Content -->
+    {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-6 md:p-10">
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div
-                    class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
+                    class="color-gradient flex h-12 w-12 items-center justify-center self-start rounded-xl bg-gradient-to-br shadow-sm"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -32,7 +32,7 @@
                     <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Psychogram Results</h1>
                     <p class="mt-1 text-sm text-gray-500">View and manage psychogram evaluation results</p>
 
-                    <!-- Company Info with Change Button -->
+                    {{-- Company Info with Change Button --}}
                     @if ($isSuperadmin && $selectedCompany)
                         <div class="mt-1 flex items-center gap-2">
                             <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <!-- Add Result Button -->
+            {{-- Add Result Button --}}
             @if (! $showCompanySelection)
                 <a
                     href="{{ route('psychogram-results.create') }}"
@@ -76,7 +76,7 @@
             @endif
         </div>
 
-        <!-- COMPANY SELECTION SECTION -->
+        {{-- COMPANY SELECTION SECTION --}}
         @if ($showCompanySelection)
             <div class="mb-8 rounded-lg border border-gray-200 bg-white p-8 text-center">
                 <svg
@@ -96,7 +96,7 @@
                 <h3 class="mt-4 text-xl font-semibold text-gray-700">Pilih Perusahaan</h3>
                 <p class="mt-2 text-gray-500">Silakan pilih perusahaan untuk mengelola data hasil psikogram</p>
 
-                <!-- Company List -->
+                {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($companiesWithCount as $item)
                         <button
@@ -139,20 +139,20 @@
             </div>
         @endif
 
-        <!-- MAIN CONTENT SECTION -->
+        {{-- MAIN CONTENT SECTION --}}
         @if (! $showCompanySelection)
             @if ($selectedCompany)
-                <!-- Search and Filter Section -->
+                {{-- Search and Filter Section --}}
                 <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                    <!-- Results Info -->
+                    {{-- Results Info --}}
                     <div class="text-sm text-gray-600">
                         Mengelola data hasil psikogram karyawan di
                         <span class="font-semibold">{{ $selectedCompany->name }}</span>
                     </div>
 
-                    <!-- Search Row -->
+                    {{-- Search Row --}}
                     <div class="grid gap-4 md:grid-cols-3">
-                        <!-- Search Input -->
+                        {{-- Search Input --}}
                         <div class="md:col-span-2">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Search Employee</label>
                             <div class="relative">
@@ -181,7 +181,7 @@
                             </div>
                         </div>
 
-                        <!-- Sort By -->
+                        {{-- Sort By --}}
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Sort By</label>
                             <div class="relative">
@@ -212,9 +212,9 @@
                         </div>
                     </div>
 
-                    <!-- Filters Row -->
+                    {{-- Filters Row --}}
                     <div class="grid gap-4 md:grid-cols-3">
-                        <!-- Aspect Filter -->
+                        {{-- Aspect Filter --}}
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Aspect</label>
                             <div class="relative">
@@ -242,7 +242,7 @@
                             </div>
                         </div>
 
-                        <!-- Score Range Filter -->
+                        {{-- Score Range Filter --}}
                         <div class="relative">
                             <label class="mb-2 block text-sm font-medium text-gray-700">Score Range</label>
                             <div class="flex gap-2">
@@ -266,7 +266,7 @@
                             </div>
                         </div>
 
-                        <!-- Reset Filters Button -->
+                        {{-- Reset Filters Button --}}
                         <div class="flex items-end">
                             <button
                                 type="button"
@@ -292,7 +292,7 @@
                         </div>
                     </div>
 
-                    <!-- Results Count -->
+                    {{-- Results Count --}}
                     <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
                         Showing
                         <span class="font-semibold text-gray-900">{{ $results->count() }}</span>
@@ -302,9 +302,9 @@
                     </div>
                 </div>
 
-                <!-- Results List Container -->
+                {{-- Results List Container --}}
                 <div class="space-y-3 overflow-x-auto">
-                    <!-- Column Headers - Hidden on mobile -->
+                    {{-- Column Headers - Hidden on mobile --}}
                     <div
                         class="color-gradient hidden grid-cols-12 gap-4 rounded-lg bg-gradient-to-r px-4 py-3 text-white md:grid"
                     >
@@ -316,16 +316,16 @@
                         <div class="col-span-2 text-center text-sm font-semibold">Actions</div>
                     </div>
 
-                    <!-- List Items -->
+                    {{-- List Items --}}
                     @forelse ($results as $result)
-                        <!-- Desktop View -->
+                        {{-- Desktop View --}}
                         <div
                             class="hidden grid-cols-12 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid"
                         >
-                            <!-- Employee & Aspect Info -->
+                            {{-- Employee & Aspect Info --}}
                             <div class="col-span-3">
                                 <div class="flex flex-col gap-2">
-                                    <!-- Employee -->
+                                    {{-- Employee --}}
                                     <div class="flex items-center gap-2">
                                         @if ($result->employee->profile_path)
                                             <img
@@ -352,7 +352,7 @@
                                 </div>
                             </div>
 
-                            <!-- Aspect -->
+                            {{-- Aspect --}}
                             <div class="col-span-2">
                                 <div class="text-start">
                                     <p class="text-sm font-medium text-gray-700">{{ $result->aspect->aspect_name }}</p>
@@ -360,12 +360,12 @@
                                 </div>
                             </div>
 
-                            <!-- Score -->
+                            {{-- Score --}}
                             <div class="col-span-1">
                                 <p class="text-xl font-bold text-gray-900">{{ $result->score }}</p>
                             </div>
 
-                            <!-- Details -->
+                            {{-- Details --}}
                             <div class="col-span-3">
                                 <div class="flex flex-col gap-1">
                                     @if ($result->employee->company)
@@ -410,7 +410,7 @@
                                 </div>
                             </div>
 
-                            <!-- Last Updated -->
+                            {{-- Last Updated --}}
                             <div class="col-span-1">
                                 <div class="flex items-center gap-1 text-sm">
                                     <svg
@@ -431,7 +431,7 @@
                                 </div>
                             </div>
 
-                            <!-- Actions -->
+                            {{-- Actions --}}
                             <div class="col-span-2 flex items-center justify-center gap-2">
                                 <button
                                     wire:click="edit({{ $result->id }})"
@@ -476,12 +476,12 @@
                             </div>
                         </div>
 
-                        <!-- Mobile View -->
+                        {{-- Mobile View --}}
                         <div
                             class="block rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:hidden"
                         >
                             <div class="space-y-4">
-                                <!-- Header -->
+                                {{-- Header --}}
                                 <div class="flex items-start justify-between border-b border-gray-100 pb-4">
                                     <div class="flex items-center gap-3">
                                         @if ($result->employee->profile_path)
@@ -509,14 +509,14 @@
                                     </div>
                                 </div>
 
-                                <!-- Aspect Info -->
+                                {{-- Aspect Info --}}
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase">Aspect</p>
                                     <p class="mt-1 font-medium text-gray-900">{{ $result->aspect->aspect_name }}</p>
                                     <p class="text-sm text-gray-500">{{ $result->aspect->aspect_code }}</p>
                                 </div>
 
-                                <!-- Details -->
+                                {{-- Details --}}
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <p class="text-xs font-medium text-gray-500 uppercase">Company</p>
@@ -538,7 +538,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Actions -->
+                                {{-- Actions --}}
                                 <div class="flex items-center justify-end gap-2 border-t border-gray-100 pt-4">
                                     <button
                                         wire:click="edit({{ $result->id }})"
@@ -605,7 +605,7 @@
                     @endforelse
                 </div>
 
-                <!-- Pagination -->
+                {{-- Pagination --}}
                 @if ($results->hasPages())
                     <div class="mt-6">
                         {{ $results->links() }}

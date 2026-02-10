@@ -13,13 +13,13 @@
                         wire:click="$set('selectedCompanyId', {{ $company->id }})"
                         class="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-5 text-left transition-all duration-300 hover:scale-[1.02] hover:border-[#69251a] hover:shadow-lg hover:shadow-[#69251a]/5"
                     >
-                        <!-- Background gradient effect -->
+                        {{-- Background gradient effect --}}
                         <div
                             class="absolute inset-0 bg-gradient-to-br from-white via-white to-gray-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                         ></div>
 
                         <div class="relative flex items-center gap-4">
-                            <!-- Company Logo -->
+                            {{-- Company Logo --}}
                             <div
                                 class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-[#69251a]/10 group-hover:to-[#8b3523]/10"
                             >
@@ -52,7 +52,7 @@
                                 @endif
                             </div>
 
-                            <!-- Company Info -->
+                            {{-- Company Info --}}
                             <div class="flex-1">
                                 <h4 class="font-bold text-gray-900 group-hover:text-[#69251a]">
                                     {{ $company->name }}
@@ -88,7 +88,7 @@
                                 </div>
                             </div>
 
-                            <!-- Chevron Icon -->
+                            {{-- Chevron Icon --}}
                             <div
                                 class="text-gray-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-[#69251a]"
                             >
@@ -134,7 +134,7 @@
                             class="h-12 w-12 rounded-xl object-cover"
                             src="{{ asset('storage/' . $selectedCompany->logo_path) }}"
                             alt="{{ 'Logo ' . $selectedCompany->name }}"
-                            onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNmI3MjgwIiBzdHJva2Utd2lkdGg9IjEuNSI+PHBhdGggc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNMi4yNSAyMWgxOS41TTIuMjUgM3YxOG0xMC41LTE4djE4bTYtMTMuNVYyMU02Ljc1IDYuNzVoLjc1bS0uNzUgM2guNzVtLS43NSAzaC43NW0zLTZoLjc1bS0uNzUgM2guNzVtLS43NSAzaC43NU02Ljc1IDIxdi0zLjM3NWMwLS42MjEuNTA0LTEuMTI1IDEuMTI1LTEuMTI1aDIuMjVjLjYyMSAwIDEuMTI1LjUwNIDEuMTI1IDEuMTI1VjIxTTMgM2gxMm0tLjc1IDQuNUgyMW0tMy43NSAzLjc1aC4wMDh2LjAwOGgtLjAwOHYtLjAwOHptMCAzaC4wMDh2LjAwOGgtLjAwOHYtLjAwOHptMCAzaC4wMDh2LjAwOGgtLjAwOHYtLjAwOHoiLz48L3N2Zz4='"
+                            onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNmI3MjgwIiBzdHJva2Utd2lkdGg9IjEuNSI+PHBhdGggc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNMi4yNSAyMWgxOS41TTIuMjUgM3YxOG0xMC41LTE4djE4bTYtMTMuNVYyMU02Ljc1IDYuNzVoLjc1bS0uNzUgM2guNzVtLS43NSAzaC43NW0zLTZoLjc1bS0uNzUgM2guNzVtLS43NSAzaC43NU02Ljc1IDIxdi0zLjM3NWMwLS42MjEuNTA0LTEuMTI1IDEuMTI1LTEuMTI1aDIuMjVjLjYyMSAwIDEuMTI1LjUwNCAxLjEyNSAxLjEyNVYyMU0zIDNoMTJtLS43NSA0LjVIMjFtLTMuNzUgMy43NWguMDA4di4wMDhoLS4wMDh2LS4wMDh6bTAgM2guMDA4di4wMDhoLS4wMDh2LS4wMDh6bTAgM2guMDA4di4wMDhoLS4wMDh2LS4wMDh6Ii8+PC9zdmc+'"
                         />
                     @endif
 
@@ -197,12 +197,12 @@
                             />
                         </svg>
                     </div>
-                    <p class="text-4xl font-bold text-white">{{ $vacantPositions }}</p>
+                    <p class="text-4xl font-bold text-white">{{ number_format($vacantPositions) }}</p>
                     <p class="mt-2 text-sm font-medium text-white/80">Vacant Positions</p>
                 </div>
             </div>
 
-            {{-- Male Employees Card --}}
+            {{-- Male Employees Card - FIXED --}}
             <div
                 class="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-blue-500 to-blue-700 p-6 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
             >
@@ -224,7 +224,7 @@
                 </div>
             </div>
 
-            {{-- Female Employees Card --}}
+            {{-- Female Employees Card - FIXED --}}
             <div
                 class="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-pink-500 to-rose-600 p-6 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
             >
@@ -377,23 +377,6 @@
             @endif
         </div>
 
-        {{-- Hiring Trend --}}
-        @if (count($monthlyHiringTrend) > 0)
-            <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-                <div class="mb-4 flex items-center justify-between">
-                    <h6 class="text-lg font-bold text-gray-900">Hiring Trend</h6>
-                    <span
-                        class="rounded-full bg-gradient-to-r from-green-500 to-emerald-600 px-3 py-1 text-xs font-semibold text-white"
-                    >
-                        Last 12 Months
-                    </span>
-                </div>
-                <div class="h-80" wire:ignore>
-                    <canvas id="hiringTrendChart"></canvas>
-                </div>
-            </div>
-        @endif
-
         {{-- Tables Row --}}
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {{-- Vacant Positions --}}
@@ -473,488 +456,672 @@
         </div>
     @endif
 
-    <script>
-        // Solusi 1: Gunakan event listener yang lebih spesifik untuk Livewire
-        document.addEventListener('livewire:init', () => {
-            console.log('Livewire initialized');
+    @script
+        <script>
+            // Chart Storage - global untuk menyimpan chart instances
+            window.dashboardCharts = window.dashboardCharts || {};
 
-            // Tunggu sampai Livewire benar-benar siap
-            setTimeout(() => {
-                if (@this.selectedCompanyId) {
-                    console.log('Company selected, initializing charts...');
-                    initializeChartsFromLivewireData();
+            // Fungsi untuk destroy chart yang ada
+            function destroyChart(chartId) {
+                if (window.dashboardCharts[chartId]) {
+                    window.dashboardCharts[chartId].destroy();
+                    delete window.dashboardCharts[chartId];
                 }
-            }, 100);
+            }
 
-            // Listen untuk event ketika data sudah siap
-            Livewire.on('dashboard-data-loaded', () => {
-                console.log('Dashboard data loaded event received');
-                setTimeout(() => {
-                    initializeChartsFromLivewireData();
-                }, 100);
-            });
-
-            // Listen untuk perubahan company
-            Livewire.on('company-changed', () => {
-                console.log('Company changed, re-initializing charts...');
-                setTimeout(() => {
-                    initializeChartsFromLivewireData();
-                }, 300);
-            });
-        });
-
-        // Solusi 2: Fungsi untuk mengambil data langsung dari Livewire component
-        function initializeChartsFromLivewireData() {
-            console.log('Initializing charts from Livewire data...');
-
-            // Data diambil langsung dari Livewire component
-            const genderData = @this.genderDistribution;
-            const ageData = @this.ageDistribution;
-            const tenureData = @this.tenureDistribution;
-            const bandData = @this.bandDistribution;
-            const departmentData = @this.departmentDistribution;
-            const mbtiData = @this.mbtiDistribution;
-            const burnoutData = @this.burnoutLevels;
-            const hiringData = @this.monthlyHiringTrend;
-
-            console.log('Data check:', {
-                genderData: genderData ? genderData.length : 'no data',
-                ageData: ageData ? ageData.length : 'no data'
-            });
-
-            // Hancurkan chart yang sudah ada sebelumnya
-            destroyAllCharts();
-
-            // Tunggu sedikit untuk memastikan DOM sudah siap
-            setTimeout(() => {
-                // Gender Chart
-                if (genderData && genderData.length > 0) {
-                    const ctx = document.getElementById('genderChart');
-                    if (ctx) {
-                        console.log('Creating gender chart');
-                        new Chart(ctx, {
-                            type: 'doughnut',
-                            data: {
-                                labels: genderData.map(d => d.label),
-                                datasets: [{
-                                    data: genderData.map(d => d.value),
-                                    backgroundColor: ['#3b82f6', '#ec4899'],
-                                    borderWidth: 0,
-                                    hoverOffset: 8,
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                cutout: '70%',
-                                plugins: {
-                                    legend: {
-                                        position: 'bottom',
-                                        labels: {
-                                            padding: 15,
-                                            usePointStyle: true,
-                                            pointStyle: 'circle',
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-
-                // Age Chart
-                if (ageData && ageData.length > 0) {
-                    const ctx = document.getElementById('ageChart');
-                    if (ctx) {
-                        console.log('Creating age chart');
-                        new Chart(ctx, {
-                            type: 'polarArea',
-                            data: {
-                                labels: ageData.map(d => d.label),
-                                datasets: [{
-                                    data: ageData.map(d => d.value),
-                                    backgroundColor: ['#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1'],
-                                    borderWidth: 0,
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        position: 'bottom',
-                                        labels: {
-                                            padding: 15,
-                                            usePointStyle: true,
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-
-                // Tenure Chart
-                if (tenureData && tenureData.length > 0) {
-                    const ctx = document.getElementById('tenureChart');
-                    if (ctx) {
-                        new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: tenureData.map(d => d.label),
-                                datasets: [{
-                                    label: 'Employees',
-                                    data: tenureData.map(d => d.value),
-                                    backgroundColor: 'rgba(16, 185, 129, 0.8)',
-                                    borderRadius: 8,
-                                    borderSkipped: false,
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        display: false
-                                    }
-                                },
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        grid: {
-                                            color: 'rgba(0,0,0,0.05)'
-                                        }
-                                    },
-                                    x: {
-                                        grid: {
-                                            display: false
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-
-                // Band Chart
-                if (bandData && bandData.length > 0) {
-                    const ctx = document.getElementById('bandChart');
-                    if (ctx) {
-                        new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: bandData.map(d => d.label),
-                                datasets: [{
-                                    label: 'Employees',
-                                    data: bandData.map(d => d.value),
-                                    backgroundColor: '#69251a',
-                                    borderRadius: 8,
-                                    borderSkipped: false,
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        display: false
-                                    }
-                                },
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        grid: {
-                                            color: 'rgba(0,0,0,0.05)'
-                                        }
-                                    },
-                                    x: {
-                                        grid: {
-                                            display: false
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-
-                // Department Chart
-                if (departmentData && departmentData.length > 0) {
-                    const ctx = document.getElementById('departmentChart');
-                    if (ctx) {
-                        new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: departmentData.map(d => d.label),
-                                datasets: [{
-                                    label: 'Employees',
-                                    data: departmentData.map(d => d.value),
-                                    backgroundColor: 'rgba(245, 148, 39, 0.8)',
-                                    borderRadius: 8,
-                                    borderSkipped: false,
-                                }]
-                            },
-                            options: {
-                                indexAxis: 'y',
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        display: false
-                                    }
-                                },
-                                scales: {
-                                    x: {
-                                        beginAtZero: true,
-                                        grid: {
-                                            color: 'rgba(0,0,0,0.05)'
-                                        }
-                                    },
-                                    y: {
-                                        grid: {
-                                            display: false
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-
-                // MBTI Chart
-                if (mbtiData && mbtiData.length > 0) {
-                    const ctx = document.getElementById('mbtiChart');
-                    if (ctx) {
-                        const chartColors = {
-                            modern: ['#0ea5e9', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#ef4444', '#84cc16'],
-                        };
-
-                        new Chart(ctx, {
-                            type: 'doughnut',
-                            data: {
-                                labels: mbtiData.map(d => d.label),
-                                datasets: [{
-                                    data: mbtiData.map(d => d.value),
-                                    backgroundColor: chartColors.modern,
-                                    borderWidth: 0,
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                cutout: '60%',
-                                plugins: {
-                                    legend: {
-                                        position: 'bottom',
-                                        labels: {
-                                            padding: 10,
-                                            usePointStyle: true,
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-
-                // Burnout Chart
-                if (burnoutData && burnoutData.length > 0) {
-                    const ctx = document.getElementById('burnoutChart');
-                    if (ctx) {
-                        const colors = {
-                            'Low': 'rgba(34, 197, 94, 0.8)',
-                            'Moderate': 'rgba(251, 191, 36, 0.8)',
-                            'High': 'rgba(239, 68, 68, 0.8)'
-                        };
-
-                        new Chart(ctx, {
-                            type: 'doughnut',
-                            data: {
-                                labels: burnoutData.map(d => d.label),
-                                datasets: [{
-                                    data: burnoutData.map(d => d.value),
-                                    backgroundColor: burnoutData.map(d => colors[d.label] || 'rgba(156, 163, 175, 0.8)'),
-                                    borderWidth: 0,
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                cutout: '60%',
-                                plugins: {
-                                    legend: {
-                                        position: 'bottom',
-                                        labels: {
-                                            padding: 15,
-                                            usePointStyle: true,
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-
-                // Hiring Trend Chart
-                if (hiringData && hiringData.length > 0) {
-                    const ctx = document.getElementById('hiringTrendChart');
-                    if (ctx) {
-                        new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: hiringData.map(d => d.label),
-                                datasets: [{
-                                    label: 'New Hires',
-                                    data: hiringData.map(d => d.value),
-                                    borderColor: '#10b981',
-                                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                                    tension: 0.4,
-                                    fill: true,
-                                    borderWidth: 3,
-                                    pointRadius: 4,
-                                    pointHoverRadius: 6,
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        display: false
-                                    }
-                                },
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        grid: {
-                                            color: 'rgba(0,0,0,0.05)'
-                                        }
-                                    },
-                                    x: {
-                                        grid: {
-                                            color: 'rgba(0,0,0,0.05)'
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-
-                console.log('Charts initialization completed');
-            }, 200);
-        }
-
-        // Fungsi untuk menghancurkan semua chart yang ada
-        function destroyAllCharts() {
-            const chartIds = [
-                'genderChart', 'ageChart', 'tenureChart', 'bandChart',
-                'departmentChart', 'mbtiChart', 'burnoutChart', 'hiringTrendChart'
-            ];
-
-            chartIds.forEach(chartId => {
-                const canvas = document.getElementById(chartId);
-                if (canvas) {
-                    const chart = Chart.getChart(canvas);
-                    if (chart) {
-                        chart.destroy();
-                    }
-                }
-            });
-        }
-
-        // Solusi 3: Observer untuk mendeteksi perubahan pada canvas container
-        function setupChartObserver() {
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.type === 'childList') {
-                        const hasCanvas = Array.from(mutation.addedNodes).some(node =>
-                            node.nodeName === 'CANVAS' ||
-                            (node.nodeName === 'DIV' && node.querySelector('canvas'))
-                        );
-
-                        if (hasCanvas) {
-                            console.log('Canvas detected, checking for data...');
-                            setTimeout(() => {
-                                if (@this.selectedCompanyId) {
-                                    initializeChartsFromLivewireData();
-                                }
-                            }, 500);
-                        }
-                    }
+            // Fungsi untuk destroy semua charts
+            function destroyAllCharts() {
+                Object.keys(window.dashboardCharts).forEach((chartId) => {
+                    destroyChart(chartId);
                 });
+            }
+
+            // Fungsi untuk membuat chart
+            function createChart(chartId, config) {
+                const canvas = document.getElementById(chartId);
+                if (!canvas) return null;
+
+                // Destroy existing chart
+                destroyChart(chartId);
+
+                // Create new chart
+                try {
+                    window.dashboardCharts[chartId] = new Chart(canvas, config);
+                    return window.dashboardCharts[chartId];
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            // Fungsi utama untuk render semua charts dengan styling yang lebih ciamik
+            function renderDashboardCharts() {
+                // Destroy existing charts first
+                destroyAllCharts();
+
+                // Get data from Livewire
+                const genderData = $wire.genderDistribution || [];
+                const ageData = $wire.ageDistribution || [];
+                const tenureData = $wire.tenureDistribution || [];
+                const bandData = $wire.bandDistribution || [];
+                const departmentData = $wire.departmentDistribution || [];
+                const mbtiData = $wire.mbtiDistribution || [];
+                const burnoutData = $wire.burnoutLevels || [];
+
+                // Gender Chart - Improved with better styling
+                if (genderData.length > 0) {
+                    createChart('genderChart', {
+                        type: 'doughnut',
+                        data: {
+                            labels: genderData.map((d) => d.label),
+                            datasets: [
+                                {
+                                    data: genderData.map((d) => d.value),
+                                    backgroundColor: ['rgba(59, 130, 246, 0.9)', 'rgba(236, 72, 153, 0.9)'],
+                                    borderWidth: 3,
+                                    borderColor: '#fff',
+                                    hoverOffset: 12,
+                                    hoverBorderWidth: 4,
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '70%',
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 20,
+                                        usePointStyle: true,
+                                        pointStyle: 'circle',
+                                        font: {
+                                            size: 13,
+                                            weight: '600',
+                                            family: "'Inter', sans-serif",
+                                        },
+                                        color: '#374151',
+                                    },
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    padding: 12,
+                                    cornerRadius: 8,
+                                    titleFont: {
+                                        size: 14,
+                                        weight: 'bold',
+                                    },
+                                    bodyFont: {
+                                        size: 13,
+                                    },
+                                    callbacks: {
+                                        label: function (context) {
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                                        },
+                                    },
+                                },
+                                datalabels: {
+                                    color: '#fff',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 18,
+                                        family: "'Inter', sans-serif",
+                                    },
+                                    textStrokeColor: 'rgba(0, 0, 0, 0.3)',
+                                    textStrokeWidth: 2,
+                                    formatter: (value, ctx) => {
+                                        const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return percentage + '%';
+                                    },
+                                },
+                            },
+                        },
+                        plugins: [ChartDataLabels],
+                    });
+                }
+
+                // Age Chart - Changed to horizontal bar chart like Department Chart
+                if (ageData.length > 0) {
+                    createChart('ageChart', {
+                        type: 'bar',
+                        data: {
+                            labels: ageData.map((d) => d.label),
+                            datasets: [
+                                {
+                                    label: 'Employees',
+                                    data: ageData.map((d) => d.value),
+                                    backgroundColor: 'rgba(20, 184, 166, 0.85)',
+                                    borderRadius: 10,
+                                    borderSkipped: false,
+                                    hoverBackgroundColor: 'rgba(20, 184, 166, 1)',
+                                },
+                            ],
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false,
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    padding: 12,
+                                    cornerRadius: 8,
+                                    titleFont: {
+                                        size: 14,
+                                        weight: 'bold',
+                                    },
+                                    bodyFont: {
+                                        size: 13,
+                                    },
+                                },
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'end',
+                                    offset: 6,
+                                    color: '#14b8a6',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 14,
+                                        family: "'Inter', sans-serif",
+                                    },
+                                    backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                                    borderRadius: 6,
+                                    padding: {
+                                        top: 4,
+                                        bottom: 4,
+                                        left: 8,
+                                        right: 8,
+                                    },
+                                    formatter: (value) => value,
+                                },
+                            },
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(0,0,0,0.05)',
+                                    },
+                                    ticks: {
+                                        font: {
+                                            size: 12,
+                                            weight: '500',
+                                        },
+                                        color: '#6B7280',
+                                    },
+                                },
+                                y: {
+                                    grid: {
+                                        display: false,
+                                    },
+                                    ticks: {
+                                        font: {
+                                            size: 12,
+                                            weight: '500',
+                                        },
+                                        color: '#374151',
+                                    },
+                                },
+                            },
+                        },
+                        plugins: [ChartDataLabels],
+                    });
+                }
+
+                // Tenure Chart - Enhanced bar chart
+                if (tenureData.length > 0) {
+                    createChart('tenureChart', {
+                        type: 'bar',
+                        data: {
+                            labels: tenureData.map((d) => d.label),
+                            datasets: [
+                                {
+                                    label: 'Employees',
+                                    data: tenureData.map((d) => d.value),
+                                    backgroundColor: 'rgba(16, 185, 129, 0.85)',
+                                    borderRadius: 10,
+                                    borderSkipped: false,
+                                    hoverBackgroundColor: 'rgba(16, 185, 129, 1)',
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false,
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    padding: 12,
+                                    cornerRadius: 8,
+                                    titleFont: {
+                                        size: 14,
+                                        weight: 'bold',
+                                    },
+                                    bodyFont: {
+                                        size: 13,
+                                    },
+                                },
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'top',
+                                    offset: 4,
+                                    color: '#059669',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 14,
+                                        family: "'Inter', sans-serif",
+                                    },
+                                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                    borderRadius: 6,
+                                    padding: {
+                                        top: 4,
+                                        bottom: 4,
+                                        left: 8,
+                                        right: 8,
+                                    },
+                                    formatter: (value) => value,
+                                },
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(0,0,0,0.05)',
+                                    },
+                                    ticks: {
+                                        font: {
+                                            size: 12,
+                                            weight: '500',
+                                        },
+                                        color: '#6B7280',
+                                    },
+                                },
+                                x: {
+                                    grid: {
+                                        display: false,
+                                    },
+                                    ticks: {
+                                        font: {
+                                            size: 12,
+                                            weight: '500',
+                                        },
+                                        color: '#6B7280',
+                                    },
+                                },
+                            },
+                        },
+                        plugins: [ChartDataLabels],
+                    });
+                }
+
+                // Band Chart - Enhanced with gradient
+                if (bandData.length > 0) {
+                    createChart('bandChart', {
+                        type: 'bar',
+                        data: {
+                            labels: bandData.map((d) => d.label),
+                            datasets: [
+                                {
+                                    label: 'Employees',
+                                    data: bandData.map((d) => d.value),
+                                    backgroundColor: 'rgba(105, 37, 26, 0.9)',
+                                    borderRadius: 10,
+                                    borderSkipped: false,
+                                    hoverBackgroundColor: '#8b3523',
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false,
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    padding: 12,
+                                    cornerRadius: 8,
+                                    titleFont: {
+                                        size: 14,
+                                        weight: 'bold',
+                                    },
+                                    bodyFont: {
+                                        size: 13,
+                                    },
+                                },
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'top',
+                                    offset: 4,
+                                    color: '#69251a',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 14,
+                                        family: "'Inter', sans-serif",
+                                    },
+                                    backgroundColor: 'rgba(105, 37, 26, 0.1)',
+                                    borderRadius: 6,
+                                    padding: {
+                                        top: 4,
+                                        bottom: 4,
+                                        left: 8,
+                                        right: 8,
+                                    },
+                                    formatter: (value) => value,
+                                },
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(0,0,0,0.05)',
+                                    },
+                                    ticks: {
+                                        font: {
+                                            size: 12,
+                                            weight: '500',
+                                        },
+                                        color: '#6B7280',
+                                    },
+                                },
+                                x: {
+                                    grid: {
+                                        display: false,
+                                    },
+                                    ticks: {
+                                        font: {
+                                            size: 12,
+                                            weight: '500',
+                                        },
+                                        color: '#6B7280',
+                                    },
+                                },
+                            },
+                        },
+                        plugins: [ChartDataLabels],
+                    });
+                }
+
+                // Department Chart - Horizontal bar with better labels
+                if (departmentData.length > 0) {
+                    createChart('departmentChart', {
+                        type: 'bar',
+                        data: {
+                            labels: departmentData.map((d) => d.label),
+                            datasets: [
+                                {
+                                    label: 'Employees',
+                                    data: departmentData.map((d) => d.value),
+                                    backgroundColor: 'rgba(245, 148, 39, 0.85)',
+                                    borderRadius: 10,
+                                    borderSkipped: false,
+                                    hoverBackgroundColor: 'rgba(245, 148, 39, 1)',
+                                },
+                            ],
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false,
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    padding: 12,
+                                    cornerRadius: 8,
+                                    titleFont: {
+                                        size: 14,
+                                        weight: 'bold',
+                                    },
+                                    bodyFont: {
+                                        size: 13,
+                                    },
+                                },
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'end',
+                                    offset: 6,
+                                    color: '#f59427',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 14,
+                                        family: "'Inter', sans-serif",
+                                    },
+                                    backgroundColor: 'rgba(245, 148, 39, 0.1)',
+                                    borderRadius: 6,
+                                    padding: {
+                                        top: 4,
+                                        bottom: 4,
+                                        left: 8,
+                                        right: 8,
+                                    },
+                                    formatter: (value) => value,
+                                },
+                            },
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(0,0,0,0.05)',
+                                    },
+                                    ticks: {
+                                        font: {
+                                            size: 12,
+                                            weight: '500',
+                                        },
+                                        color: '#6B7280',
+                                    },
+                                },
+                                y: {
+                                    grid: {
+                                        display: false,
+                                    },
+                                    ticks: {
+                                        font: {
+                                            size: 12,
+                                            weight: '500',
+                                        },
+                                        color: '#374151',
+                                    },
+                                },
+                            },
+                        },
+                        plugins: [ChartDataLabels],
+                    });
+                }
+
+                // MBTI Chart - Enhanced doughnut
+                if (mbtiData.length > 0) {
+                    createChart('mbtiChart', {
+                        type: 'doughnut',
+                        data: {
+                            labels: mbtiData.map((d) => d.label),
+                            datasets: [
+                                {
+                                    data: mbtiData.map((d) => d.value),
+                                    backgroundColor: [
+                                        'rgba(14, 165, 233, 0.9)',
+                                        'rgba(139, 92, 246, 0.9)',
+                                        'rgba(236, 72, 153, 0.9)',
+                                        'rgba(245, 158, 11, 0.9)',
+                                        'rgba(16, 185, 129, 0.9)',
+                                        'rgba(6, 182, 212, 0.9)',
+                                        'rgba(239, 68, 68, 0.9)',
+                                        'rgba(132, 204, 22, 0.9)',
+                                    ],
+                                    borderWidth: 3,
+                                    borderColor: '#fff',
+                                    hoverBorderWidth: 4,
+                                    hoverOffset: 8,
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '65%',
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 12,
+                                        usePointStyle: true,
+                                        font: {
+                                            size: 11,
+                                            weight: '600',
+                                            family: "'Inter', sans-serif",
+                                        },
+                                        color: '#374151',
+                                    },
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    padding: 12,
+                                    cornerRadius: 8,
+                                    titleFont: {
+                                        size: 14,
+                                        weight: 'bold',
+                                    },
+                                    bodyFont: {
+                                        size: 13,
+                                    },
+                                    callbacks: {
+                                        label: function (context) {
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                                        },
+                                    },
+                                },
+                                datalabels: {
+                                    color: '#fff',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 13,
+                                        family: "'Inter', sans-serif",
+                                    },
+                                    textStrokeColor: 'rgba(0, 0, 0, 0.3)',
+                                    textStrokeWidth: 2,
+                                    formatter: (value, ctx) => {
+                                        const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return percentage >= 3 ? percentage + '%' : '';
+                                    },
+                                },
+                            },
+                        },
+                        plugins: [ChartDataLabels],
+                    });
+                }
+
+                // Burnout Chart - Color-coded doughnut
+                if (burnoutData.length > 0) {
+                    const burnoutColors = {
+                        Low: 'rgba(34, 197, 94, 0.9)',
+                        Moderate: 'rgba(251, 191, 36, 0.9)',
+                        High: 'rgba(239, 68, 68, 0.9)',
+                    };
+
+                    createChart('burnoutChart', {
+                        type: 'doughnut',
+                        data: {
+                            labels: burnoutData.map((d) => d.label),
+                            datasets: [
+                                {
+                                    data: burnoutData.map((d) => d.value),
+                                    backgroundColor: burnoutData.map(
+                                        (d) => burnoutColors[d.label] || 'rgba(156, 163, 175, 0.8)',
+                                    ),
+                                    borderWidth: 3,
+                                    borderColor: '#fff',
+                                    hoverBorderWidth: 4,
+                                    hoverOffset: 10,
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '65%',
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 20,
+                                        usePointStyle: true,
+                                        font: {
+                                            size: 13,
+                                            weight: '600',
+                                            family: "'Inter', sans-serif",
+                                        },
+                                        color: '#374151',
+                                    },
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    padding: 12,
+                                    cornerRadius: 8,
+                                    titleFont: {
+                                        size: 14,
+                                        weight: 'bold',
+                                    },
+                                    bodyFont: {
+                                        size: 13,
+                                    },
+                                    callbacks: {
+                                        label: function (context) {
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                                        },
+                                    },
+                                },
+                                datalabels: {
+                                    color: '#fff',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 16,
+                                        family: "'Inter', sans-serif",
+                                    },
+                                    textStrokeColor: 'rgba(0, 0, 0, 0.4)',
+                                    textStrokeWidth: 2,
+                                    formatter: (value, ctx) => {
+                                        const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return value + '\n' + percentage + '%';
+                                    },
+                                },
+                            },
+                        },
+                        plugins: [ChartDataLabels],
+                    });
+                }
+            }
+
+            // Listen untuk event dari Livewire
+            $wire.on('dashboard-data-loaded', () => {
+                setTimeout(() => renderDashboardCharts(), 200);
             });
 
-            // Observe body untuk perubahan pada canvas
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
+            $wire.on('company-changed', () => {
+                setTimeout(() => renderDashboardCharts(), 300);
             });
-        }
 
-        // Solusi 4: Inisialisasi langsung saat script dimuat
-        console.log('Chart script loaded');
-
-        // Setup observer
-        setupChartObserver();
-
-        // Coba langsung inisialisasi setelah delay
-        setTimeout(() => {
-            console.log('Attempting initial chart load...');
-            if (@this.selectedCompanyId) {
-                initializeChartsFromLivewireData();
-            }
-        }, 1000);
-
-        // Solusi 5: Handle window load event
-        window.addEventListener('load', () => {
-            console.log('Window fully loaded');
-            setTimeout(() => {
-                if (@this.selectedCompanyId) {
-                    initializeChartsFromLivewireData();
-                }
-            }, 1500);
-        });
-
-        // Solusi 6: Custom event untuk trigger manual
-        document.addEventListener('force-chart-render', () => {
-            console.log('Force chart render event received');
-            initializeChartsFromLivewireData();
-        });
-
-        // Solusi 7: Tambahkan event listener untuk semua kemungkinan
-        document.addEventListener('livewire:navigated', () => {
-            console.log('Livewire navigated');
-            setTimeout(() => {
-                if (@this.selectedCompanyId) {
-                    initializeChartsFromLivewireData();
-                }
-            }, 1000);
-        });
-
-        // Backup: Coba setiap 2 detik jika belum berhasil
-        let retryCount = 0;
-        const maxRetries = 5;
-
-        function retryChartInitialization() {
-            if (retryCount < maxRetries) {
-                setTimeout(() => {
-                    console.log(`Retry chart initialization ${retryCount + 1}/${maxRetries}`);
-                    if (@this.selectedCompanyId &&
-                        @this.genderDistribution &&
-                        @this.genderDistribution.length > 0) {
-                        initializeChartsFromLivewireData();
-                    } else {
-                        retryCount++;
-                        retryChartInitialization();
-                    }
-                }, 2000);
-            } else {
-                console.log('Max retries reached for chart initialization');
-            }
-        }
-
-        // Mulai retry mechanism
-        retryChartInitialization();
-    </script>
+            // Initial render saat page load
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(() => renderDashboardCharts(), 500);
+            });
+        </script>
+    @endscript
 </div>

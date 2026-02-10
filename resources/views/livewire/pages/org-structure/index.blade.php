@@ -5,11 +5,11 @@
                 <livewire:components.modals.add-staff-modal />
                 <livewire:components.modals.unassign-employee-modal />
                 <livewire:components.modals.assign-employee-modal />
-            <!-- Header Controls -->
+            {{-- Header Controls --}}
             <div class="mb-8 flex flex-col gap-4">
-                <!-- Header Section -->
+                {{-- Header Section --}}
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <!-- Title and Icon -->
+                    {{-- Title and Icon --}}
                     <div class="flex items-center gap-4">
                         <div class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="size-7 text-white" viewBox="0 0 16 16">
@@ -33,13 +33,13 @@
                     </div>
                 </div>
 
-                <!-- Controls Section -->
+                {{-- Controls Section --}}
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <!-- Company Selector (Superadmin Only) -->
+                    {{-- Company Selector (Superadmin Only) --}}
                     @if($isSuperadmin)
                         <div class="flex-1 sm:max-w-md">
                             @if($hasSelectedCompany)
-                                <!-- Current Company Badge -->
+                                {{-- Current Company Badge --}}
                                 <div class="flex items-center justify-between gap-3 rounded-xl border border-gray-300 bg-white px-4 py-2.5 shadow-sm">
                                     <div class="flex min-w-0 flex-1 items-center gap-2">
                                         <svg class="h-4 w-4 flex-shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,7 +61,7 @@
                                     </button>
                                 </div>
                             @else
-                                <!-- Company Dropdown -->
+                                {{-- Company Dropdown --}}
                                 <div class="relative">
                                     <select
                                         wire:model="selectedCompanyId"
@@ -82,11 +82,11 @@
                             @endif
                         </div>
                     @else
-                        <!-- Spacer for non-superadmin -->
+                        {{-- Spacer for non-superadmin --}}
                         <div class="flex-1"></div>
                     @endif
 
-                    <!-- Table View Button -->
+                    {{-- Table View Button --}}
                     @if($hasSelectedCompany)
                         <div class="flex justify-end sm:justify-start">
                             <a href="{{ route('organization-structure.table') }}"
@@ -102,17 +102,17 @@
                 </div>
             </div>
 
-            <!-- Org Chart Container -->
+            {{-- Org Chart Container --}}
             @if($hasSelectedCompany )
                 <div class="relative rounded-xl border border-gray-200 bg-white shadow-sm">
-                    <!-- Scrollable Area -->
+                    {{-- Scrollable Area --}}
                     <div id="orgChartScrollArea" class="org-chart-scroll-area relative overflow-auto p-8">
                         <div
                             id="orgChartWrapper"
                             class="org-chart-wrapper min-w-max"
                             style="transform: scale({{ $zoom / 100 }}); transform-origin: top center"
                         >
-                            <!-- Render Nodes via Blade -->
+                            {{-- Render Nodes via Blade --}}
                             @php
                                 $renderNode = function ($nodeId, $level = 0) use (&$renderNode, &$nodes) {
                                     $node = $this->getNode($nodeId);
@@ -289,7 +289,7 @@
                         </div>
                     </div>
 
-                    <!-- Zoom Controls -->
+                    {{-- Zoom Controls --}}
                     <div class="absolute right-4 bottom-4 z-20">
                         <div class="flex items-center gap-2 rounded-lg bg-gray-100 p-2 shadow-lg">
                             <button
@@ -330,7 +330,7 @@
                     </div>
                 </div>
             @else
-                <!-- Empty State untuk Superadmin yang belum pilih company -->
+                {{-- Empty State untuk Superadmin yang belum pilih company --}}
                 <div class="relative rounded-xl border border-gray-200 bg-white shadow-sm">
                     <div class="flex flex-col items-center justify-center p-12 text-center">
                         <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
