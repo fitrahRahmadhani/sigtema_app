@@ -534,7 +534,7 @@
                                 <div class="flex-1">
                                     <h2 class="text-lg font-semibold text-gray-900">{{ $employee->name }}</h2>
                                     <p class="text-sm text-gray-600">
-                                        {{ $employee->band }} • {{ $employee->employee_number }}
+                                        Band {{ $employee->band }} • {{ $employee->employee_number }}
                                     </p>
 
                                     {{-- AI Reason --}}

@@ -116,7 +116,7 @@
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Contract Type</p>
-                        <p class="">{{ $employee->band ?? '-' }}</p>
+                        <p class="">{{ $employee->band ? 'Band ' . $employee->band : '-' }}</p>
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Age</p>
