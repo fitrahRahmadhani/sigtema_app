@@ -2,16 +2,17 @@
 
 namespace App\Livewire\Pages\Employees;
 
-use App\Models\Employee;
-use App\Models\Company;
-use Livewire\Component;
-use Livewire\Attributes\Url;
-use Livewire\WithPagination;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use App\Livewire\Traits\WithDeleteConfirmation;
+use App\Models\Company;
+use App\Models\Employee;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('components.layouts.app')]
 #[Title('Employees')]
@@ -117,11 +118,27 @@ class Index extends Component
 
     protected function performDelete($employee): void
     {
-        if ($employee->profile_path && Storage::disk('public')->exists($employee->profile_path)) {
-            Storage::disk('public')->delete($employee->profile_path);
-        }
 
-        $employee->delete();
+        $this->authorize('delete', [Employee::class, $employee]);
+
+        DB::beginTransaction();
+
+        try {
+            $profilePath = $employee->profile_path;
+
+            // Delete the employee from database
+            $employee->delete();
+
+            // Delete profile picture jika ada
+            if ($profilePath && Storage::disk('public')->exists($profilePath)) {
+                Storage::disk('public')->delete($profilePath);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->handleException('delete employee', $e->getMessage());
+        }
     }
 
     public function render()

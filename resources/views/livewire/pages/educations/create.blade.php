@@ -42,7 +42,7 @@
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Employee Selection</h3>
                 <div class="space-y-6">
-                    {{-- Company (Read-only, from session) --}}
+                    {{-- Company --}}
                     <div>
                         <label class="mb-2 block text-sm font-medium text-gray-700">
                             Company

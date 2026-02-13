@@ -118,7 +118,6 @@
                                 <button
                                     type="button"
                                     wire:click="deleteExistingPhoto"
-                                    wire:confirm="Are you sure you want to delete this photo?"
                                     class="inline-flex items-center gap-2 rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
                                 >
                                     <svg
@@ -139,20 +138,21 @@
                                 </button>
                             @endif
                         </div>
-                        <p class="text-xs text-gray-500">PNG, JPG max 2MB</p>
+                        <p class="text-xs text-gray-500">PNG, JPG max 2MB. Recommended size: 400x400px</p>
                         @error('profile_photo')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
 
-                        <div wire:loading wire:target="profile_photo" class="text-sm text-red-600">Uploading...</div>
+                        <div wire:loading wire:target="profile_photo" class="text-sm text-blue-600">Uploading...</div>
                     </div>
                 </div>
             </div>
 
-            {{-- Personal Information (Same as Create but with wire:model without .live) --}}
+            {{-- Personal Information --}}
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Personal Information</h3>
                 <div class="grid gap-6 md:grid-cols-2">
+                    {{-- Name --}}
                     <div class="md:col-span-2">
                         <label for="name" class="mb-2 block text-sm font-medium text-gray-700">
                             Full Name
@@ -162,13 +162,15 @@
                             type="text"
                             id="name"
                             wire:model.live="name"
-                            class="@error('name') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            placeholder="Enter full name"
+                            class="@error('name') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                         />
                         @error('name')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
+                    {{-- Email --}}
                     <div>
                         <label for="email" class="mb-2 block text-sm font-medium text-gray-700">
                             Email
@@ -178,13 +180,15 @@
                             type="email"
                             id="email"
                             wire:model.blur="email"
-                            class="@error('email') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            placeholder="email@example.com"
+                            class="@error('email') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                         />
                         @error('email')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
+                    {{-- Phone --}}
                     <div>
                         <label for="phone" class="mb-2 block text-sm font-medium text-gray-700">
                             Phone Number
@@ -194,26 +198,29 @@
                             type="text"
                             id="phone"
                             wire:model.blur="phone"
-                            class="@error('phone') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            placeholder="+62 812 3456 7890"
+                            class="@error('phone') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                         />
                         @error('phone')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
+                    {{-- Birth Date --}}
                     <div>
                         <label for="birth_date" class="mb-2 block text-sm font-medium text-gray-700">Birth Date</label>
                         <input
                             type="date"
                             id="birth_date"
                             wire:model.blur="birth_date"
-                            class="@error('birth_date') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="@error('birth_date') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                         />
                         @error('birth_date')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
+                    {{-- Gender --}}
                     <div>
                         <label for="gender" class="mb-2 block text-sm font-medium text-gray-700">
                             Gender
@@ -223,7 +230,7 @@
                             <select
                                 id="gender"
                                 wire:model="gender"
-                                class="@error('gender') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                class="@error('gender') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full appearance-none rounded-lg border bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:ring-1 focus:outline-none"
                             >
                                 <option value="">Select gender</option>
                                 <option value="Male">Male</option>
@@ -251,6 +258,7 @@
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <h3 class="mb-4 text-lg font-semibold text-gray-900">Employment Information</h3>
                 <div class="grid gap-6 md:grid-cols-2">
+                    {{-- Employee Number --}}
                     <div>
                         <label for="employee_number" class="mb-2 block text-sm font-medium text-gray-700">
                             Employee Number
@@ -260,13 +268,15 @@
                             type="text"
                             id="employee_number"
                             wire:model.blur="employee_number"
-                            class="@error('employee_number') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            placeholder="e.g., 00007717, 00003324"
+                            class="@error('employee_number') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                         />
                         @error('employee_number')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
+                    {{-- Personal Grade --}}
                     <div>
                         <label for="personal_grade" class="mb-2 block text-sm font-medium text-gray-700">
                             Personal Grade
@@ -276,26 +286,29 @@
                             type="text"
                             id="personal_grade"
                             wire:model.blur="personal_grade"
-                            class="@error('personal_grade') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            placeholder="e.g., 12, 13"
+                            class="@error('personal_grade') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                         />
                         @error('personal_grade')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
+                    {{-- Hire Date --}}
                     <div>
                         <label for="hire_date" class="mb-2 block text-sm font-medium text-gray-700">Hire Date</label>
                         <input
                             type="date"
                             id="hire_date"
                             wire:model.blur="hire_date"
-                            class="@error('hire_date') @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="@error('hire_date') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                         />
                         @error('hire_date')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
+                    {{-- Band --}}
                     <div>
                         <label for="band" class="mb-2 block text-sm font-medium text-gray-700">
                             Band
@@ -305,7 +318,7 @@
                             <select
                                 id="band"
                                 wire:model="band"
-                                class="@error('band') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                class="@error('band') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full appearance-none rounded-lg border bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:ring-1 focus:outline-none"
                             >
                                 <option value="">Select band</option>
                                 <option value="1">Band 1</option>
@@ -342,13 +355,13 @@
                 <div class="grid gap-6 md:grid-cols-2">
                     {{-- Password --}}
                     <div>
-                        <label for="password" class="mb-2 block text-sm font-medium text-gray-700">Password</label>
+                        <label for="password" class="mb-2 block text-sm font-medium text-gray-700">New Password</label>
                         <input
                             type="password"
                             id="password"
                             wire:model.live="password"
                             placeholder="••••••••••••"
-                            class="@error('password') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+                            class="@error('password') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                         />
                         @error('password')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -362,14 +375,14 @@
                     {{-- Password Confirmation --}}
                     <div>
                         <label for="password_confirmation" class="mb-2 block text-sm font-medium text-gray-700">
-                            Confirm Password
+                            Confirm New Password
                         </label>
                         <input
                             type="password"
                             id="password_confirmation"
                             wire:model.live="password_confirmation"
                             placeholder="••••••••••••"
-                            class="@error('password_confirmation') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+                            class="@error('password_confirmation') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                         />
                         @error('password_confirmation')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -392,7 +405,7 @@
                                 <select
                                     id="company_id"
                                     wire:model.live="company_id"
-                                    class="@error('company_id') @enderror w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                    class="@error('company_id') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full appearance-none rounded-lg border bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 focus:ring-1 focus:outline-none"
                                 >
                                     <option value="">Select a company</option>
                                     @foreach ($companies as $company)
