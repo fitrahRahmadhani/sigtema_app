@@ -1,10 +1,7 @@
 <?php
 
-use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
-use App\Livewire\Settings\TwoFactor;
 use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Features;
 
 Route::redirect('/', '/login');
 
