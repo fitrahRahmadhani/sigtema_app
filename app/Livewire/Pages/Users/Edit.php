@@ -121,7 +121,7 @@ class Edit extends Component
             $this->validate();
 
             // Authorization check
-            $this->authorize('edit', $this->user);
+            $this->authorize('update', User::class);
 
             DB::beginTransaction();
 
