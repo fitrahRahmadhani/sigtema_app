@@ -2,12 +2,15 @@
 
 namespace App\Livewire\Traits;
 
-use Livewire\Attributes\On;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
+use Livewire\Attributes\On;
 use Masmerise\Toaster\Toaster;
 
 trait WithDeleteConfirmation
 {
+    use HandleException;
+
     public $showDeleteModal = false;
     public $deleteToken = null;
     public $deleteName = '';
@@ -26,7 +29,7 @@ trait WithDeleteConfirmation
             $token = Crypt::encryptString(json_encode([
                 'id' => $id,
                 'model' => $this->getModelClass(),
-                'expires_at' => now()->addMinutes(10)->timestamp,
+                'expires_at' => now()->addMinutes(2)->timestamp,
                 'nonce' => bin2hex(random_bytes(16))
             ]));
 
@@ -35,7 +38,7 @@ trait WithDeleteConfirmation
             $this->deleteType = $this->getModelDisplayName();
             $this->showDeleteModal = true;
         } catch (\Exception $e) {
-            Toaster::error('Error preparing deletion: ' . $e->getMessage());
+            $this->handleException('prepare deletion', $e->getMessage());
         }
     }
 
@@ -74,7 +77,7 @@ trait WithDeleteConfirmation
             // Find item
             $item = $this->getModelClass()::findOrFail($payload['id']);
 
-            // Custom deletion logic
+            // Custom deletion logic with transaction
             $this->performDelete($item);
 
             // Reset state
@@ -89,9 +92,12 @@ trait WithDeleteConfirmation
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             $this->resetDeleteState();
             Toaster::error($this->getModelDisplayName() . ' not found or already deleted.');
+        } catch (DecryptException $e) {
+            $this->resetDeleteState();
+            $this->handleException('decrypt deletion token', $e->getMessage());
         } catch (\Exception $e) {
             $this->resetDeleteState();
-            Toaster::error('Deletion failed: ' . $e->getMessage());
+            $this->handleException('delete ' . strtolower($this->getModelDisplayName()), $e->getMessage());
         }
     }
 
