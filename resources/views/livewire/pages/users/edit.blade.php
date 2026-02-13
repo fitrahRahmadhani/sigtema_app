@@ -170,7 +170,7 @@
                         <input
                             type="text"
                             id="name"
-                            wire:model.live="name"
+                            wire:model="name"
                             placeholder="Enter full name"
                             class="@error('name') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
                         />
@@ -188,7 +188,7 @@
                         <input
                             type="email"
                             id="email"
-                            wire:model.live="email"
+                            wire:model="email"
                             placeholder="user@example.com"
                             class="@error('email') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
                         />
@@ -247,7 +247,7 @@
                         <input
                             type="password"
                             id="password"
-                            wire:model.live="password"
+                            wire:model="password"
                             placeholder="••••••••"
                             class="@error('password') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
                         />
@@ -268,7 +268,7 @@
                         <input
                             type="password"
                             id="password_confirmation"
-                            wire:model.live="password_confirmation"
+                            wire:model="password_confirmation"
                             placeholder="••••••••"
                             class="@error('password_confirmation') border-red-300 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
                         />

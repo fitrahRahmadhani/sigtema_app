@@ -2,55 +2,56 @@
 
 namespace App\Livewire\Pages\Users;
 
-use App\Models\User;
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\Validate;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use Spatie\Permission\Models\Role;
 use Masmerise\Toaster\Toaster;
+use Spatie\Permission\Models\Role;
 
 #[Layout('components.layouts.app')]
 #[Title('Create User')]
 class Create extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, UnauthorizedAccess, HandleException;
 
-    #[Validate('required|string|max:255')]
     public $name = '';
-
-    #[Validate('required|email|max:255|unique:users,email')]
     public $email = '';
-
-    #[Validate([
-        'required',
-        'string',
-        'min:12',
-        'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/'
-    ])]
     public $password = '';
-
-    #[Validate('required|same:password')]
     public $password_confirmation = '';
-
-    #[Validate('nullable|numeric|min:1|max:5')]
     public $band = '';
-
-    #[Validate('nullable|exists:companies,id')]
     public $company_id = '';
-
-    #[Validate('nullable|array')]
     public $selectedRoles = [];
-
-    #[Validate('nullable|image|max:2048')]
     public $profile_photo;
-
     public $profile_photo_preview = null;
     public $bandOptions = [];
+
+    protected function rules()
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => [
+                'required',
+                'string',
+                'min:12',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/'
+            ],
+            'password_confirmation' => 'required|same:password',
+            'band' => 'nullable|numeric|min:1|max:5',
+            'company_id' => 'nullable|exists:companies,id',
+            'selectedRoles' => 'nullable|array',
+            'profile_photo' => 'nullable|image|max:2048',
+        ];
+    }
 
     public function mount()
     {
@@ -76,9 +77,15 @@ class Create extends Component
 
     public function save()
     {
-        $this->validate();
-
         try {
+            // Validate form
+            $this->validate();
+
+            // Authorization check
+            $this->authorize('create', User::class);
+
+            DB::beginTransaction();
+
             // Create user
             $user = User::create([
                 'name' => $this->name,
@@ -100,9 +107,19 @@ class Create extends Component
                 $user->syncRoles($this->selectedRoles);
             }
 
+            DB::commit();
+
             return redirect()->route('users.index')->success('User created successfully!');
-        } catch (\Exception $e) {
+        } catch (ValidationException $e) {
+            DB::rollBack();
             Toaster::error('Failed to create user: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('create user');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException('create user', $e->getMessage());
         }
     }
 
