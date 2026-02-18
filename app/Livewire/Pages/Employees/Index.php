@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Pages\Employees;
 
+use App\Livewire\Traits\HandleException;
 use App\Livewire\Traits\WithDeleteConfirmation;
 use App\Models\Company;
 use App\Models\Employee;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -18,8 +20,9 @@ use Livewire\WithPagination;
 #[Title('Employees')]
 class Index extends Component
 {
-    use WithPagination, WithDeleteConfirmation;
+    use WithPagination, WithDeleteConfirmation, HandleException;
 
+    public User $user;
     public $selectedCompanyId = null;
     public $selectedCompany = null;
     public $companies = [];
@@ -36,9 +39,9 @@ class Index extends Component
 
     public function mount(): void
     {
-        $user = Auth::user();
+        $this->user = Auth::user();
 
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         if ($this->isSuperadmin) {
             $this->companies = Company::where('is_active', true)->get();
@@ -48,9 +51,9 @@ class Index extends Component
                 $this->selectedCompany = Company::find($this->selectedCompanyId);
             }
         } else {
-            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompanyId = $this->user->company_id;
             $this->selectedCompany = Company::find($this->selectedCompanyId);
-            $this->companies = Company::where('id', $user->company_id)->get();
+            $this->companies = Company::where('id', $this->user->company_id)->get();
         }
     }
 
@@ -121,9 +124,8 @@ class Index extends Component
 
         $this->authorize('delete', [Employee::class, $employee]);
 
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
             $profilePath = $employee->profile_path;
 
             // Delete the employee from database

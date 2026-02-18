@@ -2,20 +2,30 @@
 
 namespace App\Livewire\Pages\Educations;
 
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
+use App\Models\Company;
 use App\Models\Education;
 use App\Models\Employee;
-use App\Models\Company;
-use Livewire\Component;
+use App\Models\User;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 use Masmerise\Toaster\Toaster;
-use Exception;
 
 #[Layout('components.layouts.app')]
 #[Title('Add Education')]
 class Create extends Component
 {
+    use UnauthorizedAccess, HandleException;
+
+    public User $user;
+
     public $employee_id;
     public $institution_name;
     public $major;
@@ -39,8 +49,8 @@ class Create extends Component
 
     public function mount()
     {
-        $user = Auth::user();
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->user = Auth::user();
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         // Ambil company_id dari session untuk superadmin, atau dari user untuk admin biasa
         if ($this->isSuperadmin) {
@@ -50,7 +60,7 @@ class Create extends Component
                 return redirect()->route('educations.index');
             }
         } else {
-            $companyId = $user->company_id;
+            $companyId = $this->user->company_id;
         }
 
         $this->selectedCompany = Company::find($companyId);
@@ -187,6 +197,9 @@ class Create extends Component
     {
         try {
             $this->validate();
+            $this->authorize('create', [Education::class, $this->user->company]);
+
+            DB::beginTransaction();
 
             Education::create([
                 'employee_id' => $this->employee_id,
@@ -197,9 +210,19 @@ class Create extends Component
                 'end_date' => $this->end_date,
             ]);
 
+            DB::commit();
+
             return redirect()->route('educations.index')->success('Education record has been added successfully.');
-        } catch (Exception $e) {
-            Toaster::error('Failed to add education record. Please try again.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('create education');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException('create education', $e->getMessage());
         }
     }
 

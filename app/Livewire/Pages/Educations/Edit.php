@@ -3,11 +3,14 @@
 namespace App\Livewire\Pages\Educations;
 
 use App\Models\Education;
-use Livewire\Component;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Component;
 use Masmerise\Toaster\Toaster;
-use Exception;
 
 #[Layout('components.layouts.app')]
 #[Title('Edit Education')]
@@ -61,6 +64,9 @@ class Edit extends Component
     {
         try {
             $this->validate();
+            $this->authorize('update', [Education::class, $this->education]);
+
+            DB::beginTransaction();
 
             $this->education->update([
                 'institution_name' => $this->institution_name,
@@ -70,9 +76,19 @@ class Edit extends Component
                 'end_date' => $this->end_date,
             ]);
 
+            DB::commit();
+
             return redirect()->route('educations.index')->success('Education record has been updated successfully.');
-        } catch (Exception $e) {
-            Toaster::error('Failed to update education record. Please try again.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('edit education');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException('edit education', $e->getMessage());
         }
     }
 

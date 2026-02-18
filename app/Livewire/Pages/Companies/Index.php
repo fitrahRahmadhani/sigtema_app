@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Companies;
 
+use App\Livewire\Traits\HandleException;
 use App\Livewire\Traits\WithDeleteConfirmation;
 use App\Models\Company;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ use Livewire\WithPagination;
 #[Title('Companies')]
 class Index extends Component
 {
-    use WithPagination, WithDeleteConfirmation;
+    use WithPagination, WithDeleteConfirmation, HandleException;
 
     #[Url(as: 'q')]
     public $search = '';
@@ -51,9 +52,9 @@ class Index extends Component
     {
         $this->authorize('delete', [Company::class]);
 
-        DB::beginTransaction();
 
         try {
+            DB::beginTransaction();
             $logoPath = $company->logo_path;
 
             // Delete the company from database
