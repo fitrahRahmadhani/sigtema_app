@@ -145,7 +145,7 @@
                     id="name"
                     wire:model="name"
                     placeholder="Enter company name"
-                    class="block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 transition focus:border-red-900 focus:ring-2 focus:ring-red-900/20 focus:outline-none"
+                    class="@error('name') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                 />
                 @error('name')
                     <p class="text-sm text-red-600">{{ $message }}</p>
@@ -163,7 +163,7 @@
                     id="cocd"
                     wire:model="cocd"
                     placeholder="Enter company code"
-                    class="block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 transition focus:border-red-900 focus:ring-2 focus:ring-red-900/20 focus:outline-none"
+                    class="@error('cocd') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                 />
                 @error('cocd')
                     <p class="text-sm text-red-600">{{ $message }}</p>

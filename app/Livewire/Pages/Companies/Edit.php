@@ -2,35 +2,32 @@
 
 namespace App\Livewire\Pages\Companies;
 
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Livewire\Attributes\Validate;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
+use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
 #[Title('Edit Company')]
 class Edit extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, UnauthorizedAccess, HandleException;
 
     public Company $company;
-
-    #[Validate('nullable|image|max:2048')]
     public $logo;
-
-    #[Validate('required|string|max:255')]
     public $name;
-
-    #[Validate('required|string|max:255')]
     public $cocd;
-
-    #[Validate('boolean')]
     public $is_active;
-
     public $current_logo;
 
     public function mount(Company $company)
@@ -42,56 +39,73 @@ class Edit extends Component
         $this->current_logo = $company->logo_path;
     }
 
-    public function save()
+    protected function rules()
     {
-        // Validasi dengan unique kecuali company ini sendiri
-        $this->validate([
-            'logo' => 'nullable|image|max:2048',
-            'name' => 'required|string|max:255',
-            'cocd' => 'required|string|max:255,' . $this->company->id,
-            'is_active' => 'boolean',
-        ]);
-
-        $data = [
-            'slug' => Str::slug($this->name),
-            'name' => $this->name,
-            'cocd' => $this->cocd,
-            'is_active' => $this->is_active,
+        return [
+            'logo' => ['nullable', 'image', 'max:2048'],
+            'name' => ['required', 'string', 'max:255'],
+            'cocd' => ['required', 'string', 'max:5'],
+            'is_active' => ['boolean'],
         ];
-
-        // Jika ada logo baru yang diupload
-        if ($this->logo) {
-            // Hapus logo lama jika ada
-            if ($this->company->logo_path && Storage::disk('public')->exists($this->company->logo_path)) {
-                Storage::disk('public')->delete($this->company->logo_path);
-            }
-
-            // Upload logo baru
-            $date = now()->format('Ymd');
-            $slug = Str::slug($this->name);
-            $extension = $this->logo->getClientOriginalExtension();
-            $filename = "{$slug}_{$date}.{$extension}";
-
-            $logoPath = $this->logo->storeAs('companies/logos', $filename, 'public');
-            $data['logo_path'] = $logoPath;
-        }
-
-        $this->company->update($data);
-
-        return redirect()->route('companies.index')->success('Company updated successfully.');
     }
 
-    public function removeLogo()
+    protected function messages()
     {
-        if ($this->company->logo_path && Storage::disk('public')->exists($this->company->logo_path)) {
-            Storage::disk('public')->delete($this->company->logo_path);
+        return [
+            'logo.image' => 'File must be an image (JPG, PNG, etc).',
+            'logo.max' => 'Image size cannot exceed 2MB.',
+            'name.required' => 'Company name is required.',
+            'name.max' => 'Company name cannot exceed 255 characters.',
+            'cocd.required' => 'Company code is required.',
+            'cocd.max' => 'Company code cannot exceed 5 characters.',
+        ];
+    }
+
+
+    public function save()
+    {
+        try {
+            $this->validate();
+            $this->authorize('update', $this->company);
+
+            $data = [
+                'slug' => Str::slug($this->name),
+                'name' => $this->name,
+                'cocd' => $this->cocd,
+                'is_active' => $this->is_active,
+            ];
+
+            // Jika ada logo baru yang diupload
+            if ($this->logo) {
+                // Hapus logo lama jika ada
+                if ($this->company->logo_path && Storage::disk('public')->exists($this->company->logo_path)) {
+                    Storage::disk('public')->delete($this->company->logo_path);
+                }
+
+                // Upload logo baru
+                $date = now()->format('Ymd');
+                $slug = Str::slug($this->name);
+                $extension = $this->logo->getClientOriginalExtension();
+                $filename = "{$slug}_{$date}.{$extension}";
+
+                $logoPath = $this->logo->storeAs('companies/logos', $filename, 'public');
+                $data['logo_path'] = $logoPath;
+            }
+
+            $this->company->update($data);
+
+            return redirect()->route('companies.index')->success('Company updated successfully.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('edit company');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException('edit company', $e->getMessage());
         }
-
-        $this->company->update(['logo_path' => null]);
-        $this->current_logo = null;
-        $this->logo = null;
-
-        session()->flash('success', 'Logo removed successfully!');
     }
 
     public function render()
