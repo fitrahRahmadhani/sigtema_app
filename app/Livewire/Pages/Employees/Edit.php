@@ -210,10 +210,10 @@ class Edit extends Component
             throw $e;
         } catch (AuthorizationException $e) {
             DB::rollBack();
-            return $this->unauthorizedAccess('update employee');
+            return $this->unauthorizedAccess('edit employee');
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->handleException('update employee', $e->getMessage());
+            return $this->handleException('edit employee', $e->getMessage());
         }
     }
 

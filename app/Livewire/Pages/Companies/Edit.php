@@ -12,7 +12,6 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Masmerise\Toaster\Toaster;
@@ -68,6 +67,8 @@ class Edit extends Component
             $this->validate();
             $this->authorize('update', $this->company);
 
+            DB::beginTransaction();
+
             $data = [
                 'slug' => Str::slug($this->name),
                 'name' => $this->name,
@@ -93,6 +94,8 @@ class Edit extends Component
             }
 
             $this->company->update($data);
+
+            DB::commit();
 
             return redirect()->route('companies.index')->success('Company updated successfully.');
         } catch (ValidationException $e) {

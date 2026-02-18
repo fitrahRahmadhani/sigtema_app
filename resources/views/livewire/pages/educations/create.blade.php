@@ -11,7 +11,7 @@
         {{-- Header --}}
         <div class="mb-8 flex items-center gap-4">
             <div
-                class="color-gradient flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm"
+                class="color-gradient flex h-12 w-12 items-center justify-center self-start rounded-xl bg-gradient-to-br shadow-sm"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Users;
 
+use App\Livewire\Traits\HandleException;
 use App\Livewire\Traits\WithDeleteConfirmation;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ use Livewire\WithPagination;
 #[Title('Users')]
 class Index extends Component
 {
-    use WithPagination, WithDeleteConfirmation;
+    use WithPagination, WithDeleteConfirmation, HandleException;
 
     #[Url(as: 'q')]
     public $search = '';
@@ -72,9 +73,8 @@ class Index extends Component
     {
         $this->authorize('delete', User::class);
 
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
             $profilePath = $user->profile_path;
 
             // Delete the user from database

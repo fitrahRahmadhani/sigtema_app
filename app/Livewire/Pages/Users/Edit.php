@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Users;
 
+use App\Livewire\Traits\HandleException;
 use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
 use App\Models\User;
@@ -21,7 +22,7 @@ use Spatie\Permission\Models\Role;
 #[Title('Edit User')]
 class Edit extends Component
 {
-    use WithFileUploads, UnauthorizedAccess;
+    use WithFileUploads, UnauthorizedAccess, HandleException;
 
     public User $user;
 
