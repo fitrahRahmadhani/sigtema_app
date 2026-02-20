@@ -217,7 +217,7 @@
                                                             >
                                                                 {{ $employee->employee_number }}
                                                                 @if ($employee->position)
-                                                                        • {{ $employee->position }}
+                                                                        • {{ $employee->position->name }}
                                                                 @endif
                                                             </div>
                                                         </div>
