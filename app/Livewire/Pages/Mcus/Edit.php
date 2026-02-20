@@ -3,11 +3,13 @@
 namespace App\Livewire\Pages\Mcus;
 
 use App\Models\Mcu;
-use App\Models\Company;
-use Livewire\Component;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
 #[Title('Edit MCU Record')]
@@ -36,14 +38,26 @@ class Edit extends Component
 
     public function update()
     {
-        $this->validate();
+        try {
+            $this->validate();
+            $this->authorize('update', $this->mcu);
+            $this->mcu->update([
+                'result' => $this->result,
+                'year' => $this->year,
+            ]);
 
-        $this->mcu->update([
-            'result' => $this->result,
-            'year' => $this->year,
-        ]);
-
-        return redirect()->route('mcus.index')->success('MCU record has been updated successfully.');
+            return redirect()->route('mcus.index')->success('MCU record has been updated successfully.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('edit mcu');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException('edit mcu', $e->getMessage());
+        }
     }
 
     public function cancel()
