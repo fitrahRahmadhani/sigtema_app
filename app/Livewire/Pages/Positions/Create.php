@@ -2,62 +2,42 @@
 
 namespace App\Livewire\Pages\Positions;
 
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
-use Livewire\Component;
-use App\Models\Position;
 use App\Models\Employee;
-use Illuminate\Support\Str;
-use Livewire\Attributes\Title;
-use Masmerise\Toaster\Toaster;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\Validate;
+use App\Models\Position;
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
 #[Title('Create Position')]
 class Create extends Component
 {
-    #[Validate('required|string|max:255')]
+    use UnauthorizedAccess, HandleException;
+
+    public User $user;
     public $name = '';
-
-    #[Validate('required|string|max:50|unique:positions,position_code')]
     public $position_code = '';
-
-    #[Validate('required|numeric|min:1|max:99')]
     public $job_grade = '';
-
-    #[Validate('nullable|numeric|min:1|max:5')]
     public $band = '';
-
-    #[Validate('nullable|string|max:255')]
     public $work_unit = '';
-
-    #[Validate('nullable|string|max:255')]
     public $group = '';
-
-    #[Validate('nullable|string|max:255')]
     public $komp = '';
-
-    #[Validate('required|exists:companies,id')]
     public $company_id = '';
-
-    #[Validate('nullable|string|max:255')]
     public $directorate = '';
-
-    #[Validate('nullable|string|max:255')]
     public $department = '';
-
-    #[Validate('nullable|string|max:255')]
     public $biro = '';
-
-    #[Validate('nullable|string|max:255')]
     public $section = '';
-
-    #[Validate('nullable|string|max:255')]
     public $location = '';
-
-    #[Validate('nullable|exists:employees,id')]
     public $employee_id;
 
     public $selectedCompany = null;
@@ -76,8 +56,8 @@ class Create extends Component
 
     public function mount()
     {
-        $user = Auth::user();
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->user = Auth::user();
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         // Ambil company_id dari session untuk superadmin, atau dari user untuk admin biasa
         if ($this->isSuperadmin) {
@@ -87,13 +67,73 @@ class Create extends Component
                 return redirect()->route('positions.index');
             }
         } else {
-            $companyId = $user->company_id;
+            $companyId = $this->user->company_id;
         }
 
         $this->selectedCompany = Company::find($companyId);
         $this->company_id = $companyId;
 
         $this->bandOptions = range(1, 5);
+    }
+
+    public function rules()
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'position_code' => 'required|string|max:50|unique:positions,position_code',
+            'job_grade' => 'required|numeric|min:1|max:99',
+            'band' => 'nullable|numeric|min:1|max:5',
+            'work_unit' => 'nullable|string|max:255',
+            'group' => 'nullable|string|max:255',
+            'komp' => 'nullable|string|max:255',
+            'company_id' => 'required|exists:companies,id',
+            'directorate' => 'nullable|string|max:255',
+            'department' => 'nullable|string|max:255',
+            'biro' => 'nullable|string|max:255',
+            'section' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'employee_id' => 'nullable|exists:employees,id',
+        ];
+    }
+
+    public function message()
+    {
+        return [
+            'name.required' => 'Name is required.',
+            'name.string' => 'Name must be a string.',
+            'name.max' => 'Name must not exceed 255 characters.',
+            'position_code.required' => 'Position code is required.',
+            'position_code.string' => 'Position code must be a string.',
+            'position_code.max' => 'Position code must not exceed 50 characters.',
+            'position_code.unique' => 'Position code already exists.',
+            'job_grade.required' => 'Job grade is required.',
+            'job_grade.numeric' => 'Job grade must be a number.',
+            'job_grade.min' => 'Job grade must be at least 1.',
+            'job_grade.max' => 'Job grade must not exceed 99.',
+            'band.numeric' => 'Band must be a number.',
+            'band.min' => 'Band must be at least 1.',
+            'band.max' => 'Band must not exceed 5.',
+            'work_unit.string' => 'Work unit must be a string.',
+            'work_unit.max' => 'Work unit must not exceed 255 characters.',
+            'group.string' => 'Group must be a string.',
+            'group.max' => 'Group must not exceed 255 characters.',
+            'komp.string' => 'KOMP must be a string.',
+            'komp.max' => 'KOMP must not exceed 255 characters.',
+            'company_id.required' => 'Company is required.',
+            'company_id.exists' => 'Selected company does not exist.',
+            'directorate.string' => 'Directorate must be a string.',
+            'directorate.max' => 'Directorate must not exceed 255 characters.',
+            'department.string' => 'Department must be a string.',
+            'department.max' => 'Department must not exceed 255 characters.',
+            'biro.string' => 'Biro must be a string.',
+            'biro.max' => 'Biro must not exceed 255 characters.',
+            'section.string' => 'Section must be a string.',
+            'section.max' => 'Section must not exceed 255 characters.',
+            'location.string' => 'Location must be a string.',
+            'location.max' => 'Location must not exceed 255 characters.',
+            'employee_id.exists' => 'Selected employee does not exist.',
+            'employee_id.required' => 'Please select an employee.',
+        ];
     }
 
     public function updatedEmployeeSearch($value)
@@ -198,20 +238,10 @@ class Create extends Component
 
     public function save()
     {
-        $this->validate();
-
-        if ($this->employee_id) {
-            $exists = Employee::where('id', $this->employee_id)
-                ->where('company_id', $this->company_id)
-                ->exists();
-
-            if (!$exists) {
-                $this->addError('employee_id', 'Selected employee does not belong to the selected company.');
-                return;
-            }
-        }
-
         try {
+            $this->validate();
+            $this->authorize('create', [Position::class, $this->user->company]);
+
             DB::beginTransaction();
 
             $position = Position::create([
@@ -237,10 +267,17 @@ class Create extends Component
 
             DB::commit();
 
-            return redirect()->route('positions.index')->success('Position created successfully');
+            return redirect()->route('positions.index')->success('Position record has been added successfully.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('create position');
         } catch (\Exception $e) {
             DB::rollBack();
-            Toaster::error('Failed to create position: ' . $e->getMessage());
+            return $this->handleException('create position', $e->getMessage());
         }
     }
 
