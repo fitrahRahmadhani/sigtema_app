@@ -28,7 +28,7 @@ class EducationPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user, Company $company): bool
+    public function create(User $user, Company $company = null): bool
     {
         if ($user->hasRole('superadmin')) {
             return true;
