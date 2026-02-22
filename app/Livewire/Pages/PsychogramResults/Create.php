@@ -2,86 +2,117 @@
 
 namespace App\Livewire\Pages\PsychogramResults;
 
-use App\Models\PsychogramResult;
-use App\Models\Employee;
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
+use App\Models\Employee;
 use App\Models\PsychogramAspect;
-use Livewire\Component;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\Validate;
+use App\Models\PsychogramResult;
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
 #[Title('Create Psychogram Result')]
 class Create extends Component
 {
-    #[Validate('required|exists:companies,id')]
-    public $company_id = '';
+    use UnauthorizedAccess, HandleException;
 
-    #[Validate('required|exists:employees,id')]
+    public User $user;
+
+    public $company_id = '';
     public $employee_id = '';
 
     public $aspects = [];
     public $availableAspects = [];
+
     public $selectedCompany = null;
+    public $selectedEmployee = null;
     public $isSuperadmin = false;
 
-    // Employee search properties
     public $employeeSearch = '';
     public $showEmployeeDropdown = false;
-    public $selectedEmployee = null;
     public $highlightedIndex = 0;
 
-    // Minimum karakter untuk pencarian
-    private $minSearchLength = 5;
+    private int $minSearchLength = 5;
 
     public function mount()
     {
-        $user = Auth::user();
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->user = Auth::user();
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
-        // Set company_id based on user role
-        if ($this->isSuperadmin) {
-            $companyId = session('psychogram_results_company_id');
+        $companyId = $this->isSuperadmin
+            ? session('psychogram_results_company_id')
+            : $this->user->company_id;
 
-            if (!$companyId) {
-                Toaster::error('Please select a company first.');
-                return redirect()->route('psychogram-results.index');
-            }
-        } else {
-            // Admin uses their assigned company
-            $companyId = $user->company_id;
+        if (!$companyId) {
+            return redirect()->route('psychogram-results.index');
         }
 
-        // Load selected company
         $this->selectedCompany = Company::find($companyId);
 
         if (!$this->selectedCompany) {
-            Toaster::error('Company not found.');
             return redirect()->route('psychogram-results.index');
         }
 
         $this->company_id = $companyId;
 
-        // Initialize aspects with default row
         $this->aspects = [
             ['aspect_id' => '', 'score' => 3]
         ];
     }
 
+    public function rules()
+    {
+        return [
+            'company_id' => 'required|exists:companies,id',
+            'employee_id' => 'required|exists:employees,id',
+            'aspects' => 'required|array|min:1',
+            'aspects.*.aspect_id' => 'required|exists:psychogram_aspects,id|distinct',
+            'aspects.*.score' => 'required|integer|min:1|max:5',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'aspects.required' => 'At least one aspect must be added.',
+            'aspects.*.aspect_id.required' => 'Please select an aspect.',
+            'aspects.*.aspect_id.distinct' => 'Each aspect can only be selected once.',
+            'aspects.*.score.required' => 'Please provide a score.',
+            'aspects.*.score.min' => 'Score must be at least 1.',
+            'aspects.*.score.max' => 'Score must not exceed 5.',
+        ];
+    }
+
     public function updatedEmployeeSearch($value)
     {
-        // Reset highlight
         $this->highlightedIndex = 0;
 
-        // Tampilkan dropdown hanya jika ada input minimal 5 karakter
-        if (strlen(trim($value)) >= $this->minSearchLength) {
+        $this->showEmployeeDropdown =
+            strlen(trim($value)) >= $this->minSearchLength;
+    }
+
+    public function openDropdown()
+    {
+        if (
+            $this->company_id &&
+            !$this->selectedEmployee &&
+            strlen(trim($this->employeeSearch)) >= $this->minSearchLength
+        ) {
             $this->showEmployeeDropdown = true;
-        } else {
-            $this->showEmployeeDropdown = false;
         }
+    }
+
+    public function closeDropdown()
+    {
+        $this->showEmployeeDropdown = false;
     }
 
     public function getFilteredEmployeesProperty()
@@ -90,54 +121,20 @@ class Create extends Component
             return collect();
         }
 
-        $searchTerm = trim($this->employeeSearch);
+        $search = trim($this->employeeSearch);
 
-        // Hanya lakukan pencarian jika input >= 5 karakter
-        if (strlen($searchTerm) < $this->minSearchLength) {
+        if (strlen($search) < $this->minSearchLength) {
             return collect();
         }
 
-        // Pencarian dengan minimal 5 karakter
-        $searchTermLower = strtolower($searchTerm);
-
         return Employee::where('company_id', $this->company_id)
-            ->where(function ($query) use ($searchTermLower) {
-                $query->whereRaw('LOWER(name) LIKE ?', ['%' . $searchTermLower . '%'])
-                    ->orWhereRaw('LOWER(employee_number) LIKE ?', ['%' . $searchTermLower . '%']);
+            ->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('employee_number', 'like', "%{$search}%");
             })
             ->orderBy('name')
             ->limit(20)
             ->get();
-    }
-
-    public function selectEmployee($employeeId)
-    {
-        $employee = Employee::find($employeeId);
-
-        if ($employee) {
-            $this->selectedEmployee = $employee;
-            $this->employee_id = $employee->id;
-            $this->employeeSearch = $employee->name . ' (' . $employee->employee_number . ')';
-            $this->showEmployeeDropdown = false;
-            $this->highlightedIndex = 0;
-            $this->loadAvailableAspects();
-        }
-    }
-
-    public function clearEmployeeSelection()
-    {
-        $this->resetEmployeeSelection();
-    }
-
-    private function resetEmployeeSelection()
-    {
-        $this->selectedEmployee = null;
-        $this->employee_id = null;
-        $this->employeeSearch = '';
-        $this->showEmployeeDropdown = false;
-        $this->highlightedIndex = 0;
-        $this->aspects = [['aspect_id' => '', 'score' => 3]];
-        $this->availableAspects = [];
     }
 
     public function incrementHighlight()
@@ -162,47 +159,47 @@ class Create extends Component
         }
     }
 
-    public function closeDropdown()
+    public function selectEmployee($employeeId)
     {
+        $employee = Employee::where('id', $employeeId)
+            ->where('company_id', $this->company_id)
+            ->first();
+
+        if (!$employee) {
+            return;
+        }
+
+        $this->selectedEmployee = $employee;
+        $this->employee_id = $employee->id;
+        $this->employeeSearch = "{$employee->name} ({$employee->employee_number})";
         $this->showEmployeeDropdown = false;
+
+        $this->loadAvailableAspects();
     }
 
-    public function openDropdown()
+    public function clearEmployeeSelection()
     {
-        if ($this->company_id && !$this->selectedEmployee && strlen(trim($this->employeeSearch)) >= $this->minSearchLength) {
-            $this->showEmployeeDropdown = true;
-        }
+        $this->selectedEmployee = null;
+        $this->employee_id = '';
+        $this->employeeSearch = '';
+        $this->availableAspects = [];
+        $this->aspects = [['aspect_id' => '', 'score' => 3]];
     }
 
     private function loadAvailableAspects()
     {
-        if (!$this->employee_id) {
-            $this->availableAspects = [];
-            return;
-        }
-
-        $employee = Employee::find($this->employee_id);
-
-        if ($employee && $employee->company_id) {
-            $this->availableAspects = PsychogramAspect::where('is_active', true)
-                ->where(function ($query) use ($employee) {
-                    $query->whereNull('company_id')
-                        ->orWhere('company_id', $employee->company_id);
-                })
-                ->orderBy('aspect_name')
-                ->get();
-        } else {
-            $this->availableAspects = PsychogramAspect::where('is_active', true)
-                ->whereNull('company_id')
-                ->orderBy('aspect_name')
-                ->get();
-        }
+        $this->availableAspects = PsychogramAspect::where('is_active', true)
+            ->where(function ($query) {
+                $query->whereNull('company_id')
+                    ->orWhere('company_id', $this->company_id);
+            })
+            ->orderBy('aspect_name')
+            ->get();
     }
 
     public function addAspect()
     {
         if (!$this->employee_id) {
-            Toaster::warning('Please select an employee first.');
             return;
         }
 
@@ -219,71 +216,37 @@ class Create extends Component
 
     public function save()
     {
-        $this->validate([
-            'company_id' => 'required|exists:companies,id',
-            'employee_id' => 'required|exists:employees,id',
-            'aspects' => 'required|array|min:1',
-            'aspects.*.aspect_id' => 'required|exists:psychogram_aspects,id|distinct',
-            'aspects.*.score' => 'required|integer|min:1|max:5',
-        ], [
-            'aspects.*.aspect_id.distinct' => 'Each aspect can only be selected once.',
-            'aspects.*.aspect_id.required' => 'Please select an aspect.',
-            'aspects.*.score.required' => 'Please provide a score.',
-            'aspects.*.score.min' => 'Score must be at least 1.',
-            'aspects.*.score.max' => 'Score must not exceed 5.',
-        ]);
-
         try {
-            $employee = Employee::find($this->employee_id);
-            $errors = [];
+            $this->validate();
+            $this->authorize('create', [PsychogramResult::class, $this->user->company]);
 
-            // Validate each aspect
-            foreach ($this->aspects as $index => $aspectData) {
-                // Check if combination already exists
-                $exists = PsychogramResult::where('employee_id', $this->employee_id)
-                    ->where('aspect_id', $aspectData['aspect_id'])
-                    ->exists();
+            DB::beginTransaction();
 
-                if ($exists) {
-                    $this->addError(
-                        "aspects.{$index}.aspect_id",
-                        'A score for this aspect already exists for this employee.'
-                    );
-                    $errors[] = true;
-                    continue;
-                }
-
-                // Validate aspect availability
-                $aspect = PsychogramAspect::find($aspectData['aspect_id']);
-
-                if ($aspect->company_id && $aspect->company_id != $employee->company_id) {
-                    $this->addError(
-                        "aspects.{$index}.aspect_id",
-                        'This aspect is not available for this employee\'s company.'
-                    );
-                    $errors[] = true;
-                    continue;
-                }
-            }
-
-            if (!empty($errors)) {
-                Toaster::error('Please fix the errors before submitting.');
-                return;
-            }
-
-            // Create all results
-            foreach ($this->aspects as $aspectData) {
-                PsychogramResult::create([
+            $insertData = collect($this->aspects)->map(function ($item) {
+                return [
                     'employee_id' => $this->employee_id,
-                    'aspect_id' => $aspectData['aspect_id'],
-                    'score' => $aspectData['score'],
-                ]);
-            }
+                    'aspect_id' => $item['aspect_id'],
+                    'score' => $item['score'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            })->toArray();
 
-            Toaster::success('Psychogram results created successfully.');
-            return redirect()->route('psychogram-results.index');
+            PsychogramResult::insert($insertData);
+
+            DB::commit();
+
+            return redirect()->route('psychogram-results.index')
+                ->success('Psychogram results created successfully');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('create psychogram result');
         } catch (\Exception $e) {
-            Toaster::error('Failed to create psychogram results: ' . $e->getMessage());
+            DB::rollBack();
+            return $this->handleException('create psychogram result', $e->getMessage());
         }
     }
 
