@@ -96,6 +96,7 @@ Route::group(['middleware' => ['role:superadmin|admin', 'auth', 'verified']], fu
     Route::get('papis', App\Livewire\Pages\Papis\Index::class)->name('papis.index');
 
     // Bulk Upload
+    Route::get('bulk-upload/users', App\Livewire\Pages\BulkUploads\Users::class)->name('bulk-upload.users');
     Route::get('bulk-upload/employees', App\Livewire\Pages\BulkUploads\Employees::class)->name('bulk-upload.employees');
     Route::get('bulk-upload/positions', \App\Livewire\Pages\BulkUploads\Positions::class)->name('bulk-upload.positions');
     Route::get('bulk-upload/educations', \App\Livewire\Pages\BulkUploads\Educations::class)->name('bulk-upload.educations');
