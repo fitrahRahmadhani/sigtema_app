@@ -141,10 +141,7 @@
 
                     {{-- Status --}}
                     <div>
-                        <label for="is_active" class="mb-2 block text-sm font-medium text-gray-700">
-                            Status
-                            <span class="text-red-600">*</span>
-                        </label>
+                        <label for="is_active" class="mb-2 block text-sm font-medium text-gray-700">Status</label>
                         <div class="space-y-2">
                             <div class="flex items-center gap-2">
                                 <input
@@ -177,9 +174,6 @@
                                 </label>
                             </div>
                         </div>
-                        @error('is_active')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
                     </div>
                 </div>
             </div>
