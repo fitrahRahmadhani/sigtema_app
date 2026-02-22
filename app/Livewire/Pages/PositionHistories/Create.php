@@ -2,20 +2,29 @@
 
 namespace App\Livewire\Pages\PositionHistories;
 
-use App\Models\PositionHistory;
-use App\Models\Employee;
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
-use Livewire\Component;
+use App\Models\Employee;
+use App\Models\PositionHistory;
+use App\Models\User;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 use Masmerise\Toaster\Toaster;
-use Exception;
 
 #[Layout('components.layouts.app')]
 #[Title('Add Position History')]
 class Create extends Component
 {
+    use UnauthorizedAccess, HandleException;
+
+    public User $user;
     public $employee_id;
     public $position_name;
     public $work_unit;
@@ -38,8 +47,8 @@ class Create extends Component
 
     public function mount()
     {
-        $user = Auth::user();
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->user = Auth::user();
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         // Ambil company_id dari session untuk superadmin, atau dari user untuk admin biasa
         if ($this->isSuperadmin) {
@@ -49,7 +58,7 @@ class Create extends Component
                 return redirect()->route('position-histories.index');
             }
         } else {
-            $companyId = $user->company_id;
+            $companyId = $this->user->company_id;
         }
 
         $this->selectedCompany = Company::find($companyId);
@@ -190,6 +199,9 @@ class Create extends Component
     {
         try {
             $this->validate();
+            $this->authorize('create', [PositionHistory::class, $this->user->company]);
+
+            DB::beginTransaction();
 
             PositionHistory::create([
                 'employee_id' => $this->employee_id,
@@ -200,10 +212,20 @@ class Create extends Component
                 'company' => $this->company,
             ]);
 
+            DB::commit();
+
             return redirect()->route('position-histories.index')
                 ->success('Position history has been added successfully.');
-        } catch (Exception $e) {
-            Toaster::error('Failed to add position history. Please try again.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('create position history');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException('create position history', $e->getMessage());
         }
     }
 
