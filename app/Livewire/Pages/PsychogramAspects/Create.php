@@ -2,32 +2,32 @@
 
 namespace App\Livewire\Pages\PsychogramAspects;
 
-use App\Models\PsychogramAspect;
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
-use Livewire\Component;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\Validate;
+use App\Models\PsychogramAspect;
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
 #[Title('Create Psychogram Aspect')]
 class Create extends Component
 {
-    #[Validate('required|string|max:20')]
+    use UnauthorizedAccess, HandleException;
+
+    public User $user;
     public $aspect_code = '';
-
-    #[Validate('required|string|max:255')]
     public $aspect_name = '';
-
-    #[Validate('nullable|string')]
     public $description = '';
-
-    #[Validate('required|boolean')]
     public $is_active = true;
-
-    #[Validate('required|integer|min:0')]
     public $sort_order = 0;
 
     public $company_id = '';
@@ -36,8 +36,8 @@ class Create extends Component
 
     public function mount()
     {
-        $user = Auth::user();
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->user = Auth::user();
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         // Ambil company_id dari session untuk superadmin, atau dari user untuk admin biasa
         if ($this->isSuperadmin) {
@@ -47,27 +47,53 @@ class Create extends Component
                 return redirect()->route('psychogram-aspects.index');
             }
         } else {
-            $companyId = $user->company_id;
+            $companyId = $this->user->company_id;
         }
 
         $this->selectedCompany = Company::find($companyId);
         $this->company_id = $companyId;
     }
 
+    public function rules()
+    {
+        return [
+            'aspect_code' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('psychogram_aspects', 'aspect_code')
+                    ->where(
+                        fn($query) =>
+                        $query->where('company_id', $this->company_id)
+                    ),
+            ],
+            'aspect_name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'is_active' => 'boolean',
+            'sort_order' => 'required|integer|min:0',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'aspect_code.unique' => 'This aspect code already exists for this company.',
+            'aspect_code.required' => 'Aspect code is required.',
+            'aspect_name.required' => 'Aspect name is required.',
+            'description.string' => 'Description must be a string.',
+            'sort_order.required' => 'Sort order is required.',
+            'sort_order.integer' => 'Sort order must be an integer.',
+            'sort_order.min' => 'Sort order must be at least 0.',
+        ];
+    }
+
     public function save()
     {
-        $this->validate();
 
         try {
-            // Validasi uniqueness berdasarkan company_id
-            $exists = PsychogramAspect::where('company_id', $this->company_id)
-                ->where('aspect_code', $this->aspect_code)
-                ->exists();
-
-            if ($exists) {
-                $this->addError('aspect_code', 'This aspect code already exists for this company.');
-                return;
-            }
+            $this->validate();
+            $this->authorize('create', [PsychogramAspect::class, $this->user->company]);
+            DB::beginTransaction();
 
             PsychogramAspect::create([
                 'company_id' => $this->company_id,
@@ -78,10 +104,20 @@ class Create extends Component
                 'sort_order' => $this->sort_order,
             ]);
 
+            DB::commit();
+
             return redirect()->route('psychogram-aspects.index')
                 ->success('Psychogram aspect created successfully');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('create psychogram aspect');
         } catch (\Exception $e) {
-            Toaster::error('Failed to create psychogram aspect: ' . $e->getMessage());
+            DB::rollBack();
+            return $this->handleException('create psychogram aspect', $e->getMessage());
         }
     }
 
