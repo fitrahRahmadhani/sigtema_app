@@ -41,11 +41,12 @@ class Edit extends Component
         try {
             $this->validate();
             $this->authorize('update', $this->mcu);
+            DB::beginTransaction();
             $this->mcu->update([
                 'result' => $this->result,
                 'year' => $this->year,
             ]);
-
+            DB::commit();
             return redirect()->route('mcus.index')->success('MCU record has been updated successfully.');
         } catch (ValidationException $e) {
             DB::rollBack();

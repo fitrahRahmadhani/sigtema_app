@@ -166,7 +166,7 @@ class Edit extends Component
             return redirect()->route('users.index')->success('User updated successfully!');
         } catch (ValidationException $e) {
             DB::rollBack();
-            Toaster::error('Failed to create user: ' . $e->getMessage());
+            Toaster::error('Failed to edit user: ' . $e->getMessage());
             throw $e;
         } catch (AuthorizationException $e) {
             DB::rollBack();
