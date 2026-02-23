@@ -34,6 +34,22 @@ class Create extends Component
     public $profile_photo_preview = null;
     public $bandOptions = [];
 
+    public function mount()
+    {
+        $this->bandOptions = range(1, 5);
+    }
+
+    public function updatedProfilePhoto()
+    {
+        $this->validate([
+            'profile_photo' => 'nullable|image|max:2048',
+        ]);
+
+        if ($this->profile_photo) {
+            $this->profile_photo_preview = $this->profile_photo->temporaryUrl();
+        }
+    }
+
     protected function rules()
     {
         return [
@@ -53,21 +69,39 @@ class Create extends Component
         ];
     }
 
-    public function mount()
+    protected function messages()
     {
-        $this->bandOptions = range(1, 5);
+        return [
+            'name.required' => 'Name is required.',
+            'name.string' => 'Name must be a valid string.',
+            'name.max' => 'Name may not be greater than 255 characters.',
+
+            'email.required' => 'Email is required.',
+            'email.email' => 'Email must be a valid email address.',
+            'email.max' => 'Email may not be greater than 255 characters.',
+            'email.unique' => 'This email is already registered.',
+
+            'password.required' => 'Password is required.',
+            'password.string' => 'Password must be a valid string.',
+            'password.min' => 'Password must be at least 12 characters.',
+            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
+
+            'password_confirmation.required' => 'Password confirmation is required.',
+            'password_confirmation.same' => 'Password confirmation must match the password.',
+
+            'band.numeric' => 'Band must be a number.',
+            'band.min' => 'Band must be at least 1.',
+            'band.max' => 'Band may not be greater than 5.',
+
+            'company_id.exists' => 'Selected company is invalid.',
+
+            'selectedRoles.array' => 'Selected roles must be a valid array.',
+
+            'profile_photo.image' => 'Profile photo must be a valid image file.',
+            'profile_photo.max' => 'Profile photo may not be greater than 2MB.',
+        ];
     }
 
-    public function updatedProfilePhoto()
-    {
-        $this->validate([
-            'profile_photo' => 'nullable|image|max:2048',
-        ]);
-
-        if ($this->profile_photo) {
-            $this->profile_photo_preview = $this->profile_photo->temporaryUrl();
-        }
-    }
 
     public function removeProfilePhoto()
     {

@@ -148,10 +148,10 @@ class Edit extends Component
             Toaster::success('Profile photo deleted successfully!');
         } catch (AuthorizationException $e) {
             DB::rollBack();
-            return $this->unauthorizedAccess('delete employee photo');
+            return $this->unauthorizedAccess('delete employee profile photo');
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->handleException('delete employee photo', $e->getMessage());
+            return $this->handleException('delete employee profile photo', $e->getMessage());
         }
     }
 
