@@ -55,7 +55,7 @@
                                         type="text"
                                         id="roleName"
                                         wire:model="roleName"
-                                        class="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                        class="@error('roleName') border-red-500  @else border-gray-300 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
                                         placeholder="Enter role name (e.g., manager, editor, analyst)"
                                         autofocus
                                     />
