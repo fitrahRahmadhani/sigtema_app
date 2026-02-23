@@ -2,16 +2,23 @@
 
 namespace App\Livewire\Pages\RolePermission;
 
-use Livewire\Component;
-use Livewire\Attributes\Title;
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
-use Spatie\Permission\Models\Role;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 use Masmerise\Toaster\Toaster;
+use App\Models\Role;
 
 #[Layout('components.layouts.app')]
 #[Title('Edit Role - Role Management')]
 class Edit extends Component
 {
+    use UnauthorizedAccess, HandleException;
+
     public $roleId;
     public $roleName = '';
     public $roleCount = 0;
@@ -30,22 +37,49 @@ class Edit extends Component
         $this->roleName = $this->role->name;
     }
 
+    public function rules()
+    {
+        return [
+            'roleName' => 'required|string|max:255|unique:roles,name,' . $this->roleId,
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'roleName.required' => 'Role name is required.',
+            'roleName.unique' => 'This role already exists.',
+            'roleName.max' => 'Role name must not exceed 255 characters.',
+            'roleName.string' => 'Role name must be a string.',
+        ];
+    }
+
     public function saveRole()
     {
-        $this->validate([
-            'roleName' => 'required|string|max:255|unique:roles,name,' . $this->roleId,
-        ]);
-
         try {
-            // Update role
+            $this->validate();
+            $this->authorize('update', $this->role);
+
+            DB::beginTransaction();
+
             $this->role->update([
                 'name' => $this->roleName
             ]);
 
+            DB::commit();
+
             // Redirect to roles index
             return redirect()->route('role-permissions.index')->success('Role updated successfully!');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Failed to edit role: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('edit role');
         } catch (\Exception $e) {
-            Toaster::error('Error updating role: ' . $e->getMessage());
+            DB::rollBack();
+            return $this->handleException('edit role', $e->getMessage());
         }
     }
 

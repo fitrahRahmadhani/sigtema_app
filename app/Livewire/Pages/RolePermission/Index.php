@@ -2,19 +2,20 @@
 
 namespace App\Livewire\Pages\RolePermission;
 
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\WithDeleteConfirmation;
+use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Spatie\Permission\Models\Role;
-use Masmerise\Toaster\Toaster;
-use App\Livewire\Traits\WithDeleteConfirmation;
+use App\Models\Role;
 
 #[Layout('components.layouts.app')]
 #[Title('Role Management')]
 class Index extends Component
 {
-    use WithPagination, WithDeleteConfirmation;
+    use WithPagination, WithDeleteConfirmation, HandleException;
 
     public $search = '';
 
@@ -36,12 +37,18 @@ class Index extends Component
 
     protected function performDelete($role): void
     {
-        // Prevent deletion of super admin role
-        if ($role->name === 'superadmin') {
-            throw new \Exception('Cannot delete Super Admin role!');
+        try {
+            DB::beginTransaction();
+            // Prevent deletion of super admin role
+            if ($role->name === 'superadmin') {
+                throw new \Exception('Cannot delete Super Admin role!');
+            }
+            $role->delete();
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->handleException('delete role', $e->getMessage());
         }
-
-        $role->delete();
     }
 
     public function render()
