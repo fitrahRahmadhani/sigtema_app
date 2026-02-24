@@ -2,25 +2,36 @@
 
 namespace App\Livewire\Pages\Employees;
 
-use Livewire\Component;
 use App\Models\Employee;
-use Livewire\Attributes\Title;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Layout('components.layouts.app')]
 #[Title('Detail Pegawai')]
 class Show extends Component
 {
+    public User $user;
     public $employee;
 
     public $softCompetencies = [];
     public $workDirectionData = [];
     public $discData = [];
 
-    public function mount(Employee $employee)
+    public function mount($employee = null)
     {
-        $this->employee = $employee;
-        $this->softCompetencies = $employee->getScores();
+        $this->user = Auth::user();
+
+        if ($this->user->hasRole('employee')) {
+            $this->employee = Employee::where('email', $this->user->email)->firstOrFail();
+        } else {
+            // Untuk admin/superadmin, resolve manual dari slug
+            $this->employee = Employee::where('slug', $employee)->firstOrFail();
+        }
+
+        $this->softCompetencies = $this->employee->getScores();
         $this->workDirectionData = $this->getWorkDirectionData();
         $this->discData = $this->getDISCData();
     }

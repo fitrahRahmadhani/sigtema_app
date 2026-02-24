@@ -19,7 +19,7 @@ class RolePolicy
      */
     public function update(User $user): bool
     {
-        return $user->hasRole('admin');
+        return $user->hasRole('superadmin');
     }
 
     /**

@@ -1,10 +1,12 @@
 <div class="space-y-4 p-2">
-    {{-- Breadcrumbs --}}
-    <flux:breadcrumbs>
-        <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
-        <flux:breadcrumbs.item href="{{ route('employees.index') }}">Employees</flux:breadcrumbs.item>
-        <flux:breadcrumbs.item>{{ $employee->name }}'s Profile</flux:breadcrumbs.item>
-    </flux:breadcrumbs>
+    @unlessrole('employee')
+        {{-- Breadcrumbs --}}
+        <flux:breadcrumbs>
+            <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item href="{{ route('employees.index') }}">Employees</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item>{{ $employee->name }}'s Profile</flux:breadcrumbs.item>
+        </flux:breadcrumbs>
+    @endunlessrole
 
     {{-- Content --}}
     <div class="h-full w-full rounded-xl bg-white p-4 md:p-6 lg:p-10">
