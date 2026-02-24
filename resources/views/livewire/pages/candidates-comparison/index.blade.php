@@ -834,6 +834,18 @@
                                         <td class="px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->positionHistories && $selectedEmployees[$i]->positionHistories->count() > 0)
                                                 <ul class="space-y-3">
+                                                    @if ($selectedEmployees[$i]->position)
+                                                        <li class="border-l-2 border-gray-500 pl-3">
+                                                            <p class="font-medium text-gray-900">
+                                                                {{ $selectedEmployees[$i]->position->name }}
+                                                            </p>
+                                                            <p class="text-sm text-gray-600">
+                                                                {{ $selectedEmployees[$i]->position->company->name }}
+                                                            </p>
+                                                            <p class="text-sm text-gray-400">Current</p>
+                                                        </li>
+                                                    @endif
+
                                                     @foreach ($selectedEmployees[$i]->positionHistories as $position)
                                                         <li class="border-l-2 border-gray-500 pl-3">
                                                             <p class="font-medium text-gray-900">

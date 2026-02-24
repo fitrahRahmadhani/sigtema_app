@@ -501,6 +501,24 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {{-- Current Position (from Position relation) --}}
+                            @if ($employee->position)
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                        Current
+                                    </td>
+                                    <td class="border-r border-gray-300 px-3 py-3 text-gray-800 sm:px-4">
+                                        {{ $employee->position->name ?? '-' }}
+                                    </td>
+                                    <td class="border-r border-gray-300 px-3 py-3 text-gray-600 sm:px-4">
+                                        {{ $employee->position->work_unit ?? '-' }}
+                                    </td>
+                                    <td class="px-3 py-3 text-gray-800 uppercase sm:px-4">
+                                        {{ $employee->position->company->name ?? '-' }}
+                                    </td>
+                                </tr>
+                            @endif
+
                             @forelse ($employee->positionHistories as $positionHistory)
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
