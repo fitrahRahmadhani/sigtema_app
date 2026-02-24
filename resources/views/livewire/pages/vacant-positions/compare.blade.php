@@ -740,6 +740,18 @@
                                 <td class="px-6 py-4 align-top text-gray-700">
                                     @if ($employee->positionHistories && $employee->positionHistories->count() > 0)
                                         <ul class="space-y-3">
+                                            @if ($employee->position)
+                                                <li class="border-l-2 border-gray-500 pl-3">
+                                                    <p class="font-medium text-gray-900">
+                                                        {{ $employee->position->name }}
+                                                    </p>
+                                                    <p class="text-sm text-gray-600">
+                                                        {{ $employee->position->company->name }}
+                                                    </p>
+                                                    <p class="text-sm text-gray-400">Current</p>
+                                                </li>
+                                            @endif
+
                                             @foreach ($employee->positionHistories as $position)
                                                 <li class="border-l-2 border-gray-500 pl-3">
                                                     <p class="font-medium text-gray-900">

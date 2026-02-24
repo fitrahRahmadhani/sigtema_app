@@ -500,6 +500,24 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {{-- Current Position (from Position relation) --}}
+                            @if ($employee->position)
+                                <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
+                                    <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
+                                        Current
+                                    </td>
+                                    <td class="border-r border-gray-300 px-3 py-3 text-gray-800 sm:px-4">
+                                        {{ $employee->position->name ?? '-' }}
+                                    </td>
+                                    <td class="border-r border-gray-300 px-3 py-3 text-gray-600 sm:px-4">
+                                        {{ $employee->position->work_unit ?? '-' }}
+                                    </td>
+                                    <td class="px-3 py-3 text-gray-800 uppercase sm:px-4">
+                                        {{ $employee->position->company->name ?? '-' }}
+                                    </td>
+                                </tr>
+                            @endif
+
                             @forelse ($employee->positionHistories as $positionHistory)
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="border-r border-gray-300 px-3 py-3 text-center text-gray-800 sm:px-4">
@@ -511,32 +529,19 @@
                                     <td class="border-r border-gray-300 px-3 py-3 text-gray-600 sm:px-4">
                                         {{ $positionHistory->work_unit }}
                                     </td>
-                                    <td class="px-3 py-3 text-center text-gray-800 sm:px-4">
+                                    <td class="px-3 py-3 text-gray-800 uppercase sm:px-4">
                                         {{ $positionHistory->company }}
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
-                                    <td colspan="4" class="px-3 py-8 text-center text-gray-500 sm:px-4">
-                                        <div class="flex flex-col items-center justify-center">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                class="h-12 w-12 text-gray-300"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="1.5"
-                                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                                                />
-                                            </svg>
+                                @if (! $employee->position)
+                                    <tr>
+                                        <td colspan="4" class="px-3 py-8 text-center text-gray-500 sm:px-4">
+                                            {{-- empty state svg... --}}
                                             <p class="mt-2 text-sm text-gray-300">No position history records found</p>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
+                                @endif
                             @endforelse
                         </tbody>
                     </table>
