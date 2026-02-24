@@ -61,9 +61,11 @@ class Login extends Component
 
         if (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin') ||  Auth::user()->hasRole('hc-operator')) {
 
-            $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+            $this->redirect(route('dashboard'), navigate: true);
         } elseif (Auth::user()->hasRole('head-of-unit')) {
             $this->redirect(route('career-path'), navigate: true);
+        } elseif (Auth::user()->hasRole('employee')) {
+            $this->redirect(route('my-profile'), navigate: true);
         } else {
             abort(403);
         }

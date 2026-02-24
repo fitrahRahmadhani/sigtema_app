@@ -5,13 +5,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
 
-Route::group(['middleware' => ['role:superadmin|admin|hc-operator', 'auth', 'verified']], function () {
+Route::group(['middleware' => ['auth', 'verified', 'role:employee']], function () {
+    // Profile
+    Route::get('my-profile', App\Livewire\Pages\Employees\Show::class)->name('my-profile');
+});
+
+Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin|hc-operator']], function () {
     // Dashboard
     Route::get('dashboard', App\Livewire\Pages\Dashboard\Index::class)->name('dashboard');
 });
 
 
-Route::group(['middleware' => ['role:superadmin', 'auth', 'verified']], function () {
+Route::group(['middleware' => ['auth', 'verified', 'role:superadmin']], function () {
     // Companies
     Route::get('companies', App\Livewire\Pages\Companies\Index::class)->name('companies.index');
     Route::get('companies/create', App\Livewire\Pages\Companies\Create::class)->name('companies.create');
@@ -31,7 +36,7 @@ Route::group(['middleware' => ['role:superadmin', 'auth', 'verified']], function
     Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index'])->name('logs.index');
 });
 
-Route::group(['middleware' => ['role:superadmin|admin', 'auth', 'verified']], function () {
+Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin']], function () {
     // Organization Structure
     Route::get('organization-structure', App\Livewire\Pages\OrgStructure\Index::class)->name('organization-structure.index');
     Route::get('organization-structure/table', App\Livewire\Pages\OrgStructure\Table::class)->name('organization-structure.table');
@@ -113,7 +118,7 @@ Route::group(['middleware' => ['role:superadmin|admin', 'auth', 'verified']], fu
     Route::get('requirements/positions/{position}/edit', \App\Livewire\Pages\Requirements\Positions\Edit::class)->name('requirements.position.edit');
 });
 
-Route::group(['middleware' => ['role:superadmin|admin|head-of-unit|hc-operator', 'auth', 'verified']], function () {
+Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin|head-of-unit|hc-operator']], function () {
     // Career Path
     Route::get('career-path', App\Livewire\Pages\CareerPath::class)->name('career-path');
 
