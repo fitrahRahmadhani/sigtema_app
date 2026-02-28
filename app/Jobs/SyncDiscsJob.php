@@ -44,8 +44,6 @@ class SyncDiscsJob implements ShouldQueue
         Cache::put($lockKey, true, 3600);
 
         try {
-            Log::info('Starting DISC sync job', ['user_id' => $this->userId]);
-
             // Kirim event status processing
             broadcast(new DiscSyncStatusUpdated($this->userId, 'processing', null, 'Starting DISC sync process...'));
 
@@ -64,8 +62,6 @@ class SyncDiscsJob implements ShouldQueue
 
             // Process data
             $stats = $this->processData($allApiData);
-
-            Log::info('DISC sync job completed', $stats);
 
             // Kirim event completed
             broadcast(new DiscSyncStatusUpdated($this->userId, 'completed', $stats, 'DISC sync completed successfully!'));
@@ -106,8 +102,6 @@ class SyncDiscsJob implements ShouldQueue
             throw new \Exception('DISC API configuration not found');
         }
 
-        Log::info('Fetching DISC data from API', ['url' => $apiUrl]);
-
         $allData = [];
         $nextCursor = null;
         $page = 1;
@@ -124,13 +118,6 @@ class SyncDiscsJob implements ShouldQueue
             if (!empty($responseData['data'])) {
                 $allData = array_merge($allData, $responseData['data']);
                 $nextCursor = $responseData['meta']['next_cursor'] ?? null;
-
-                Log::info('Fetched page from DISC API', [
-                    'page' => $page,
-                    'items_fetched' => count($responseData['data']),
-                    'total_so_far' => count($allData),
-                    'has_next' => !empty($nextCursor)
-                ]);
             } else {
                 $nextCursor = null;
             }
@@ -154,11 +141,6 @@ class SyncDiscsJob implements ShouldQueue
             30,
             'Validated ' . count($validatedData) . ' DISC assessments from ' . count($allData) . ' total'
         ));
-
-        Log::info('DISC API data validated', [
-            'total_fetched' => count($allData),
-            'total_valid' => count($validatedData)
-        ]);
 
         return $validatedData;
     }

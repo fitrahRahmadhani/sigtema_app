@@ -44,8 +44,6 @@ class SyncInnovationsJob implements ShouldQueue
         Cache::put($lockKey, true, 3600);
 
         try {
-            Log::info('Starting innovation sync job', ['user_id' => $this->userId]);
-
             // Kirim event status processing
             broadcast(new SyncStatusUpdated($this->userId, 'processing', null, 'Starting sync process...'));
 
@@ -62,8 +60,6 @@ class SyncInnovationsJob implements ShouldQueue
 
             // Process data
             $stats = $this->processData($apiData);
-
-            Log::info('Sync job completed', $stats);
 
             // Kirim event completed
             broadcast(new SyncStatusUpdated($this->userId, 'completed', $stats, 'Sync completed successfully!'));
@@ -103,8 +99,6 @@ class SyncInnovationsJob implements ShouldQueue
         if (!$apiUrl || !$apiKey) {
             throw new \Exception('API configuration not found');
         }
-
-        Log::info('Fetching data from API', ['url' => $apiUrl]);
 
         broadcast(new SyncProgressUpdated($this->userId, 15, 'Connecting to API...'));
 
@@ -165,7 +159,6 @@ class SyncInnovationsJob implements ShouldQueue
         }
 
         broadcast(new SyncProgressUpdated($this->userId, 25, 'Validated ' . count($validatedData) . ' items'));
-        Log::info('API data validated', ['total' => count($validatedData)]);
 
         return $validatedData;
     }

@@ -44,8 +44,6 @@ class SyncMbtisJob implements ShouldQueue
         Cache::put($lockKey, true, 3600);
 
         try {
-            Log::info('Starting MBTI sync job', ['user_id' => $this->userId]);
-
             // Kirim event status processing
             $this->broadcastStatus('processing', null, 'Starting MBTI sync process...');
 
@@ -69,8 +67,6 @@ class SyncMbtisJob implements ShouldQueue
 
             // Delay kecil untuk memastikan event terkirim
             usleep(200000); // 200ms
-
-            Log::info('MBTI sync job completed', $stats);
 
             // Kirim event completed
             $this->broadcastStatus('completed', $stats, 'MBTI sync completed successfully!');
@@ -133,8 +129,6 @@ class SyncMbtisJob implements ShouldQueue
             throw new \Exception('MBTI API configuration not found');
         }
 
-        Log::info('Fetching MBTI data from API', ['url' => $apiUrl]);
-
         $allData = [];
         $nextCursor = null;
         $page = 1;
@@ -151,13 +145,6 @@ class SyncMbtisJob implements ShouldQueue
             if (!empty($responseData['data'])) {
                 $allData = array_merge($allData, $responseData['data']);
                 $nextCursor = $responseData['meta']['next_cursor'] ?? null;
-
-                Log::info('Fetched page from API', [
-                    'page' => $page,
-                    'items_fetched' => count($responseData['data']),
-                    'total_so_far' => count($allData),
-                    'has_next' => !empty($nextCursor)
-                ]);
             } else {
                 $nextCursor = null;
             }
@@ -178,11 +165,6 @@ class SyncMbtisJob implements ShouldQueue
             30,
             'Validated ' . count($validatedData) . ' items from ' . count($allData) . ' total'
         );
-
-        Log::info('MBTI API data validated', [
-            'total_fetched' => count($allData),
-            'total_valid' => count($validatedData)
-        ]);
 
         return $validatedData;
     }
