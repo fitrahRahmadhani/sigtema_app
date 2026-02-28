@@ -37,7 +37,6 @@ class SyncBurnoutsJob implements ShouldQueue
 
         // Cek lock untuk mencegah multiple sync
         if (Cache::has($lockKey)) {
-            Log::warning('Burnout sync already in progress', ['user_id' => $this->userId]);
             return;
         }
 
@@ -45,8 +44,6 @@ class SyncBurnoutsJob implements ShouldQueue
         Cache::put($lockKey, true, 3600);
 
         try {
-            Log::info('Starting burnout sync job', ['user_id' => $this->userId]);
-
             // Kirim event status processing
             broadcast(new BurnoutSyncStatusUpdated($this->userId, 'processing', null, 'Starting burnout sync process...'));
 
@@ -65,8 +62,6 @@ class SyncBurnoutsJob implements ShouldQueue
 
             // Process data
             $stats = $this->processData($allApiData);
-
-            Log::info('Burnout sync job completed', $stats);
 
             // Kirim event completed
             broadcast(new BurnoutSyncStatusUpdated($this->userId, 'completed', $stats, 'Burnout sync completed successfully!'));
@@ -107,8 +102,6 @@ class SyncBurnoutsJob implements ShouldQueue
             throw new \Exception('Burnout API configuration not found');
         }
 
-        Log::info('Fetching burnout data from API', ['url' => $apiUrl]);
-
         $allData = [];
         $nextCursor = null;
         $page = 1;
@@ -126,13 +119,6 @@ class SyncBurnoutsJob implements ShouldQueue
             if (!empty($responseData['data'])) {
                 $allData = array_merge($allData, $responseData['data']);
                 $nextCursor = $responseData['meta']['next_cursor'] ?? null;
-
-                Log::info('Fetched page from API', [
-                    'page' => $page,
-                    'items_fetched' => count($responseData['data']),
-                    'total_so_far' => count($allData),
-                    'has_next' => !empty($nextCursor)
-                ]);
             } else {
                 $nextCursor = null;
             }
@@ -156,11 +142,6 @@ class SyncBurnoutsJob implements ShouldQueue
             30,
             'Validated ' . count($validatedData) . ' items from ' . count($allData) . ' total'
         ));
-
-        Log::info('Burnout API data validated', [
-            'total_fetched' => count($allData),
-            'total_valid' => count($validatedData)
-        ]);
 
         return $validatedData;
     }

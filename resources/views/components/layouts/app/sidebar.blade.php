@@ -1,13 +1,13 @@
 <flux:sidebar sticky stashable class="h-full w-[305px] border-e border-zinc-200 bg-zinc-50">
     <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-    <a href="{{ route('dashboard') }}" class="flex items-center" wire:navigate>
+    <div class="flex items-center" wire:navigate>
         <img
             src="{{ asset('assets/logo/sigtema_without_text.png') }}"
-            class="mx-auto h-8 lg:mt-4"
+            class="mx-auto h-14 lg:mt-4"
             alt="Logo SIGTEMA"
         />
-    </a>
+    </div>
 
     <div class="mt-10 flex h-full w-full flex-col space-y-2 text-gray-500">
         <p class="ml-4 text-sm font-semibold text-gray-400 uppercase">main menu</p>

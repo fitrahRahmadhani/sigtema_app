@@ -48,7 +48,7 @@
                     </p>
                     <div class="mt-2 flex items-center gap-2">
                         <p class="font-semibold text-gray-600">Powered by</p>
-                        <img src="{{ asset('assets/logo/logo-gemini.png') }}" class="w-22" alt="Logo Gemini AI" />
+                        <img src="{{ asset('assets/logo/Groq Logo_Black 25.svg') }}" class="w-14" alt="Logo Groq AI" />
                     </div>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                     <div class="overflow-hidden rounded-2xl bg-white shadow-2xl">
                         {{-- AI Header --}}
                         <div class="bg-gradient-to-r from-[#721d21] to-[#8a252a] p-8 text-center">
-                            <div class="relative mx-auto mb-6 h-20 w-20">
+                            <div class="relative mx-auto mb-6 hidden h-20 w-20 md:block">
                                 <div class="absolute inset-0 animate-pulse rounded-full bg-white/20"></div>
                                 <div
                                     class="relative flex h-full w-full items-center justify-center rounded-full border-4 border-white/30 bg-gradient-to-r from-white/10 to-white/20"
@@ -180,10 +180,14 @@
                                 </div>
                             </div>
 
-                            {{-- Gemini AI Logo --}}
+                            {{-- AI Logo --}}
                             <div class="mt-8 flex items-center justify-center gap-3 rounded-lg bg-gray-50 py-4">
                                 <p class="text-sm font-medium text-gray-600">Powered by</p>
-                                <img src="{{ asset('assets/logo/logo-gemini.png') }}" class="h-8" alt="Gemini AI" />
+                                <img
+                                    src="{{ asset('assets/logo/Groq Logo_Black 25.svg') }}"
+                                    class="h-6"
+                                    alt="Groq AI"
+                                />
                             </div>
                         </div>
                     </div>
@@ -240,7 +244,7 @@
                                     </svg>
                                 </div>
                                 <input
-                                    wire:model.live.debounce.300ms="searchTerm"
+                                    wire:model.live.debounce.500ms="searchTerm"
                                     type="text"
                                     class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 pl-10 text-sm focus:border-[#721d21] focus:ring-[#721d21]"
                                     placeholder="Search by name or employee number..."
@@ -258,36 +262,30 @@
                                         {{ count($selectedForAnalysis) }} / {{ $maxCandidates }}
                                     </span>
                                 </div>
-                                <div class="flex flex-wrap gap-2">
-                                    @foreach ($selectedForAnalysis as $employeeId)
-                                        @php
-                                            $employee = App\Models\Employee::find($employeeId);
-                                        @endphp
-
-                                        @if ($employee)
-                                            <div class="flex items-center gap-2 rounded-full bg-[#721d21]/10 px-4 py-2">
-                                                <span class="font-medium text-[#721d21]">{{ $employee->name }}</span>
-                                                <button
-                                                    wire:click="removeFromAnalysis({{ $employeeId }})"
-                                                    type="button"
-                                                    class="rounded-full p-1 text-[#721d21] hover:bg-[#721d21]/20"
+                                <div class="flex max-h-[60px] flex-wrap gap-2 overflow-y-scroll">
+                                    @foreach ($selectedForAnalysis as $employeeId => $employeeData)
+                                        <div class="flex items-center gap-2 rounded-full bg-[#721d21]/10 px-2 py-1">
+                                            <span class="text-xs text-[#721d21]">{{ $employeeData['name'] }}</span>
+                                            <button
+                                                wire:click="removeFromAnalysis({{ $employeeId }})"
+                                                type="button"
+                                                class="rounded-full p-1 text-[#721d21] hover:bg-[#721d21]/20"
+                                            >
+                                                <svg
+                                                    class="h-3 w-3"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
                                                 >
-                                                    <svg
-                                                        class="h-4 w-4"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        viewBox="0 0 24 24"
-                                                    >
-                                                        <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M6 18L18 6M6 6l12 12"
-                                                        />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        @endif
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M6 18L18 6M6 6l12 12"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </div>
                                     @endforeach
                                 </div>
                             </div>
