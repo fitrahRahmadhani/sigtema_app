@@ -113,47 +113,140 @@
                                             </div>
                                             <div class="ml-3">
                                                 <h3 class="text-sm font-medium text-yellow-800">Attention Required</h3>
-                                                <div class="mt-2 text-sm text-yellow-700">
-                                                    <p>
-                                                        You are about to unassign an employee from their position. This
-                                                        action cannot be undone.
-                                                    </p>
+                                                <p class="mt-1 text-sm text-yellow-700">
+                                                    You are about to unassign
+                                                    <strong>{{ $employeeName }}</strong>
+                                                    from
+                                                    <strong>{{ $positionName }}</strong>
+                                                    . This action cannot be undone.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Save as History Checkbox --}}
+                                    <div class="mb-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
+                                        <label class="flex cursor-pointer items-center gap-3">
+                                            <input
+                                                type="checkbox"
+                                                wire:model.live="saveAsHistory"
+                                                class="h-4 w-4 rounded border-gray-300 text-[#721d21] focus:ring-[#721d21]"
+                                            />
+                                            <div>
+                                                <span class="text-sm font-medium text-gray-900">
+                                                    Save as employment history
+                                                </span>
+                                                <p class="text-xs text-gray-500">
+                                                    Record this position assignment in the employee's work history
+                                                </p>
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                    {{-- History Form (shown when checkbox is checked) --}}
+                                    @if ($saveAsHistory)
+                                        <div class="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                                            <h4 class="mb-3 text-sm font-semibold text-blue-900">
+                                                Employment History Record
+                                            </h4>
+                                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                                {{-- Employee Name --}}
+                                                <div>
+                                                    <label class="mb-1 block text-xs font-medium text-gray-700">
+                                                        Employee Name
+                                                        <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        wire:model.blur="historyEmployeeName"
+                                                        class="@error('historyEmployeeName') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border bg-white px-3 py-2 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                                    />
+                                                    @error('historyEmployeeName')
+                                                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                                    @enderror
+                                                </div>
+
+                                                {{-- Position Name --}}
+                                                <div>
+                                                    <label class="mb-1 block text-xs font-medium text-gray-700">
+                                                        Position
+                                                        <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        wire:model.blur="historyPositionName"
+                                                        class="@error('historyPositionName') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border bg-white px-3 py-2 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                                    />
+                                                    @error('historyPositionName')
+                                                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                                    @enderror
+                                                </div>
+
+                                                {{-- Work Unit --}}
+                                                <div>
+                                                    <label class="mb-1 block text-xs font-medium text-gray-700">
+                                                        Work Unit
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        wire:model.blur="historyWorkUnit"
+                                                        class="@error('historyWorkUnit') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border bg-white px-3 py-2 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                                    />
+                                                    @error('historyWorkUnit')
+                                                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                                    @enderror
+                                                </div>
+
+                                                {{-- Company --}}
+                                                <div>
+                                                    <label class="mb-1 block text-xs font-medium text-gray-700">
+                                                        Company
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        wire:model.blur="historyCompany"
+                                                        class="@error('historyCompany') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border bg-white px-3 py-2 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                                    />
+                                                    @error('historyCompany')
+                                                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                                    @enderror
+                                                </div>
+
+                                                {{-- Start Date --}}
+                                                <div>
+                                                    <label class="mb-1 block text-xs font-medium text-gray-700">
+                                                        Start Date
+                                                    </label>
+                                                    <input
+                                                        type="date"
+                                                        wire:model.blur="historyStartDate"
+                                                        class="@error('historyStartDate') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border bg-white px-3 py-2 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                                    />
+                                                    @error('historyStartDate')
+                                                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                                    @enderror
+                                                </div>
+
+                                                {{-- End Date --}}
+                                                <div>
+                                                    <label class="mb-1 block text-xs font-medium text-gray-700">
+                                                        End Date
+                                                    </label>
+                                                    <input
+                                                        type="date"
+                                                        wire:model.blur="historyEndDate"
+                                                        class="@error('historyEndDate') border-red-500 @else border-gray-300 @enderror w-full rounded-lg border bg-white px-3 py-2 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                                    />
+                                                    @error('historyEndDate')
+                                                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    {{-- Employee Details --}}
-                                    <div class="mb-4 rounded-lg bg-gray-50 p-4">
-                                        <div class="grid grid-cols-1 gap-3">
-                                            <div>
-                                                <label class="text-sm font-medium text-gray-500">Position</label>
-                                                <p class="text-sm font-semibold text-gray-900">{{ $positionName }}</p>
-                                            </div>
-                                            <div>
-                                                <label class="text-sm font-medium text-gray-500">Employee</label>
-                                                <p class="text-sm font-semibold text-gray-900">{{ $employeeName }}</p>
-                                            </div>
-                                            <div>
-                                                <label class="text-sm font-medium text-gray-500">Department/Unit</label>
-                                                <p class="text-sm text-gray-900">{{ $employeeDetails }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {{-- Confirmation Text --}}
-                                    <div class="mb-6 text-sm text-gray-600">
-                                        <p>
-                                            This will remove
-                                            <strong>{{ $employeeName }}</strong>
-                                            from the
-                                            <strong>{{ $positionName }}</strong>
-                                            position. The position will become vacant and available for new assignment.
-                                        </p>
-                                    </div>
+                                    @endif
 
                                     {{-- Action Buttons --}}
-                                    <div class="flex justify-end gap-3 border-t border-gray-200 pt-6">
+                                    <div class="flex justify-end gap-3 border-t border-gray-200 pt-4">
                                         <button
                                             type="button"
                                             wire:click="close()"
@@ -167,7 +260,11 @@
                                             wire:loading.attr="disabled"
                                             class="rounded-xl bg-yellow-600 px-6 py-2.5 font-medium text-white shadow-sm transition-all duration-200 hover:bg-yellow-700 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                                         >
-                                            <span wire:loading.remove class="inline-flex items-center gap-2">
+                                            <span
+                                                wire:loading.remove
+                                                wire:target="unassign"
+                                                class="inline-flex items-center gap-2"
+                                            >
                                                 <svg
                                                     class="h-4 w-4"
                                                     fill="none"
@@ -183,7 +280,11 @@
                                                 </svg>
                                                 Unassign Employee
                                             </span>
-                                            <span wire:loading class="inline-flex items-center gap-2">
+                                            <span
+                                                wire:loading
+                                                wire:target="unassign"
+                                                class="inline-flex items-center gap-2"
+                                            >
                                                 Processing...
                                             </span>
                                         </button>
