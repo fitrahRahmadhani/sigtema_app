@@ -5,13 +5,14 @@ namespace App\Livewire\Pages\OrgStructure;
 use App\Livewire\Components\Modals\AddStaffModal;
 use App\Livewire\Components\Modals\AssignEmployeeModal;
 use App\Livewire\Components\Modals\UnassignEmployeeModal;
+use App\Livewire\Traits\HandleException;
 use App\Livewire\Traits\WithDeleteConfirmation;
 use App\Models\Company;
-use App\Models\Employee;
 use App\Models\EmployeeHierarchy;
 use App\Models\Position;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Masmerise\Toaster\Toaster;
@@ -19,7 +20,7 @@ use Masmerise\Toaster\Toaster;
 #[Title('Organization Structure')]
 class Index extends Component
 {
-    use WithDeleteConfirmation;
+    use WithDeleteConfirmation, HandleException;
 
     public User $user;
     public $zoom = 100;
@@ -349,11 +350,22 @@ class Index extends Component
      */
     protected function performDelete($item): void
     {
-        // Jalankan delete logic dari trait
-        $item->delete();
 
-        // Tambahkan refresh chart
-        $this->refreshChart();
+
+        $this->authorize('delete', [EmployeeHierarchy::class, $item]);
+
+        try {
+            DB::beginTransaction();
+            // Jalankan delete logic dari trait
+            $item->delete();
+
+            // Tambahkan refresh chart
+            $this->refreshChart();
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->handleException('remove hierarchy from chart', $e->getMessage());
+        }
     }
 
     public function openAddStaffModal($superiorPositionId)
