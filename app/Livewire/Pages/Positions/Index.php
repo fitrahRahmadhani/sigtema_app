@@ -2,22 +2,26 @@
 
 namespace App\Livewire\Pages\Positions;
 
-use App\Models\Position;
-use App\Models\Company;
-use Livewire\Component;
-use Livewire\Attributes\Url;
-use Livewire\WithPagination;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Illuminate\Support\Facades\Auth;
+use App\Livewire\Traits\HandleException;
 use App\Livewire\Traits\WithDeleteConfirmation;
+use App\Models\Company;
+use App\Models\Position;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('components.layouts.app')]
 #[Title('Positions')]
 class Index extends Component
 {
-    use WithPagination, WithDeleteConfirmation;
+    use WithPagination, WithDeleteConfirmation, HandleException;
 
+    public User $user;
     public $selectedCompanyId = null;
     public $selectedCompany = null;
     public $companies = [];
@@ -43,9 +47,9 @@ class Index extends Component
 
     public function mount(): void
     {
-        $user = Auth::user();
+        $this->user = Auth::user();
 
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         if ($this->isSuperadmin) {
             $this->companies = Company::where('is_active', true)->get();
@@ -55,9 +59,9 @@ class Index extends Component
                 $this->selectedCompany = Company::find($this->selectedCompanyId);
             }
         } else {
-            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompanyId = $this->user->company_id;
             $this->selectedCompany = Company::find($this->selectedCompanyId);
-            $this->companies = Company::where('id', $user->company_id)->get();
+            $this->companies = Company::where('id', $this->user->company_id)->get();
         }
     }
 
@@ -137,7 +141,16 @@ class Index extends Component
 
     protected function performDelete($position): void
     {
-        $position->delete();
+        $this->authorize('delete', [Position::class, $position]);
+
+        try {
+            DB::beginTransaction();
+            $position->delete();
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->handleException('delete position', $e->getMessage());
+        }
     }
 
     public function render()

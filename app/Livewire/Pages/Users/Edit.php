@@ -2,59 +2,74 @@
 
 namespace App\Livewire\Pages\Users;
 
-use App\Models\User;
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
-use Livewire\Component;
-use Livewire\WithFileUploads;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\Validate;
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Spatie\Permission\Models\Role;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 use Masmerise\Toaster\Toaster;
+use Spatie\Permission\Models\Role;
 
 #[Layout('components.layouts.app')]
 #[Title('Edit User')]
 class Edit extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, UnauthorizedAccess, HandleException;
 
     public User $user;
 
-    #[Validate('required|string|max:255')]
     public $name = '';
-
-    #[Validate('required|email|max:255|unique:users,email,' . '$this->user->id')]
     public $email = '';
-
-    #[Validate([
-        'nullable',
-        'string',
-        'min:12',
-        'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/'
-    ])]
     public $password = '';
-
-    #[Validate('nullable|same:password')]
     public $password_confirmation = '';
-
-    #[Validate('nullable|numeric|min:1|max:5')]
     public $band = '';
-
-    #[Validate('nullable|exists:companies,id')]
     public $company_id = '';
-
-    #[Validate('nullable|array')]
     public $selectedRoles = [];
-
-    #[Validate('nullable|image|max:2048')]
     public $profile_photo;
 
     public $existing_profile_photo = null;
     public $profile_photo_preview = null;
     public $companies = [];
     public $bandOptions = [];
+
+    protected function rules()
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $this->user->id,
+            'password' => [
+                'nullable',
+                'string',
+                'min:12',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/'
+            ],
+            'password_confirmation' => 'nullable|same:password',
+            'band' => 'nullable|numeric|min:1|max:5',
+            'company_id' => 'nullable|exists:companies,id',
+            'selectedRoles' => 'nullable|array',
+            'profile_photo' => 'nullable|image|max:2048',
+        ];
+    }
+
+    protected function messages()
+    {
+        return [
+            'email.unique' => 'Email ini sudah digunakan oleh user lain.',
+            'password.min' => 'Password minimal 12 karakter.',
+            'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, angka, dan karakter khusus.',
+            'password_confirmation.same' => 'Konfirmasi password tidak cocok.',
+            'profile_photo.image' => 'File harus berupa gambar.',
+            'profile_photo.max' => 'Ukuran gambar maksimal 2MB.',
+        ];
+    }
 
     public function mount(User $user)
     {
@@ -75,9 +90,7 @@ class Edit extends Component
 
     public function updatedProfilePhoto()
     {
-        $this->validate([
-            'profile_photo' => 'nullable|image|max:2048',
-        ]);
+        $this->validateOnly('profile_photo');
 
         if ($this->profile_photo) {
             $this->profile_photo_preview = $this->profile_photo->temporaryUrl();
@@ -104,18 +117,15 @@ class Edit extends Component
 
     public function save()
     {
-        $this->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $this->user->id,
-            'password' => 'nullable|string|min:12|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
-            'password_confirmation' => 'nullable|same:password',
-            'band' => 'nullable|numeric|min:1|max:5',
-            'company_id' => 'nullable|exists:companies,id',
-            'selectedRoles' => 'nullable|array',
-            'profile_photo' => 'nullable|image|max:2048',
-        ]);
-
         try {
+            // Validasi form
+            $this->validate();
+
+            // Authorization check
+            $this->authorize('update', User::class);
+
+            DB::beginTransaction();
+
             // Update user basic info
             $userData = [
                 'name' => $this->name,
@@ -151,10 +161,19 @@ class Edit extends Component
                 $this->user->syncRoles([]);
             }
 
-            Toaster::success('User updated successfully!');
-            return redirect()->route('users.index');
+            DB::commit();
+
+            return redirect()->route('users.index')->success('User updated successfully!');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Failed to edit user: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('edit user');
         } catch (\Exception $e) {
-            Toaster::error('Failed to update user: ' . $e->getMessage());
+            DB::rollBack();
+            return $this->handleException('edit user', $e->getMessage());
         }
     }
 

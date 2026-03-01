@@ -2,56 +2,93 @@
 
 namespace App\Livewire\Pages\Companies;
 
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
-use Livewire\Component;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Livewire\WithFileUploads;
-use Livewire\Attributes\Title;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Validate;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+use Livewire\WithFileUploads;
+use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
+#[Title('Create Company')]
 class Create extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, UnauthorizedAccess, HandleException;
 
-    #[Title('Create Company')]
-
-    #[Validate('required|image|max:2048')]
     public $logo;
-
-    #[Validate('required|string|max:255')]
     public $name;
-
-    #[Validate('required|string|max:255')]
     public $cocd;
-
-    #[Validate('boolean')]
     public $is_active = true;
+
+    protected function rules()
+    {
+        return [
+            'logo' => ['required', 'image', 'max:2048'],
+            'name' => ['required', 'string', 'max:255'],
+            'cocd' => ['required', 'string', 'max:5'],
+            'is_active' => ['boolean'],
+        ];
+    }
+
+    protected function messages()
+    {
+        return [
+            'logo.required' => 'Logo is required.',
+            'logo.image' => 'File must be an image (JPG, PNG, etc).',
+            'logo.max' => 'Image size cannot exceed 2MB.',
+            'name.required' => 'Name is required.',
+            'name.max' => 'Name cannot exceed 255 characters.',
+            'cocd.required' => 'Company code is required.',
+            'cocd.max' => 'Company code cannot exceed 5 characters.',
+        ];
+    }
 
     public function save()
     {
-        $this->validate();
+        try {
+            $this->validate();
 
-        // Generate custom path: company-name_YYYYMMDD.extension
-        $date = now()->format('Ymd');
-        $slug = Str::uuid();
-        $extension = $this->logo->getClientOriginalExtension();
-        $filename = "{$slug}_{$date}.{$extension}";
+            $this->authorize('create', [Company::class]);
 
-        // Store with custom filename
-        $logoPath = $this->logo->storeAs('companies/logos', $filename, 'public');
+            DB::beginTransaction();
 
-        Company::create([
-            'slug' => $slug,
-            'name' => $this->name,
-            'cocd' => $this->cocd,
-            'logo_path' => $logoPath,
-            'is_active' => $this->is_active,
-        ]);
+            // Generate custom path: company-name_YYYYMMDD.extension
+            $date = now()->format('Ymd');
+            $slug = Str::uuid();
+            $extension = $this->logo->getClientOriginalExtension();
+            $filename = "{$slug}_{$date}.{$extension}";
 
+            // Store with custom filename
+            $logoPath = $this->logo->storeAs('companies/logos', $filename, 'public');
 
-        return redirect()->route('companies.index')->success('Company created successfully.');
+            Company::create([
+                'slug' => $slug,
+                'name' => $this->name,
+                'cocd' => $this->cocd,
+                'logo_path' => $logoPath,
+                'is_active' => $this->is_active,
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('companies.index')->success('Company created successfully.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('create company');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException('create company', $e->getMessage());
+        }
     }
 
     public function render()

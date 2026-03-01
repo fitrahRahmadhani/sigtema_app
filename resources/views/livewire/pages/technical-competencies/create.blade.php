@@ -217,7 +217,7 @@
                                                             >
                                                                 {{ $employee->employee_number }}
                                                                 @if ($employee->position)
-                                                                        • {{ $employee->position }}
+                                                                        • {{ $employee->position->name }}
                                                                 @endif
                                                             </div>
                                                         </div>
@@ -330,7 +330,7 @@
                             type="text"
                             id="name"
                             wire:model="name"
-                            class="@error('name') @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="@error('name') border-red-500 @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                             placeholder="Enter competency or certification name"
                         />
                         @error('name')
@@ -348,7 +348,7 @@
                             type="text"
                             id="issued_by"
                             wire:model="issued_by"
-                            class="@error('issued_by') @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="@error('issued_by') border-red-500 @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                             placeholder="Enter issuing organization"
                         />
                         @error('issued_by')
@@ -368,7 +368,7 @@
                             wire:model="year"
                             min="2000"
                             max="{{ date('Y') + 1 }}"
-                            class="@error('year') @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="@error('year') border-red-500 @enderror w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
                             placeholder="Enter year (e.g., 2024)"
                         />
                         @error('year')

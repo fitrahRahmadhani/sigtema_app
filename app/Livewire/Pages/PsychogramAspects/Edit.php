@@ -2,34 +2,34 @@
 
 namespace App\Livewire\Pages\PsychogramAspects;
 
-use App\Models\PsychogramAspect;
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
-use Livewire\Component;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\Validate;
+use App\Models\PsychogramAspect;
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
 #[Title('Edit Psychogram Aspect')]
 class Edit extends Component
 {
+    use UnauthorizedAccess, HandleException;
+
     public PsychogramAspect $psychogramAspect;
+    public User $user;
 
-    #[Validate('required|string|max:20')]
     public $aspect_code = '';
-
-    #[Validate('required|string|max:255')]
     public $aspect_name = '';
-
-    #[Validate('nullable|string')]
     public $description = '';
-
-    #[Validate('required|boolean')]
     public $is_active = true;
-
-    #[Validate('required|integer|min:0')]
     public $sort_order = 0;
 
     public $selectedCompany = null;
@@ -46,33 +46,55 @@ class Edit extends Component
         $this->is_active = $psychogram_aspect->is_active;
         $this->sort_order = $psychogram_aspect->sort_order;
 
-        $user = Auth::user();
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->user = Auth::user();
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         // Load company (read-only)
         $this->selectedCompany = Company::find($psychogram_aspect->company_id);
+    }
 
-        // Validasi akses
-        if (!$this->isSuperadmin && $psychogram_aspect->company_id !== $user->company_id) {
-            abort(403, 'Unauthorized access to this psychogram aspect.');
-        }
+    public function rules()
+    {
+        return [
+            'aspect_code' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('psychogram_aspects', 'aspect_code')
+                    ->where(
+                        fn($query) =>
+                        $query->where('company_id', $this->psychogramAspect->company_id)
+                    )
+                    ->ignore($this->psychogramAspect->id),
+            ],
+            'aspect_name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'is_active' => 'boolean',
+            'sort_order' => 'required|integer|min:0',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'aspect_code' => 'required|string|max:20|unique:psychogram_aspects,aspect_code,' . $this->psychogramAspect->id,
+            'aspect_code.required' => 'Aspect code is required.',
+            'aspect_name.required' => 'Aspect name is required.',
+            'description.string' => 'Description must be a string.',
+            'sort_order.required' => 'Sort order is required.',
+            'sort_order.integer' => 'Sort order must be an integer.',
+            'sort_order.min' => 'Sort order must be at least 0.',
+        ];
     }
 
     public function save()
     {
-        $this->validate();
 
         try {
-            // Validasi uniqueness berdasarkan company_id (exclude current record)
-            $exists = PsychogramAspect::where('company_id', $this->psychogramAspect->company_id)
-                ->where('aspect_code', $this->aspect_code)
-                ->where('id', '!=', $this->psychogramAspect->id)
-                ->exists();
+            $this->validate();
+            $this->authorize('update', [PsychogramAspect::class, $this->psychogramAspect]);
 
-            if ($exists) {
-                $this->addError('aspect_code', 'This aspect code already exists for this company.');
-                return;
-            }
+            DB::beginTransaction();
 
             $this->psychogramAspect->update([
                 'aspect_code' => $this->aspect_code,
@@ -82,10 +104,20 @@ class Edit extends Component
                 'sort_order' => $this->sort_order,
             ]);
 
+            DB::commit();
+
             return redirect()->route('psychogram-aspects.index')
                 ->success('Psychogram aspect updated successfully');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('update psychogram aspect');
         } catch (\Exception $e) {
-            Toaster::error('Failed to update psychogram aspect: ' . $e->getMessage());
+            DB::rollBack();
+            return $this->handleException('update psychogram aspect', $e->getMessage());
         }
     }
 

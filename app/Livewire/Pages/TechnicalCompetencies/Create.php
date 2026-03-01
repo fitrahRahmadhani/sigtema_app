@@ -2,20 +2,29 @@
 
 namespace App\Livewire\Pages\TechnicalCompetencies;
 
-use App\Models\TechnicalCompetency;
-use App\Models\Employee;
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
-use Livewire\Component;
+use App\Models\Employee;
+use App\Models\TechnicalCompetency;
+use App\Models\User;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 use Masmerise\Toaster\Toaster;
-use Exception;
 
 #[Layout('components.layouts.app')]
 #[Title('Add Technical Competency')]
 class Create extends Component
 {
+    use UnauthorizedAccess, HandleException;
+
+    public User $user;
     public $employee_id;
     public $name;
     public $issued_by;
@@ -36,8 +45,8 @@ class Create extends Component
 
     public function mount()
     {
-        $user = Auth::user();
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->user = Auth::user();
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         // Ambil company_id dari session untuk superadmin, atau dari user untuk admin biasa
         if ($this->isSuperadmin) {
@@ -47,7 +56,7 @@ class Create extends Component
                 return redirect()->route('technical-competencies.index');
             }
         } else {
-            $companyId = $user->company_id;
+            $companyId = $this->user->company_id;
         }
 
         $this->selectedCompany = Company::find($companyId);
@@ -184,6 +193,9 @@ class Create extends Component
     {
         try {
             $this->validate();
+            $this->authorize('create', [TechnicalCompetency::class, $this->user->company]);
+
+            DB::beginTransaction();
 
             TechnicalCompetency::create([
                 'employee_id' => $this->employee_id,
@@ -192,10 +204,20 @@ class Create extends Component
                 'year' => $this->year,
             ]);
 
+            DB::commit();
+
             return redirect()->route('technical-competencies.index')
                 ->success('Technical competency has been added successfully.');
-        } catch (Exception $e) {
-            Toaster::error('Failed to add technical competency. Please try again.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('create technical competency');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException('create technical competency', $e->getMessage());
         }
     }
 

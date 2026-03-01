@@ -57,8 +57,6 @@ class ProcessAIRecommendationsJob implements ShouldQueue
             // Broadcast completion
             $this->broadcastProgress(100, "AI analysis completed!");
             $this->broadcastCompletion($results);
-
-            Log::info("AI Analysis completed successfully for position {$this->position->id}");
         } catch (\Exception $e) {
             Log::error("AI Job Failed: {$e->getMessage()}", [
                 'position_id' => $this->position->id,

@@ -205,7 +205,7 @@
                                         $output .= '</a>';
                                     }
                                     $user = auth()->user();
-                                    $isAdmin = $user && ($user->hasRole('superadmin') || $user->hasRole('admin'));
+                                    $isAdmin = $user && ($user->hasRole('superadmin') || $user->hasRole('admin') || $user->hasRole('hc-operator'));
 
                                     if ($isAdmin) {
                                         // Assign employee (only for vacant)
@@ -217,7 +217,7 @@
                                             $output .= '<span class="text-sm font-medium">Assign Employee</span>';
                                             $output .= '</button>';
                                         }
-
+                                        if (!$isVacant) {
                                         // Unassign employee
                                         $output .= '<button wire:click="openUnassignEmployeeModal(' . $node['position_id'] . ')" class="w-full flex items-center gap-3 px-3 py-2 rounded-md ' . ($isVacant ? 'text-red-700 hover:bg-red-100' : 'text-gray-700 hover:bg-gray-100') . ' transition-colors">';
                                         $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">';
@@ -225,6 +225,7 @@
                                         $output .= '</svg>';
                                         $output .= '<span class="text-sm font-medium">Unassign Employee</span>';
                                         $output .= '</button>';
+                                        }
 
                                         // Add Staff
                                         $output .= '<button wire:click="openAddStaffModal(' . $node['position_id'] . ')" class="w-full flex items-center gap-3 px-3 py-2 rounded-md ' . ($isVacant ? 'text-red-700 hover:bg-red-100' : 'text-gray-700 hover:bg-gray-100') . ' transition-colors">';

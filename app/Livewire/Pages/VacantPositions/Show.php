@@ -2,23 +2,23 @@
 
 namespace App\Livewire\Pages\VacantPositions;
 
-use Livewire\Component;
-use App\Models\Position;
-use App\Models\Employee;
 use App\Jobs\ProcessAIRecommendationsJob;
-use Masmerise\Toaster\Toaster;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\On;
+use App\Models\Employee;
+use App\Models\Position;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
 class Show extends Component
 {
     #[Title('Candidates Match')]
 
+    public User $user;
     public $positionSlug;
     public $selectedCandidates = [];
     public $aiProcessing = false;
@@ -30,8 +30,7 @@ class Show extends Component
     public $searchTerm = '';
     public $availableEmployees = [];
     public $selectedForAnalysis = [];
-    public $maxCandidates = 20;
-    public $user;
+    public $maxCandidates = 10;
 
     public function mount(Position $position)
     {
@@ -40,29 +39,33 @@ class Show extends Component
         if ($this->user->hasRole('head-of-unit') && $this->user->band >= $position->band) {
             return redirect()->route('vacant-positions.index')->warning('You do not have permission to access this page.');
         }
-        $this->position = $position;
+
+        $this->position     = $position;
         $this->positionSlug = $position->slug;
 
-        // Check for cached results
-        $cacheKey = "ai_analysis_{$this->position->id}";
-        $cachedResults = Cache::get($cacheKey);
+        $cachedResults = Cache::get($this->cacheKey());
 
         if ($cachedResults) {
             $this->recommendations = $cachedResults;
-            $this->aiProcessing = false;
-            $this->aiProgress = 100;
+            $this->aiProcessing    = false;
+            $this->aiProgress      = 100;
         }
+    }
+
+    private function cacheKey(): string
+    {
+        return 'ai_analysis_' . Auth::id() . '_' . $this->position->id;
     }
 
     protected function getListeners()
     {
-        $userId = Auth::id();
+        $userId     = Auth::id();
         $positionId = $this->position->id;
 
         return [
-            "echo-private:ai-analysis.{$userId}.{$positionId},.ai.progress" => 'handleAIProgress',
+            "echo-private:ai-analysis.{$userId}.{$positionId},.ai.progress"  => 'handleAIProgress',
             "echo-private:ai-analysis.{$userId}.{$positionId},.ai.completed" => 'handleAICompleted',
-            "echo-private:ai-analysis.{$userId}.{$positionId},.ai.failed" => 'handleAIFailed',
+            "echo-private:ai-analysis.{$userId}.{$positionId},.ai.failed"    => 'handleAIFailed',
         ];
     }
 
@@ -77,158 +80,150 @@ class Show extends Component
 
     public function searchEmployees()
     {
-        $this->availableEmployees = Employee::with('position')
+        if (strlen($this->searchTerm) < 2) {
+            $this->availableEmployees = [];
+            return;
+        }
+
+        $selectedIds = array_keys($this->selectedForAnalysis);
+
+        $this->availableEmployees = Employee::with(['position:id,name,employee_id'])
+            ->select(['id', 'name', 'employee_number', 'band', 'company_id'])
             ->where('company_id', $this->position->company_id)
-
-            // Jika user role head-of-unit, tampilkan employee dengan band >= band user
-            ->when($this->user->hasRole('head-of-unit'), function ($q) {
-                $q->where('band', '>=', (int) $this->user->band);
+            ->when(
+                $this->user->hasRole('head-of-unit'),
+                fn($q) =>
+                $q->where('band', '>=', (int) $this->user->band)
+            )
+            ->where(function ($q) {
+                $q->where('name', 'LIKE', '%' . $this->searchTerm . '%')
+                    ->orWhere('employee_number', 'LIKE', '%' . $this->searchTerm . '%');
             })
-
-            // Filter berdasarkan searchTerm (CASE-INSENSITIVE)
-            ->when($this->searchTerm, function ($q) {
-                $searchTerm = strtolower($this->searchTerm); // Convert ke lowercase
-                $q->where(function ($query) use ($searchTerm) {
-                    $query->whereRaw('LOWER(name) LIKE ?', ['%' . $searchTerm . '%'])
-                        ->orWhereRaw('LOWER(employee_number) LIKE ?', ['%' . $searchTerm . '%']);
-                });
-            })
-
-            // Kecualikan employee yang sudah dipilih
-            ->when(!empty($this->selectedForAnalysis), function ($q) {
-                $q->whereNotIn('id', $this->selectedForAnalysis);
-            })
-
-            ->limit(50)
+            ->when(
+                !empty($selectedIds),
+                fn($q) =>
+                $q->whereNotIn('id', $selectedIds)
+            )
+            ->limit(20)
             ->get()
-            ->map(fn($employee) => [
-                'id' => $employee->id,
-                'name' => $employee->name,
-                'employee_number' => $employee->employee_number,
-                'band' => $employee->band,
-                'position' => $employee->position->name ?? 'No Position',
+            ->mapWithKeys(fn($employee) => [
+                $employee->id => [
+                    'id'              => $employee->id,
+                    'name'            => $employee->name,
+                    'employee_number' => $employee->employee_number,
+                    'band'            => $employee->band,
+                    'position'        => $employee->position?->name ?? 'No Position',
+                ]
             ])
             ->toArray();
     }
 
-
-
     public function addToAnalysis($employeeId)
     {
         if (count($this->selectedForAnalysis) >= $this->maxCandidates) {
-            Toaster::warning("Maximum {$this->maxCandidates} candidates can be analyzed");
+            Toaster::warning("Maksimal {$this->maxCandidates} kandidat dapat dianalisis");
             return;
         }
 
-        if (!in_array($employeeId, $this->selectedForAnalysis)) {
-            $this->selectedForAnalysis[] = $employeeId;
-            $this->availableEmployees = array_filter($this->availableEmployees, function ($emp) use ($employeeId) {
-                return $emp['id'] != $employeeId;
-            });
+        if (isset($this->availableEmployees[$employeeId])) {
+            $this->selectedForAnalysis[$employeeId] = $this->availableEmployees[$employeeId];
+            unset($this->availableEmployees[$employeeId]);
         }
     }
 
     public function removeFromAnalysis($employeeId)
     {
-        $this->selectedForAnalysis = array_filter($this->selectedForAnalysis, function ($id) use ($employeeId) {
-            return $id != $employeeId;
-        });
+        if (isset($this->selectedForAnalysis[$employeeId])) {
+            $this->availableEmployees[$employeeId] = $this->selectedForAnalysis[$employeeId];
+            unset($this->selectedForAnalysis[$employeeId]);
+        }
     }
 
     public function startAIProcessing()
     {
-        if (count($this->selectedForAnalysis) === 0) {
-            Toaster::warning('Please select at least 1 candidate to analyze');
+        $employeeIds = array_keys($this->selectedForAnalysis);
+
+        if (count($employeeIds) === 0) {
+            Toaster::warning('Pilih minimal 1 kandidat untuk dianalisis');
             return;
         }
 
-        $this->aiProcessing = true;
-        $this->aiProgress = 0;
-        $this->aiStatus = 'Preparing AI analysis...';
+        if (count($employeeIds) > $this->maxCandidates) {
+            Toaster::warning("Maksimal {$this->maxCandidates} kandidat per analisis");
+            return;
+        }
+
+        $this->aiProcessing      = true;
+        $this->aiProgress        = 0;
+        $this->aiStatus          = 'Mempersiapkan analisis AI...';
         $this->showEmployeeModal = false;
 
-        // Dispatch job dengan kandidat terpilih
         ProcessAIRecommendationsJob::dispatch(
             $this->position,
             Auth::id(),
-            $this->selectedForAnalysis
+            $employeeIds
         );
 
-        Toaster::info('AI analysis started. Process may take 1-2 minutes.');
+        Toaster::info('Analisis AI dimulai. Proses membutuhkan 1 - 2 menit.');
     }
 
     public function retryAIProcessing()
     {
-        Cache::forget("ai_analysis_{$this->position->id}");
-        $this->recommendations = [];
+        Cache::forget($this->cacheKey());
+        $this->recommendations     = [];
         $this->selectedForAnalysis = [];
-        $this->showEmployeeModal = true;
+        $this->availableEmployees  = [];
+        $this->searchTerm          = '';
+        $this->showEmployeeModal   = true;
     }
 
     public function handleAIProgress($event)
     {
-        Log::info('Livewire received progress event', [
-            'event' => $event,
-            'position_id' => $this->position->id,
-            'user_id' => Auth::id()
-        ]);
-
         $this->aiProgress = $event['progress'];
-        $this->aiStatus = $event['message'];
+        $this->aiStatus   = $event['message'];
     }
 
     public function handleAICompleted($event)
     {
-        Log::info('Livewire received completed event', [
-            'event' => $event,
-            'position_id' => $this->position->id
-        ]);
-
         $this->recommendations = $event['results'];
-        $this->aiProcessing = false;
-        $this->aiProgress = 100;
-        $this->aiStatus = 'Analysis complete!';
+        $this->aiProcessing    = false;
+        $this->aiProgress      = 100;
+        $this->aiStatus        = 'Analisis selesai!';
 
-        // Store in cache
-        Cache::put("ai_analysis_{$this->position->id}", $event['results'], now()->addHours(24));
+        Cache::put($this->cacheKey(), $event['results'], now()->addHours(24));
 
-        Toaster::success('AI analysis complete! Best recommendations have been found.');
+        Toaster::success('Analisis AI selesai! Rekomendasi terbaik telah ditemukan.');
     }
 
     public function handleAIFailed($event)
     {
-        Log::info('Livewire received failed event', [
-            'event' => $event,
-            'position_id' => $this->position->id
-        ]);
-
         $this->aiProcessing = false;
-        $this->aiStatus = 'Analysis failed';
-        Toaster::error('AI analysis failed: ' . $event['error']);
+        $this->aiStatus     = 'Analisis gagal';
+        Toaster::error('Analisis AI gagal: ' . $event['error']);
     }
 
     public function updatedSelectedCandidates($value)
     {
         if (count($this->selectedCandidates) > 5) {
             $this->selectedCandidates = array_slice($this->selectedCandidates, 0, 5);
-            Toaster::warning('Maximum 5 candidates can be selected');
+            Toaster::warning('Maksimal 5 kandidat dapat dipilih untuk perbandingan');
         }
     }
 
     public function compareSelected()
     {
         if (count($this->selectedCandidates) < 2) {
-            Toaster::warning('Please select at least 2 candidates to compare');
+            Toaster::warning('Pilih minimal 2 kandidat untuk dibandingkan');
             return;
         }
 
         if (count($this->selectedCandidates) > 5) {
-            Toaster::warning('Maximum 5 candidates can be compared');
+            Toaster::warning('Maksimal 5 kandidat dapat dibandingkan');
             return;
         }
 
         return redirect()->route('vacant-positions.compare', [
-            'position' => $this->positionSlug,
+            'position'   => $this->positionSlug,
             'candidates' => implode(',', $this->selectedCandidates)
         ]);
     }
@@ -236,7 +231,7 @@ class Show extends Component
     public function render()
     {
         return view('livewire.pages.vacant-positions.show', [
-            'position' => $this->position,
+            'position'   => $this->position,
             'candidates' => $this->recommendations
         ]);
     }

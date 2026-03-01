@@ -8,63 +8,104 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Validate;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
+use Masmerise\Toaster\Toaster;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
-use Masmerise\Toaster\Toaster;
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\Access\AuthorizationException;
 
 #[Layout('components.layouts.app')]
 #[Title('Edit Employee')]
 class Edit extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, UnauthorizedAccess, HandleException;
 
     public Employee $employee;
 
-    #[Validate('required|string|max:255')]
     public $name = '';
-
     public $employee_number = '';
-
     public $email = '';
-
-    #[Validate('required|string|max:20')]
     public $phone = '';
-
-    #[Validate('nullable|date')]
     public $birth_date = '';
-
-    #[Validate('required|in:Male,Female')]
     public $gender = '';
-
-    #[Validate([
-        'nullable',
-        'string',
-        'min:12',
-        'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
-        'confirmed'
-    ])]
     public $password = '';
-
     public $password_confirmation = '';
-
-    #[Validate('required|string|max:50')]
     public $personal_grade = '';
-
-    #[Validate('nullable|date')]
     public $hire_date = '';
-
-    #[Validate('required|in:1,2,3,4,5')]
     public $band = '';
-
-    #[Validate('required|exists:companies,id')]
     public $company_id = '';
-
-    #[Validate('nullable|image|max:2048')]
     public $profile_photo;
-
     public $existing_profile_photo = null;
+
+    protected function rules()
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'employee_number' => [
+                'required',
+                'string',
+                Rule::unique('employees')->ignore($this->employee->id)
+            ],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('employees')->ignore($this->employee->id)
+            ],
+            'phone' => ['required', 'string', 'max:20'],
+            'birth_date' => ['nullable', 'date'],
+            'gender' => ['required', 'in:Male,Female'],
+            'password' => [
+                'nullable',
+                'string',
+                'min:12',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&]/',
+                'confirmed'
+            ],
+            'password_confirmation' => ['nullable', 'same:password'],
+            'personal_grade' => ['required', 'string', 'max:50'],
+            'hire_date' => ['nullable', 'date'],
+            'band' => ['required', 'in:1,2,3,4,5'],
+            'company_id' => ['required', 'exists:companies,id'],
+            'profile_photo' => ['nullable', 'image', 'max:2048'],
+        ];
+    }
+
+    protected function messages()
+    {
+        return [
+            'name.required' => 'Employee name is required.',
+            'name.max' => 'Employee name cannot exceed 255 characters.',
+            'employee_number.required' => 'Employee number is required.',
+            'employee_number.unique' => 'This employee number is already registered.',
+            'email.required' => 'Email address is required.',
+            'email.email' => 'Please enter a valid email address.',
+            'email.unique' => 'This email is already registered.',
+            'phone.required' => 'Phone number is required.',
+            'phone.max' => 'Phone number cannot exceed 20 characters.',
+            'birth_date.date' => 'Please enter a valid birth date.',
+            'gender.required' => 'Gender is required.',
+            'gender.in' => 'Gender must be either Male or Female.',
+            'password.min' => 'Password must be at least 12 characters.',
+            'password.regex' => 'Password must contain uppercase, lowercase, number, and special character (@$!%*#?&).',
+            'password.confirmed' => 'Password confirmation does not match.',
+            'personal_grade.required' => 'Personal grade is required.',
+            'personal_grade.max' => 'Personal grade cannot exceed 50 characters.',
+            'hire_date.date' => 'Please enter a valid hire date.',
+            'band.required' => 'Band is required.',
+            'band.in' => 'Band must be between 1 and 5.',
+            'company_id.required' => 'Company is required.',
+            'company_id.exists' => 'Selected company does not exist.',
+            'profile_photo.image' => 'File must be an image (JPG, PNG, etc).',
+            'profile_photo.max' => 'Image size cannot exceed 2MB.',
+        ];
+    }
 
     public function mount(Employee $employee)
     {
@@ -82,31 +123,52 @@ class Edit extends Component
         $this->existing_profile_photo = $employee->profile_path;
     }
 
-    public function rules()
-    {
-        return [
-            'email' => ['required', 'email', Rule::unique('employees')->ignore($this->employee->id)],
-            'employee_number' => ['required', 'string', Rule::unique('employees')->ignore($this->employee->id)],
-        ];
-    }
-
     public function deleteExistingPhoto()
     {
-        if ($this->existing_profile_photo && Storage::disk('public')->exists($this->existing_profile_photo)) {
-            Storage::disk('public')->delete($this->existing_profile_photo);
+        try {
+            // Authorization check
+            $this->authorize('update', $this->employee);
+
+            DB::beginTransaction();
+
+            $oldPhotoPath = $this->employee->profile_path;
+
+            // Update database first
+            $this->employee->update(['profile_path' => null]);
+
+            // Delete file after successful database update
+            if ($oldPhotoPath && Storage::disk('public')->exists($oldPhotoPath)) {
+                Storage::disk('public')->delete($oldPhotoPath);
+            }
+
+            $this->existing_profile_photo = null;
+
+            DB::commit();
+
+            Toaster::success('Profile photo deleted successfully!');
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('delete employee profile photo');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException('delete employee profile photo', $e->getMessage());
         }
-
-        $this->employee->update(['profile_path' => null]);
-        $this->existing_profile_photo = null;
-
-        Toaster::success('Profile photo deleted successfully!');
     }
 
     public function save()
     {
-        $this->validate();
-
         try {
+            // Validate form
+            $this->validate();
+
+            // Authorization check
+            $this->authorize('update', $this->employee);
+
+            DB::beginTransaction();
+
+            $oldPhotoPath = $this->employee->profile_path;
+
+            // Prepare data to update
             $data = [
                 'name' => $this->name,
                 'employee_number' => $this->employee_number,
@@ -120,30 +182,44 @@ class Edit extends Component
                 'company_id' => $this->company_id,
             ];
 
-            if ($this->password) {
+            // Update password if provided
+            if (!empty($this->password)) {
                 $data['password'] = Hash::make($this->password);
             }
 
+            // Upload profile photo if exists
             if ($this->profile_photo) {
-                if ($this->existing_profile_photo && Storage::disk('public')->exists($this->existing_profile_photo)) {
-                    Storage::disk('public')->delete($this->existing_profile_photo);
-                }
-
-                $path = $this->profile_photo->store('employees', 'public');
-                $data['profile_path'] = $path;
+                $newPath = $this->profile_photo->store('employees', 'public');
+                $data['profile_path'] = $newPath;
             }
 
+            // Update employee
             $this->employee->update($data);
 
+            // Delete old photo after successful database update (only if new photo uploaded)
+            if ($this->profile_photo && $oldPhotoPath && Storage::disk('public')->exists($oldPhotoPath)) {
+                Storage::disk('public')->delete($oldPhotoPath);
+            }
+
+            DB::commit();
+
             return redirect()->route('employees.index')->success('Employee updated successfully!');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('edit employee');
         } catch (\Exception $e) {
-            Toaster::error('Failed to update employee: ' . $e->getMessage());
+            DB::rollBack();
+            return $this->handleException('edit employee', $e->getMessage());
         }
     }
 
     public function cancel()
     {
-        return $this->redirect(route('employees.index'), navigate: true);
+        return redirect()->route('employees.index');
     }
 
     public function render()

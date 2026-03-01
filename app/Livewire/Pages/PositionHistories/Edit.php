@@ -2,22 +2,31 @@
 
 namespace App\Livewire\Pages\PositionHistories;
 
-use App\Models\PositionHistory;
-use App\Models\Employee;
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
-use Livewire\Component;
+use App\Models\Employee;
+use App\Models\PositionHistory;
+use App\Models\User;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 use Masmerise\Toaster\Toaster;
-use Exception;
 
 #[Layout('components.layouts.app')]
 #[Title('Edit Position History')]
 class Edit extends Component
 {
+    use UnauthorizedAccess, HandleException;
+
     public PositionHistory $positionHistory;
 
+    public User $user;
     public $position_name;
     public $work_unit;
     public $start_date;
@@ -39,17 +48,12 @@ class Edit extends Component
         $this->end_date = $position_history->end_date?->format('Y-m-d');
         $this->company = $position_history->company;
 
-        $user = Auth::user();
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->user = Auth::user();
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         // Load employee dan company (read-only)
         $this->selectedEmployee = Employee::find($position_history->employee_id);
         $this->selectedCompany = Company::find($this->selectedEmployee->company_id);
-
-        // Validasi akses
-        if (!$this->isSuperadmin && $this->selectedEmployee->company_id !== $user->company_id) {
-            abort(403, 'Unauthorized access to this position history.');
-        }
     }
 
     public function rules()
@@ -78,6 +82,9 @@ class Edit extends Component
     {
         try {
             $this->validate();
+            $this->authorize('update', [PositionHistory::class, $this->positionHistory]);
+
+            DB::beginTransaction();
 
             $this->positionHistory->update([
                 'position_name' => $this->position_name,
@@ -87,10 +94,20 @@ class Edit extends Component
                 'company' => $this->company,
             ]);
 
+            DB::commit();
+
             return redirect()->route('position-histories.index')
                 ->success('Position history has been updated successfully.');
-        } catch (Exception $e) {
-            Toaster::error('Failed to update position history. Please try again.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('edit position history');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException('edit position history', $e->getMessage());
         }
     }
 

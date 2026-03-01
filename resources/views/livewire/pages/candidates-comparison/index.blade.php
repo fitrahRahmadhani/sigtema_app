@@ -153,21 +153,34 @@
                     </div>
                 </div>
 
-                {{-- Info Refresh Chart --}}
+                {{-- Info Box --}}
                 <div class="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-                    <div class="flex items-center gap-2 text-sm text-yellow-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
-                            <path
-                                fill-rule="evenodd"
-                                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
-                                clip-rule="evenodd"
-                            />
-                        </svg>
-
+                    <div class="flex flex-col items-start gap-2 text-sm text-yellow-600">
+                        <div class="flex items-center gap-2 text-base">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                class="size-5"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                            <h6 class="font-semibold">Informasi</h6>
+                        </div>
                         <p>
                             <span class="font-semibold">Jika chart (bagan) tidak muncul,</span>
                             mohon untuk refresh halaman
                         </p>
+                        @hasrole('head-of-unit')
+                            <p>
+                                Anda hanya dapat mengkomparasi karyawan
+                                <span class="font-semibold">selevel atau di bawah band Anda</span>
+                            </p>
+                        @endhasrole
                     </div>
                 </div>
 
@@ -477,7 +490,6 @@
                                                         <canvas
                                                             id="papiChart-{{ $i }}"
                                                             class="h-full w-full"
-                                                            wire:ignore
                                                             data-papi-data="{{ json_encode($papiChartData[$i]) }}"
                                                             data-employee-name="{{ $selectedEmployees[$i]->name ?? 'Employee' }}"
                                                         ></canvas>
@@ -545,7 +557,6 @@
                                                             <canvas
                                                                 id="disc1Chart-{{ $i }}"
                                                                 class="h-full w-full"
-                                                                wire:ignore
                                                                 data-disc-data="{{
                                                                     json_encode([
                                                                         'D' => $discChartData[$i]['D1'],
@@ -578,7 +589,6 @@
                                                             <canvas
                                                                 id="disc2Chart-{{ $i }}"
                                                                 class="h-full w-full"
-                                                                wire:ignore
                                                                 data-disc-data="{{
                                                                     json_encode([
                                                                         'D' => $discChartData[$i]['D2'],
@@ -611,7 +621,6 @@
                                                             <canvas
                                                                 id="disc3Chart-{{ $i }}"
                                                                 class="h-full w-full"
-                                                                wire:ignore
                                                                 data-disc-data="{{
                                                                     json_encode([
                                                                         'D' => $discChartData[$i]['D3'],
@@ -834,6 +843,18 @@
                                         <td class="px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]) && $selectedEmployees[$i]->positionHistories && $selectedEmployees[$i]->positionHistories->count() > 0)
                                                 <ul class="space-y-3">
+                                                    @if ($selectedEmployees[$i]->position)
+                                                        <li class="border-l-2 border-gray-500 pl-3">
+                                                            <p class="font-medium text-gray-900">
+                                                                {{ $selectedEmployees[$i]->position->name }}
+                                                            </p>
+                                                            <p class="text-sm text-gray-600">
+                                                                {{ $selectedEmployees[$i]->position->company->name }}
+                                                            </p>
+                                                            <p class="text-sm text-gray-400">Current</p>
+                                                        </li>
+                                                    @endif
+
                                                     @foreach ($selectedEmployees[$i]->positionHistories as $position)
                                                         <li class="border-l-2 border-gray-500 pl-3">
                                                             <p class="font-medium text-gray-900">
@@ -1044,780 +1065,566 @@
     </div>
 
     <script>
-        // Konfigurasi PAPI
-        const papiSegments = [
-            {
-                code: 'N',
-                angle: 0,
-                cat: 'ARAH KERJA',
-                desc: 'Menyelesaikan\nTugas\nPribadi',
-                color: '#FFB7B7',
-                colorSolid: '#ef4444',
-            },
-            {
-                code: 'G',
-                angle: 18,
-                cat: 'ARAH KERJA',
-                desc: 'Peranan sbg\nPekerja\nKeras',
-                color: '#FFB7B7',
-                colorSolid: '#ef4444',
-            },
-            {
-                code: 'A',
-                angle: 36,
-                cat: 'ARAH KERJA',
-                desc: 'Hasrat utk\nBerprestasi',
-                color: '#FFB7B7',
-                colorSolid: '#ef4444',
-            },
-            {
-                code: 'L',
-                angle: 54,
-                cat: 'KEPEMIMPINAN',
-                desc: 'Peranan\nSbg\nPemimpin',
-                color: '#d1d5db',
-                colorSolid: '#6b7280',
-            },
-            {
-                code: 'P',
-                angle: 72,
-                cat: 'KEPEMIMPINAN',
-                desc: 'Mengendalikan\nOrang\nLain',
-                color: '#d1d5db',
-                colorSolid: '#6b7280',
-            },
-            {
-                code: 'I',
-                angle: 90,
-                cat: 'KEPEMIMPINAN',
-                desc: 'Mudah\nMembuat\nMemutuskan',
-                color: '#d1d5db',
-                colorSolid: '#6b7280',
-            },
-            {
-                code: 'T',
-                angle: 108,
-                cat: 'AKTIVITAS',
-                desc: 'Tempo Kerja',
-                color: '#bfdbfe',
-                colorSolid: '#3b82f6',
-            },
-            { code: 'V', angle: 126, cat: 'AKTIVITAS', desc: 'Stamina', color: '#bfdbfe', colorSolid: '#3b82f6' },
-            {
-                code: 'S',
-                angle: 180,
-                cat: 'PERGAULAN',
-                desc: 'Pergaulan\nSosial',
-                color: '#cffafe',
-                colorSolid: '#06b6d4',
-            },
-            {
-                code: 'B',
-                angle: 162,
-                cat: 'PERGAULAN',
-                desc: 'Kebutuhan\nTerhadap\nKelompok',
-                color: '#cffafe',
-                colorSolid: '#06b6d4',
-            },
-            {
-                code: 'O',
-                angle: 144,
-                cat: 'PERGAULAN',
-                desc: 'Kebutuhan\nutk mendekati\n& menyayangi',
-                color: '#cffafe',
-                colorSolid: '#06b6d4',
-            },
-            {
-                code: 'X',
-                angle: 198,
-                cat: 'PERGAULAN',
-                desc: 'Mendapatkan\nPerhatian',
-                color: '#cffafe',
-                colorSolid: '#06b6d4',
-            },
-            {
-                code: 'C',
-                angle: 216,
-                cat: 'GAYA KERJA',
-                desc: 'Suka\nPekerjaan\nyg Teratur',
-                color: '#f0fdf4',
-                colorSolid: '#16A34A',
-            },
-            {
-                code: 'D',
-                angle: 234,
-                cat: 'GAYA KERJA',
-                desc: 'Suka\nPekerjaan\nyg Terperinci',
-                color: '#f0fdf4',
-                colorSolid: '#16A34A',
-            },
-            {
-                code: 'R',
-                angle: 252,
-                cat: 'GAYA KERJA',
-                desc: 'Tipe\nTeoritis',
-                color: '#f0fdf4',
-                colorSolid: '#16A34A',
-            },
-            {
-                code: 'Z',
-                angle: 270,
-                cat: 'SIFAT',
-                desc: 'Hasrat utk\nBerubah',
-                color: '#fefce8',
-                colorSolid: '#f59e0b',
-            },
-            {
-                code: 'E',
-                angle: 288,
-                cat: 'SIFAT',
-                desc: 'Pengendalian\nEmosi',
-                color: '#fefce8',
-                colorSolid: '#f59e0b',
-            },
-            { code: 'K', angle: 306, cat: 'SIFAT', desc: 'Agresivitas', color: '#fefce8', colorSolid: '#f59e0b' },
-            {
-                code: 'F',
-                angle: 324,
-                cat: 'KETAATAN',
-                desc: 'Dukungan\nutk\nArahan',
-                color: '#ffedd5',
-                colorSolid: '#f97316',
-            },
-            {
-                code: 'W',
-                angle: 342,
-                cat: 'KETAATAN',
-                desc: 'Kebutuhan utk\nTaat Aturan\nArahan',
-                color: '#ffedd5',
-                colorSolid: '#f97316',
-            },
-        ];
+        (function () {
+            // ── Config ──────────────────────────────────────────────────────
+            const papiSegments = [
+                {
+                    code: 'N',
+                    angle: 0,
+                    cat: 'ARAH KERJA',
+                    desc: 'Menyelesaikan\nTugas\nPribadi',
+                    color: '#FFB7B7',
+                    colorSolid: '#ef4444',
+                },
+                {
+                    code: 'G',
+                    angle: 18,
+                    cat: 'ARAH KERJA',
+                    desc: 'Peranan sbg\nPekerja\nKeras',
+                    color: '#FFB7B7',
+                    colorSolid: '#ef4444',
+                },
+                {
+                    code: 'A',
+                    angle: 36,
+                    cat: 'ARAH KERJA',
+                    desc: 'Hasrat utk\nBerprestasi',
+                    color: '#FFB7B7',
+                    colorSolid: '#ef4444',
+                },
+                {
+                    code: 'L',
+                    angle: 54,
+                    cat: 'KEPEMIMPINAN',
+                    desc: 'Peranan\nSbg\nPemimpin',
+                    color: '#d1d5db',
+                    colorSolid: '#6b7280',
+                },
+                {
+                    code: 'P',
+                    angle: 72,
+                    cat: 'KEPEMIMPINAN',
+                    desc: 'Mengendalikan\nOrang\nLain',
+                    color: '#d1d5db',
+                    colorSolid: '#6b7280',
+                },
+                {
+                    code: 'I',
+                    angle: 90,
+                    cat: 'KEPEMIMPINAN',
+                    desc: 'Mudah\nMembuat\nMemutuskan',
+                    color: '#d1d5db',
+                    colorSolid: '#6b7280',
+                },
+                {
+                    code: 'T',
+                    angle: 108,
+                    cat: 'AKTIVITAS',
+                    desc: 'Tempo Kerja',
+                    color: '#bfdbfe',
+                    colorSolid: '#3b82f6',
+                },
+                { code: 'V', angle: 126, cat: 'AKTIVITAS', desc: 'Stamina', color: '#bfdbfe', colorSolid: '#3b82f6' },
+                {
+                    code: 'S',
+                    angle: 180,
+                    cat: 'PERGAULAN',
+                    desc: 'Pergaulan\nSosial',
+                    color: '#cffafe',
+                    colorSolid: '#06b6d4',
+                },
+                {
+                    code: 'B',
+                    angle: 162,
+                    cat: 'PERGAULAN',
+                    desc: 'Kebutuhan\nTerhadap\nKelompok',
+                    color: '#cffafe',
+                    colorSolid: '#06b6d4',
+                },
+                {
+                    code: 'O',
+                    angle: 144,
+                    cat: 'PERGAULAN',
+                    desc: 'Kebutuhan\nutk mendekati\n& menyayangi',
+                    color: '#cffafe',
+                    colorSolid: '#06b6d4',
+                },
+                {
+                    code: 'X',
+                    angle: 198,
+                    cat: 'PERGAULAN',
+                    desc: 'Mendapatkan\nPerhatian',
+                    color: '#cffafe',
+                    colorSolid: '#06b6d4',
+                },
+                {
+                    code: 'C',
+                    angle: 216,
+                    cat: 'GAYA KERJA',
+                    desc: 'Suka\nPekerjaan\nyg Teratur',
+                    color: '#f0fdf4',
+                    colorSolid: '#16A34A',
+                },
+                {
+                    code: 'D',
+                    angle: 234,
+                    cat: 'GAYA KERJA',
+                    desc: 'Suka\nPekerjaan\nyg Terperinci',
+                    color: '#f0fdf4',
+                    colorSolid: '#16A34A',
+                },
+                {
+                    code: 'R',
+                    angle: 252,
+                    cat: 'GAYA KERJA',
+                    desc: 'Tipe\nTeoritis',
+                    color: '#f0fdf4',
+                    colorSolid: '#16A34A',
+                },
+                {
+                    code: 'Z',
+                    angle: 270,
+                    cat: 'SIFAT',
+                    desc: 'Hasrat utk\nBerubah',
+                    color: '#fefce8',
+                    colorSolid: '#f59e0b',
+                },
+                {
+                    code: 'E',
+                    angle: 288,
+                    cat: 'SIFAT',
+                    desc: 'Pengendalian\nEmosi',
+                    color: '#fefce8',
+                    colorSolid: '#f59e0b',
+                },
+                { code: 'K', angle: 306, cat: 'SIFAT', desc: 'Agresivitas', color: '#fefce8', colorSolid: '#f59e0b' },
+                {
+                    code: 'F',
+                    angle: 324,
+                    cat: 'KETAATAN',
+                    desc: 'Dukungan\nutk\nArahan',
+                    color: '#ffedd5',
+                    colorSolid: '#f97316',
+                },
+                {
+                    code: 'W',
+                    angle: 342,
+                    cat: 'KETAATAN',
+                    desc: 'Kebutuhan utk\nTaat Aturan\nArahan',
+                    color: '#ffedd5',
+                    colorSolid: '#f97316',
+                },
+            ];
+            const papiCategories = {
+                KETAATAN: { start: 315, end: 351, color: '#f97316' },
+                'ARAH KERJA': { start: 351, end: 45, color: '#ef4444' },
+                KEPEMIMPINAN: { start: 45, end: 99, color: '#6b7280' },
+                AKTIVITAS: { start: 99, end: 135, color: '#3b82f6' },
+                PERGAULAN: { start: 135, end: 207, color: '#06b6d4' },
+                'GAYA KERJA': { start: 207, end: 261, color: '#16A34A' },
+                SIFAT: { start: 261, end: 315, color: '#FACC15' },
+            };
 
-        const papiCategories = {
-            KETAATAN: { start: 315, end: 351, color: '#f97316' },
-            'ARAH KERJA': { start: 351, end: 45, color: '#ef4444' },
-            KEPEMIMPINAN: { start: 45, end: 99, color: '#6b7280' },
-            AKTIVITAS: { start: 99, end: 135, color: '#3b82f6' },
-            PERGAULAN: { start: 135, end: 207, color: '#06b6d4' },
-            'GAYA KERJA': { start: 207, end: 261, color: '#16A34A' },
-            SIFAT: { start: 261, end: 315, color: '#FACC15' },
-        };
+            // ── State ────────────────────────────────────────────────────────
+            const chartStore = { papi: {}, disc1: {}, disc2: {}, disc3: {} };
+            let pending = false;
 
-        // Store untuk chart instances
-        const chartInstances = {
-            papi: {},
-            disc1: {},
-            disc2: {},
-            disc3: {},
-        };
-
-        // CRITICAL: Chart.js dan libraries check
-        let chartJSReady = false;
-        let initializationQueue = [];
-
-        // Fungsi untuk menghapus semua chart
-        function destroyAllCharts() {
-            Object.values(chartInstances.papi).forEach((chart) => {
-                if (chart && typeof chart.destroy === 'function') {
-                    chart.destroy();
+            // ── Helpers ──────────────────────────────────────────────────────
+            function safeDestroy(store, key) {
+                if (store[key]) {
+                    try {
+                        store[key].destroy();
+                    } catch (_) {}
+                    delete store[key];
                 }
-            });
-            chartInstances.papi = {};
+            }
 
-            Object.values(chartInstances.disc1).forEach((chart) => {
-                if (chart && typeof chart.destroy === 'function') {
-                    chart.destroy();
-                }
-            });
-            chartInstances.disc1 = {};
-
-            Object.values(chartInstances.disc2).forEach((chart) => {
-                if (chart && typeof chart.destroy === 'function') {
-                    chart.destroy();
-                }
-            });
-            chartInstances.disc2 = {};
-
-            Object.values(chartInstances.disc3).forEach((chart) => {
-                if (chart && typeof chart.destroy === 'function') {
-                    chart.destroy();
-                }
-            });
-            chartInstances.disc3 = {};
-        }
-
-        // Fungsi untuk menggambar teks melengkung
-        function drawArcText(ctx, text, cx, cy, radius, centerDeg, letterSpacing = 0.6) {
-            ctx.save();
-            ctx.font = 'bold 12px Arial';
-            ctx.fillStyle = '#fff';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            const left = centerDeg > 90 && centerDeg < 270;
-            const chars = left ? [...text].reverse() : [...text];
-            const widths = chars.map((c) => ctx.measureText(c).width);
-            const totalWidth = widths.reduce((a, b) => a + b, 0) + letterSpacing * (chars.length - 1);
-            let angle = ((centerDeg - 90) * Math.PI) / 180 - totalWidth / (2 * radius);
-
-            chars.forEach((ch, i) => {
-                const w = widths[i] / radius;
-                const mid = angle + w / 2;
-                const x = cx + radius * Math.cos(mid);
-                const y = cy + radius * Math.sin(mid);
-
+            function drawArcText(ctx, text, cx, cy, radius, centerDeg, spacing = 0.6) {
                 ctx.save();
-                ctx.translate(x, y);
-                ctx.rotate(mid + Math.PI / 2 + (left ? Math.PI : 0));
-                ctx.fillText(ch, 0, 0);
-                ctx.restore();
-
-                angle += w + letterSpacing / radius;
-            });
-
-            ctx.restore();
-        }
-
-        // Fungsi menggambar chart PAPI
-        function drawPAPIChart(canvasId, papiData, employeeName = 'Employee') {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) {
-                return null;
-            }
-
-            if (chartInstances.papi[canvasId]) {
-                chartInstances.papi[canvasId].destroy();
-                delete chartInstances.papi[canvasId];
-            }
-
-            const ctx = canvas.getContext('2d');
-            const container = canvas.parentElement;
-
-            const containerWidth = container.offsetWidth;
-            const size = Math.min(containerWidth, 400);
-
-            canvas.width = size;
-            canvas.height = size;
-
-            canvas.style.width = size + 'px';
-            canvas.style.height = size + 'px';
-
-            const cx = size / 2;
-            const cy = size / 2;
-
-            const outerR = size * 0.48;
-            const innerR = size * 0.42;
-            const boxOuter = size * 0.41;
-            const boxInner = size * 0.33;
-            const descR = size * 0.37;
-            const subDescOuter = size * 0.32;
-            const subDescInner = size * 0.28;
-            const radarR = size * 0.28;
-
-            ctx.clearRect(0, 0, size, size);
-
-            function getCategoryCenter(start, end) {
-                if (start <= end) return (start + end) / 2;
-                const span = 360 - start + end;
-                let center = start + span / 2;
-                if (center >= 360) center -= 360;
-                return center;
-            }
-
-            function getCategoryAverage(categoryName) {
-                const segs = papiSegments.filter((s) => s.cat === categoryName);
-                if (!segs.length) return 0;
-                const scores = segs
-                    .map((s) => {
-                        const d = papiData.find((w) => w.code === s.code);
-                        return d ? parseFloat(d.score) : null;
-                    })
-                    .filter((v) => v !== null);
-                if (!scores.length) return 0;
-                return (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
-            }
-
-            function arc(start, end, color) {
-                ctx.beginPath();
-                ctx.arc(cx, cy, outerR, ((start - 90) * Math.PI) / 180, ((end - 90) * Math.PI) / 180);
-                ctx.arc(cx, cy, innerR, ((end - 90) * Math.PI) / 180, ((start - 90) * Math.PI) / 180, true);
-                ctx.closePath();
-                ctx.fillStyle = color;
-                ctx.fill();
-            }
-
-            // Draw categories
-            Object.entries(papiCategories).forEach(([n, c]) => {
-                if (n === 'KETAATAN') {
-                    arc(315, 360, c.color);
-                    arc(0, 45, c.color);
-                } else arc(c.start, c.end, c.color);
-            });
-
-            // Draw category labels
-            Object.entries(papiCategories).forEach(([name, c]) => {
-                const r = (outerR + innerR) / 2;
-                const center = getCategoryCenter(c.start, c.end);
-                const avg = getCategoryAverage(name);
-                const label = `${name} | ${avg}`;
-                drawArcText(ctx, label, cx, cy, r, center, 0.6);
-            });
-
-            // Draw segment backgrounds
-            papiSegments.forEach((s) => {
-                const sa = ((s.angle - 9 - 90) * Math.PI) / 180;
-                const ea = ((s.angle + 9 - 90) * Math.PI) / 180;
-                ctx.beginPath();
-                ctx.arc(cx, cy, subDescOuter, sa, ea);
-                ctx.arc(cx, cy, subDescInner, ea, sa, true);
-                ctx.closePath();
-                ctx.fillStyle = s.colorSolid;
-                ctx.fill();
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            });
-
-            // Draw segment codes
-            papiSegments.forEach((s) => {
-                const rad = ((s.angle - 90) * Math.PI) / 180;
-                const r = (subDescOuter + subDescInner) / 2;
-                const x = cx + r * Math.cos(rad);
-                const y = cy + r * Math.sin(rad);
-                ctx.save();
-                ctx.translate(x, y);
-                let rotate = rad + Math.PI / 2;
-                if (s.angle > 90 && s.angle < 270) rotate += Math.PI;
-                ctx.rotate(rotate);
-                ctx.font = 'bold 10px Arial';
+                ctx.font = 'bold 12px Arial';
                 ctx.fillStyle = '#fff';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(s.code, 0, 0);
-                ctx.restore();
-            });
-
-            // Draw description boxes
-            papiSegments.forEach((s) => {
-                const sa = ((s.angle - 9 - 90) * Math.PI) / 180;
-                const ea = ((s.angle + 9 - 90) * Math.PI) / 180;
-                ctx.beginPath();
-                ctx.arc(cx, cy, boxOuter, sa, ea);
-                ctx.arc(cx, cy, boxInner, ea, sa, true);
-                ctx.closePath();
-                ctx.fillStyle = s.color;
-                ctx.fill();
-                ctx.strokeStyle = s.colorSolid;
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            });
-
-            // Draw descriptions
-            papiSegments.forEach((s) => {
-                const rad = ((s.angle - 90) * Math.PI) / 180;
-                const x = cx + descR * Math.cos(rad);
-                const y = cy + descR * Math.sin(rad);
-                ctx.save();
-                ctx.translate(x, y);
-                let rotate = rad + Math.PI / 2;
-                if (s.angle > 90 && s.angle < 270) rotate += Math.PI;
-                ctx.rotate(rotate);
-                ctx.font = '8px Arial';
-                ctx.fillStyle = '#000';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                const lines = s.desc.split('\n');
-                lines.forEach((line, i) => {
-                    ctx.fillText(line, 0, (i - (lines.length - 1) / 2) * 8);
+                const left = centerDeg > 90 && centerDeg < 270;
+                const chars = left ? [...text].reverse() : [...text];
+                const ws = chars.map((c) => ctx.measureText(c).width);
+                const total = ws.reduce((a, b) => a + b, 0) + spacing * (chars.length - 1);
+                let angle = ((centerDeg - 90) * Math.PI) / 180 - total / (2 * radius);
+                chars.forEach((ch, i) => {
+                    const w = ws[i] / radius,
+                        mid = angle + w / 2;
+                    ctx.save();
+                    ctx.translate(cx + radius * Math.cos(mid), cy + radius * Math.sin(mid));
+                    ctx.rotate(mid + Math.PI / 2 + (left ? Math.PI : 0));
+                    ctx.fillText(ch, 0, 0);
+                    ctx.restore();
+                    angle += w + spacing / radius;
                 });
                 ctx.restore();
-            });
-
-            // Draw radar chart
-            const radarChart = drawRadarChart(canvas, papiData, cx, cy, radarR);
-
-            if (radarChart) {
-                chartInstances.papi[canvasId] = radarChart;
             }
 
-            return radarChart;
-        }
+            // ── PAPI ─────────────────────────────────────────────────────────
+            function drawPAPIChart(id, data, name = 'Employee') {
+                const canvas = document.getElementById(id);
+                if (!canvas || typeof Chart === 'undefined') return;
 
-        // Fungsi untuk menggambar radar chart
-        function drawRadarChart(canvas, papiData, cx, cy, r) {
-            const parent = canvas.parentElement;
+                canvas.parentElement?.querySelector('.radar-chart-container')?.remove();
+                safeDestroy(chartStore.papi, id);
 
-            const existingRadar = parent.querySelector('.radar-chart-container');
-            if (existingRadar) {
-                existingRadar.remove();
-            }
+                const ctx = canvas.getContext('2d');
+                const size = Math.min(canvas.parentElement.offsetWidth || 400, 400);
+                canvas.width = size;
+                canvas.height = size;
+                canvas.style.width = size + 'px';
+                canvas.style.height = size + 'px';
 
-            const radarDiv = document.createElement('div');
-            radarDiv.className = 'radar-chart-container';
-            radarDiv.style.position = 'absolute';
-            radarDiv.style.left = cx - r + 'px';
-            radarDiv.style.top = cy - r + 'px';
-            radarDiv.style.width = r * 2 + 'px';
-            radarDiv.style.height = r * 2 + 'px';
+                const cx = size / 2,
+                    cy = size / 2;
+                const oR = size * 0.48,
+                    iR = size * 0.42;
+                const bO = size * 0.41,
+                    bI = size * 0.33;
+                const dR = size * 0.37;
+                const sO = size * 0.32,
+                    sI = size * 0.28;
+                const rR = size * 0.28;
 
-            const radarCanvas = document.createElement('canvas');
-            radarCanvas.width = r * 2;
-            radarCanvas.height = r * 2;
-            radarDiv.appendChild(radarCanvas);
+                ctx.clearRect(0, 0, size, size);
 
-            parent.appendChild(radarDiv);
-
-            if (typeof Chart === 'undefined') {
-                return null;
-            }
-
-            try {
-                const chart = new Chart(radarCanvas, {
-                    type: 'radar',
-                    data: {
-                        labels: papiSegments.map((s) => s.code),
-                        datasets: [
-                            {
-                                label: 'PAPI Score',
-                                data: papiSegments.map((s) => {
-                                    const data = papiData.find((d) => d.code === s.code);
-                                    return data ? parseFloat(data.score) : 0;
-                                }),
-                                backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                                borderColor: '#2563EB',
-                                borderWidth: 2,
-                                pointRadius: 2,
-                                pointBackgroundColor: '#2563EB',
-                                pointBorderColor: '#fff',
-                                pointBorderWidth: 1,
-                            },
-                        ],
-                    },
-                    options: {
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    title: function (context) {
-                                        const segment = papiSegments[context[0].dataIndex];
-                                        return `${segment.code} - ${segment.cat}`;
-                                    },
-                                    label: function (context) {
-                                        const segment = papiSegments[context.dataIndex];
-                                        return `${segment.desc.replace(/\n/g, ' ')}: ${context.raw}`;
-                                    },
-                                },
-                            },
-                        },
-                        scales: {
-                            r: {
-                                min: 0,
-                                max: 9,
-                                pointLabels: { display: false },
-                                ticks: { stepSize: 1 },
-                            },
-                        },
-                        maintainAspectRatio: false,
-                        responsive: true,
-                    },
-                });
-
-                return chart;
-            } catch (error) {
-                return null;
-            }
-        }
-
-        // Fungsi untuk menggambar chart DISC
-        function drawDISCChart(canvasId, discData, chartType = 1) {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) return null;
-
-            if (typeof Chart === 'undefined') {
-                return null;
-            }
-
-            const existingChart = Chart.getChart(canvas);
-            if (existingChart) {
-                existingChart.destroy();
-            }
-
-            const colorMap = {
-                1: { border: '#ef4444', background: 'rgba(239, 68, 68, 0.1)' },
-                2: { border: '#eab308', background: 'rgba(234, 179, 8, 0.1)' },
-                3: { border: '#22c55e', background: 'rgba(34, 197, 94, 0.1)' },
-            };
-
-            const colors = colorMap[chartType] || colorMap[1];
-
-            try {
-                const chart = new Chart(canvas, {
-                    type: 'line',
-                    plugins: [window.ChartDataLabels || {}],
-                    data: {
-                        labels: ['D', 'I', 'S', 'C'],
-                        datasets: [
-                            {
-                                label: `DISC ${chartType}`,
-                                data: [
-                                    parseFloat(discData.D) || 0,
-                                    parseFloat(discData.I) || 0,
-                                    parseFloat(discData.S) || 0,
-                                    parseFloat(discData.C) || 0,
-                                ],
-                                borderColor: colors.border,
-                                backgroundColor: colors.background,
-                                borderWidth: 3,
-                                tension: 0.4,
-                                fill: true,
-                                pointRadius: 6,
-                                pointHoverRadius: 8,
-                                pointBackgroundColor: '#fff',
-                                pointBorderWidth: 3,
-                                pointBorderColor: colors.border,
-                            },
-                        ],
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        layout: {
-                            padding: {
-                                top: 10,
-                                bottom: 10,
-                                left: 5,
-                                right: 5,
-                            },
-                        },
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                padding: 12,
-                                titleFont: { size: 14, weight: 'bold' },
-                                bodyFont: { size: 13 },
-                                callbacks: {
-                                    label: function (context) {
-                                        return `Score: ${context.parsed.y}`;
-                                    },
-                                },
-                            },
-                            datalabels: {
-                                display: true,
-                                color: '#111',
-                                backgroundColor: colors.background.replace('0.1', '0.2'),
-                                borderRadius: 4,
-                                font: { size: 12, weight: 'bold' },
-                                align: 'top',
-                                offset: 6,
-                                formatter: (value) => value,
-                            },
-                        },
-                        scales: {
-                            y: {
-                                ticks: {
-                                    stepSize: 20,
-                                    font: { size: 11 },
-                                },
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.05)',
-                                    drawBorder: true,
-                                },
-                            },
-                            x: {
-                                ticks: {
-                                    font: { size: 13, weight: 'bold' },
-                                    color: '#374151',
-                                },
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.05)',
-                                    drawBorder: true,
-                                },
-                            },
-                        },
-                    },
-                });
-
-                const chartKey = canvasId;
-                if (chartType === 1) {
-                    chartInstances.disc1[chartKey] = chart;
-                } else if (chartType === 2) {
-                    chartInstances.disc2[chartKey] = chart;
-                } else {
-                    chartInstances.disc3[chartKey] = chart;
-                }
-
-                return chart;
-            } catch (error) {
-                return null;
-            }
-        }
-
-        // CRITICAL: Fungsi untuk menginisialisasi semua charts
-        function initializeCharts() {
-            if (!chartJSReady) {
-                initializationQueue.push(() => initializeCharts());
-                return;
-            }
-
-            // Initialize PAPI charts
-            for (let i = 0; i < 5; i++) {
-                const canvasId = `papiChart-${i}`;
-                const canvas = document.getElementById(canvasId);
-
-                if (canvas) {
-                    try {
-                        const papiDataAttr = canvas.getAttribute('data-papi-data');
-                        if (papiDataAttr && papiDataAttr !== '[]') {
-                            const papiData = JSON.parse(papiDataAttr);
-                            drawPAPIChart(canvasId, papiData, canvas.dataset.employeeName);
-                        }
-                    } catch (error) {}
-                }
-            }
-
-            // Initialize DISC charts
-            for (let i = 0; i < 5; i++) {
-                ['disc1', 'disc2', 'disc3'].forEach((discType, index) => {
-                    const canvasId = `${discType}Chart-${i}`;
-                    const canvas = document.getElementById(canvasId);
-
-                    if (canvas) {
-                        try {
-                            const discDataAttr = canvas.getAttribute('data-disc-data');
-                            if (discDataAttr && discDataAttr !== '{}') {
-                                const discData = JSON.parse(discDataAttr);
-                                if (discData && typeof discData === 'object' && Object.keys(discData).length > 0) {
-                                    drawDISCChart(canvasId, discData, index + 1);
-                                }
-                            }
-                        } catch (error) {}
-                    }
-                });
-            }
-        }
-
-        // CRITICAL: Load Chart.js dan plugins
-        function loadChartJS() {
-            return new Promise((resolve) => {
-                if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
-                    chartJSReady = true;
-                    resolve();
-                    return;
-                }
-
-                if (typeof Chart !== 'undefined') {
-                    if (typeof ChartDataLabels === 'undefined') {
-                        const script = document.createElement('script');
-                        script.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2';
-                        script.onload = () => {
-                            chartJSReady = true;
-                            resolve();
-                        };
-                        document.head.appendChild(script);
-                    } else {
-                        chartJSReady = true;
-                        resolve();
-                    }
-                    return;
-                }
-
-                const chartScript = document.createElement('script');
-                chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-                chartScript.onload = () => {
-                    const datalabelsScript = document.createElement('script');
-                    datalabelsScript.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2';
-                    datalabelsScript.onload = () => {
-                        chartJSReady = true;
-                        resolve();
-                    };
-                    document.head.appendChild(datalabelsScript);
+                const catCenter = (s, e) => {
+                    if (s <= e) return (s + e) / 2;
+                    let c = s + (360 - s + e) / 2;
+                    if (c >= 360) c -= 360;
+                    return c;
                 };
-                document.head.appendChild(chartScript);
-            });
-        }
+                const catAvg = (cat) => {
+                    const segs = papiSegments.filter((s) => s.cat === cat);
+                    const vals = segs
+                        .map((s) => {
+                            const d = data.find((w) => w.code === s.code);
+                            return d ? +d.score : null;
+                        })
+                        .filter((v) => v !== null);
+                    return vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) : 0;
+                };
+                const arc = (s, e, color) => {
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, oR, ((s - 90) * Math.PI) / 180, ((e - 90) * Math.PI) / 180);
+                    ctx.arc(cx, cy, iR, ((e - 90) * Math.PI) / 180, ((s - 90) * Math.PI) / 180, true);
+                    ctx.closePath();
+                    ctx.fillStyle = color;
+                    ctx.fill();
+                };
 
-        // CRITICAL: Initialize on page load
-        (async function () {
-            await loadChartJS();
-
-            // Process queue
-            while (initializationQueue.length > 0) {
-                const fn = initializationQueue.shift();
-                fn();
-            }
-
-            // Initialize charts
-            setTimeout(() => {
-                initializeCharts();
-            }, 100);
-        })();
-
-        // CRITICAL: Gunakan Livewire hook untuk memastikan DOM sudah update
-        document.addEventListener('livewire:init', () => {
-            // Hook ke Livewire lifecycle - ini yang paling penting!
-            Livewire.hook('morph.updated', ({ el, component }) => {
-                setTimeout(() => initializeCharts(), 200);
-            });
-
-            Livewire.hook('message.processed', (message, component) => {
-                setTimeout(() => initializeCharts(), 150);
-            });
-
-            // Event dari component yang sudah ada
-            Livewire.on('charts-loaded', () => {
-                setTimeout(() => initializeCharts(), 300);
-            });
-
-            Livewire.on('employee-selected', (event) => {
-                setTimeout(() => initializeCharts(), 350);
-            });
-
-            Livewire.on('employee-cleared', (event) => {
-                const index = event.index;
-
-                const papiCanvas = document.getElementById(`papiChart-${index}`);
-                if (papiCanvas) {
-                    const ctx = papiCanvas.getContext('2d');
-                    ctx.clearRect(0, 0, papiCanvas.width, papiCanvas.height);
-
-                    const radarContainer = papiCanvas.parentElement.querySelector('.radar-chart-container');
-                    if (radarContainer) {
-                        radarContainer.remove();
-                    }
-                }
-
-                ['disc1', 'disc2', 'disc3'].forEach((discType) => {
-                    const discCanvas = document.getElementById(`${discType}Chart-${index}`);
-                    if (discCanvas) {
-                        const chart = Chart.getChart(discCanvas);
-                        if (chart) chart.destroy();
-                    }
+                // Category arcs
+                Object.entries(papiCategories).forEach(([n, c]) => {
+                    n === 'KETAATAN' ? (arc(315, 360, c.color), arc(0, 45, c.color)) : arc(c.start, c.end, c.color);
+                });
+                // Category labels
+                Object.entries(papiCategories).forEach(([n, c]) => {
+                    drawArcText(ctx, `${n} | ${catAvg(n)}`, cx, cy, (oR + iR) / 2, catCenter(c.start, c.end), 0.6);
+                });
+                // Segment code rings
+                papiSegments.forEach((s) => {
+                    const sa = ((s.angle - 9 - 90) * Math.PI) / 180,
+                        ea = ((s.angle + 9 - 90) * Math.PI) / 180;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, sO, sa, ea);
+                    ctx.arc(cx, cy, sI, ea, sa, true);
+                    ctx.closePath();
+                    ctx.fillStyle = s.colorSolid;
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                });
+                // Segment code text
+                papiSegments.forEach((s) => {
+                    const rad = ((s.angle - 90) * Math.PI) / 180,
+                        r = (sO + sI) / 2;
+                    ctx.save();
+                    ctx.translate(cx + r * Math.cos(rad), cy + r * Math.sin(rad));
+                    let rot = rad + Math.PI / 2;
+                    if (s.angle > 90 && s.angle < 270) rot += Math.PI;
+                    ctx.rotate(rot);
+                    ctx.font = 'bold 10px Arial';
+                    ctx.fillStyle = '#fff';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(s.code, 0, 0);
+                    ctx.restore();
+                });
+                // Description boxes
+                papiSegments.forEach((s) => {
+                    const sa = ((s.angle - 9 - 90) * Math.PI) / 180,
+                        ea = ((s.angle + 9 - 90) * Math.PI) / 180;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, bO, sa, ea);
+                    ctx.arc(cx, cy, bI, ea, sa, true);
+                    ctx.closePath();
+                    ctx.fillStyle = s.color;
+                    ctx.fill();
+                    ctx.strokeStyle = s.colorSolid;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                });
+                // Description text
+                papiSegments.forEach((s) => {
+                    const rad = ((s.angle - 90) * Math.PI) / 180;
+                    ctx.save();
+                    ctx.translate(cx + dR * Math.cos(rad), cy + dR * Math.sin(rad));
+                    let rot = rad + Math.PI / 2;
+                    if (s.angle > 90 && s.angle < 270) rot += Math.PI;
+                    ctx.rotate(rot);
+                    ctx.font = '8px Arial';
+                    ctx.fillStyle = '#000';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    s.desc.split('\n').forEach((line, i, arr) => ctx.fillText(line, 0, (i - (arr.length - 1) / 2) * 8));
+                    ctx.restore();
                 });
 
-                // Re-initialize after clearing
-                setTimeout(() => initializeCharts(), 250);
+                // Radar overlay
+                const div = document.createElement('div');
+                div.className = 'radar-chart-container';
+                Object.assign(div.style, {
+                    position: 'absolute',
+                    left: `${cx - rR}px`,
+                    top: `${cy - rR}px`,
+                    width: `${rR * 2}px`,
+                    height: `${rR * 2}px`,
+                });
+                const rc = document.createElement('canvas');
+                rc.width = rR * 2;
+                rc.height = rR * 2;
+                div.appendChild(rc);
+                canvas.parentElement.appendChild(div);
+
+                try {
+                    chartStore.papi[id] = new Chart(rc, {
+                        type: 'radar',
+                        data: {
+                            labels: papiSegments.map((s) => s.code),
+                            datasets: [
+                                {
+                                    label: 'PAPI',
+                                    data: papiSegments.map((s) => {
+                                        const d = data.find((x) => x.code === s.code);
+                                        return d ? +d.score : 0;
+                                    }),
+                                    backgroundColor: 'rgba(59,130,246,0.2)',
+                                    borderColor: '#2563EB',
+                                    borderWidth: 2,
+                                    pointRadius: 2,
+                                    pointBackgroundColor: '#2563EB',
+                                    pointBorderColor: '#fff',
+                                    pointBorderWidth: 1,
+                                },
+                            ],
+                        },
+                        options: {
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        title: (c) =>
+                                            `${papiSegments[c[0].dataIndex].code} - ${papiSegments[c[0].dataIndex].cat}`,
+                                        label: (c) => `${papiSegments[c.dataIndex].desc.replace(/\n/g, ' ')}: ${c.raw}`,
+                                    },
+                                },
+                            },
+                            scales: { r: { min: 0, max: 9, pointLabels: { display: false }, ticks: { stepSize: 1 } } },
+                            maintainAspectRatio: false,
+                            responsive: true,
+                        },
+                    });
+                } catch (_) {}
+            }
+
+            // ── DISC ─────────────────────────────────────────────────────────
+            function drawDISCChart(id, data, type = 1) {
+                const canvas = document.getElementById(id);
+                if (!canvas || typeof Chart === 'undefined') return;
+                const ex = Chart.getChart(canvas);
+                if (ex) ex.destroy();
+                const key = `disc${type}`;
+                safeDestroy(chartStore[key], id);
+                const cm = {
+                    1: { border: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
+                    2: { border: '#eab308', bg: 'rgba(234,179,8,0.1)' },
+                    3: { border: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
+                };
+                const c = cm[type] || cm[1];
+                try {
+                    chartStore[key][id] = new Chart(canvas, {
+                        type: 'line',
+                        plugins: [window.ChartDataLabels || {}],
+                        data: {
+                            labels: ['D', 'I', 'S', 'C'],
+                            datasets: [
+                                {
+                                    label: `DISC ${type}`,
+                                    data: [+data.D || 0, +data.I || 0, +data.S || 0, +data.C || 0],
+                                    borderColor: c.border,
+                                    backgroundColor: c.bg,
+                                    borderWidth: 3,
+                                    tension: 0.4,
+                                    fill: true,
+                                    pointRadius: 6,
+                                    pointHoverRadius: 8,
+                                    pointBackgroundColor: '#fff',
+                                    pointBorderWidth: 3,
+                                    pointBorderColor: c.border,
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            layout: { padding: { top: 10, bottom: 10, left: 5, right: 5 } },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0,0,0,0.8)',
+                                    padding: 12,
+                                    callbacks: { label: (x) => `Score: ${x.parsed.y}` },
+                                },
+                                datalabels: {
+                                    display: true,
+                                    color: '#111',
+                                    backgroundColor: c.bg.replace('0.1', '0.2'),
+                                    borderRadius: 4,
+                                    font: { size: 12, weight: 'bold' },
+                                    align: 'top',
+                                    offset: 6,
+                                    formatter: (v) => v,
+                                },
+                            },
+                            scales: {
+                                y: { ticks: { stepSize: 20, font: { size: 11 } }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                                x: {
+                                    ticks: { font: { size: 13, weight: 'bold' }, color: '#374151' },
+                                    grid: { color: 'rgba(0,0,0,0.05)' },
+                                },
+                            },
+                        },
+                    });
+                } catch (_) {}
+            }
+
+            // ── Init ─────────────────────────────────────────────────────────
+            function initCharts() {
+                if (typeof Chart === 'undefined') return;
+                for (let i = 0; i < 5; i++) {
+                    // PAPI
+                    const pc = document.getElementById(`papiChart-${i}`);
+                    if (pc) {
+                        try {
+                            const raw = pc.getAttribute('data-papi-data');
+                            if (raw && raw !== '[]' && raw !== 'null') {
+                                const d = JSON.parse(raw);
+                                if (Array.isArray(d) && d.length)
+                                    drawPAPIChart(`papiChart-${i}`, d, pc.dataset.employeeName);
+                            }
+                        } catch (_) {}
+                    }
+                    // DISC
+                    ['disc1', 'disc2', 'disc3'].forEach((t, idx) => {
+                        const dc = document.getElementById(`${t}Chart-${i}`);
+                        if (dc) {
+                            try {
+                                const raw = dc.getAttribute('data-disc-data');
+                                if (raw && raw !== '{}' && raw !== 'null') {
+                                    const d = JSON.parse(raw);
+                                    if (d && Object.keys(d).length) drawDISCChart(`${t}Chart-${i}`, d, idx + 1);
+                                }
+                            } catch (_) {}
+                        }
+                    });
+                }
+            }
+
+            // Debounce agar tidak double-fire
+            function scheduleInit() {
+                if (pending) return;
+                pending = true;
+                // requestAnimationFrame memastikan DOM paint sudah selesai
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        initCharts();
+                        pending = false;
+                    });
+                });
+            }
+
+            // ── Load Chart.js jika belum ada ─────────────────────────────────
+            function ensureChartJS(cb) {
+                if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
+                    cb();
+                    return;
+                }
+
+                const loadScript = (src, next) => {
+                    const s = document.createElement('script');
+                    s.src = src;
+                    s.onload = next;
+                    document.head.appendChild(s);
+                };
+
+                if (typeof Chart === 'undefined') {
+                    loadScript('https://cdn.jsdelivr.net/npm/chart.js', () => {
+                        loadScript('https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2', cb);
+                    });
+                } else {
+                    loadScript('https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2', cb);
+                }
+            }
+
+            // ── Bootstrap ────────────────────────────────────────────────────
+            ensureChartJS(() => {
+                // Jalankan pertama kali
+                scheduleInit();
+
+                // Livewire 3 — event dari PHP component
+                document.addEventListener('livewire:init', () => {
+                    Livewire.on('employee-selected', () => scheduleInit());
+                    Livewire.on('charts-loaded', () => scheduleInit());
+
+                    Livewire.on('employee-cleared', (ev) => {
+                        const idx = Array.isArray(ev) ? ev[0]?.index : ev?.index;
+                        if (idx === undefined) return;
+
+                        const pc = document.getElementById(`papiChart-${idx}`);
+                        if (pc) {
+                            pc.getContext('2d').clearRect(0, 0, pc.width, pc.height);
+                            pc.parentElement?.querySelector('.radar-chart-container')?.remove();
+                            safeDestroy(chartStore.papi, `papiChart-${idx}`);
+                        }
+                        ['disc1', 'disc2', 'disc3'].forEach((t) => {
+                            const dc = document.getElementById(`${t}Chart-${idx}`);
+                            if (dc) {
+                                const ch = Chart.getChart(dc);
+                                if (ch) ch.destroy();
+                                safeDestroy(chartStore[t], `${t}Chart-${idx}`);
+                            }
+                        });
+                    });
+
+                    // Livewire 3 hook — dipanggil setiap kali DOM selesai di-morph
+                    Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
+                        succeed(({ snapshot, effect }) => {
+                            scheduleInit();
+                        });
+                    });
+                });
+
+                // Resize
+                let rt;
+                window.addEventListener('resize', () => {
+                    clearTimeout(rt);
+                    rt = setTimeout(scheduleInit, 250);
+                });
             });
-        });
-
-        // Livewire navigation
-        document.addEventListener('livewire:navigated', () => {
-            setTimeout(() => initializeCharts(), 400);
-        });
-
-        // Cleanup
-        document.addEventListener('livewire:before-unload', function () {
-            destroyAllCharts();
-        });
-
-        // Window resize
-        let resizeTimer;
-        window.addEventListener('resize', function () {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                initializeCharts();
-            }, 250);
-        });
+        })();
     </script>
 </div>

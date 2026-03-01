@@ -2,19 +2,26 @@
 
 namespace App\Livewire\Pages\Requirements\Positions;
 
-use Livewire\Component;
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
+use App\Models\Company;
+use App\Models\Position;
+use App\Models\PositionRequirementSetting;
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use App\Models\Position;
-use App\Models\Company;
-use App\Models\PositionRequirementSetting;
-use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
 #[Title('Create Position Requirements')]
 class Create extends Component
 {
+    use UnauthorizedAccess, HandleException;
+    public User $user;
     public $position_id = null;
     public $company_id = null;
     public $selectedCompany = null;
@@ -37,8 +44,8 @@ class Create extends Component
 
     public function mount()
     {
-        $user = Auth::user();
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->user = Auth::user();
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         // Set company_id based on user role
         if ($this->isSuperadmin) {
@@ -49,7 +56,7 @@ class Create extends Component
                 return redirect()->route('requirements.position');
             }
         } else {
-            $companyId = $user->company_id;
+            $companyId = $this->user->company_id;
         }
 
         $this->selectedCompany = Company::find($companyId);
@@ -245,49 +252,51 @@ class Create extends Component
 
     public function save()
     {
-        // Validate position selection
-        if (!$this->position_id) {
-            Toaster::warning('Please select a position.');
-            return;
-        }
-
-        // Validate requirements
-        $validRequirements = [];
-        foreach ($this->requirements as $index => $requirement) {
-            $name = trim($requirement['name'] ?? '');
-            $value = trim($requirement['value'] ?? '');
-
-            // Skip empty rows
-            if (empty($name) && empty($value)) {
-                continue;
-            }
-
-            // Validate that name is not empty
-            if (empty($name)) {
-                Toaster::warning("Requirement name cannot be empty in row " . ($index + 1));
+        try {
+            $this->authorize('create', [PositionRequirementSetting::class, $this->user->company_id]);
+            // Validate position selection
+            if (!$this->position_id) {
+                Toaster::warning('Please select a position.');
                 return;
             }
 
-            $validRequirements[] = [
-                'name' => $name,
-                'value' => $value
-            ];
-        }
+            // Validate requirements
+            $validRequirements = [];
+            foreach ($this->requirements as $index => $requirement) {
+                $name = trim($requirement['name'] ?? '');
+                $value = trim($requirement['value'] ?? '');
 
-        // Check if there's at least one valid requirement
-        if (empty($validRequirements)) {
-            Toaster::warning('Please add at least one requirement.');
-            return;
-        }
+                // Skip empty rows
+                if (empty($name) && empty($value)) {
+                    continue;
+                }
 
-        // Check if requirements already exist for this position (double check)
-        $existingRequirements = PositionRequirementSetting::where('position_id', $this->position_id)->exists();
-        if ($existingRequirements) {
-            Toaster::warning('Requirements already exist for this position. Please use the edit page instead.');
-            return redirect()->route('requirements.position.edit', ['position' => $this->position_id]);
-        }
+                // Validate that name is not empty
+                if (empty($name)) {
+                    Toaster::warning("Requirement name cannot be empty in row " . ($index + 1));
+                    return;
+                }
 
-        try {
+                $validRequirements[] = [
+                    'name' => $name,
+                    'value' => $value
+                ];
+            }
+
+            // Check if there's at least one valid requirement
+            if (empty($validRequirements)) {
+                Toaster::warning('Please add at least one requirement.');
+                return;
+            }
+
+            // Check if requirements already exist for this position (double check)
+            $existingRequirements = PositionRequirementSetting::where('position_id', $this->position_id)->exists();
+            if ($existingRequirements) {
+                Toaster::warning('Requirements already exist for this position. Please use the edit page instead.');
+                return redirect()->route('requirements.position.edit', ['position' => $this->position_id]);
+            }
+
+            DB::beginTransaction();
             // Save all requirements
             foreach ($validRequirements as $requirement) {
                 PositionRequirementSetting::create([
@@ -298,10 +307,15 @@ class Create extends Component
                 ]);
             }
 
-            Toaster::success(count($validRequirements) . ' requirements created successfully!');
-            return redirect()->route('requirements.position');
+            DB::commit();
+
+            return redirect()->route('requirements.position')->success(count($validRequirements) . ' requirements created successfully!');
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('create position requirement');
         } catch (\Exception $e) {
-            Toaster::error('Failed to create requirements: ' . $e->getMessage());
+            DB::rollBack();
+            return $this->handleException('create position requirement', $e->getMessage());
         }
     }
 

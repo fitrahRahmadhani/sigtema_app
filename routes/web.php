@@ -1,20 +1,22 @@
 <?php
 
-use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
-use App\Livewire\Settings\TwoFactor;
 use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Features;
 
 Route::redirect('/', '/login');
 
-Route::group(['middleware' => ['role:superadmin|admin|hc-operator', 'auth', 'verified']], function () {
+Route::group(['middleware' => ['auth', 'verified', 'role:employee']], function () {
+    // Profile
+    Route::get('my-profile', App\Livewire\Pages\Employees\Show::class)->name('my-profile');
+});
+
+Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin|hc-operator']], function () {
     // Dashboard
     Route::get('dashboard', App\Livewire\Pages\Dashboard\Index::class)->name('dashboard');
 });
 
 
-Route::group(['middleware' => ['role:superadmin', 'auth', 'verified']], function () {
+Route::group(['middleware' => ['auth', 'verified', 'role:superadmin']], function () {
     // Companies
     Route::get('companies', App\Livewire\Pages\Companies\Index::class)->name('companies.index');
     Route::get('companies/create', App\Livewire\Pages\Companies\Create::class)->name('companies.create');
@@ -34,7 +36,7 @@ Route::group(['middleware' => ['role:superadmin', 'auth', 'verified']], function
     Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index'])->name('logs.index');
 });
 
-Route::group(['middleware' => ['role:superadmin|admin', 'auth', 'verified']], function () {
+Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin']], function () {
     // Organization Structure
     Route::get('organization-structure', App\Livewire\Pages\OrgStructure\Index::class)->name('organization-structure.index');
     Route::get('organization-structure/table', App\Livewire\Pages\OrgStructure\Table::class)->name('organization-structure.table');
@@ -99,12 +101,14 @@ Route::group(['middleware' => ['role:superadmin|admin', 'auth', 'verified']], fu
     Route::get('papis', App\Livewire\Pages\Papis\Index::class)->name('papis.index');
 
     // Bulk Upload
+    Route::get('bulk-upload/users', App\Livewire\Pages\BulkUploads\Users::class)->name('bulk-upload.users');
     Route::get('bulk-upload/employees', App\Livewire\Pages\BulkUploads\Employees::class)->name('bulk-upload.employees');
     Route::get('bulk-upload/positions', \App\Livewire\Pages\BulkUploads\Positions::class)->name('bulk-upload.positions');
     Route::get('bulk-upload/educations', \App\Livewire\Pages\BulkUploads\Educations::class)->name('bulk-upload.educations');
     Route::get('bulk-upload/mcus', \App\Livewire\Pages\BulkUploads\Mcus::class)->name('bulk-upload.mcus');
     Route::get('bulk-upload/technical-competencies', \App\Livewire\Pages\BulkUploads\TechnicalCompetencies::class)->name('bulk-upload.technical-competencies');
     Route::get('bulk-upload/position-histories', \App\Livewire\Pages\BulkUploads\PositionHistories::class)->name('bulk-upload.position-histories');
+    Route::get('bulk-upload/psychogram-aspects', \App\Livewire\Pages\BulkUploads\PsychogramAspects::class)->name('bulk-upload.psychogram-aspects');
     Route::get('bulk-upload/psychogram-results', \App\Livewire\Pages\BulkUploads\PsychogramResults::class)->name('bulk-upload.psychogram-results');
     Route::get('bulk-upload/position-requirements', \App\Livewire\Pages\BulkUploads\PositionRequirements::class)->name('bulk-upload.position-requirements');
 
@@ -114,7 +118,7 @@ Route::group(['middleware' => ['role:superadmin|admin', 'auth', 'verified']], fu
     Route::get('requirements/positions/{position}/edit', \App\Livewire\Pages\Requirements\Positions\Edit::class)->name('requirements.position.edit');
 });
 
-Route::group(['middleware' => ['role:superadmin|admin|head-of-unit|hc-operator', 'auth', 'verified']], function () {
+Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin|head-of-unit|hc-operator']], function () {
     // Career Path
     Route::get('career-path', App\Livewire\Pages\CareerPath::class)->name('career-path');
 

@@ -165,7 +165,7 @@
                             id="name"
                             wire:model.live.debounce.500ms="name"
                             placeholder="Enter your full name"
-                            class="@error('name') border-red-500 @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="@error('name') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                         />
                         @error('name')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -206,7 +206,7 @@
                             id="current_password"
                             wire:model.live.debounce.500ms="current_password"
                             placeholder="Enter your current password"
-                            class="@error('current_password') border-red-500 @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="@error('current_password') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                         />
                         @error('current_password')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -221,7 +221,7 @@
                             id="password"
                             wire:model.live.debounce.500ms="password"
                             placeholder="Min. 12 characters"
-                            class="@error('password') border-red-500 @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="@error('password') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                         />
                         @error('password')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -264,7 +264,7 @@
                             id="password_confirmation"
                             wire:model.live.debounce.500ms="password_confirmation"
                             placeholder="Confirm your new password"
-                            class="@error('password_confirmation') border-red-500 @enderror w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                            class="@error('password_confirmation') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-[#721d21] focus:ring-[#721d21] @enderror w-full rounded-lg border px-4 py-2.5 text-sm focus:ring-1 focus:outline-none"
                         />
                         @error('password_confirmation')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -294,7 +294,7 @@
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
                         />
                     </svg>
                     <svg

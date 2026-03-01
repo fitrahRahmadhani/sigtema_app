@@ -2,13 +2,15 @@
 
 namespace App\Livewire\Pages\Requirements\Positions;
 
-use Livewire\Component;
-use Livewire\WithPagination;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
+use App\Models\Company;
 use App\Models\Position;
 use App\Models\PositionRequirementSetting;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('components.layouts.app')]
 #[Title('Position Requirements')]
@@ -16,6 +18,7 @@ class Index extends Component
 {
     use WithPagination;
 
+    public User $user;
     public $search = '';
     public $companyId = null;
     public $isSuperadmin = false;
@@ -25,28 +28,28 @@ class Index extends Component
 
     public function mount()
     {
-        $user = Auth::user();
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->user = Auth::user();
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         if ($this->isSuperadmin) {
-            $this->companies = \App\Models\Company::where('is_active', true)->get();
+            $this->companies = Company::where('is_active', true)->get();
             $this->companyId = session('requirements_company_id');
 
             if ($this->companyId) {
-                $this->selectedCompany = \App\Models\Company::find($this->companyId);
+                $this->selectedCompany = Company::find($this->companyId);
             } else {
                 $this->showCompanySelection = true;
             }
         } else {
-            $this->companyId = $user->company_id;
-            $this->selectedCompany = \App\Models\Company::find($this->companyId);
+            $this->companyId = $this->user->company_id;
+            $this->selectedCompany = Company::find($this->companyId);
         }
     }
 
     public function selectCompany($companyId)
     {
         $this->companyId = $companyId;
-        $this->selectedCompany = \App\Models\Company::find($companyId);
+        $this->selectedCompany = Company::find($companyId);
         session(['requirements_company_id' => $companyId]);
         $this->showCompanySelection = false;
         $this->resetPage();

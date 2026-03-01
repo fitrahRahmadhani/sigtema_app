@@ -2,20 +2,22 @@
 
 namespace App\Livewire\Pages\Companies;
 
-use App\Models\Company;
-use Livewire\Component;
-use Livewire\Attributes\Url;
-use Livewire\WithPagination;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Illuminate\Support\Facades\Storage;
+use App\Livewire\Traits\HandleException;
 use App\Livewire\Traits\WithDeleteConfirmation;
+use App\Models\Company;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('components.layouts.app')]
 #[Title('Companies')]
 class Index extends Component
 {
-    use WithPagination, WithDeleteConfirmation;
+    use WithPagination, WithDeleteConfirmation, HandleException;
 
     #[Url(as: 'q')]
     public $search = '';
@@ -48,13 +50,26 @@ class Index extends Component
     // Override performDelete
     protected function performDelete($company): void
     {
-        // Delete logo file jika ada
-        if ($company->logo_path && Storage::disk('public')->exists($company->logo_path)) {
-            Storage::disk('public')->delete($company->logo_path);
-        }
+        $this->authorize('delete', [Company::class]);
 
-        // Delete the company
-        $company->delete();
+
+        try {
+            DB::beginTransaction();
+            $logoPath = $company->logo_path;
+
+            // Delete the company from database
+            $company->delete();
+
+            // Delete logo
+            if ($logoPath && Storage::disk('public')->exists($logoPath)) {
+                Storage::disk('public')->delete($logoPath);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->handleException('delete company', $e->getMessage());
+        }
     }
 
     public function render()

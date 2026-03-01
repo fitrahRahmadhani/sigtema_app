@@ -2,19 +2,23 @@
 
 namespace App\Livewire\Settings;
 
-use App\Models\User;
-use Livewire\Component;
-use Livewire\WithFileUploads;
-use Livewire\Attributes\Title;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 use Masmerise\Toaster\Toaster;
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 
 #[Title('Profile Settings')]
 class Profile extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, UnauthorizedAccess, HandleException;
 
     public $name = '';
     public $current_password = '';
@@ -49,10 +53,10 @@ class Profile extends Component
                 'nullable',
                 'string',
                 'min:12',
-                'regex:/[a-z]/',      // at least one lowercase letter
-                'regex:/[A-Z]/',      // at least one uppercase letter
-                'regex:/[0-9]/',      // at least one digit
-                'regex:/[@$!%*#?&]/', // at least one special character
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&]/',
                 'confirmed'
             ],
             'password_confirmation' => ['nullable', 'same:password'],
@@ -91,32 +95,66 @@ class Profile extends Component
 
     public function updatedProfilePhoto()
     {
-        $this->validate([
-            'profile_photo' => ['nullable', 'image', 'max:2048'],
-        ]);
+        try {
+            $this->validate([
+                'profile_photo' => ['nullable', 'image', 'max:2048'],
+            ]);
+        } catch (ValidationException $e) {
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            $this->profile_photo = null;
+            throw $e;
+        }
     }
 
     public function deleteExistingPhoto()
     {
         $user = Auth::user();
 
-        if ($this->existing_profile_photo && Storage::disk('public')->exists($this->existing_profile_photo)) {
-            Storage::disk('public')->delete($this->existing_profile_photo);
+        try {
+            // Authorization check
+            $this->authorize('update', $user);
+
+            DB::beginTransaction();
+
+            $oldPhotoPath = $user->profile_path;
+
+            // Update database first
+            $user->profile_path = null;
+            $user->save();
+
+            // Delete file after successful database update
+            if ($oldPhotoPath && Storage::disk('public')->exists($oldPhotoPath)) {
+                Storage::disk('public')->delete($oldPhotoPath);
+            }
+
+            $this->existing_profile_photo = null;
+
+            DB::commit();
+
+            Toaster::success('Photo profile deleted successfully!');
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('delete profile photo');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException('delete profile photo', $e->getMessage());
         }
-
-        $user->profile_path = null;
-        $user->save();
-
-        $this->existing_profile_photo = null;
-        Toaster::success('Foto profil berhasil dihapus.');
     }
 
     public function save()
     {
-        $this->validate();
-
         try {
+            // Validate form
+            $this->validate();
+
             $user = Auth::user();
+
+            // Authorization check
+            $this->authorize('update', $user);
+
+            DB::beginTransaction();
+
+            $oldPhotoPath = $user->profile_path;
 
             // Update name
             $user->name = $this->name;
@@ -128,28 +166,32 @@ class Profile extends Component
 
             // Upload profile photo if exists
             if ($this->profile_photo) {
-                // Delete old photo
-                if ($this->existing_profile_photo && Storage::disk('public')->exists($this->existing_profile_photo)) {
-                    Storage::disk('public')->delete($this->existing_profile_photo);
-                }
-
-                // Store new photo
-                $path = $this->profile_photo->store('profiles', 'public');
-                $user->profile_path = $path;
+                // Store new photo first
+                $newPath = $this->profile_photo->store('profiles', 'public');
+                $user->profile_path = $newPath;
             }
 
+            // Save user data
             $user->save();
 
-            Toaster::success('Profil berhasil diperbarui.');
+            // Delete old photo after successful database update (only if new photo uploaded)
+            if ($this->profile_photo && $oldPhotoPath && Storage::disk('public')->exists($oldPhotoPath)) {
+                Storage::disk('public')->delete($oldPhotoPath);
+            }
 
-            // Reset form
-            $this->current_password = '';
-            $this->password = '';
-            $this->password_confirmation = '';
-            $this->profile_photo = null;
-            $this->existing_profile_photo = $user->profile_path;
+            DB::commit();
+
+            return redirect()->route('settings.profile')->success('Profile updated successfully!');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('update profile');
         } catch (\Exception $e) {
-            Toaster::error('Gagal memperbarui profil: ' . $e->getMessage());
+            DB::rollBack();
+            return $this->handleException('update profile', $e->getMessage());
         }
     }
 

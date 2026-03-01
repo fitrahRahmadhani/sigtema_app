@@ -2,20 +2,22 @@
 
 namespace App\Livewire\Pages\Users;
 
-use App\Models\User;
-use Livewire\Component;
-use Livewire\Attributes\Url;
-use Livewire\WithPagination;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Illuminate\Support\Facades\Storage;
+use App\Livewire\Traits\HandleException;
 use App\Livewire\Traits\WithDeleteConfirmation;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('components.layouts.app')]
 #[Title('Users')]
 class Index extends Component
 {
-    use WithPagination, WithDeleteConfirmation;
+    use WithPagination, WithDeleteConfirmation, HandleException;
 
     #[Url(as: 'q')]
     public $search = '';
@@ -69,13 +71,25 @@ class Index extends Component
     // Override performDelete untuk custom logic
     protected function performDelete($user): void
     {
-        // Delete profile picture jika ada
-        if ($user->profile_path && Storage::disk('public')->exists($user->profile_path)) {
-            Storage::disk('public')->delete($user->profile_path);
-        }
+        $this->authorize('delete', User::class);
 
-        // Delete the user
-        $user->delete();
+        try {
+            DB::beginTransaction();
+            $profilePath = $user->profile_path;
+
+            // Delete the user from database
+            $user->delete();
+
+            // Delete profile picture jika ada
+            if ($profilePath && Storage::disk('public')->exists($profilePath)) {
+                Storage::disk('public')->delete($profilePath);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->handleException('delete user and profile picture', $e->getMessage());
+        }
     }
 
     public function render()

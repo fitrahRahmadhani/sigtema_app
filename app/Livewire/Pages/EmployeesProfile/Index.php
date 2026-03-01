@@ -2,21 +2,24 @@
 
 namespace App\Livewire\Pages\EmployeesProfile;
 
-use Livewire\Component;
-use Livewire\Attributes\Url;
-use Livewire\WithPagination;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use App\Models\Employee;
 use App\Models\Company;
+use App\Models\Employee;
 use App\Models\Position;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('components.layouts.app')]
 #[Title('Employees Profile')]
 class Index extends Component
 {
     use WithPagination;
+
+    public User $user;
 
     #[Url(as: 'q')]
     public $search = '';
@@ -36,9 +39,9 @@ class Index extends Component
 
     public function mount()
     {
-        $user = Auth::user();
+        $this->user = Auth::user();
 
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         if ($this->isSuperadmin) {
             $this->companies = Company::where('is_active', true)->get();
@@ -48,9 +51,9 @@ class Index extends Component
                 $this->selectedCompany = Company::find($this->selectedCompanyId);
             }
         } else {
-            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompanyId = $this->user->company_id;
             $this->selectedCompany = Company::find($this->selectedCompanyId);
-            $this->companies = Company::where('id', $user->company_id)->get();
+            $this->companies = Company::where('id', $this->user->company_id)->get();
         }
     }
 

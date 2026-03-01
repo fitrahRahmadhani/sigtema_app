@@ -2,22 +2,30 @@
 
 namespace App\Livewire\Pages\TechnicalCompetencies;
 
-use App\Models\TechnicalCompetency;
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Employee;
-use App\Models\Company;
-use Livewire\Component;
+use App\Models\TechnicalCompetency;
+use App\Models\User;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 use Masmerise\Toaster\Toaster;
-use Exception;
 
 #[Layout('components.layouts.app')]
 #[Title('Edit Technical Competency')]
 class Edit extends Component
 {
+    use UnauthorizedAccess, HandleException;
+
     public TechnicalCompetency $technicalCompetency;
 
+    public User $user;
     public $employee_id;
     public $name;
     public $issued_by;
@@ -37,17 +45,12 @@ class Edit extends Component
         $this->issued_by = $technical_competency->issued_by;
         $this->year = $technical_competency->year;
 
-        $user = Auth::user();
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->user = Auth::user();
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         // Load employee dan company (read-only)
         $this->selectedEmployee = Employee::find($this->employee_id);
         $this->selectedCompany = $this->selectedEmployee->company;
-
-        // Validasi akses
-        if (!$this->isSuperadmin && $this->selectedEmployee->company_id !== $user->company_id) {
-            abort(403, 'Unauthorized access to this technical competency.');
-        }
     }
 
     public function rules()
@@ -75,6 +78,9 @@ class Edit extends Component
     {
         try {
             $this->validate();
+            $this->authorize('update', [TechnicalCompetency::class, $this->technicalCompetency]);
+
+            DB::beginTransaction();
 
             $this->technicalCompetency->update([
                 'name' => $this->name,
@@ -82,10 +88,20 @@ class Edit extends Component
                 'year' => $this->year,
             ]);
 
+            DB::commit();
+
             return redirect()->route('technical-competencies.index')
                 ->success('Technical competency has been updated successfully.');
-        } catch (Exception $e) {
-            Toaster::error('Failed to update technical competency. Please try again.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('edit technical competency');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException('edit technical competency', $e->getMessage());
         }
     }
 

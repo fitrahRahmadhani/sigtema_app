@@ -155,7 +155,6 @@
                     <div class="text-sm text-gray-600">
                         Mengelola data Psychogram Aspects untuk
                         <span class="font-semibold">{{ $selectedCompany->name }}</span>
-                        <span class="text-gray-500">(including global aspects)</span>
                     </div>
 
                     {{-- Search Row --}}
