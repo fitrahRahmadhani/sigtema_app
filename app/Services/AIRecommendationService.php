@@ -157,8 +157,8 @@ class AIRecommendationService
         }
 
         if ($employee->positionHistories->isNotEmpty()) {
-            $data['history'] = $employee->positionHistories->map(fn($h) => array_filter([
-                'pos'    => $h->position_name,
+            $data['position_history'] = $employee->positionHistories->map(fn($h) => array_filter([
+                'position'    => $h->position_name,
                 'unit'   => $h->work_unit,
                 'start'  => $h->start_date ? substr($h->start_date, 0, 7) : null,
                 'end'    => $h->end_date   ? substr($h->end_date, 0, 7)   : null,
@@ -239,7 +239,7 @@ class AIRecommendationService
         return <<<PROMPT
             Expert HR consultant. Role: {$position->name} (Band {$position->band}).
             {$requirementsText}
-            BANDS: 1=TopMgmt 2=SrMgr 3=Mgr 4=JrOfficer 5=Staff
+            BANDS: 1=TopMgmt (High) 2=SrMgr 3=Mgr 4=JrOfficer 5=Staff (Low)
             SCORING: 0-30=Unfit 31-50=Marginal 51-70=Moderate 71-85=Good 86-100=Excellent
             PENALIZE: skill gaps, low experience, burnout, irrelevant bg, band gap >1 without potential
             REWARD: skill match, relevant exp, progression, certs, innovation, achievements, cross-functional exp

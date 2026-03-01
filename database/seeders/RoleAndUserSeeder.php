@@ -40,6 +40,12 @@ class RoleAndUserSeeder extends Seeder
             'guard_name' => 'web'
         ]);
 
+        // 5. Employee
+        $roleEmployee = Role::firstOrCreate([
+            'name' => 'employee',
+            'guard_name' => 'web'
+        ]);
+
         // ========== Create User ==========
 
         // 1. User for Superadmin

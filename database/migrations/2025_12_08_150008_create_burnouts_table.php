@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('emotional_exhaustion')->nullable();
             $table->integer('depersonalization')->nullable();
             $table->integer('achievement_decline')->nullable();
-            $table->string('result')->nullable();
+            $table->text('result')->nullable();
             $table->string('external_id')->nullable();
             $table->string('source')->default('eksternal');
             $table->timestamps();
