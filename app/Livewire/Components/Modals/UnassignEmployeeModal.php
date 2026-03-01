@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Components\Modals;
 
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Position;
 use App\Models\PositionHistory;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -13,6 +15,8 @@ use Masmerise\Toaster\Toaster;
 
 class UnassignEmployeeModal extends Component
 {
+    use UnauthorizedAccess, HandleException;
+
     public $show = false;
     public $positionId = null;
 

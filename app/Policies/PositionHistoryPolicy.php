@@ -34,7 +34,7 @@ class PositionHistoryPolicy
             return true;
         }
 
-        return $user->hasRole('admin') && $user->company_id === $company->id;
+        return $user->hasRole('admin') || $user->hasRole('hc-operator') && $user->company_id === $company->id;
     }
 
     /**

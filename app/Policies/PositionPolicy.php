@@ -33,7 +33,7 @@ class PositionPolicy
         if ($user->hasRole('superadmin')) {
             return true;
         }
-        return $user->hasRole('admin') && $user->company_id === $company->id;
+        return $user->hasRole('admin') || $user->hasRole('hc-operator') && $user->company_id === $company->id;
     }
 
     /**
@@ -45,7 +45,7 @@ class PositionPolicy
             return true;
         }
 
-        return $user->hasRole('admin') && $user->company_id === $position->company_id;
+        return $user->hasRole('admin')  && $user->company_id === $position->company_id;
     }
 
     /**
