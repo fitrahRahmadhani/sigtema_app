@@ -2,103 +2,298 @@
 
 namespace App\Livewire\Pages\OrgStructure;
 
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
-use Livewire\Component;
-use App\Models\Position;
-use Livewire\Attributes\Title;
-use Masmerise\Toaster\Toaster;
-use Livewire\Attributes\Layout;
 use App\Models\EmployeeHierarchy;
-use Livewire\Attributes\Validate;
+use App\Models\Position;
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
 #[Title('Create Employee Hierarchy')]
 class Create extends Component
 {
-    #[Validate('required|exists:companies,id')]
+    use UnauthorizedAccess, HandleException;
+    public User $user;
+    public $company;
     public $company_id;
-
-    #[Validate('required|exists:positions,id')]
     public $position_id;
-
-    #[Validate('required|exists:positions,id')]
     public $superior_id;
-
-    #[Validate('required|string|max:255')]
     public $relation_type = 'direct';
 
-    public $positions = [];
-    public $superiors = [];
+    // Position search
+    public $positionSearch           = '';
+    public $showPositionDropdown     = false;
+    public $selectedPosition         = null;
+    public $positionHighlightedIndex = 0;
 
-    public $company;
+    // Superior search
+    public $superiorSearch           = '';
+    public $showSuperiorDropdown     = false;
+    public $selectedSuperior         = null;
+    public $superiorHighlightedIndex = 0;
+
+    private $minSearchLength = 3;
 
     public function mount()
     {
-        if (!Auth::user()->hasRole('superadmin')) {
-            $this->company_id = Auth::user()->company_id;
-            $this->company = Company::find($this->company_id);
+        $this->user = Auth::user();
+
+        if (!$this->user->hasRole('superadmin')) {
+            $this->company_id = $this->user->company_id;
+            $this->company    = Company::find($this->company_id);
         } else {
             $this->company_id = session('selected_company_id');
-            $this->updatedCompanyId();
+            if ($this->company_id) {
+                $this->company = Company::find($this->company_id);
+            }
         }
     }
 
-    public function updatedCompanyId()
+    protected function rules(): array
     {
-        $this->positions = Position::where('company_id', $this->company_id)
-            ->get();
-
-        $this->superiors = Position::where('company_id', $this->company_id)
-            ->get();
-
-        $this->reset(['position_id', 'superior_id']);
+        return [
+            'company_id'    => ['required', 'exists:companies,id'],
+            'position_id'   => ['required', 'exists:positions,id', 'different:superior_id'],
+            'superior_id'   => ['required', 'exists:positions,id', 'different:position_id'],
+            'relation_type' => ['required', 'string', 'max:255'],
+        ];
     }
 
-    public function updatedPositionId()
+    protected function messages(): array
     {
-        // Filter out the selected position from superiors to prevent self-reference
-        $this->superiors = Position::where('company_id', $this->company_id)
-            ->where('id', '!=', $this->position_id)
+        return [
+            'company_id.required'    => 'Company is required.',
+            'company_id.exists'      => 'Selected company does not exist.',
+            'position_id.required'   => 'Position is required.',
+            'position_id.exists'     => 'Selected position does not exist.',
+            'position_id.different'  => 'Position and superior cannot be the same.',
+            'superior_id.required'   => 'Superior position is required.',
+            'superior_id.exists'     => 'Selected superior does not exist.',
+            'superior_id.different'  => 'Superior and position cannot be the same.',
+            'relation_type.required' => 'Relation type is required.',
+        ];
+    }
+
+    public function getFilteredPositionsProperty()
+    {
+        if (!$this->company_id || strlen(trim($this->positionSearch)) < $this->minSearchLength) {
+            return collect();
+        }
+
+        return Position::where('company_id', $this->company_id)
+            ->where(function ($q) {
+                $q->where('name', 'LIKE', '%' . $this->positionSearch . '%')
+                    ->orWhere('position_code', 'LIKE', '%' . $this->positionSearch . '%');
+            })
+            ->select(['id', 'name', 'position_code'])
+            ->orderBy('name')
+            ->limit(10)
             ->get();
+    }
+
+    public function getFilteredSuperiorsProperty()
+    {
+        if (!$this->company_id || !$this->position_id || strlen(trim($this->superiorSearch)) < $this->minSearchLength) {
+            return collect();
+        }
+
+        return Position::where('company_id', $this->company_id)
+            ->where('id', '!=', $this->position_id)
+            ->where(function ($q) {
+                $q->where('name', 'LIKE', '%' . $this->superiorSearch . '%')
+                    ->orWhere('position_code', 'LIKE', '%' . $this->superiorSearch . '%');
+            })
+            ->select(['id', 'name', 'position_code'])
+            ->orderBy('name')
+            ->limit(10)
+            ->get();
+    }
+
+    public function updatedPositionSearch($value)
+    {
+        $this->positionHighlightedIndex = 0;
+        $this->showPositionDropdown = strlen(trim($value)) >= $this->minSearchLength;
+    }
+
+    public function selectPosition(int $id): void
+    {
+        $position = Position::select(['id', 'name', 'position_code'])->find($id);
+        if ($position) {
+            $this->selectedPosition         = $position;
+            $this->position_id              = $position->id;
+            $this->positionSearch           = $position->name . ' (' . $position->position_code . ')';
+            $this->showPositionDropdown     = false;
+            $this->positionHighlightedIndex = 0;
+
+            // Reset superior saat position berubah
+            $this->clearSuperiorSelection();
+        }
+    }
+
+    public function clearPositionSelection(): void
+    {
+        $this->selectedPosition         = null;
+        $this->position_id              = null;
+        $this->positionSearch           = '';
+        $this->showPositionDropdown     = false;
+        $this->positionHighlightedIndex = 0;
+        $this->clearSuperiorSelection();
+    }
+
+    public function openPositionDropdown(): void
+    {
+        if ($this->company_id && !$this->selectedPosition && strlen(trim($this->positionSearch)) >= $this->minSearchLength) {
+            $this->showPositionDropdown = true;
+        }
+    }
+
+    public function closePositionDropdown(): void
+    {
+        $this->showPositionDropdown = false;
+    }
+
+    public function incrementPositionHighlight(): void
+    {
+        $count = $this->filteredPositions->count();
+        if ($count > 0) {
+            $this->positionHighlightedIndex = min($this->positionHighlightedIndex + 1, $count - 1);
+        }
+    }
+
+    public function decrementPositionHighlight(): void
+    {
+        $this->positionHighlightedIndex = max($this->positionHighlightedIndex - 1, 0);
+    }
+
+    public function selectHighlightedPosition(): void
+    {
+        $positions = $this->filteredPositions;
+        if ($positions->count() > 0 && isset($positions[$this->positionHighlightedIndex])) {
+            $this->selectPosition($positions[$this->positionHighlightedIndex]->id);
+        }
+    }
+
+    public function updatedSuperiorSearch($value)
+    {
+        $this->superiorHighlightedIndex = 0;
+        $this->showSuperiorDropdown = strlen(trim($value)) >= $this->minSearchLength;
+    }
+
+    public function selectSuperior(int $id): void
+    {
+        $superior = Position::select(['id', 'name', 'position_code'])->find($id);
+        if ($superior) {
+            $this->selectedSuperior         = $superior;
+            $this->superior_id              = $superior->id;
+            $this->superiorSearch           = $superior->name . ' (' . $superior->position_code . ')';
+            $this->showSuperiorDropdown     = false;
+            $this->superiorHighlightedIndex = 0;
+        }
+    }
+
+    public function clearSuperiorSelection(): void
+    {
+        $this->selectedSuperior         = null;
+        $this->superior_id              = null;
+        $this->superiorSearch           = '';
+        $this->showSuperiorDropdown     = false;
+        $this->superiorHighlightedIndex = 0;
+    }
+
+    public function openSuperiorDropdown(): void
+    {
+        if ($this->position_id && !$this->selectedSuperior && strlen(trim($this->superiorSearch)) >= $this->minSearchLength) {
+            $this->showSuperiorDropdown = true;
+        }
+    }
+
+    public function closeSuperiorDropdown(): void
+    {
+        $this->showSuperiorDropdown = false;
+    }
+
+    public function incrementSuperiorHighlight(): void
+    {
+        $count = $this->filteredSuperiors->count();
+        if ($count > 0) {
+            $this->superiorHighlightedIndex = min($this->superiorHighlightedIndex + 1, $count - 1);
+        }
+    }
+
+    public function decrementSuperiorHighlight(): void
+    {
+        $this->superiorHighlightedIndex = max($this->superiorHighlightedIndex - 1, 0);
+    }
+
+    public function selectHighlightedSuperior(): void
+    {
+        $superiors = $this->filteredSuperiors;
+        if ($superiors->count() > 0 && isset($superiors[$this->superiorHighlightedIndex])) {
+            $this->selectSuperior($superiors[$this->superiorHighlightedIndex]->id);
+        }
+    }
+
+    public function updatedCompanyId(): void
+    {
+        $this->company = Company::find($this->company_id);
+        $this->clearPositionSelection();
     }
 
     public function save()
     {
-        $this->validate([
-            'company_id' => 'required|exists:companies,id',
-            'position_id' => 'required|exists:positions,id|different:superior_id',
-            'superior_id' => 'required|exists:positions,id|different:position_id',
-            'relation_type' => 'required|string|max:255',
-        ]);
+        try {
+            $this->validate();
+            $this->authorize('create', [EmployeeHierarchy::class, $this->user->company]);
 
-        // Check if hierarchy already exists
-        $exists = EmployeeHierarchy::where('company_id', $this->company_id)
-            ->where('position_id', $this->position_id)
-            ->where('superior_id', $this->superior_id)
-            ->exists();
+            $exists = EmployeeHierarchy::where('company_id', $this->company_id)
+                ->where('position_id', $this->position_id)
+                ->where('superior_id', $this->superior_id)
+                ->exists();
 
-        if ($exists) {
-            Toaster::error('This hierarchy relationship already exists.');
-            return;
+            if ($exists) {
+                Toaster::error('This hierarchy relationship already exists.');
+                return;
+            }
+
+            DB::beginTransaction();
+
+            EmployeeHierarchy::create([
+                'company_id'    => $this->company_id,
+                'position_id'   => $this->position_id,
+                'superior_id'   => $this->superior_id,
+                'relation_type' => $this->relation_type,
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('organization-structure.table')
+                ->success('Hierarchy created successfully.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Toaster::error('Validation failed: ' . $e->getMessage());
+            throw $e;
+        } catch (AuthorizationException $e) {
+            DB::rollBack();
+            return $this->unauthorizedAccess('create hierarchy');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException('create hierarchy', $e->getMessage());
         }
-
-        EmployeeHierarchy::create([
-            'company_id' => $this->company_id,
-            'position_id' => $this->position_id,
-            'superior_id' => $this->superior_id,
-            'relation_type' => $this->relation_type,
-        ]);
-
-        return redirect()->route('organization-structure.table')
-            ->success('Hierarchy created successfully.');
     }
 
     public function render()
     {
-        $companies = Company::where('is_active', true)->get();
         return view('livewire.pages.org-structure.create', [
-            'companies' => $companies,
+            'companies' => Company::where('is_active', true)->get(),
         ]);
     }
 }

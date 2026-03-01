@@ -2,21 +2,25 @@
 
 namespace App\Livewire\Pages\OrgStructure;
 
-use App\Models\EmployeeHierarchy;
+use App\Livewire\Traits\HandleException;
+use App\Livewire\Traits\WithDeleteConfirmation;
 use App\Models\Company;
+use App\Models\EmployeeHierarchy;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Illuminate\Support\Facades\Auth;
-use App\Livewire\Traits\WithDeleteConfirmation;
 
 #[Layout('components.layouts.app')]
 #[Title('Organization Structure')]
 class Table extends Component
 {
-    use WithPagination, WithDeleteConfirmation;
+    use WithPagination, WithDeleteConfirmation, HandleException;
 
+    public User $user;
     public $search = '';
     public $companyFilter = '';
     public $relationTypeFilter = '';
@@ -39,10 +43,10 @@ class Table extends Component
 
     private function initializeUserAccess()
     {
-        $user = Auth::user();
+        $this->user = Auth::user();
 
         // Cek jika superadmin (company_id = null)
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         if ($this->isSuperadmin) {
             // Superadmin: ambil company yang dipilih dari session
@@ -54,9 +58,9 @@ class Table extends Component
             }
         } else {
             // Admin: pakai company mereka
-            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompanyId = $this->user->company_id;
             $this->companyFilter = $this->selectedCompanyId;
-            $this->company = $user->company->name;
+            $this->company = $this->user->company->name;
         }
     }
 
@@ -84,6 +88,21 @@ class Table extends Component
     protected function getModelDisplayName(): string
     {
         return 'Hierarchy';
+    }
+
+    protected function performDelete($hierarchy): void
+    {
+
+        $this->authorize('delete', [EmployeeHierarchy::class, $hierarchy]);
+
+        try {
+            DB::beginTransaction();
+            $hierarchy->delete();
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->handleException('delete hierarchy', $e->getMessage());
+        }
     }
 
     public function resetCompanyFilter()
