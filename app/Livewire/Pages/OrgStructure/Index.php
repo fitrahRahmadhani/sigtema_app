@@ -2,24 +2,26 @@
 
 namespace App\Livewire\Pages\OrgStructure;
 
-use App\Models\Company;
-use Livewire\Component;
-use App\Models\Employee;
-use App\Models\Position;
-use Livewire\Attributes\Title;
-use Masmerise\Toaster\Toaster;
-use App\Models\EmployeeHierarchy;
-use Illuminate\Support\Facades\Auth;
-use App\Livewire\Traits\WithDeleteConfirmation;
 use App\Livewire\Components\Modals\AddStaffModal;
 use App\Livewire\Components\Modals\AssignEmployeeModal;
 use App\Livewire\Components\Modals\UnassignEmployeeModal;
+use App\Livewire\Traits\WithDeleteConfirmation;
+use App\Models\Company;
+use App\Models\Employee;
+use App\Models\EmployeeHierarchy;
+use App\Models\Position;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 
 #[Title('Organization Structure')]
 class Index extends Component
 {
     use WithDeleteConfirmation;
 
+    public User $user;
     public $zoom = 100;
     public $nodes = [];
     public $selectedCompanyId = null;
@@ -42,10 +44,10 @@ class Index extends Component
 
     private function initializeUserAccess()
     {
-        $user = Auth::user();
+        $this->user = Auth::user();
 
         // Cek jika superadmin
-        $this->isSuperadmin = $user->hasRole('superadmin');
+        $this->isSuperadmin = $this->user->hasRole('superadmin');
 
         if ($this->isSuperadmin) {
             // Superadmin: load semua companies
@@ -60,7 +62,7 @@ class Index extends Component
             }
         } else {
             // Admin: pakai company mereka
-            $this->selectedCompanyId = $user->company_id;
+            $this->selectedCompanyId = $this->user->company_id;
             $this->hasSelectedCompany = true;
             $this->initializeChart();
         }
