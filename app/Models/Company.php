@@ -17,6 +17,24 @@ class Company extends Model
         return $this->hasMany(User::class);
     }
 
+    public function getAdminLabelAttribute(): string
+    {
+        $admins = $this->hasMany(User::class, 'company_id')
+            ->whereHas('roles', function ($query) {
+                $query->where('name', 'admin');
+            })->get();
+
+        if ($admins->isEmpty()) {
+            return 'No admin assigned';
+        }
+
+        if ($admins->count() === 1) {
+            return $admins->first()->name;
+        }
+
+        return $admins->first()->name . ' +' . ($admins->count() - 1) . ' others';
+    }
+
     public function employees()
     {
         return $this->hasMany(Employee::class);
