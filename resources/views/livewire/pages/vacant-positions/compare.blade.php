@@ -42,7 +42,7 @@
                     </p>
                     <div class="mt-2 flex items-center gap-2">
                         <p class="font-semibold text-gray-600">Powered by</p>
-                        <img src="{{ asset('assets/logo/logo-gemini.png') }}" class="h-6" alt="Gemini AI" />
+                        <img src="{{ asset('assets/logo/Groq Logo_Black 25.svg') }}" class="h-6" alt="Groq AI" />
                     </div>
                 </div>
             </div>
@@ -352,6 +352,19 @@
                                     <span class="text-gray-400 italic">
                                         {{ $employee->hire_date?->format('d F Y') ?? 'N/A' }}
                                     </span>
+                                </td>
+                            @endforeach
+                        </tr>
+
+                        {{-- Pension Date --}}
+                        <tr>
+                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Pension Date</td>
+                            @foreach ($selectedEmployees as $employee)
+                                <td class="w-[400px] px-6 py-4 text-gray-700">
+                                    <span>
+                                        {{ $employee->retirement_date_formatted ?? 'N/A' }}
+                                    </span>
+                                    <span>({{ $employee->time_until_retirement ?? 'N/A' }})</span>
                                 </td>
                             @endforeach
                         </tr>

@@ -189,33 +189,15 @@
 
                     {{-- Admin Info --}}
                     <div class="col-span-3 flex items-center gap-3 overflow-hidden">
-                        @if ($company->admin && $company->admin->first())
-                            <div class="flex items-center gap-2">
-                                @if ($company->admin->first()->profile_path)
-                                    <img
-                                        src="{{ \Storage::url($company->admin->first()->profile_path) }}"
-                                        alt="{{ $company->admin->first()->name }}"
-                                        class="h-8 w-8 rounded-lg border-2 border-white shadow-sm"
-                                    />
-                                @else
-                                    <div
-                                        class="color-gradient flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br text-xs font-semibold text-white shadow-sm"
-                                    >
-                                        {{ substr($company->admin->first()->name, 0, 1) }}
-                                    </div>
-                                @endif
-                                <div class="min-w-0 flex-1">
-                                    <p class="truncate text-sm font-medium text-gray-900">
-                                        {{ $company->admin->first()->name }}
-                                    </p>
-                                    <p class="truncate text-xs text-gray-500">
-                                        {{ $company->admin->first()->email }}
-                                    </p>
-                                </div>
+                        <div class="flex items-center gap-2">
+                            <div class="min-w-0 flex-1">
+                                <p
+                                    class="{{ $company->admin_label === 'No admin assigned' ? 'text-gray-400 italic' : 'text-gray-900' }} truncate text-sm font-medium"
+                                >
+                                    {{ $company->admin_label }}
+                                </p>
                             </div>
-                        @else
-                            <span class="text-sm text-gray-400 italic">No admin assigned</span>
-                        @endif
+                        </div>
                     </div>
 
                     {{-- Status --}}

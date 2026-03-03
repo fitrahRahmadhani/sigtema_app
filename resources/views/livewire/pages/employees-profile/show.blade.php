@@ -89,11 +89,8 @@
                         </span>
                     @endif
                 </h6>
+                <p class="text-lg">{{ $employee->employee_number ?? '-' }}</p>
                 <div class="mt-4 grid h-full w-full grid-cols-2 gap-4 sm:mt-6 sm:grid-cols-3 lg:grid-cols-5">
-                    <div class="w-full">
-                        <p class="text-primary-text font-semibold">Employee ID</p>
-                        <p class="">{{ $employee->employee_number ?? '-' }}</p>
-                    </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Position</p>
                         <p class="">{{ $employee->position->name ?? '-' }}</p>
@@ -121,6 +118,13 @@
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Age</p>
                         <p class="">{{ $employee->age ?? '-' }} years old</p>
+                    </div>
+                    <div class="w-full">
+                        <p class="text-primary-text font-semibold">Pension</p>
+                        <p>
+                            {{ $employee->retirement_date_formatted ?? '-' }}
+                            ({{ $employee->time_until_retirement ?? '-' }})
+                        </p>
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Job Grade</p>

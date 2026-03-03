@@ -241,7 +241,7 @@ class AIRecommendationService
             {$requirementsText}
             BANDS: 1=TopMgmt (High) 2=SrMgr 3=Mgr 4=JrOfficer 5=Staff (Low)
             SCORING: 0-30=Unfit 31-50=Marginal 51-70=Moderate 71-85=Good 86-100=Excellent
-            PENALIZE: skill gaps, low experience, burnout, irrelevant bg, band gap >1 without potential
+            PENALIZE: skill gaps, low experience, burnout (lower is better), irrelevant bg, band gap >1 without potential
             REWARD: skill match, relevant exp, progression, certs, innovation, achievements, cross-functional exp
             NOTE: 1-level band gap allowed if strong potential shown.
 

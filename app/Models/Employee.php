@@ -225,6 +225,60 @@ class Employee extends Model
     }
 
     /**
+     * Get employee's pension date
+     */
+    public function getRetirementDateAttribute()
+    {
+        if (!$this->birth_date) {
+            return null;
+        }
+
+        $age57 = $this->birth_date->copy()->addYears(57);
+
+        $lastDayOfMonth = $age57->copy()->endOfMonth()->day;
+        $day = min(30, $lastDayOfMonth);
+
+        return $age57->copy()->day($day);
+    }
+
+    /**
+     * Get retirement year
+     */
+    public function getRetirementYearAttribute(): ?int
+    {
+        return $this->retirement_date?->year;
+    }
+
+    public function getTimeUntilRetirementAttribute(): ?string
+    {
+        if (!$this->retirement_date) {
+            return null;
+        }
+
+        $now = now();
+
+        if ($this->retirement_date->isPast()) {
+            return 'Retired';
+        }
+
+        $diff = $now->diff($this->retirement_date);
+
+        $years = $diff->y;
+        $months = $diff->m;
+
+        if ($years >= 1) {
+            return $years . ' year' . ($years > 1 ? 's' : '') . ' left';
+        }
+
+        return $months . ' month' . ($months > 1 ? 's' : '') . ' left';
+    }
+
+    public function getRetirementDateFormattedAttribute(): ?string
+    {
+        return $this->retirement_date?->format('d-M-Y');
+    }
+
+    /**
      * Get employee's tenure (years of service)
      */
     public function getTenureAttribute(): int

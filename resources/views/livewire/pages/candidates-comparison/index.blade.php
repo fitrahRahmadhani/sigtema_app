@@ -430,6 +430,27 @@
                                     @endfor
                                 </tr>
 
+                                {{-- Pension Date --}}
+                                <tr>
+                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Pension Date
+                                    </td>
+                                    @for ($i = 0; $i < $columnCount; $i++)
+                                        <td class="w-[400px] px-6 py-4 text-gray-700">
+                                            @if (! empty($selectedEmployees[$i]))
+                                                <span class="">
+                                                    {{ $selectedEmployees[$i]->retirement_date_formatted ?? 'N/A' }}
+                                                </span>
+                                                <span>
+                                                    ({{ $selectedEmployees[$i]->time_until_retirement ?? 'N/A' }})
+                                                </span>
+                                            @else
+                                                <span class="text-gray-400">-</span>
+                                            @endif
+                                        </td>
+                                    @endfor
+                                </tr>
+
                                 {{-- Personality Information Section --}}
                                 <tr class="color-gradient">
                                     <td
