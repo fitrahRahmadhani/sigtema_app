@@ -144,7 +144,7 @@ class AIRecommendationService
         if ($employee->mcuResults->isNotEmpty()) {
             $data['mcu'] = $employee->mcuResults->map(fn($m) => [
                 'year'   => $m->year,
-                'result' => $m->result,
+                'result' => $m->result . ' / 5 stars',
             ])->toArray();
         }
 
@@ -242,7 +242,7 @@ class AIRecommendationService
             BANDS: 1=TopMgmt (High) 2=SrMgr 3=Mgr 4=JrOfficer 5=Staff (Low)
             SCORING: 0-30=Unfit 31-50=Marginal 51-70=Moderate 71-85=Good 86-100=Excellent
             PENALIZE: skill gaps, low experience, burnout (lower is better), irrelevant bg, band gap >1 without potential
-            REWARD: skill match, relevant exp, progression, certs, innovation, achievements, cross-functional exp
+            REWARD: skill match, relevant exp, progression, certs, innovation, achievements, cross-functional exp, current_position (if relevant)
             NOTE: 1-level band gap allowed if strong potential shown.
 
             DATA: {$dataJson}
