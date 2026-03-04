@@ -438,7 +438,7 @@
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
-                                                <span class="">
+                                                <span>
                                                     {{ $selectedEmployees[$i]->retirement_date_formatted ?? 'N/A' }}
                                                 </span>
                                                 <span>
