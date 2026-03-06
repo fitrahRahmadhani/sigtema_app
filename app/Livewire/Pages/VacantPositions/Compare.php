@@ -121,7 +121,7 @@ class Compare extends Component
     // Helper untuk mendapatkan data DISC
     public function getEmployeeDISCData($employee)
     {
-        if (!$employee->disc) {
+        if (!$employee->disc || $employee->disc?->interpretation1 == '(Skor tidak valid)' || $employee->disc?->interpretation2 == '(Skor tidak valid)' || $employee->disc?->interpretation3 == '(Skor tidak valid)') {
             return [
                 'D1' => 0,
                 'I1' => 0,

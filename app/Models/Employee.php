@@ -235,10 +235,8 @@ class Employee extends Model
 
         $age57 = $this->birth_date->copy()->addYears(57);
 
-        $lastDayOfMonth = $age57->copy()->endOfMonth()->day;
-        $day = min(30, $lastDayOfMonth);
-
-        return $age57->copy()->day($day);
+        // Pensiun tanggal 1 bulan berikutnya setelah ulang tahun ke-57
+        return $age57->copy()->startOfMonth()->addMonth();
     }
 
     /**

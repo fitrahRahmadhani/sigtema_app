@@ -262,9 +262,9 @@
                     >
                         <div class="col-span-2 text-sm font-semibold">Employee</div>
                         <div class="col-span-2 text-sm font-semibold">Contact</div>
-                        <div class="col-span-2 text-sm font-semibold">Position</div>
+                        <div class="col-span-3 text-sm font-semibold">Position</div>
                         <div class="col-span-2 text-sm font-semibold">Company</div>
-                        <div class="col-span-2 text-sm font-semibold">Band</div>
+                        <div class="col-span-1 text-sm font-semibold">Band</div>
                         <div class="col-span-2 text-center text-sm font-semibold">Actions</div>
                     </div>
 
@@ -327,7 +327,7 @@
                             </div>
 
                             {{-- Position --}}
-                            <div class="col-span-2 flex flex-col justify-center">
+                            <div class="col-span-3 flex flex-col justify-center">
                                 @if ($employee->position)
                                     <p class="truncate text-sm font-medium text-gray-900">
                                         {{ $employee->position->name }}
@@ -349,7 +349,7 @@
                             </div>
 
                             {{-- Band --}}
-                            <div class="col-span-2 flex flex-col justify-center">
+                            <div class="col-span-1 flex flex-col justify-center">
                                 @if ($employee->band)
                                     <span
                                         class="inline-flex w-fit items-center rounded-md bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800"

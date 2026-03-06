@@ -153,7 +153,7 @@ class Index extends Component
         }
 
         // Load DISC data
-        if ($employee->disc) {
+        if ($employee->disc && ($employee->disc?->interpretation1 != '(Skor tidak valid)' && $employee->disc?->interpretation2 != '(Skor tidak valid)' && $employee->disc?->interpretation3 != '(Skor tidak valid)')) {
             $this->discChartData[$index] = [
                 'D1' => $employee->disc->D1 ?? 0,
                 'I1' => $employee->disc->I1 ?? 0,

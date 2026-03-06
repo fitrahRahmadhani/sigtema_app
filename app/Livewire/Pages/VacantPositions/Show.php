@@ -36,7 +36,7 @@ class Show extends Component
     {
         $this->user = Auth::user();
 
-        if ($this->user->hasRole('head-of-unit') && $this->user->band >= $position->band) {
+        if ($this->user->hasRole('head-of-unit') && $this->user->band > $position->band) {
             return redirect()->route('vacant-positions.index')->warning('You do not have permission to access this page.');
         }
 

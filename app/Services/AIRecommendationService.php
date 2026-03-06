@@ -243,7 +243,7 @@ class AIRecommendationService
             SCORING: 0-30=Unfit 31-50=Marginal 51-70=Moderate 71-85=Good 86-100=Excellent
             PENALIZE: skill gaps, low experience, burnout (lower is better), irrelevant bg, band gap >1 without potential
             REWARD: skill match, relevant exp, progression, certs, innovation, achievements, cross-functional exp, current_position (if relevant)
-            NOTE: 1-level band gap allowed if strong potential shown.
+            NOTE: 1-level band gap allowed if strong potential shown.  MCU is minor factor; if strength, state value only.
 
             DATA: {$dataJson}
 

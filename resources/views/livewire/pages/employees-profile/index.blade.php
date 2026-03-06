@@ -1,11 +1,12 @@
 <div class="space-y-4 p-2">
     {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
-                        @hasanyrole('superadmin|admin')
-        <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
+        @hasanyrole('superadmin|admin')
+            <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         @endhasanyrole
+
         <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Path</flux:breadcrumbs.item>
-        <flux:breadcrumbs.item>Employees Profile</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item>Employee Profile</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
     {{-- Content --}}
@@ -29,7 +30,7 @@
                 </svg>
             </div>
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Employees Profile</h1>
+                <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Employee Profile</h1>
 
                 {{-- FIX: Hanya tampilkan jika selectedCompany ADA dan BUKAN null --}}
                 @if ($isSuperadmin && $selectedCompany)
@@ -282,8 +283,9 @@
                     <div
                         class="color-gradient hidden place-items-center justify-items-start gap-4 rounded-lg px-4 py-3 text-white md:grid md:grid-cols-12"
                     >
-                        <div class="col-span-3 text-sm font-semibold">Nama</div>
                         <div class="col-span-1 text-sm font-semibold">Employee ID</div>
+                        <div class="col-span-2 text-sm font-semibold">Nama</div>
+                        <div class="col-span-1 text-sm font-semibold">Band</div>
                         <div class="col-span-1 text-sm font-semibold">Gender</div>
                         <div class="col-span-1 text-sm font-semibold">JG/PG</div>
                         <div class="col-span-3 text-sm font-semibold">Posisi</div>
@@ -297,13 +299,21 @@
                             href="{{ route('employees-profile.show', $employee->slug) }}"
                             class="hidden rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-200 hover:border-[#721d21] hover:shadow-md md:grid md:grid-cols-12 md:gap-4"
                         >
-                            <div class="col-span-3 flex flex-col justify-center">
-                                <p class="line-clamp-2 text-sm font-semibold text-gray-900">{{ $employee->name }}</p>
-                            </div>
                             <div class="col-span-1 flex flex-col justify-center">
                                 <p class="line-clamp-1 text-sm font-semibold text-gray-900">
                                     {{ $employee->employee_number }}
                                 </p>
+                            </div>
+                            <div class="col-span-2 flex flex-col justify-center">
+                                <p class="line-clamp-2 text-sm font-semibold text-gray-900">{{ $employee->name }}</p>
+                            </div>
+                            <div class="col-span-1 flex flex-col justify-center">
+                                <span
+                                    class="mt-1 inline-flex w-fit items-center rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800"
+                                >
+                                    <span class="mr-1 hidden lg:inline">Band</span>
+                                    {{ $employee->band }}
+                                </span>
                             </div>
                             <div class="col-span-1 flex flex-col justify-center">
                                 <span
