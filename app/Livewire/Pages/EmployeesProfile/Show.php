@@ -2,16 +2,18 @@
 
 namespace App\Livewire\Pages\EmployeesProfile;
 
-use Livewire\Component;
 use App\Models\Employee;
-use Livewire\Attributes\Title;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Title('Employee Profile')]
 #[Layout('components.layouts.app')]
 class Show extends Component
 {
-
+    public User $user;
     public $employee;
 
     public $softCompetencies = [];
@@ -21,6 +23,11 @@ class Show extends Component
     public function mount(Employee $employee)
     {
         $this->employee = $employee;
+        $this->user = Auth::user();
+
+        if ($this->user->hasRole('head-of-unit') && $this->user->band > $this->employee->band) {
+            return redirect()->route('employees-profile.index')->warning('You do not have permission to access this page.');
+        }
         $this->softCompetencies = $employee->getScores();
         $this->workDirectionData = $this->getWorkDirectionData();
         $this->discData = $this->getDISCData();
@@ -68,7 +75,7 @@ class Show extends Component
 
     private function getDISCData()
     {
-        if (!$this->employee->disc) {
+        if (!$this->employee->disc || $this->employee->disc?->interpretation1 == '(Skor tidak valid)' || $this->employee->disc?->interpretation2 == '(Skor tidak valid)' || $this->employee->disc?->interpretation3 == '(Skor tidak valid)') {
             return $this->getDefaultDISCData();
         }
         return $this->employee->disc;

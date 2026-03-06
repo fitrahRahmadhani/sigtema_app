@@ -356,7 +356,9 @@
 
                                 {{-- Email --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Email</td>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Email
+                                    </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
@@ -370,7 +372,9 @@
 
                                 {{-- Phone --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Phone</td>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Phone
+                                    </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
@@ -384,7 +388,7 @@
 
                                 {{-- Personal Grade --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Personal Grade
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -402,7 +406,9 @@
 
                                 {{-- Band --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Band</td>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Band
+                                    </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
@@ -416,7 +422,9 @@
 
                                 {{-- Hire Date --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Hire Date</td>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Hire Date
+                                    </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
@@ -432,7 +440,7 @@
 
                                 {{-- Pension Date --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Pension Date
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -469,7 +477,9 @@
 
                                 {{-- MBTI --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">MBTI</td>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        MBTI
+                                    </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]->mbti->mbti))
@@ -565,12 +575,16 @@
                                     <td class="left-0 bg-white px-6 py-4 font-medium text-gray-900"></td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top">
-                                            @if (! empty($selectedEmployees[$i]) && ! empty($discChartData[$i]))
+                                            @if (! empty($selectedEmployees[$i]))
                                                 <div class="flex w-[400px] flex-col space-y-6">
                                                     {{-- DISC 1 --}}
                                                     <div class="overflow-hidden rounded-lg border border-gray-300">
-                                                        <div class="bg-red-500 px-3 py-2 text-center">
-                                                            <p class="text-sm font-semibold text-white">DISC 1</p>
+                                                        <div
+                                                            class="flex h-[50px] items-center justify-center bg-red-500 px-3 py-2 text-center"
+                                                        >
+                                                            <p class="font-semibold text-white">
+                                                                Personality Typically Displayed
+                                                            </p>
                                                         </div>
                                                         <div
                                                             class="relative flex min-h-[150px] items-center justify-center border-x border-gray-300 bg-white p-4"
@@ -601,8 +615,12 @@
 
                                                     {{-- DISC 2 --}}
                                                     <div class="overflow-hidden rounded-lg border border-gray-300">
-                                                        <div class="bg-yellow-500 px-3 py-2 text-center">
-                                                            <p class="text-sm font-semibold text-white">DISC 2</p>
+                                                        <div
+                                                            class="flex h-[50px] items-center justify-center bg-yellow-500 px-3 py-2 text-center"
+                                                        >
+                                                            <p class="font-semibold text-white">
+                                                                Personality Under Pressure
+                                                            </p>
                                                         </div>
                                                         <div
                                                             class="relative flex min-h-[150px] items-center justify-center border-x border-gray-300 bg-white p-4"
@@ -633,8 +651,12 @@
 
                                                     {{-- DISC 3 --}}
                                                     <div class="overflow-hidden rounded-lg border border-gray-300">
-                                                        <div class="bg-green-500 px-3 py-2 text-center">
-                                                            <p class="text-sm font-semibold text-white">DISC 3</p>
+                                                        <div
+                                                            class="flex h-[50px] items-center justify-center bg-green-500 px-3 py-2 text-center"
+                                                        >
+                                                            <p class="font-semibold text-white">
+                                                                Hidden Core Personality
+                                                            </p>
                                                         </div>
                                                         <div
                                                             class="relative flex min-h-[150px] items-center justify-center border-x border-gray-300 bg-white p-4"
@@ -697,7 +719,9 @@
 
                                 {{-- Strengths --}}
                                 <tr>
-                                    <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                    <td
+                                        class="left-0 w-[400px] border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900"
+                                    >
                                         Strengths
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -721,7 +745,9 @@
 
                                 {{-- Weaknesses --}}
                                 <tr>
-                                    <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                    <td
+                                        class="left-0 w-[400px] border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900"
+                                    >
                                         Weaknesses
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -1008,7 +1034,7 @@
 
                                 {{-- Kelalahan Emosional --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Kelalahan Emosional
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -1026,7 +1052,7 @@
 
                                 {{-- Depersonalisasi --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Depersonalisasi
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -1044,7 +1070,7 @@
 
                                 {{-- Penurunan Prestasi --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Penurunan Prestasi
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -1062,7 +1088,7 @@
 
                                 {{-- Penafsiran --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Penafsiran
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -1424,6 +1450,7 @@
                 try {
                     chartStore.papi[id] = new Chart(rc, {
                         type: 'radar',
+                        plugins: [ChartDataLabels],
                         data: {
                             labels: papiSegments.map((s) => s.code),
                             datasets: [
@@ -1452,6 +1479,16 @@
                                             `${papiSegments[c[0].dataIndex].code} - ${papiSegments[c[0].dataIndex].cat}`,
                                         label: (c) => `${papiSegments[c.dataIndex].desc.replace(/\n/g, ' ')}: ${c.raw}`,
                                     },
+                                },
+                                datalabels: {
+                                    color: '#111',
+                                    backgroundColor: 'rgba(59,130,246,0.2)',
+                                    borderRadius: 3,
+                                    font: { size: 8, weight: 'bold' },
+                                    align: 'end',
+                                    anchor: 'end',
+                                    offset: 4,
+                                    formatter: (value) => (value === 0 ? '' : value),
                                 },
                             },
                             scales: { r: { min: 0, max: 9, pointLabels: { display: false }, ticks: { stepSize: 1 } } },
@@ -1522,7 +1559,13 @@
                                 },
                             },
                             scales: {
-                                y: { ticks: { stepSize: 20, font: { size: 11 } }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                                y: {
+                                    beginAtZero: true,
+                                    min: -10,
+                                    max: 10,
+                                    ticks: { stepSize: 20, font: { size: 11 } },
+                                    grid: { color: 'rgba(0,0,0,0.05)' },
+                                },
                                 x: {
                                     ticks: { font: { size: 13, weight: 'bold' }, color: '#374151' },
                                     grid: { color: 'rgba(0,0,0,0.05)' },

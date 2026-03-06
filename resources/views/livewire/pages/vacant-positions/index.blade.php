@@ -6,7 +6,12 @@
         @endhasanyrole
 
         <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Path</flux:breadcrumbs.item>
-        <flux:breadcrumbs.item>Vacant Positions</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item>
+            Vacant Positions
+            @if ($activeTab == 'all')
+                (All Positions)
+            @endif
+        </flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
     {{-- Content --}}
@@ -15,7 +20,7 @@
         <div class="mb-8 flex items-start justify-between gap-4">
             <div class="flex items-center gap-4">
                 <div
-                    class="color-gradient flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-white"
+                    class="color-gradient flex h-10 w-10 items-center justify-center self-start rounded-xl bg-gray-100 text-white"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -34,7 +39,11 @@
                 </div>
                 <div>
                     <h1 class="inline text-2xl font-bold text-gray-900 md:text-3xl">
-                        Vacant Positions
+                        @if ($activeTab == 'vacant')
+                            Vacant Positions
+                        @else
+                            All Positions
+                        @endif
                         <img src="{{ asset('assets/icon/logo-ai.svg') }}" class="mb-2 ml-2 inline h-8" alt="Logo AI" />
                     </h1>
 
@@ -339,7 +348,8 @@
                         <div class="col-span-1 text-sm font-semibold">Kode Posisi</div>
                         <div class="col-span-3 text-sm font-semibold">Unit Kerja</div>
                         <div class="col-span-3 text-sm font-semibold">Departemen</div>
-                        <div class="col-span-2 text-sm font-semibold">Status</div>
+                        <div class="col-span-1 text-sm font-semibold">Band</div>
+                        <div class="col-span-1 text-sm font-semibold">Status</div>
                     </div>
 
                     {{-- List Items --}}
@@ -367,7 +377,15 @@
                                     {{ $position->department ?? '-' }}
                                 </p>
                             </div>
-                            <div class="col-span-2 flex items-center">
+                            <div class="col-span-1 flex flex-col justify-center">
+                                <span
+                                    class="inline-flex w-fit items-center justify-center rounded-full bg-gray-100 px-3 py-1 text-center text-xs font-medium text-gray-800"
+                                >
+                                    <span class="mr-1 hidden lg:inline">Band</span>
+                                    {{ $position->band ?? '-' }}
+                                </span>
+                            </div>
+                            <div class="col-span-1 flex items-center">
                                 @if ($position->employee_id)
                                     <span
                                         class="inline-flex items-center justify-center rounded-full bg-green-100 px-3 py-1 text-center text-xs font-medium text-green-800"
@@ -457,11 +475,19 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500 uppercase">Departemen</p>
-                                    <p class="mt-1 line-clamp-1 font-semibold text-gray-900">
-                                        {{ $position->department ?? '-' }}
-                                    </p>
+                                <div class="mt-2 grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-500 uppercase">Departemen</p>
+                                        <p class="mt-1 line-clamp-1 font-semibold text-gray-900">
+                                            {{ $position->department ?? '-' }}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-500 uppercase">Band</p>
+                                        <p class="mt-1 line-clamp-1 font-semibold text-gray-900">
+                                            Band {{ $position->band ?? '-' }}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </a>

@@ -215,8 +215,10 @@
                             <div class="grid h-full grid-cols-1 gap-4 sm:grid-cols-3" wire:ignore>
                                 {{-- DISC 1 --}}
                                 <div class="flex h-full flex-col">
-                                    <div class="rounded-t-md bg-red-500 px-3 py-2 text-center">
-                                        <p class="text-sm font-semibold text-white">DISC 1</p>
+                                    <div
+                                        class="flex h-[50px] items-center justify-center rounded-t-md bg-red-500 px-3 py-2 text-center"
+                                    >
+                                        <p class="text-sm font-semibold text-white">Personality Typically Displayed</p>
                                     </div>
                                     <div
                                         class="relative flex min-h-[250px] grow items-center justify-center border-x border-gray-300 bg-white p-2 sm:min-h-[300px] md:min-h-[350px]"
@@ -235,8 +237,10 @@
 
                                 {{-- DISC 2 --}}
                                 <div class="flex h-full flex-col">
-                                    <div class="rounded-t-md bg-yellow-500 px-3 py-2 text-center">
-                                        <p class="text-sm font-semibold text-white">DISC 2</p>
+                                    <div
+                                        class="flex h-[50px] items-center justify-center rounded-t-md bg-yellow-500 px-3 py-2 text-center"
+                                    >
+                                        <p class="text-sm font-semibold text-white">Personality Under Pressure</p>
                                     </div>
                                     <div
                                         class="relative flex min-h-[250px] grow items-center justify-center border-x border-gray-300 bg-white p-2 sm:min-h-[300px] md:min-h-[350px]"
@@ -255,8 +259,10 @@
 
                                 {{-- DISC 3 --}}
                                 <div class="flex h-full flex-col">
-                                    <div class="rounded-t-md bg-green-500 px-3 py-2 text-center">
-                                        <p class="text-sm font-semibold text-white">DISC 3</p>
+                                    <div
+                                        class="flex h-[50px] items-center justify-center rounded-t-md bg-green-500 px-3 py-2 text-center"
+                                    >
+                                        <p class="text-sm font-semibold text-white">Hidden Core Personality</p>
                                     </div>
                                     <div
                                         class="relative flex min-h-[250px] grow items-center justify-center border-x border-gray-300 bg-white p-2 sm:min-h-[300px] md:min-h-[350px]"
@@ -274,7 +280,7 @@
                                 </div>
                             </div>
                         @else
-                            <div class="flex flex-col items-center justify-center">
+                            <div class="flex h-full flex-col items-center justify-center">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     class="h-12 w-12 text-gray-300"

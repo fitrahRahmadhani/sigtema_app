@@ -67,7 +67,7 @@
             <div class="col-span-3 h-full w-full space-y-4 md:col-span-1">
                 <div class="color-gradient flex h-[90%] w-full flex-col rounded-lg p-4">
                     <h6 class="border-b border-white pb-4 text-3xl font-bold text-white lg:text-5xl">
-                        Employee's
+                        Employee
                         <br />
                         Profile
                     </h6>

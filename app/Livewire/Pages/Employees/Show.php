@@ -78,7 +78,7 @@ class Show extends Component
 
     private function getDISCData()
     {
-        if (!$this->employee->disc) {
+        if (!$this->employee->disc || $this->employee->disc?->interpretation1 == '(Skor tidak valid)' || $this->employee->disc?->interpretation2 == '(Skor tidak valid)' || $this->employee->disc?->interpretation3 == '(Skor tidak valid)') {
             return $this->getDefaultDISCData();
         }
         return $this->employee->disc;
