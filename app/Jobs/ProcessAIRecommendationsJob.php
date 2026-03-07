@@ -42,7 +42,7 @@ class ProcessAIRecommendationsJob implements ShouldQueue
             // Broadcast progress
             $this->broadcastProgress(10, "Preparing AI analysis...");
 
-            $results = $service->analyzeWithFileUpload(
+            $results = $service->analyzeWithAI(
                 $this->position,
                 $this->selectedEmployeeIds,
                 function ($progress, $message) {

@@ -5,6 +5,8 @@
 
 <link rel="icon" href="/favicon.ico" sizes="any" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.png" />
 
 {{-- Preconnect untuk koneksi lebih cepat --}}
 <link rel="preconnect" href="https://fonts.bunny.net" />

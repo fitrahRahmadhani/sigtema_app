@@ -8,6 +8,7 @@ use App\Models\Position;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -165,6 +166,8 @@ class Show extends Component
         );
 
         Toaster::info('Analisis AI dimulai. Proses membutuhkan 1 - 2 menit.');
+
+        Log::info('(VC) User ' . Auth::user()->name . ' (' . Auth::user()->email . ')' . ' memulai analisis AI untuk posisi ' . $this->position->name);
     }
 
     public function retryAIProcessing()

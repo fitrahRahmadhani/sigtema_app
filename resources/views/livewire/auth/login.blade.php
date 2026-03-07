@@ -28,7 +28,6 @@
                         type="text"
                         id="email"
                         wire:model.blur="email"
-                        autocomplete="off"
                         class="w-full p-2 text-black focus:outline-none"
                         placeholder="Masukkan email"
                     />
@@ -62,6 +61,7 @@
                     <input
                         :type="showPassword ? 'text' : 'password'"
                         id="password"
+                        autocomplete="new-password"
                         wire:model.blur="password"
                         class="w-full p-2 pr-10 text-black focus:outline-none"
                         placeholder="Masukkan password"

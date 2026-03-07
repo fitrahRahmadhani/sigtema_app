@@ -522,7 +522,7 @@
                                     <td class="border-r border-gray-300 px-3 py-3 text-gray-600 sm:px-4">
                                         {{ $employee->position->work_unit ?? '-' }}
                                     </td>
-                                    <td class="px-3 py-3 text-gray-800 uppercase sm:px-4">
+                                    <td class="px-3 py-3 text-center text-gray-800 uppercase sm:px-4">
                                         {{ $employee->position->company->name ?? '-' }}
                                     </td>
                                 </tr>
@@ -539,7 +539,7 @@
                                     <td class="border-r border-gray-300 px-3 py-3 text-gray-600 sm:px-4">
                                         {{ $positionHistory->work_unit }}
                                     </td>
-                                    <td class="px-3 py-3 text-gray-800 uppercase sm:px-4">
+                                    <td class="px-3 py-3 text-center text-gray-800 uppercase sm:px-4">
                                         {{ $positionHistory->company }}
                                     </td>
                                 </tr>
