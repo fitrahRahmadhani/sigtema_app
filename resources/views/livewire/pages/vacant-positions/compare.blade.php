@@ -91,8 +91,8 @@
                     </svg>
 
                     <p>
-                        <span class="font-semibold">Jika chart (bagan) tidak muncul,</span>
-                        mohon untuk refresh halaman
+                        <span class="font-semibold">If the chart does not appear,</span>
+                        please refresh the page.
                     </p>
                 </div>
             </div>
@@ -907,10 +907,10 @@
                             </td>
                         </tr>
 
-                        {{-- Kelalahan Emosional --}}
+                        {{-- Emotional Exhaustion --}}
                         <tr>
                             <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                Kelalahan Emosional
+                                Emotional Exhaustion
                             </td>
                             @foreach ($selectedEmployees as $employee)
                                 @php
@@ -923,10 +923,10 @@
                             @endforeach
                         </tr>
 
-                        {{-- Depersonalisasi --}}
+                        {{-- Depersonalization --}}
                         <tr>
                             <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                Depersonalisasi
+                                Depersonalization
                             </td>
                             @foreach ($selectedEmployees as $employee)
                                 @php
@@ -939,10 +939,10 @@
                             @endforeach
                         </tr>
 
-                        {{-- Penurunan Prestasi --}}
+                        {{-- Reduced Performance --}}
                         <tr>
                             <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                Penurunan Prestasi
+                                Reduced Performance
                             </td>
                             @foreach ($selectedEmployees as $employee)
                                 @php
@@ -955,10 +955,10 @@
                             @endforeach
                         </tr>
 
-                        {{-- Penafsiran --}}
+                        {{-- Interpretation --}}
                         <tr>
                             <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                Penafsiran
+                                Interpretation
                             </td>
                             @foreach ($selectedEmployees as $employee)
                                 @php
