@@ -72,8 +72,8 @@
                         d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"
                     />
                 </svg>
-                <h3 class="mt-4 text-xl font-semibold text-gray-700">Pilih Perusahaan</h3>
-                <p class="mt-2 text-gray-500">Silakan pilih perusahaan untuk melihat data karyawan</p>
+                <h3 class="mt-4 text-xl font-semibold text-gray-700">Select Company</h3>
+                <p class="mt-2 text-gray-500">Please select a company to compare employees</p>
 
                 {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -109,7 +109,7 @@
                                 </div>
                                 <div>
                                     <h4 class="font-semibold text-gray-900">{{ $company->name }}</h4>
-                                    <p class="text-sm text-gray-500">{{ $company->employees_count ?? 0 }} karyawan</p>
+                                    <p class="text-sm text-gray-500">{{ $company->employees_count ?? 0 }} employees</p>
                                 </div>
                             </div>
                         </button>
@@ -126,36 +126,37 @@
                 <div class="mb-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
                     {{-- Results Info --}}
                     <div class="text-sm text-gray-600">
-                        Menampilkan karyawan di
+                        Showing employees at
                         <span class="font-semibold">{{ $selectedCompany->name }}</span>
                     </div>
 
-                    {{-- Desktop Layout: Search & Filter --}}
-                    <div class="hidden gap-4 md:grid md:grid-cols-4">
+                    {{-- Desktop Layout --}}
+                    <div class="hidden gap-4 md:grid md:grid-cols-6">
                         {{-- Search Input --}}
                         <div class="md:col-span-2">
                             <label class="mb-2 block text-sm font-medium text-gray-700">
-                                Cari Nama atau Employee ID
+                                Search Name or Employee ID
                             </label>
                             <input
                                 type="text"
                                 wire:model.live.debounce.300ms="search"
-                                placeholder="Ketik nama atau employee ID..."
+                                placeholder="Type name or employee ID..."
                                 class="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus:outline-none"
                             />
                         </div>
 
-                        {{-- Filter Gender --}}
+                        {{-- Filter Band --}}
                         <div class="relative">
-                            <label class="mb-2 block text-sm font-medium text-gray-700">Gender</label>
+                            <label class="mb-2 block text-sm font-medium text-gray-700">Band</label>
                             <div class="relative">
                                 <select
-                                    wire:model.live="filterGender"
+                                    wire:model.live="filterBand"
                                     class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus:outline-none"
                                 >
-                                    <option value="">Semua Gender</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
+                                    <option value="">All Bands</option>
+                                    @foreach ($bands as $band)
+                                        <option value="{{ $band }}">Band {{ $band }}</option>
+                                    @endforeach
                                 </select>
                                 <svg
                                     class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
@@ -170,15 +171,15 @@
                             </div>
                         </div>
 
-                        {{-- Filter Unit --}}
+                        {{-- Filter Work Unit --}}
                         <div class="relative">
-                            <label class="mb-2 block text-sm font-medium text-gray-700">Unit</label>
+                            <label class="mb-2 block text-sm font-medium text-gray-700">Work Unit</label>
                             <div class="relative">
                                 <select
                                     wire:model.live="filterUnit"
                                     class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus:outline-none"
                                 >
-                                    <option value="">Semua Unit</option>
+                                    <option value="">All Units</option>
                                     @foreach ($units as $unit)
                                         <option value="{{ $unit }}">{{ $unit }}</option>
                                     @endforeach
@@ -195,36 +196,88 @@
                                 </svg>
                             </div>
                         </div>
+
+                        {{-- Filter Department --}}
+                        <div class="relative">
+                            <label class="mb-2 block text-sm font-medium text-gray-700">Department</label>
+                            <div class="relative">
+                                <select
+                                    wire:model.live="filterDepartment"
+                                    class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus:outline-none"
+                                >
+                                    <option value="">All Departments</option>
+                                    @foreach ($departments as $dept)
+                                        <option value="{{ $dept }}">{{ $dept }}</option>
+                                    @endforeach
+                                </select>
+                                <svg
+                                    class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        {{-- Filter Gender --}}
+                        <div class="relative">
+                            <label class="mb-2 block text-sm font-medium text-gray-700">Gender</label>
+                            <div class="relative">
+                                <select
+                                    wire:model.live="filterGender"
+                                    class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus:outline-none"
+                                >
+                                    <option value="">All Genders</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                                <svg
+                                    class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
 
-                    {{-- Mobile Layout: Stacked --}}
+                    {{-- Mobile Layout --}}
                     <div class="space-y-4 md:hidden">
                         {{-- Search Input --}}
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-700">
-                                Cari Nama atau Employee ID
+                                Search Name or Employee ID
                             </label>
                             <input
                                 type="text"
                                 wire:model.live.debounce.300ms="search"
-                                placeholder="Ketik nama atau employee ID..."
+                                placeholder="Type name or employee ID..."
                                 class="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus:outline-none"
                             />
                         </div>
 
-                        {{-- Filter Row --}}
+                        {{-- Filter Row 1 --}}
                         <div class="grid grid-cols-2 gap-4">
-                            {{-- Gender --}}
+                            {{-- Band --}}
                             <div class="relative">
-                                <label class="mb-2 block text-sm font-medium text-gray-700">Gender</label>
+                                <label class="mb-2 block text-sm font-medium text-gray-700">Band</label>
                                 <div class="relative">
                                     <select
-                                        wire:model.live="filterGender"
+                                        wire:model.live="filterBand"
                                         class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus:outline-none"
                                     >
-                                        <option value="">Semua</option>
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
+                                        <option value="">All Bands</option>
+                                        @foreach ($bands as $band)
+                                            <option value="{{ $band }}">Band {{ $band }}</option>
+                                        @endforeach
                                     </select>
                                     <svg
                                         class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
@@ -239,18 +292,72 @@
                                 </div>
                             </div>
 
-                            {{-- Unit --}}
+                            {{-- Work Unit --}}
                             <div class="relative">
-                                <label class="mb-2 block text-sm font-medium text-gray-700">Unit</label>
+                                <label class="mb-2 block text-sm font-medium text-gray-700">Work Unit</label>
                                 <div class="relative">
                                     <select
                                         wire:model.live="filterUnit"
                                         class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus:outline-none"
                                     >
-                                        <option value="">Semua Unit</option>
+                                        <option value="">All Units</option>
                                         @foreach ($units as $unit)
                                             <option value="{{ $unit }}">{{ $unit }}</option>
                                         @endforeach
+                                    </select>
+                                    <svg
+                                        class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Filter Row 2 --}}
+                        <div class="grid grid-cols-2 gap-4">
+                            {{-- Department --}}
+                            <div class="relative">
+                                <label class="mb-2 block text-sm font-medium text-gray-700">Department</label>
+                                <div class="relative">
+                                    <select
+                                        wire:model.live="filterDepartment"
+                                        class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus:outline-none"
+                                    >
+                                        <option value="">All Depts</option>
+                                        @foreach ($departments as $dept)
+                                            <option value="{{ $dept }}">{{ $dept }}</option>
+                                        @endforeach
+                                    </select>
+                                    <svg
+                                        class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            {{-- Gender --}}
+                            <div class="relative">
+                                <label class="mb-2 block text-sm font-medium text-gray-700">Gender</label>
+                                <div class="relative">
+                                    <select
+                                        wire:model.live="filterGender"
+                                        class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus:outline-none"
+                                    >
+                                        <option value="">All</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
                                     </select>
                                     <svg
                                         class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
@@ -269,11 +376,11 @@
 
                     {{-- Results Count --}}
                     <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
-                        Menampilkan
+                        Showing
                         <span class="font-semibold">{{ $employees->count() }}</span>
-                        dari
+                        of
                         <span class="font-semibold">{{ $employees->total() }}</span>
-                        karyawan
+                        employees
                     </div>
                 </div>
 
@@ -284,12 +391,12 @@
                         class="color-gradient hidden place-items-center justify-items-start gap-4 rounded-lg px-4 py-3 text-white md:grid md:grid-cols-12"
                     >
                         <div class="col-span-1 text-sm font-semibold">Employee ID</div>
-                        <div class="col-span-2 text-sm font-semibold">Nama</div>
+                        <div class="col-span-2 text-sm font-semibold">Name</div>
                         <div class="col-span-1 text-sm font-semibold">Band</div>
                         <div class="col-span-1 text-sm font-semibold">Gender</div>
                         <div class="col-span-1 text-sm font-semibold">JG/PG</div>
-                        <div class="col-span-3 text-sm font-semibold">Posisi</div>
-                        <div class="col-span-3 text-sm font-semibold">Unit</div>
+                        <div class="col-span-3 text-sm font-semibold">Position</div>
+                        <div class="col-span-3 text-sm font-semibold">Work Unit</div>
                     </div>
 
                     {{-- List Items --}}
@@ -301,7 +408,8 @@
                         >
                             <div class="col-span-1 flex flex-col justify-center">
                                 <p class="line-clamp-1 text-sm font-semibold text-gray-900">
-                                    {{ $employee->employee_number }}
+                                    <span class="inline lg:hidden">{{ substr($employee->employee_number, -4) }}</span>
+                                    <span class="hidden lg:inline">{{ $employee->employee_number }}</span>
                                 </p>
                             </div>
                             <div class="col-span-2 flex flex-col justify-center">
