@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\EmployeesProfile;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -31,6 +32,8 @@ class Show extends Component
         $this->softCompetencies = $employee->getScores();
         $this->workDirectionData = $this->getWorkDirectionData();
         $this->discData = $this->getDISCData();
+
+        Log::info('(EP) User ' . $this->user->name . ' (' . $this->user->email . ')' . ' melihat profile karyawan ' . $this->employee->name);
     }
 
     private function getWorkDirectionData()

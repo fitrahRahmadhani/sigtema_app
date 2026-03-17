@@ -233,10 +233,10 @@ class Employee extends Model
             return null;
         }
 
-        $age57 = $this->birth_date->copy()->addYears(57);
+        $age56 = $this->birth_date->copy()->addYears(56);
 
         // Pensiun tanggal 1 bulan berikutnya setelah ulang tahun ke-57
-        return $age57->copy()->startOfMonth()->addMonth();
+        return $age56->copy()->startOfMonth()->addMonth();
     }
 
     /**

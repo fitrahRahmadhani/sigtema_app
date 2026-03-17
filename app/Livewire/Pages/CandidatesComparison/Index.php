@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -295,7 +296,6 @@ class Index extends Component
             'company',
             'papi',
             'disc',
-            // Hapus softCompetencies dari eager loading
         ])->find($employeeId);
 
         if ($employee) {
@@ -310,6 +310,8 @@ class Index extends Component
             // Dispatch event to initialize charts
             $this->dispatch('employee-selected', index: $index);
             $this->dispatch('charts-loaded');
+
+            Log::info('(CC) User ' . $this->user->name . ' selected employee ' . $employee->name);
         }
     }
 

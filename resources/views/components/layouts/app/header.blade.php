@@ -67,6 +67,11 @@
             class="absolute top-24 right-6 h-fit w-[200px] rounded-lg border border-zinc-200 bg-white p-2 text-gray-500 shadow-lg"
             style="display: none"
         >
+            <div class="color-gradient mb-2 w-full rounded-md p-2 text-center font-semibold text-white">
+                Role:
+                <span class="capitalize">{{ auth()->user()->roles()->first()->name }}</span>
+            </div>
+
             {{-- Button untuk profile --}}
             <a
                 href="{{ route('settings.profile') }}"
@@ -87,7 +92,7 @@
                     />
                 </svg>
 
-                <p>Profil Saya</p>
+                <p>My Profile</p>
             </a>
 
             {{-- Form Logout --}}
@@ -111,7 +116,7 @@
                             d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
                         />
                     </svg>
-                    <p>Keluar</p>
+                    <p>Sign Out</p>
                 </button>
             </form>
         </div>

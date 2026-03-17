@@ -24,18 +24,21 @@ class Index extends Component
     public string $search = '';
     public string $filterDepartment = '';
     public string $filterUnit = '';
-    public string $activeTab = 'vacant'; // 'vacant' or 'all'
+    public string $filterBand = '';
+    public string $activeTab = 'vacant';
 
     protected $queryString = [
         'search' => ['except' => ''],
         'filterDepartment' => ['except' => ''],
         'filterUnit' => ['except' => ''],
+        'filterBand' => ['except' => ''],
         'activeTab' => ['except' => 'vacant'],
         'page' => ['except' => 1]
     ];
 
     public function mount(): void
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
 
         $this->isSuperadmin = $user->hasRole('superadmin');
@@ -87,6 +90,7 @@ class Index extends Component
         $this->search = '';
         $this->filterDepartment = '';
         $this->filterUnit = '';
+        $this->filterBand = '';
     }
 
     public function updatedSearch(): void
@@ -100,6 +104,11 @@ class Index extends Component
     }
 
     public function updatedFilterUnit(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterBand(): void
     {
         $this->resetPage();
     }
@@ -134,7 +143,6 @@ class Index extends Component
 
     public function render()
     {
-        // Jika superadmin belum pilih company
         if ($this->isSuperadmin && !$this->selectedCompanyId) {
             return view('livewire.pages.vacant-positions.index', [
                 'showCompanySelection' => true,
@@ -178,7 +186,12 @@ class Index extends Component
             });
         }
 
-        $positions = $query->orderBy('name')->paginate(10);
+        // Filter band
+        if (!empty($this->filterBand)) {
+            $query->where('band', $this->filterBand);
+        }
+
+        $positions = $query->orderBy('band')->paginate(10);
 
         // Get unique departments and units for filters
         $departmentQuery = Position::where('company_id', $this->selectedCompanyId);
@@ -194,6 +207,13 @@ class Index extends Component
             ->unique()
             ->sort()
             ->values();
+
+        $bands = Position::where('company_id', $this->selectedCompanyId)
+            ->distinct()
+            ->whereNotNull('band')
+            ->orderBy('band')
+            ->pluck('band')
+            ->toArray();
 
         $units = $unitQuery->where(function ($q) {
             $q->whereNotNull('section')
@@ -214,6 +234,7 @@ class Index extends Component
             'showCompanySelection' => false,
             'positions' => $positions,
             'departments' => $departments,
+            'bands' => $bands,
             'units' => $units,
             'selectedCompany' => $this->selectedCompany,
             'isSuperadmin' => $this->isSuperadmin,
