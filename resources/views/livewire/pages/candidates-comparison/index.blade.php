@@ -96,8 +96,8 @@
                         d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"
                     />
                 </svg>
-                <h3 class="mt-4 text-xl font-semibold text-gray-700">Pilih Perusahaan</h3>
-                <p class="mt-2 text-gray-500">Silakan pilih perusahaan untuk membandingkan karyawan</p>
+                <h3 class="mt-4 text-xl font-semibold text-gray-700">Select Company</h3>
+                <p class="mt-2 text-gray-500">Please select a company to compare employees</p>
 
                 {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -148,7 +148,7 @@
                 {{-- Info Box --}}
                 <div class="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
                     <div class="text-sm text-gray-600">
-                        Membandingkan karyawan di
+                        Comparing employees at
                         <span class="font-semibold">{{ $selectedCompany->name }}</span>
                     </div>
                 </div>
@@ -169,16 +169,16 @@
                                     clip-rule="evenodd"
                                 />
                             </svg>
-                            <h6 class="font-semibold">Informasi</h6>
+                            <h6 class="font-semibold">Information</h6>
                         </div>
                         <p>
-                            <span class="font-semibold">Jika chart (bagan) tidak muncul,</span>
-                            mohon untuk refresh halaman
+                            <span class="font-semibold">If charts do not appear,</span>
+                            please refresh the page
                         </p>
                         @hasrole('head-of-unit')
                             <p>
-                                Anda hanya dapat mengkomparasi karyawan
-                                <span class="font-semibold">selevel atau di bawah band Anda</span>
+                                You can only compare employees
+                                <span class="font-semibold">at or below your band level</span>
                             </p>
                         @endhasrole
                     </div>
@@ -1032,10 +1032,10 @@
                                     </td>
                                 </tr>
 
-                                {{-- Kelalahan Emosional --}}
+                                {{-- Emotional Exhaustion --}}
                                 <tr>
                                     <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                        Kelalahan Emosional
+                                        Emotional Exhaustion
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 align-top text-gray-700">
@@ -1050,10 +1050,10 @@
                                     @endfor
                                 </tr>
 
-                                {{-- Depersonalisasi --}}
+                                {{-- Depersonalization --}}
                                 <tr>
                                     <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                        Depersonalisasi
+                                        Depersonalization
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 align-top text-gray-700">
@@ -1068,10 +1068,10 @@
                                     @endfor
                                 </tr>
 
-                                {{-- Penurunan Prestasi --}}
+                                {{-- Performance Decline --}}
                                 <tr>
                                     <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                        Penurunan Prestasi
+                                        Performance Decline
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 align-top text-gray-700">
@@ -1086,10 +1086,10 @@
                                     @endfor
                                 </tr>
 
-                                {{-- Penafsiran --}}
+                                {{-- Interpretation --}}
                                 <tr>
                                     <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                        Penafsiran
+                                        Interpretation
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 align-top text-gray-700">
