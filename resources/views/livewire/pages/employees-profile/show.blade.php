@@ -24,8 +24,8 @@
                 </svg>
 
                 <p>
-                    <span class="font-semibold">Jika chart (bagan) tidak muncul,</span>
-                    mohon untuk refresh halaman
+                    <span class="font-semibold">If charts do not appear,</span>
+                    please refresh the page
                 </p>
             </div>
         </div>
@@ -734,7 +734,7 @@
                         </table>
                     </div>
                     <p class="p-2 text-gray-400 italic">
-                        *Jika ada pertanyaan terkait MCU, silahkan hubungi Dokter Perusahaan
+                        * If you have any questions regarding the MCU, please contact the Company Doctors
                     </p>
                 </div>
 
@@ -756,15 +756,15 @@
                                     <th
                                         class="w-2/3 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
                                     >
-                                        Aspek
+                                        Aspect
                                     </th>
-                                    <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Skor</th>
+                                    <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Score</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-2/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Kelelahan Emosional
+                                        Emotional Exhaustion
                                     </td>
                                     <td class="px-3 py-2 text-gray-600 sm:px-4">
                                         {{ $employee->burnout->emotional_exhaustion ?? '-' }}
@@ -772,7 +772,7 @@
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-2/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Depersonalisasi
+                                        Depersonalization
                                     </td>
                                     <td class="px-3 py-2 text-gray-600 sm:px-4">
                                         {{ $employee->burnout->depersonalization ?? '-' }}
@@ -780,7 +780,7 @@
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-2/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Penurunan Prestasi
+                                        Performance Decline
                                     </td>
                                     <td class="px-3 py-2 text-gray-600 sm:px-4">
                                         {{ $employee->burnout->achievement_decline ?? '-' }}
@@ -790,7 +790,7 @@
                                     <td
                                         class="w-2/3 border-r border-gray-300 px-3 py-2 font-bold text-gray-800 sm:px-4"
                                     >
-                                        Total Skor
+                                        Total Score
                                     </td>
                                     <td class="px-3 py-2 font-bold text-gray-600 sm:px-4">
                                         {{ $employee->burnout?->getTotalScore() ?? '-' }}
@@ -798,7 +798,7 @@
                                 </tr>
                                 <tr class="border-t border-gray-300 transition-colors">
                                     <td colspan="2" class="px-3 py-3 sm:px-4">
-                                        <div class="mb-1 font-semibold text-gray-800">Penafsiran Hasil:</div>
+                                        <div class="mb-1 font-semibold text-gray-800">Interpretation:</div>
                                         <div class="text-sm text-gray-700">
                                             {!! strip_tags($employee->burnout?->result, '<i><b>') ?? '-' !!}
                                         </div>

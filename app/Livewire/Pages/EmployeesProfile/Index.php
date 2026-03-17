@@ -30,6 +30,12 @@ class Index extends Component
     #[Url(as: 'unit')]
     public $filterUnit = '';
 
+    #[Url(as: 'dept')]
+    public $filterDepartment = '';
+
+    #[Url(as: 'band')]
+    public $filterBand = '';
+
     #[Url]
     public $selectedCompanyId = null;
 
@@ -88,6 +94,16 @@ class Index extends Component
         $this->resetPage();
     }
 
+    public function updatingFilterDepartment()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterBand()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
         // Jika superadmin belum pilih company
@@ -124,6 +140,18 @@ class Index extends Component
             $query->where('gender', $this->filterGender);
         }
 
+        // Filter department
+        if (!empty($this->filterDepartment)) {
+            $query->whereHas('position', function ($q) {
+                $q->where('department', $this->filterDepartment);
+            });
+        }
+
+        // Filter band
+        if (!empty($this->filterBand)) {
+            $query->where('band', $this->filterBand);
+        }
+
         // Filter unit menggunakan work_unit
         if (!empty($this->filterUnit)) {
             $query->whereHas('position', function ($q) {
@@ -155,11 +183,27 @@ class Index extends Component
             ->sort()
             ->values();
 
+        $departments = Position::where('company_id', $companyId)
+            ->whereNotNull('department')
+            ->pluck('department')
+            ->unique()
+            ->sort()
+            ->values();
+
+        $bands = Employee::where('company_id', $companyId)
+            ->whereNotNull('band')
+            ->distinct()
+            ->orderBy('band')
+            ->pluck('band')
+            ->toArray();
+
         return view('livewire.pages.employees-profile.index', [
             'showCompanySelection' => false,
             'employees' => $employees,
             'total' => $employees->total(),
             'units' => $units,
+            'departments' => $departments,
+            'bands' => $bands,
             'selectedCompany' => $selectedCompany,
             'isSuperadmin' => $this->isSuperadmin,
             'companies' => $this->companies
