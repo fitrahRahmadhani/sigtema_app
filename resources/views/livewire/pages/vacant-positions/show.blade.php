@@ -223,7 +223,6 @@
                                                 clip-rule="evenodd"
                                             />
                                         </svg>
-
                                         You may only compare employees at the same level as you or below your Band
                                     </div>
                                 </div>
@@ -639,7 +638,7 @@
                             </div>
                         </div>
 
-                        {{-- Match Score & Footer - Selalu di bawah --}}
+                        {{-- Match Score & Footer --}}
                         <div class="mt-auto">
                             {{-- Recommendation Badge --}}
                             @if (! empty($candidate['recommendation']))

@@ -143,4 +143,9 @@ Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin|head-o
     Route::get('settings/profile', Profile::class)->name('settings.profile');
 });
 
+Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin|head-of-unit|hc-operator|employee']], function () {
+    // Settings
+    Route::get('settings/profile', Profile::class)->name('settings.profile');
+});
+
 require __DIR__ . '/auth.php';

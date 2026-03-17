@@ -122,7 +122,7 @@ class Show extends Component
     public function addToAnalysis($employeeId)
     {
         if (count($this->selectedForAnalysis) >= $this->maxCandidates) {
-            Toaster::warning("Maksimal {$this->maxCandidates} kandidat dapat dianalisis");
+            Toaster::warning("Maximum {$this->maxCandidates} candidates can be analyzed");
             return;
         }
 
@@ -145,18 +145,18 @@ class Show extends Component
         $employeeIds = array_keys($this->selectedForAnalysis);
 
         if (count($employeeIds) === 0) {
-            Toaster::warning('Pilih minimal 1 kandidat untuk dianalisis');
+            Toaster::warning('Select at least 1 candidate to analyze');
             return;
         }
 
         if (count($employeeIds) > $this->maxCandidates) {
-            Toaster::warning("Maksimal {$this->maxCandidates} kandidat per analisis");
+            Toaster::warning("Maximum {$this->maxCandidates} candidates per analysis");
             return;
         }
 
         $this->aiProcessing      = true;
         $this->aiProgress        = 0;
-        $this->aiStatus          = 'Mempersiapkan analisis AI...';
+        $this->aiStatus          = 'Preparing AI analysis...';
         $this->showEmployeeModal = false;
 
         ProcessAIRecommendationsJob::dispatch(
@@ -165,9 +165,9 @@ class Show extends Component
             $employeeIds
         );
 
-        Toaster::info('Analisis AI dimulai. Proses membutuhkan 1 - 2 menit.');
+        Toaster::info('AI analysis started. Process may take 1 - 2 minutes.');
 
-        Log::info('(VC) User ' . Auth::user()->name . ' (' . Auth::user()->email . ')' . ' memulai analisis AI untuk posisi ' . $this->position->name);
+        Log::info('(VC) User ' . Auth::user()->name . ' (' . Auth::user()->email . ')' . ' started AI analysis for position ' . $this->position->name);
     }
 
     public function retryAIProcessing()
@@ -191,37 +191,37 @@ class Show extends Component
         $this->recommendations = $event['results'];
         $this->aiProcessing    = false;
         $this->aiProgress      = 100;
-        $this->aiStatus        = 'Analisis selesai!';
+        $this->aiStatus        = 'Analysis complete!';
 
         Cache::put($this->cacheKey(), $event['results'], now()->addHours(24));
 
-        Toaster::success('Analisis AI selesai! Rekomendasi terbaik telah ditemukan.');
+        Toaster::success('AI analysis complete! Best recommendations have been found.');
     }
 
     public function handleAIFailed($event)
     {
         $this->aiProcessing = false;
-        $this->aiStatus     = 'Analisis gagal';
-        Toaster::error('Analisis AI gagal: ' . $event['error']);
+        $this->aiStatus     = 'Analysis failed';
+        Toaster::error('AI Analysis Failed: ' . $event['error']);
     }
 
     public function updatedSelectedCandidates($value)
     {
         if (count($this->selectedCandidates) > 5) {
             $this->selectedCandidates = array_slice($this->selectedCandidates, 0, 5);
-            Toaster::warning('Maksimal 5 kandidat dapat dipilih untuk perbandingan');
+            Toaster::warning('Maximum 5 candidates can be selected for comparison');
         }
     }
 
     public function compareSelected()
     {
         if (count($this->selectedCandidates) < 2) {
-            Toaster::warning('Pilih minimal 2 kandidat untuk dibandingkan');
+            Toaster::warning('Comparison must have at least 2 candidates');
             return;
         }
 
         if (count($this->selectedCandidates) > 5) {
-            Toaster::warning('Maksimal 5 kandidat dapat dibandingkan');
+            Toaster::warning('Max. 5 candidates can be compared');
             return;
         }
 
