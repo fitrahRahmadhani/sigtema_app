@@ -312,6 +312,7 @@ class Index extends Component
             $this->dispatch('charts-loaded');
 
             Log::info('(CC) User ' . $this->user->name . ' selected employee ' . $employee->name);
+            activity()->withProperties(['actor' => $this->user->name, 'employee' => $employee->name])->log('(CC) User selected employee');
         }
     }
 

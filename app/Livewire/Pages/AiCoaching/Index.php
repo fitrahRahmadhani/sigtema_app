@@ -48,7 +48,7 @@ class Index extends Component
             'papi',
             'positionHistories',
             'position',
-        ])->where('email', 'fardhi.ade@sig.id')->first();
+        ])->where('email', $user->email)->first();
 
         if (!$employee) {
             $this->isRegistered = false;
@@ -205,6 +205,9 @@ class Index extends Component
         $this->isLoading = true;
 
         $this->dispatch('process-ai-response', message: $message);
+
+        Log::info('(AI Coaching) User ' . Auth::user()->name . ' sent message: ' . $message);
+        activity()->withProperties(['actor' => Auth::user()->name,  'target' => $this->targetEmployee->name, 'message' => $message])->log('(AI Coaching) User sent message');
     }
 
     #[\Livewire\Attributes\On('process-ai-response')]
