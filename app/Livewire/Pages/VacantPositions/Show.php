@@ -168,6 +168,9 @@ class Show extends Component
         Toaster::info('AI analysis started. Process may take 1 - 2 minutes.');
 
         Log::info('(VC) User ' . Auth::user()->name . ' (' . Auth::user()->email . ')' . ' started AI analysis for position ' . $this->position->name);
+        activity()
+            ->withProperties(['actor' => Auth::user()->name, 'position' => $this->position->name])
+            ->log('(VC) Started AI analysis for vacant position ');
     }
 
     public function retryAIProcessing()
