@@ -646,7 +646,7 @@
                                         <div class="text-center">
                                             <p class="text-xs text-gray-500">D</p>
                                             <p
-                                                class="{{ $disc->D1 >= 7 ? 'text-red-600' : 'text-gray-900' }} text-lg font-semibold"
+                                                class="{{ $disc->D1 >= 7 ? 'text-red-600' : 'text-gray-900' }} text-xs font-semibold lg:text-lg"
                                             >
                                                 {{ $disc->D1 ?? '-' }}
                                             </p>
@@ -654,7 +654,7 @@
                                         <div class="text-center">
                                             <p class="text-xs text-gray-500">I</p>
                                             <p
-                                                class="{{ $disc->I1 >= 7 ? 'text-yellow-600' : 'text-gray-900' }} text-lg font-semibold"
+                                                class="{{ $disc->I1 >= 7 ? 'text-yellow-600' : 'text-gray-900' }} text-xs font-semibold lg:text-lg"
                                             >
                                                 {{ $disc->I1 ?? '-' }}
                                             </p>
@@ -662,7 +662,7 @@
                                         <div class="text-center">
                                             <p class="text-xs text-gray-500">S</p>
                                             <p
-                                                class="{{ $disc->S1 >= 7 ? 'text-green-600' : 'text-gray-900' }} text-lg font-semibold"
+                                                class="{{ $disc->S1 >= 7 ? 'text-green-600' : 'text-gray-900' }} text-xs font-semibold lg:text-lg"
                                             >
                                                 {{ $disc->S1 ?? '-' }}
                                             </p>
@@ -670,7 +670,7 @@
                                         <div class="text-center">
                                             <p class="text-xs text-gray-500">C</p>
                                             <p
-                                                class="{{ $disc->C1 >= 7 ? 'text-blue-600' : 'text-gray-900' }} text-lg font-semibold"
+                                                class="{{ $disc->C1 >= 7 ? 'text-blue-600' : 'text-gray-900' }} text-xs font-semibold lg:text-lg"
                                             >
                                                 {{ $disc->C1 ?? '-' }}
                                             </p>
@@ -685,7 +685,7 @@
                                         <div class="text-center">
                                             <p class="text-xs text-gray-500">D</p>
                                             <p
-                                                class="{{ $disc->D2 >= 7 ? 'text-red-600' : 'text-gray-900' }} text-lg font-semibold"
+                                                class="{{ $disc->D2 >= 7 ? 'text-red-600' : 'text-gray-900' }} text-xs font-semibold lg:text-lg"
                                             >
                                                 {{ $disc->D2 ?? '-' }}
                                             </p>
@@ -693,7 +693,7 @@
                                         <div class="text-center">
                                             <p class="text-xs text-gray-500">I</p>
                                             <p
-                                                class="{{ $disc->I2 >= 7 ? 'text-yellow-600' : 'text-gray-900' }} text-lg font-semibold"
+                                                class="{{ $disc->I2 >= 7 ? 'text-yellow-600' : 'text-gray-900' }} text-xs font-semibold lg:text-lg"
                                             >
                                                 {{ $disc->I2 ?? '-' }}
                                             </p>
@@ -701,7 +701,7 @@
                                         <div class="text-center">
                                             <p class="text-xs text-gray-500">S</p>
                                             <p
-                                                class="{{ $disc->S2 >= 7 ? 'text-green-600' : 'text-gray-900' }} text-lg font-semibold"
+                                                class="{{ $disc->S2 >= 7 ? 'text-green-600' : 'text-gray-900' }} text-xs font-semibold lg:text-lg"
                                             >
                                                 {{ $disc->S2 ?? '-' }}
                                             </p>
@@ -709,7 +709,7 @@
                                         <div class="text-center">
                                             <p class="text-xs text-gray-500">C</p>
                                             <p
-                                                class="{{ $disc->C2 >= 7 ? 'text-blue-600' : 'text-gray-900' }} text-lg font-semibold"
+                                                class="{{ $disc->C2 >= 7 ? 'text-blue-600' : 'text-gray-900' }} text-xs font-semibold lg:text-lg"
                                             >
                                                 {{ $disc->C2 ?? '-' }}
                                             </p>
@@ -724,7 +724,7 @@
                                         <div class="text-center">
                                             <p class="text-xs text-gray-500">D</p>
                                             <p
-                                                class="{{ $disc->D3 >= 7 ? 'text-red-600' : 'text-gray-900' }} text-lg font-semibold"
+                                                class="{{ $disc->D3 >= 7 ? 'text-red-600' : 'text-gray-900' }} text-xs font-semibold lg:text-lg"
                                             >
                                                 {{ $disc->D3 ?? '-' }}
                                             </p>
@@ -732,7 +732,7 @@
                                         <div class="text-center">
                                             <p class="text-xs text-gray-500">I</p>
                                             <p
-                                                class="{{ $disc->I3 >= 7 ? 'text-yellow-600' : 'text-gray-900' }} text-lg font-semibold"
+                                                class="{{ $disc->I3 >= 7 ? 'text-yellow-600' : 'text-gray-900' }} text-xs font-semibold lg:text-lg"
                                             >
                                                 {{ $disc->I3 ?? '-' }}
                                             </p>
@@ -740,7 +740,7 @@
                                         <div class="text-center">
                                             <p class="text-xs text-gray-500">S</p>
                                             <p
-                                                class="{{ $disc->S3 >= 7 ? 'text-green-600' : 'text-gray-900' }} text-lg font-semibold"
+                                                class="{{ $disc->S3 >= 7 ? 'text-green-600' : 'text-gray-900' }} text-xs font-semibold lg:text-lg"
                                             >
                                                 {{ $disc->S3 ?? '-' }}
                                             </p>
@@ -748,7 +748,7 @@
                                         <div class="text-center">
                                             <p class="text-xs text-gray-500">C</p>
                                             <p
-                                                class="{{ $disc->C3 >= 7 ? 'text-blue-600' : 'text-gray-900' }} text-lg font-semibold"
+                                                class="{{ $disc->C3 >= 7 ? 'text-blue-600' : 'text-gray-900' }} text-xs font-semibold lg:text-lg"
                                             >
                                                 {{ $disc->C3 ?? '-' }}
                                             </p>
@@ -1239,10 +1239,6 @@
                     -webkit-line-clamp: 2;
                     -webkit-box-orient: vertical;
                     overflow: hidden;
-                }
-
-                .color-gradient {
-                    background: linear-gradient(135deg, #721d21 0%, #9d2d32 100%);
                 }
             `;
             document.head.appendChild(style);

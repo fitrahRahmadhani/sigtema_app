@@ -146,6 +146,9 @@ Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin|head-o
 Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin|head-of-unit|hc-operator|employee']], function () {
     // Settings
     Route::get('settings/profile', Profile::class)->name('settings.profile');
+
+    // AI Coaching
+    Route::get('ai-coaching', App\Livewire\Pages\AiCoaching\Index::class)->name('ai-coaching');
 });
 
 require __DIR__ . '/auth.php';
