@@ -2,11 +2,15 @@
 
 namespace App\Livewire\Pages\ActivityLogs;
 
+use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Spatie\Activitylog\Models\Activity;
-use Illuminate\Support\Facades\DB;
 
+#[Layout('components.layouts.app')]
+#[Title('Activity Logs')]
 class Index extends Component
 {
     use WithPagination;
