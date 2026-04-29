@@ -169,8 +169,9 @@ class Show extends Component
 
         Log::info('(VC) User ' . Auth::user()->name . ' (' . Auth::user()->email . ')' . ' started AI analysis for position ' . $this->position->name);
         activity()
+            ->event('Vacant Position Analysis')
             ->withProperties(['actor' => Auth::user()->name, 'position' => $this->position->name])
-            ->log('(VC) Started AI analysis for vacant position ');
+            ->log('Actor started AI analysis for position ' . $this->position->name);
     }
 
     public function retryAIProcessing()

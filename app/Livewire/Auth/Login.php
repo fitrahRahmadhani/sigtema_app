@@ -72,7 +72,7 @@ class Login extends Component
             'role'   => $authUser->roles->first()->name,
         ]);
 
-        activity()->withProperties(['actor' => $authUser->name, 'role' => $authUser->roles->first()->name])->log('User logged in');
+        activity()->event('Login')->withProperties(['actor' => $authUser->name, 'role' => $authUser->roles->first()->name])->log('Actor logged in');
 
         if ($authUser->hasRole('superadmin') || $authUser->hasRole('admin') || $authUser->hasRole('hc-operator')) {
             $this->redirect(route('dashboard'), navigate: true);

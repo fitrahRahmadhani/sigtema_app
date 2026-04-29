@@ -34,7 +34,7 @@ class Show extends Component
         $this->discData = $this->getDISCData();
 
         Log::info('(EP) User ' . $this->user->name . ' (' . $this->user->email . ')' . ' melihat profile karyawan ' . $this->employee->name);
-        activity()->withProperties(['actor' => $this->user->name, 'employee' => $this->employee->name])->log('(EP) User viewed employee profile');
+        activity()->event('Employee Profile')->withProperties(['actor' => $this->user->name, 'employee' => $this->employee->name])->log('Actor viewed employee profile ' . $this->employee->name);
     }
 
     private function getWorkDirectionData()

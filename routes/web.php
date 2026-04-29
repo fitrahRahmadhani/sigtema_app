@@ -32,6 +32,9 @@ Route::group(['middleware' => ['auth', 'verified', 'role:superadmin']], function
     Route::get('role-permissions/create', App\Livewire\Pages\RolePermission\Create::class)->name('role-permissions.create');
     Route::get('role-permissions/{id}/edit', App\Livewire\Pages\RolePermission\Edit::class)->name('role-permissions.edit');
 
+    // Activity Logs
+    Route::get('activity', App\Livewire\Pages\ActivityLogs\Index::class)->name('activity-logs.index');
+
     // Logs
     Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index'])->name('logs.index');
 });
