@@ -207,7 +207,7 @@ class Index extends Component
         $this->dispatch('process-ai-response', message: $message);
 
         Log::info('(AI Coaching) User ' . Auth::user()->name . ' sent message: ' . $message);
-        activity()->withProperties(['actor' => Auth::user()->name,  'target' => $this->targetEmployee->name, 'message' => $message])->log('(AI Coaching) User sent message');
+        activity()->event('AI Coaching')->withProperties(['actor' => Auth::user()->name,  'target' => $this->targetEmployee->name, 'message' => $message])->log('Actor sent message to AI Coach');
     }
 
     #[\Livewire\Attributes\On('process-ai-response')]
