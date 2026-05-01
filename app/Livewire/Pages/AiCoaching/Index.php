@@ -274,7 +274,7 @@ class Index extends Component
 
         BATASAN:
         - Hanya fokus pada topik karier, pengembangan diri, dan pekerjaan
-        - Jika ada pertanyaan di luar topik tersebut, arahkan kembali ke pengembangan karier
+        - Jika ada pertanyaan di luar topik tersebut, tolak, dan arahkan kembali ke pengembangan karier
         PROMPT;
     }
 
