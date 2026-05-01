@@ -6,7 +6,12 @@
         @endhasanyrole
 
         <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Path</flux:breadcrumbs.item>
-        <flux:breadcrumbs.item>Vacant Positions</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item>
+            Vacant Positions
+            @if ($activeTab == 'all')
+                (All Positions)
+            @endif
+        </flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
     {{-- Content --}}
@@ -15,7 +20,7 @@
         <div class="mb-8 flex items-start justify-between gap-4">
             <div class="flex items-center gap-4">
                 <div
-                    class="color-gradient flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-white"
+                    class="color-gradient flex h-10 w-10 items-center justify-center self-start rounded-xl bg-gray-100 text-white"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -34,7 +39,11 @@
                 </div>
                 <div>
                     <h1 class="inline text-2xl font-bold text-gray-900 md:text-3xl">
-                        Vacant Positions
+                        @if ($activeTab == 'vacant')
+                            Vacant Positions
+                        @else
+                            All Positions
+                        @endif
                         <img src="{{ asset('assets/icon/logo-ai.svg') }}" class="mb-2 ml-2 inline h-8" alt="Logo AI" />
                     </h1>
 
@@ -120,8 +129,8 @@
                         d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"
                     />
                 </svg>
-                <h3 class="mt-4 text-xl font-semibold text-gray-700">Pilih Perusahaan</h3>
-                <p class="mt-2 text-gray-500">Silakan pilih perusahaan untuk melihat posisi kosong</p>
+                <h3 class="mt-4 text-xl font-semibold text-gray-700">Select Company</h3>
+                <p class="mt-2 text-gray-500">Please select a company to view the vacant positions.</p>
 
                 {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -159,7 +168,7 @@
                                     <h4 class="font-semibold text-gray-900">{{ $company->name }}</h4>
                                     <p class="text-sm text-gray-500">
                                         {{ \App\Models\Position::where('company_id', $company->id)->whereNull('employee_id')->count() }}
-                                        posisi kosong
+                                        vacant positions
                                     </p>
                                 </div>
                             </div>
@@ -177,24 +186,52 @@
                     {{-- Results Info --}}
                     <div class="text-sm text-gray-600">
                         @if ($activeTab === 'vacant')
-                            Menampilkan posisi kosong di
+                            Showing vacant positions in
                         @else
-                            Menampilkan semua posisi di
+                            Showing all positions in
                         @endif
                         <span class="font-semibold">{{ $selectedCompany->name }}</span>
                     </div>
 
                     {{-- Desktop Layout: Search & Filter --}}
-                    <div class="hidden gap-4 md:grid md:grid-cols-4">
+                    <div class="hidden gap-4 md:grid md:grid-cols-5">
                         {{-- Search Input --}}
                         <div class="md:col-span-2">
-                            <label class="mb-2 block text-sm font-medium text-gray-700">Cari Posisi atau Kode</label>
+                            <label class="mb-2 block text-sm font-medium text-gray-700">
+                                Search position name or position code
+                            </label>
                             <input
                                 type="text"
                                 wire:model.live.debounce.300ms="search"
-                                placeholder="Ketik nama posisi atau kode..."
+                                placeholder="Type to search..."
                                 class="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus:outline-none"
                             />
+                        </div>
+
+                        {{-- Band Filter --}}
+                        <div class="relative">
+                            <label class="mb-2 block text-sm font-medium text-gray-700">Band</label>
+                            <div class="relative">
+                                <select
+                                    wire:model.live="filterBand"
+                                    class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-[#721d21] focus:ring-1 focus:ring-[#721d21] focus:outline-none"
+                                >
+                                    <option value="">All Bands</option>
+                                    @foreach ($bands as $band)
+                                        <option value="{{ $band }}">Band {{ $band }}</option>
+                                    @endforeach
+                                </select>
+                                <svg
+                                    class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
                         </div>
 
                         {{-- Filter Departemen --}}
@@ -205,7 +242,7 @@
                                     wire:model.live="filterDepartment"
                                     class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus:outline-none"
                                 >
-                                    <option value="">Semua Departemen</option>
+                                    <option value="">All Departements</option>
                                     @foreach ($departments as $dept)
                                         <option value="{{ $dept }}">{{ $dept }}</option>
                                     @endforeach
@@ -225,13 +262,13 @@
 
                         {{-- Filter Unit --}}
                         <div class="relative">
-                            <label class="mb-2 block text-sm font-medium text-gray-700">Unit Kerja</label>
+                            <label class="mb-2 block text-sm font-medium text-gray-700">Work Unit</label>
                             <div class="relative">
                                 <select
                                     wire:model.live="filterUnit"
                                     class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-sm text-gray-700 focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus:outline-none"
                                 >
-                                    <option value="">Semua Unit</option>
+                                    <option value="">All work units</option>
                                     @foreach ($units as $unit)
                                         <option value="{{ $unit }}">{{ $unit }}</option>
                                     @endforeach
@@ -321,11 +358,11 @@
 
                     {{-- Results Count --}}
                     <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
-                        Menampilkan
+                        Showing
                         <span class="font-semibold">{{ $positions->count() }}</span>
-                        dari
+                        of
                         <span class="font-semibold">{{ $positions->total() }}</span>
-                        posisi
+                        results
                     </div>
                 </div>
 
@@ -335,11 +372,12 @@
                     <div
                         class="color-gradient hidden place-items-center justify-items-start gap-4 rounded-lg px-4 py-3 text-white md:grid md:grid-cols-12"
                     >
-                        <div class="col-span-3 text-sm font-semibold">Nama Posisi</div>
-                        <div class="col-span-1 text-sm font-semibold">Kode Posisi</div>
-                        <div class="col-span-3 text-sm font-semibold">Unit Kerja</div>
-                        <div class="col-span-3 text-sm font-semibold">Departemen</div>
-                        <div class="col-span-2 text-sm font-semibold">Status</div>
+                        <div class="col-span-3 text-sm font-semibold">Position Name</div>
+                        <div class="col-span-1 text-sm font-semibold">Position Code</div>
+                        <div class="col-span-3 text-sm font-semibold">Work Unit</div>
+                        <div class="col-span-3 text-sm font-semibold">Departement</div>
+                        <div class="col-span-1 text-sm font-semibold">Band</div>
+                        <div class="col-span-1 text-sm font-semibold">Status</div>
                     </div>
 
                     {{-- List Items --}}
@@ -367,7 +405,15 @@
                                     {{ $position->department ?? '-' }}
                                 </p>
                             </div>
-                            <div class="col-span-2 flex items-center">
+                            <div class="col-span-1 flex flex-col justify-center">
+                                <span
+                                    class="inline-flex w-fit items-center justify-center rounded-full bg-gray-100 px-3 py-1 text-center text-xs font-medium text-gray-800"
+                                >
+                                    <span class="mr-1 hidden lg:inline">Band</span>
+                                    {{ $position->band ?? '-' }}
+                                </span>
+                            </div>
+                            <div class="col-span-1 flex items-center">
                                 @if ($position->employee_id)
                                     <span
                                         class="inline-flex items-center justify-center rounded-full bg-green-100 px-3 py-1 text-center text-xs font-medium text-green-800"
@@ -457,11 +503,19 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500 uppercase">Departemen</p>
-                                    <p class="mt-1 line-clamp-1 font-semibold text-gray-900">
-                                        {{ $position->department ?? '-' }}
-                                    </p>
+                                <div class="mt-2 grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-500 uppercase">Departemen</p>
+                                        <p class="mt-1 line-clamp-1 font-semibold text-gray-900">
+                                            {{ $position->department ?? '-' }}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-500 uppercase">Band</p>
+                                        <p class="mt-1 line-clamp-1 font-semibold text-gray-900">
+                                            Band {{ $position->band ?? '-' }}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </a>
@@ -483,12 +537,12 @@
                             </svg>
                             <p class="mt-4 font-medium text-gray-500">
                                 @if ($activeTab === 'vacant')
-                                    Tidak ada posisi kosong yang ditemukan
+                                    No vacant positions found
                                 @else
-                                        Tidak ada posisi yang ditemukan
+                                    No positions found
                                 @endif
                             </p>
-                            <p class="mt-1 text-sm text-gray-400">Coba ubah filter pencarian Anda</p>
+                            <p class="mt-1 text-sm text-gray-400">Try searching with a different keyword</p>
                         </div>
                     @endforelse
                 </div>

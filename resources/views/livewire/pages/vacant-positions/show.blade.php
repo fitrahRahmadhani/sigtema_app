@@ -208,6 +208,23 @@
                                     <p class="mt-1 text-white/80">
                                         Select up to {{ $maxCandidates }} employees to analyze
                                     </p>
+                                    <div
+                                        class="mt-2 flex items-center gap-1 rounded-full border border-white/30 bg-white/5 p-2 text-xs text-white"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 24 24"
+                                            fill="currentColor"
+                                            class="size-5"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+                                                clip-rule="evenodd"
+                                            />
+                                        </svg>
+                                        You may only compare employees at the same level as you or below your Band
+                                    </div>
                                 </div>
                                 <button
                                     wire:click="$set('showEmployeeModal', false)"
@@ -621,7 +638,7 @@
                             </div>
                         </div>
 
-                        {{-- Match Score & Footer - Selalu di bawah --}}
+                        {{-- Match Score & Footer --}}
                         <div class="mt-auto">
                             {{-- Recommendation Badge --}}
                             @if (! empty($candidate['recommendation']))
@@ -662,7 +679,8 @@
                             {{-- Footer --}}
                             <div class="mt-4 flex items-end justify-between border-t border-gray-200 pt-3">
                                 <a
-                                    href="{{ route('employees.show', $employee->slug) }}"
+                                    href="{{ route('employees-profile.show', $employee->slug) }}"
+                                    target="_blank"
                                     class="{{ $isDisabled ? 'pointer-events-none' : '' }} text-sm text-[#721d21] transition-colors hover:text-[#5a1719] hover:underline"
                                     onclick="event.stopPropagation();"
                                 >

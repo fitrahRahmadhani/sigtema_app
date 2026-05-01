@@ -13,6 +13,12 @@ Route::group(['middleware' => ['auth', 'verified', 'role:employee']], function (
 Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin|hc-operator']], function () {
     // Dashboard
     Route::get('dashboard', App\Livewire\Pages\Dashboard\Index::class)->name('dashboard');
+
+    // Organization Structure
+    Route::get('organization-structure', App\Livewire\Pages\OrgStructure\Index::class)->name('organization-structure.index');
+    Route::get('organization-structure/table', App\Livewire\Pages\OrgStructure\Table::class)->name('organization-structure.table');
+    Route::get('organization-structure/create', App\Livewire\Pages\OrgStructure\Create::class)->name('organization-structure.create');
+    Route::get('organization-structure/{hierarchy}/edit', App\Livewire\Pages\OrgStructure\Edit::class)->name('organization-structure.edit');
 });
 
 
@@ -32,17 +38,14 @@ Route::group(['middleware' => ['auth', 'verified', 'role:superadmin']], function
     Route::get('role-permissions/create', App\Livewire\Pages\RolePermission\Create::class)->name('role-permissions.create');
     Route::get('role-permissions/{id}/edit', App\Livewire\Pages\RolePermission\Edit::class)->name('role-permissions.edit');
 
+    // Activity Logs
+    Route::get('activity', App\Livewire\Pages\ActivityLogs\Index::class)->name('activity-logs.index');
+
     // Logs
     Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index'])->name('logs.index');
 });
 
 Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin']], function () {
-    // Organization Structure
-    Route::get('organization-structure', App\Livewire\Pages\OrgStructure\Index::class)->name('organization-structure.index');
-    Route::get('organization-structure/table', App\Livewire\Pages\OrgStructure\Table::class)->name('organization-structure.table');
-    Route::get('organization-structure/create', App\Livewire\Pages\OrgStructure\Create::class)->name('organization-structure.create');
-    Route::get('organization-structure/{hierarchy}/edit', App\Livewire\Pages\OrgStructure\Edit::class)->name('organization-structure.edit');
-
     // Positions
     Route::get('positions', App\Livewire\Pages\Positions\Index::class)->name('positions.index');
     Route::get('positions/create', App\Livewire\Pages\Positions\Create::class)->name('positions.create');
@@ -135,12 +138,16 @@ Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin|head-o
     Route::get('career-path/employees-profile', App\Livewire\Pages\EmployeesProfile\Index::class)->name('employees-profile.index');
     Route::get('career-path/employees-profile/{employee:slug}/show', App\Livewire\Pages\EmployeesProfile\Show::class)->name('employees-profile.show');
 
-    // Organization Structure
-    Route::get('organization-structure', App\Livewire\Pages\OrgStructure\Index::class)->name('organization-structure.index');
-    Route::get('organization-structure/table', App\Livewire\Pages\OrgStructure\Table::class)->name('organization-structure.table');
-
     // Settings
     Route::get('settings/profile', Profile::class)->name('settings.profile');
+});
+
+Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin|head-of-unit|hc-operator|employee']], function () {
+    // Settings
+    Route::get('settings/profile', Profile::class)->name('settings.profile');
+
+    // AI Coaching
+    Route::get('ai-coaching', App\Livewire\Pages\AiCoaching\Index::class)->name('ai-coaching');
 });
 
 require __DIR__ . '/auth.php';

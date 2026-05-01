@@ -3,17 +3,18 @@
 namespace App\Livewire\Auth;
 
 use App\Models\User;
-use Livewire\Component;
-use Livewire\Attributes\Title;
-use Illuminate\Support\Str;
-use Laravel\Fortify\Features;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\Validate;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Laravel\Fortify\Features;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Validate;
+use Livewire\Component;
 
 #[Layout('components.layouts.auth')]
 class Login extends Component
@@ -37,6 +38,10 @@ class Login extends Component
      */
     public function login(): void
     {
+        $this->email = is_array($this->email) ? '' : trim((string) $this->email);
+        $this->password = is_array($this->password) ? '' : trim((string) $this->password);
+        $this->gRecaptchaResponse = is_array($this->gRecaptchaResponse) ? '' : trim((string) $this->gRecaptchaResponse);
+
         $this->validate();
 
         $this->ensureIsNotRateLimited();
@@ -45,26 +50,35 @@ class Login extends Component
 
         if (Features::canManageTwoFactorAuthentication() && $user->hasEnabledTwoFactorAuthentication()) {
             Session::put([
-                'login.id' => $user->getKey(),
+                'login.id'       => $user->getKey(),
                 'login.remember' => $this->remember,
             ]);
 
             $this->redirect(route('two-factor.login'), navigate: true);
-
             return;
         }
 
         Auth::login($user, $this->remember);
-
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-        if (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin') ||  Auth::user()->hasRole('hc-operator')) {
+        /** @var User $authUser */
+        $authUser = Auth::user();
 
+        Log::info('User logged in', [
+            'idUser' => $authUser->id,
+            'user'   => $authUser->name,
+            'email'  => $authUser->email,
+            'role'   => $authUser->roles->first()->name,
+        ]);
+
+        activity()->event('Login')->withProperties(['actor' => $authUser->name, 'role' => $authUser->roles->first()->name])->log('Actor logged in');
+
+        if ($authUser->hasRole('superadmin') || $authUser->hasRole('admin') || $authUser->hasRole('hc-operator')) {
             $this->redirect(route('dashboard'), navigate: true);
-        } elseif (Auth::user()->hasRole('head-of-unit')) {
+        } elseif ($authUser->hasRole('head-of-unit')) {
             $this->redirect(route('career-path'), navigate: true);
-        } elseif (Auth::user()->hasRole('employee')) {
+        } elseif ($authUser->hasRole('employee')) {
             $this->redirect(route('my-profile'), navigate: true);
         } else {
             abort(403);
@@ -78,7 +92,6 @@ class Login extends Component
     {
         $user = Auth::getProvider()->retrieveByCredentials(['email' => $this->email, 'password' => $this->password]);
 
-        // Jika email tidak ditemukan
         if (! $user) {
             RateLimiter::hit($this->throttleKey());
 
@@ -87,7 +100,6 @@ class Login extends Component
             ]);
         }
 
-        // Jika password salah
         if (! Auth::getProvider()->validateCredentials($user, ['password' => $this->password])) {
             RateLimiter::hit($this->throttleKey());
 

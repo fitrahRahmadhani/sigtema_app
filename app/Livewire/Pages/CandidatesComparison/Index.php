@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -153,7 +154,7 @@ class Index extends Component
         }
 
         // Load DISC data
-        if ($employee->disc) {
+        if ($employee->disc && ($employee->disc?->interpretation1 != '(Skor tidak valid)' && $employee->disc?->interpretation2 != '(Skor tidak valid)' && $employee->disc?->interpretation3 != '(Skor tidak valid)')) {
             $this->discChartData[$index] = [
                 'D1' => $employee->disc->D1 ?? 0,
                 'I1' => $employee->disc->I1 ?? 0,
@@ -295,7 +296,6 @@ class Index extends Component
             'company',
             'papi',
             'disc',
-            // Hapus softCompetencies dari eager loading
         ])->find($employeeId);
 
         if ($employee) {
@@ -310,6 +310,9 @@ class Index extends Component
             // Dispatch event to initialize charts
             $this->dispatch('employee-selected', index: $index);
             $this->dispatch('charts-loaded');
+
+            Log::info('(CC) User ' . $this->user->name . ' selected employee ' . $employee->name);
+            activity()->event('Candidate Comparison')->withProperties(['actor' => $this->user->name, 'employee' => $employee->name])->log('Actor compared employee ' . $employee->name);
         }
     }
 

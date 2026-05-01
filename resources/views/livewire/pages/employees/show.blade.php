@@ -22,8 +22,8 @@
                 </svg>
 
                 <p>
-                    <span class="font-semibold">Jika chart (bagan) tidak muncul,</span>
-                    mohon untuk refresh halaman
+                    <span class="font-semibold">If charts do not appear,</span>
+                    please refresh the page
                 </p>
             </div>
         </div>
@@ -88,11 +88,8 @@
                         </span>
                     @endif
                 </h6>
+                <p class="text-lg">{{ $employee->employee_number ?? '-' }}</p>
                 <div class="mt-4 grid h-full w-full grid-cols-2 gap-4 sm:mt-6 sm:grid-cols-3 lg:grid-cols-5">
-                    <div class="w-full">
-                        <p class="text-primary-text font-semibold">Employee ID</p>
-                        <p class="">{{ $employee->employee_number ?? '-' }}</p>
-                    </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Position</p>
                         <p class="">{{ $employee->position->name ?? '-' }}</p>
@@ -120,6 +117,13 @@
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Age</p>
                         <p class="">{{ $employee->age ?? '-' }} years old</p>
+                    </div>
+                    <div class="w-full">
+                        <p class="text-primary-text font-semibold">Pension</p>
+                        <p>
+                            {{ $employee->retirement_date_formatted ?? '-' }}
+                            ({{ $employee->time_until_retirement ?? '-' }})
+                        </p>
                     </div>
                     <div class="w-full">
                         <p class="text-primary-text font-semibold">Job Grade</p>
@@ -211,8 +215,10 @@
                             <div class="grid h-full grid-cols-1 gap-4 sm:grid-cols-3" wire:ignore>
                                 {{-- DISC 1 --}}
                                 <div class="flex h-full flex-col">
-                                    <div class="rounded-t-md bg-red-500 px-3 py-2 text-center">
-                                        <p class="text-sm font-semibold text-white">DISC 1</p>
+                                    <div
+                                        class="flex h-[50px] items-center justify-center rounded-t-md bg-red-500 px-3 py-2 text-center"
+                                    >
+                                        <p class="text-sm font-semibold text-white">Personality Typically Displayed</p>
                                     </div>
                                     <div
                                         class="relative flex min-h-[250px] grow items-center justify-center border-x border-gray-300 bg-white p-2 sm:min-h-[300px] md:min-h-[350px]"
@@ -231,8 +237,10 @@
 
                                 {{-- DISC 2 --}}
                                 <div class="flex h-full flex-col">
-                                    <div class="rounded-t-md bg-yellow-500 px-3 py-2 text-center">
-                                        <p class="text-sm font-semibold text-white">DISC 2</p>
+                                    <div
+                                        class="flex h-[50px] items-center justify-center rounded-t-md bg-yellow-500 px-3 py-2 text-center"
+                                    >
+                                        <p class="text-sm font-semibold text-white">Personality Under Pressure</p>
                                     </div>
                                     <div
                                         class="relative flex min-h-[250px] grow items-center justify-center border-x border-gray-300 bg-white p-2 sm:min-h-[300px] md:min-h-[350px]"
@@ -251,8 +259,10 @@
 
                                 {{-- DISC 3 --}}
                                 <div class="flex h-full flex-col">
-                                    <div class="rounded-t-md bg-green-500 px-3 py-2 text-center">
-                                        <p class="text-sm font-semibold text-white">DISC 3</p>
+                                    <div
+                                        class="flex h-[50px] items-center justify-center rounded-t-md bg-green-500 px-3 py-2 text-center"
+                                    >
+                                        <p class="text-sm font-semibold text-white">Hidden Core Personality</p>
                                     </div>
                                     <div
                                         class="relative flex min-h-[250px] grow items-center justify-center border-x border-gray-300 bg-white p-2 sm:min-h-[300px] md:min-h-[350px]"
@@ -270,7 +280,7 @@
                                 </div>
                             </div>
                         @else
-                            <div class="flex flex-col items-center justify-center">
+                            <div class="flex h-full flex-col items-center justify-center">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     class="h-12 w-12 text-gray-300"
@@ -512,7 +522,7 @@
                                     <td class="border-r border-gray-300 px-3 py-3 text-gray-600 sm:px-4">
                                         {{ $employee->position->work_unit ?? '-' }}
                                     </td>
-                                    <td class="px-3 py-3 text-gray-800 uppercase sm:px-4">
+                                    <td class="px-3 py-3 text-center text-gray-800 uppercase sm:px-4">
                                         {{ $employee->position->company->name ?? '-' }}
                                     </td>
                                 </tr>
@@ -529,7 +539,7 @@
                                     <td class="border-r border-gray-300 px-3 py-3 text-gray-600 sm:px-4">
                                         {{ $positionHistory->work_unit }}
                                     </td>
-                                    <td class="px-3 py-3 text-gray-800 uppercase sm:px-4">
+                                    <td class="px-3 py-3 text-center text-gray-800 uppercase sm:px-4">
                                         {{ $positionHistory->company }}
                                     </td>
                                 </tr>
@@ -710,7 +720,7 @@
                         </table>
                     </div>
                     <p class="p-2 text-gray-400 italic">
-                        *Jika ada pertanyaan terkait MCU, silahkan hubungi Dokter Perusahaan
+                        * If you have any questions regarding the MCU, please contact the Company Doctors
                     </p>
                 </div>
 
@@ -740,7 +750,7 @@
                             <tbody>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-2/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Kelelahan Emosional
+                                        Emotional Exhaustion
                                     </td>
                                     <td class="px-3 py-2 text-gray-600 sm:px-4">
                                         {{ $employee->burnout->emotional_exhaustion ?? '-' }}
@@ -748,7 +758,7 @@
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-2/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Depersonalisasi
+                                        Depersonalization
                                     </td>
                                     <td class="px-3 py-2 text-gray-600 sm:px-4">
                                         {{ $employee->burnout->depersonalization ?? '-' }}
@@ -756,7 +766,7 @@
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-2/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Penurunan Prestasi
+                                        Performance Decline
                                     </td>
                                     <td class="px-3 py-2 text-gray-600 sm:px-4">
                                         {{ $employee->burnout->achievement_decline ?? '-' }}
@@ -766,7 +776,7 @@
                                     <td
                                         class="w-2/3 border-r border-gray-300 px-3 py-2 font-bold text-gray-800 sm:px-4"
                                     >
-                                        Total Skor
+                                        Total Score
                                     </td>
                                     <td class="px-3 py-2 font-bold text-gray-600 sm:px-4">
                                         {{ $employee->burnout?->getTotalScore() ?? '-' }}
@@ -774,7 +784,7 @@
                                 </tr>
                                 <tr class="border-t border-gray-300 transition-colors">
                                     <td colspan="2" class="px-3 py-3 sm:px-4">
-                                        <div class="mb-1 font-semibold text-gray-800">Penafsiran Hasil:</div>
+                                        <div class="mb-1 font-semibold text-gray-800">Interpretation:</div>
                                         <div class="text-sm text-gray-700">
                                             {!! strip_tags($employee->burnout?->result, '<i><b>') ?? '-' !!}
                                         </div>

@@ -2,12 +2,13 @@
 
 namespace App\Livewire\Pages\VacantPositions;
 
-use Livewire\Component;
-use App\Models\Position;
 use App\Models\Employee;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
+use App\Models\Position;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
@@ -25,7 +26,6 @@ class Compare extends Component
         $this->position = $position;
         $this->positionSlug = $position->slug;
 
-        // Get candidate IDs from query parameter
         $candidatesParam = request()->query('candidates');
 
         if (!$candidatesParam) {
@@ -35,13 +35,13 @@ class Compare extends Component
 
         $this->candidateIds = explode(',', $candidatesParam);
 
-        // Validate that we have between 2-5 candidates
         if (count($this->candidateIds) < 2 || count($this->candidateIds) > 5) {
             Toaster::error('Please select 2-5 candidates to compare');
             return redirect()->route('vacant-positions.show', ['position' => $position->slug]);
         }
 
-        // Load employees dengan semua relasi (tanpa softCompetencies eager loading)
+        $orderedIds = implode(',', array_map('intval', $this->candidateIds));
+
         $this->selectedEmployees = Employee::with([
             'position',
             'educations',
@@ -54,15 +54,16 @@ class Compare extends Component
             'disc',
             'mbti',
             'burnout',
-        ])->whereIn('id', $this->candidateIds)->get();
+        ])->whereIn('id', $this->candidateIds)->orderByRaw("FIELD(id, {$orderedIds})")
+            ->get();
 
-        // Load AI recommendations from cache
         $this->loadAIRecommendations();
     }
 
     private function loadAIRecommendations()
     {
-        $cacheKey = "ai_analysis_{$this->position->id}";
+        $userId = Auth::user()->id;
+        $cacheKey = "ai_analysis_{$userId}_{$this->position->id}";
         $cachedResults = Cache::get($cacheKey);
 
         if ($cachedResults) {
@@ -121,7 +122,7 @@ class Compare extends Component
     // Helper untuk mendapatkan data DISC
     public function getEmployeeDISCData($employee)
     {
-        if (!$employee->disc) {
+        if (!$employee->disc || $employee->disc?->interpretation1 == '(Skor tidak valid)' || $employee->disc?->interpretation2 == '(Skor tidak valid)' || $employee->disc?->interpretation3 == '(Skor tidak valid)') {
             return [
                 'D1' => 0,
                 'I1' => 0,

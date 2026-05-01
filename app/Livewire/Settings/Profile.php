@@ -47,7 +47,7 @@ class Profile extends Component
         }
 
         return [
-            'name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s]+$/u'],
+            'name' => ['required', 'string', 'max:255'],
             'current_password' => $passwordRules,
             'password' => [
                 'nullable',
@@ -68,7 +68,6 @@ class Profile extends Component
     {
         return [
             'name.required' => 'Nama lengkap wajib diisi.',
-            'name.regex' => 'Nama hanya boleh mengandung huruf dan spasi.',
             'current_password.required' => 'Password saat ini wajib diisi untuk mengganti password.',
             'current_password.current_password' => 'Password saat ini tidak valid.',
             'password.min' => 'Password baru minimal 12 karakter.',

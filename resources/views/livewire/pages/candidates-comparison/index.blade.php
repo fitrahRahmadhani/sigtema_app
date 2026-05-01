@@ -96,8 +96,8 @@
                         d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"
                     />
                 </svg>
-                <h3 class="mt-4 text-xl font-semibold text-gray-700">Pilih Perusahaan</h3>
-                <p class="mt-2 text-gray-500">Silakan pilih perusahaan untuk membandingkan karyawan</p>
+                <h3 class="mt-4 text-xl font-semibold text-gray-700">Select Company</h3>
+                <p class="mt-2 text-gray-500">Please select a company to compare employees</p>
 
                 {{-- Company List --}}
                 <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -148,7 +148,7 @@
                 {{-- Info Box --}}
                 <div class="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
                     <div class="text-sm text-gray-600">
-                        Membandingkan karyawan di
+                        Comparing employees at
                         <span class="font-semibold">{{ $selectedCompany->name }}</span>
                     </div>
                 </div>
@@ -169,16 +169,16 @@
                                     clip-rule="evenodd"
                                 />
                             </svg>
-                            <h6 class="font-semibold">Informasi</h6>
+                            <h6 class="font-semibold">Information</h6>
                         </div>
                         <p>
-                            <span class="font-semibold">Jika chart (bagan) tidak muncul,</span>
-                            mohon untuk refresh halaman
+                            <span class="font-semibold">If charts do not appear,</span>
+                            please refresh the page
                         </p>
                         @hasrole('head-of-unit')
                             <p>
-                                Anda hanya dapat mengkomparasi karyawan
-                                <span class="font-semibold">selevel atau di bawah band Anda</span>
+                                You can only compare employees
+                                <span class="font-semibold">at or below your band level</span>
                             </p>
                         @endhasrole
                     </div>
@@ -356,7 +356,9 @@
 
                                 {{-- Email --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Email</td>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Email
+                                    </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
@@ -370,7 +372,9 @@
 
                                 {{-- Phone --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Phone</td>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Phone
+                                    </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
@@ -384,7 +388,7 @@
 
                                 {{-- Personal Grade --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Personal Grade
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -402,7 +406,9 @@
 
                                 {{-- Band --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Band</td>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Band
+                                    </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
@@ -416,12 +422,35 @@
 
                                 {{-- Hire Date --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Hire Date</td>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Hire Date
+                                    </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 text-gray-700">
                                             @if (! empty($selectedEmployees[$i]))
                                                 <span class="text-gray-400 italic">
                                                     {{ $selectedEmployees[$i]->hire_date?->format('d F Y') ?? 'N/A' }}
+                                                </span>
+                                            @else
+                                                <span class="text-gray-400">-</span>
+                                            @endif
+                                        </td>
+                                    @endfor
+                                </tr>
+
+                                {{-- Pension Date --}}
+                                <tr>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Pension Date
+                                    </td>
+                                    @for ($i = 0; $i < $columnCount; $i++)
+                                        <td class="w-[400px] px-6 py-4 text-gray-700">
+                                            @if (! empty($selectedEmployees[$i]))
+                                                <span>
+                                                    {{ $selectedEmployees[$i]->retirement_date_formatted ?? 'N/A' }}
+                                                </span>
+                                                <span>
+                                                    ({{ $selectedEmployees[$i]->time_until_retirement ?? 'N/A' }})
                                                 </span>
                                             @else
                                                 <span class="text-gray-400">-</span>
@@ -448,7 +477,9 @@
 
                                 {{-- MBTI --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">MBTI</td>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        MBTI
+                                    </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 align-top text-gray-700">
                                             @if (! empty($selectedEmployees[$i]->mbti->mbti))
@@ -544,12 +575,16 @@
                                     <td class="left-0 bg-white px-6 py-4 font-medium text-gray-900"></td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="px-6 py-4 align-top">
-                                            @if (! empty($selectedEmployees[$i]) && ! empty($discChartData[$i]))
+                                            @if (! empty($selectedEmployees[$i]))
                                                 <div class="flex w-[400px] flex-col space-y-6">
                                                     {{-- DISC 1 --}}
                                                     <div class="overflow-hidden rounded-lg border border-gray-300">
-                                                        <div class="bg-red-500 px-3 py-2 text-center">
-                                                            <p class="text-sm font-semibold text-white">DISC 1</p>
+                                                        <div
+                                                            class="flex h-[50px] items-center justify-center bg-red-500 px-3 py-2 text-center"
+                                                        >
+                                                            <p class="font-semibold text-white">
+                                                                Personality Typically Displayed
+                                                            </p>
                                                         </div>
                                                         <div
                                                             class="relative flex min-h-[150px] items-center justify-center border-x border-gray-300 bg-white p-4"
@@ -580,8 +615,12 @@
 
                                                     {{-- DISC 2 --}}
                                                     <div class="overflow-hidden rounded-lg border border-gray-300">
-                                                        <div class="bg-yellow-500 px-3 py-2 text-center">
-                                                            <p class="text-sm font-semibold text-white">DISC 2</p>
+                                                        <div
+                                                            class="flex h-[50px] items-center justify-center bg-yellow-500 px-3 py-2 text-center"
+                                                        >
+                                                            <p class="font-semibold text-white">
+                                                                Personality Under Pressure
+                                                            </p>
                                                         </div>
                                                         <div
                                                             class="relative flex min-h-[150px] items-center justify-center border-x border-gray-300 bg-white p-4"
@@ -612,8 +651,12 @@
 
                                                     {{-- DISC 3 --}}
                                                     <div class="overflow-hidden rounded-lg border border-gray-300">
-                                                        <div class="bg-green-500 px-3 py-2 text-center">
-                                                            <p class="text-sm font-semibold text-white">DISC 3</p>
+                                                        <div
+                                                            class="flex h-[50px] items-center justify-center bg-green-500 px-3 py-2 text-center"
+                                                        >
+                                                            <p class="font-semibold text-white">
+                                                                Hidden Core Personality
+                                                            </p>
                                                         </div>
                                                         <div
                                                             class="relative flex min-h-[150px] items-center justify-center border-x border-gray-300 bg-white p-4"
@@ -676,7 +719,9 @@
 
                                 {{-- Strengths --}}
                                 <tr>
-                                    <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                    <td
+                                        class="left-0 w-[400px] border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900"
+                                    >
                                         Strengths
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -700,7 +745,9 @@
 
                                 {{-- Weaknesses --}}
                                 <tr>
-                                    <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                    <td
+                                        class="left-0 w-[400px] border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900"
+                                    >
                                         Weaknesses
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
@@ -985,10 +1032,10 @@
                                     </td>
                                 </tr>
 
-                                {{-- Kelalahan Emosional --}}
+                                {{-- Emotional Exhaustion --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                        Kelalahan Emosional
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Emotional Exhaustion
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 align-top text-gray-700">
@@ -1003,10 +1050,10 @@
                                     @endfor
                                 </tr>
 
-                                {{-- Depersonalisasi --}}
+                                {{-- Depersonalization --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                        Depersonalisasi
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Depersonalization
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 align-top text-gray-700">
@@ -1021,10 +1068,10 @@
                                     @endfor
                                 </tr>
 
-                                {{-- Penurunan Prestasi --}}
+                                {{-- Performance Decline --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                        Penurunan Prestasi
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Performance Decline
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 align-top text-gray-700">
@@ -1039,10 +1086,10 @@
                                     @endfor
                                 </tr>
 
-                                {{-- Penafsiran --}}
+                                {{-- Interpretation --}}
                                 <tr>
-                                    <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                        Penafsiran
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Interpretation
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 align-top text-gray-700">
@@ -1403,6 +1450,7 @@
                 try {
                     chartStore.papi[id] = new Chart(rc, {
                         type: 'radar',
+                        plugins: [ChartDataLabels],
                         data: {
                             labels: papiSegments.map((s) => s.code),
                             datasets: [
@@ -1431,6 +1479,16 @@
                                             `${papiSegments[c[0].dataIndex].code} - ${papiSegments[c[0].dataIndex].cat}`,
                                         label: (c) => `${papiSegments[c.dataIndex].desc.replace(/\n/g, ' ')}: ${c.raw}`,
                                     },
+                                },
+                                datalabels: {
+                                    color: '#111',
+                                    backgroundColor: 'rgba(59,130,246,0.2)',
+                                    borderRadius: 3,
+                                    font: { size: 8, weight: 'bold' },
+                                    align: 'end',
+                                    anchor: 'end',
+                                    offset: 4,
+                                    formatter: (value) => (value === 0 ? '' : value),
                                 },
                             },
                             scales: { r: { min: 0, max: 9, pointLabels: { display: false }, ticks: { stepSize: 1 } } },
@@ -1501,7 +1559,13 @@
                                 },
                             },
                             scales: {
-                                y: { ticks: { stepSize: 20, font: { size: 11 } }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                                y: {
+                                    beginAtZero: true,
+                                    min: -10,
+                                    max: 10,
+                                    ticks: { stepSize: 20, font: { size: 11 } },
+                                    grid: { color: 'rgba(0,0,0,0.05)' },
+                                },
                                 x: {
                                     ticks: { font: { size: 13, weight: 'bold' }, color: '#374151' },
                                     grid: { color: 'rgba(0,0,0,0.05)' },

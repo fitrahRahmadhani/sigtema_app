@@ -42,7 +42,7 @@
                     </p>
                     <div class="mt-2 flex items-center gap-2">
                         <p class="font-semibold text-gray-600">Powered by</p>
-                        <img src="{{ asset('assets/logo/logo-gemini.png') }}" class="h-6" alt="Gemini AI" />
+                        <img src="{{ asset('assets/logo/Groq Logo_Black 25.svg') }}" class="h-6" alt="Groq AI" />
                     </div>
                 </div>
             </div>
@@ -91,8 +91,8 @@
                     </svg>
 
                     <p>
-                        <span class="font-semibold">Jika chart (bagan) tidak muncul,</span>
-                        mohon untuk refresh halaman
+                        <span class="font-semibold">If the chart does not appear,</span>
+                        please refresh the page.
                     </p>
                 </div>
             </div>
@@ -188,7 +188,9 @@
 
                         {{-- AI Match Score --}}
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">AI Match Score</td>
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                AI Match Score
+                            </td>
                             @foreach ($selectedEmployees as $employee)
                                 @php
                                     $aiInfo = $this->getAIInfoForEmployee($employee->id);
@@ -216,7 +218,7 @@
 
                         {{-- AI Strengths --}}
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 AI Strengths Analysis
                             </td>
                             @foreach ($selectedEmployees as $employee)
@@ -256,7 +258,7 @@
 
                         {{-- AI Development Areas --}}
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 AI Development Areas
                             </td>
                             @foreach ($selectedEmployees as $employee)
@@ -306,7 +308,7 @@
 
                         {{-- Email --}}
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Email</td>
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">Email</td>
                             @foreach ($selectedEmployees as $employee)
                                 <td class="w-[400px] px-6 py-4 text-gray-700">
                                     <span class="font-medium">{{ $employee->email ?? '-' }}</span>
@@ -316,7 +318,7 @@
 
                         {{-- Phone --}}
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Phone</td>
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">Phone</td>
                             @foreach ($selectedEmployees as $employee)
                                 <td class="w-[400px] px-6 py-4 text-gray-700">
                                     <span class="font-medium">{{ $employee->phone ?? '-' }}</span>
@@ -326,7 +328,9 @@
 
                         {{-- Personal Grade --}}
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Personal Grade</td>
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                Personal Grade
+                            </td>
                             @foreach ($selectedEmployees as $employee)
                                 <td class="w-[400px] px-6 py-4 text-gray-700">
                                     <span class="font-medium">{{ $employee->personal_grade ?? '-' }}</span>
@@ -336,7 +340,7 @@
 
                         {{-- Band --}}
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Band</td>
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">Band</td>
                             @foreach ($selectedEmployees as $employee)
                                 <td class="w-[400px] px-6 py-4 text-gray-700">
                                     <span class="font-medium">{{ $employee->band ?? '-' }}</span>
@@ -346,12 +350,29 @@
 
                         {{-- Hire Date --}}
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Hire Date</td>
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                Hire Date
+                            </td>
                             @foreach ($selectedEmployees as $employee)
                                 <td class="w-[400px] px-6 py-4 text-gray-700">
                                     <span class="text-gray-400 italic">
                                         {{ $employee->hire_date?->format('d F Y') ?? 'N/A' }}
                                     </span>
+                                </td>
+                            @endforeach
+                        </tr>
+
+                        {{-- Pension Date --}}
+                        <tr>
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                Pension Date
+                            </td>
+                            @foreach ($selectedEmployees as $employee)
+                                <td class="w-[400px] px-6 py-4 text-gray-700">
+                                    <span>
+                                        {{ $employee->retirement_date_formatted ?? 'N/A' }}
+                                    </span>
+                                    <span>({{ $employee->time_until_retirement ?? 'N/A' }})</span>
                                 </td>
                             @endforeach
                         </tr>
@@ -374,7 +395,7 @@
 
                         {{-- MBTI --}}
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">MBTI</td>
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">MBTI</td>
                             @foreach ($selectedEmployees as $employee)
                                 <td class="w-[400px] px-6 py-4 align-top text-gray-700">
                                     @if (! empty($employee->mbti->mbti))
@@ -455,8 +476,12 @@
                                         <div class="flex w-[400px] flex-col space-y-6">
                                             {{-- DISC 1 --}}
                                             <div class="overflow-hidden rounded-lg border border-gray-300">
-                                                <div class="bg-red-500 px-3 py-2 text-center">
-                                                    <p class="text-sm font-semibold text-white">DISC 1</p>
+                                                <div
+                                                    class="flex h-[50px] items-center justify-center bg-red-500 px-3 py-2 text-center"
+                                                >
+                                                    <p class="font-semibold text-white">
+                                                        Personality Typically Displayed
+                                                    </p>
                                                 </div>
                                                 <div
                                                     class="relative flex min-h-[150px] items-center justify-center border-x border-gray-300 bg-white p-4"
@@ -486,8 +511,10 @@
 
                                             {{-- DISC 2 --}}
                                             <div class="overflow-hidden rounded-lg border border-gray-300">
-                                                <div class="bg-yellow-500 px-3 py-2 text-center">
-                                                    <p class="text-sm font-semibold text-white">DISC 2</p>
+                                                <div
+                                                    class="flex h-[50px] items-center justify-center bg-yellow-500 px-3 py-2 text-center"
+                                                >
+                                                    <p class="font-semibold text-white">Personality Under Pressure</p>
                                                 </div>
                                                 <div
                                                     class="relative flex min-h-[150px] items-center justify-center border-x border-gray-300 bg-white p-4"
@@ -517,8 +544,10 @@
 
                                             {{-- DISC 3 --}}
                                             <div class="overflow-hidden rounded-lg border border-gray-300">
-                                                <div class="bg-green-500 px-3 py-2 text-center">
-                                                    <p class="text-sm font-semibold text-white">DISC 3</p>
+                                                <div
+                                                    class="flex h-[50px] items-center justify-center bg-green-500 px-3 py-2 text-center"
+                                                >
+                                                    <p class="font-semibold text-white">Hidden Core Personality</p>
                                                 </div>
                                                 <div
                                                     class="relative flex min-h-[150px] items-center justify-center border-x border-gray-300 bg-white p-4"
@@ -580,7 +609,7 @@
 
                         {{-- Strengths --}}
                         <tr>
-                            <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                            <td class="left-0 w-[400px] border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 Strengths
                             </td>
                             @foreach ($selectedEmployees as $employee)
@@ -604,7 +633,7 @@
 
                         {{-- Weaknesses --}}
                         <tr>
-                            <td class="left-0 w-[400px] bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                            <td class="left-0 w-[400px] border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                 Weaknesses
                             </td>
                             @foreach ($selectedEmployees as $employee)
@@ -878,10 +907,10 @@
                             </td>
                         </tr>
 
-                        {{-- Kelalahan Emosional --}}
+                        {{-- Emotional Exhaustion --}}
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                Kelalahan Emosional
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                Emotional Exhaustion
                             </td>
                             @foreach ($selectedEmployees as $employee)
                                 @php
@@ -894,9 +923,11 @@
                             @endforeach
                         </tr>
 
-                        {{-- Depersonalisasi --}}
+                        {{-- Depersonalization --}}
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Depersonalisasi</td>
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                Depersonalization
+                            </td>
                             @foreach ($selectedEmployees as $employee)
                                 @php
                                     $burnoutData = $this->getEmployeeBurnoutData($employee);
@@ -908,10 +939,10 @@
                             @endforeach
                         </tr>
 
-                        {{-- Penurunan Prestasi --}}
+                        {{-- Reduced Performance --}}
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                Penurunan Prestasi
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                Reduced Performance
                             </td>
                             @foreach ($selectedEmployees as $employee)
                                 @php
@@ -924,9 +955,11 @@
                             @endforeach
                         </tr>
 
-                        {{-- Penafsiran --}}
+                        {{-- Interpretation --}}
                         <tr>
-                            <td class="left-0 bg-white px-6 py-4 pl-10 font-medium text-gray-900">Penafsiran</td>
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                Interpretation
+                            </td>
                             @foreach ($selectedEmployees as $employee)
                                 @php
                                     $burnoutData = $this->getEmployeeBurnoutData($employee);
@@ -1339,6 +1372,7 @@
             try {
                 const chart = new Chart(radarCanvas, {
                     type: 'radar',
+                    plugins: [ChartDataLabels],
                     data: {
                         labels: papiSegments.map((s) => s.code),
                         datasets: [
@@ -1372,6 +1406,16 @@
                                         return `${segment.desc.replace(/\n/g, ' ')}: ${context.raw}`;
                                     },
                                 },
+                            },
+                            datalabels: {
+                                color: '#111',
+                                backgroundColor: 'rgba(59,130,246,0.2)',
+                                borderRadius: 3,
+                                font: { size: 8, weight: 'bold' },
+                                align: 'end',
+                                anchor: 'end',
+                                offset: 4,
+                                formatter: (value) => (value === 0 ? '' : value),
                             },
                         },
                         scales: {
@@ -1413,6 +1457,10 @@
                 2: { border: '#eab308', background: 'rgba(234, 179, 8, 0.1)' },
                 3: { border: '#22c55e', background: 'rgba(34, 197, 94, 0.1)' },
             };
+
+            if (window.ChartDataLabels) {
+                Chart.register(window.ChartDataLabels);
+            }
 
             const colors = colorMap[chartType] || colorMap[1];
 
@@ -1460,9 +1508,22 @@
                                     },
                                 },
                             },
+                            datalabels: {
+                                display: true,
+                                color: '#111',
+                                backgroundColor: colors.background.replace('0.1', '0.3'),
+                                borderRadius: 4,
+                                font: { size: 12, weight: 'bold' },
+                                align: 'top',
+                                offset: 6,
+                                formatter: (v) => v,
+                            },
                         },
                         scales: {
                             y: {
+                                beginAtZero: false,
+                                min: -10,
+                                max: 10,
                                 ticks: { stepSize: 20, font: { size: 11 } },
                                 grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: true },
                             },
