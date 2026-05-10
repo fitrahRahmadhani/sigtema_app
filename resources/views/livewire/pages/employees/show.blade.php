@@ -742,9 +742,9 @@
                                     <th
                                         class="w-2/3 border-r border-gray-300 px-3 py-2 font-semibold text-gray-800 sm:px-4"
                                     >
-                                        Aspek
+                                        Aspect
                                     </th>
-                                    <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Skor</th>
+                                    <th class="px-3 py-2 font-semibold text-gray-600 sm:px-4">Score</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -766,7 +766,7 @@
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-2/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Performance Decline
+                                        Achievement Decline
                                     </td>
                                     <td class="px-3 py-2 text-gray-600 sm:px-4">
                                         {{ $employee->burnout->achievement_decline ?? '-' }}
@@ -779,20 +779,30 @@
                                         Total Score
                                     </td>
                                     <td class="px-3 py-2 font-bold text-gray-600 sm:px-4">
-                                        {{ $employee->burnout?->getTotalScore() ?? '-' }}
+                                        <span>{{ $employee->burnout?->getTotalScore() ?? '-' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-t border-gray-300 transition-colors">
                                     <td colspan="2" class="px-3 py-3 sm:px-4">
-                                        <div class="mb-1 font-semibold text-gray-800">Interpretation:</div>
+                                        <p
+                                            class="mb-1 w-fit rounded-full bg-gray-200 px-4 py-1 font-semibold text-gray-800"
+                                        >
+                                            Level : {{ $employee->burnout?->level ?? '-' }}
+                                        </p>
+                                        <div class="mt-2 mb-1 font-semibold text-gray-800">Interpretation:</div>
                                         <div class="text-sm text-gray-700">
-                                            {!! strip_tags($employee->burnout?->result, '<i><b>') ?? '-' !!}
+                                            {{ $employee->burnout?->description ?? '-' }}
+                                        </div>
+                                        <div class="mt-2 mb-1 font-semibold text-gray-800">Recommendation:</div>
+                                        <div class="text-sm text-gray-700">
+                                            {{ $employee->burnout?->recommendation ?? '-' }}
                                         </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+                    <p class="p-2 text-gray-400 italic">* Lower is better</p>
                 </div>
             </div>
         </div>

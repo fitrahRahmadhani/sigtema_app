@@ -5,7 +5,7 @@
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         @endhasanyrole
 
-        <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Path</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Pattern</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('vacant-positions.index') }}">Vacant Positions</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('vacant-positions.show', ['position' => $position->slug]) }}">
             {{ $position->name }} - AI Match
@@ -939,10 +939,10 @@
                             @endforeach
                         </tr>
 
-                        {{-- Reduced Performance --}}
+                        {{-- Achievement Decline --}}
                         <tr>
                             <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                Reduced Performance
+                                Achievement Decline
                             </td>
                             @foreach ($selectedEmployees as $employee)
                                 @php
@@ -951,6 +951,22 @@
 
                                 <td class="w-[400px] px-6 py-4 align-top text-gray-700">
                                     <span class="font-medium">{{ $burnoutData['achievement_decline'] }}</span>
+                                </td>
+                            @endforeach
+                        </tr>
+
+                        {{-- Level --}}
+                        <tr>
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">Level</td>
+                            @foreach ($selectedEmployees as $employee)
+                                @php
+                                    $burnoutData = $this->getEmployeeBurnoutData($employee);
+                                @endphp
+
+                                <td class="w-[400px] px-6 py-4 align-top text-gray-700">
+                                    <span class="font-medium">
+                                        {{ $burnoutData['level'] ?? '-' }}
+                                    </span>
                                 </td>
                             @endforeach
                         </tr>
@@ -967,7 +983,25 @@
 
                                 <td class="w-[400px] px-6 py-4 align-top text-gray-700">
                                     <span class="font-medium">
-                                        {!! strip_tags($burnoutData['result'], '<i><b>') !!}
+                                        {{ $burnoutData['description'] ?? '-' }}
+                                    </span>
+                                </td>
+                            @endforeach
+                        </tr>
+
+                        {{-- Recommendation --}}
+                        <tr>
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                Recommendation
+                            </td>
+                            @foreach ($selectedEmployees as $employee)
+                                @php
+                                    $burnoutData = $this->getEmployeeBurnoutData($employee);
+                                @endphp
+
+                                <td class="w-[400px] px-6 py-4 align-top text-gray-700">
+                                    <span class="font-medium">
+                                        {{ $burnoutData['recommendation'] ?? '-' }}
                                     </span>
                                 </td>
                             @endforeach
