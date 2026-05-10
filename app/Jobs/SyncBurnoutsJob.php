@@ -231,6 +231,10 @@ class SyncBurnoutsJob implements ShouldQueue
                 'emotional_exhaustion' => $item['emotional_exhaustion'] ?? null,
                 'depersonalization' => $item['depersonalization'] ?? null,
                 'achievement_decline' => $item['achievement_decline'] ?? null,
+                'total' => $item['total'] ?? null,
+                'level' => $item['level'] ?? null,
+                'description' => $item['description'] ?? null,
+                'recommendation' => $item['recommendation'] ?? null,
                 'result' => $item['result'] ?? null,
                 'test_date' => $item['test_date (yyyy-mm-dd)'] ?? null,
                 'api_data' => $item // Simpan data lengkap untuk debugging
@@ -293,6 +297,10 @@ class SyncBurnoutsJob implements ShouldQueue
                             'emotional_exhaustion' => $item['emotional_exhaustion'],
                             'depersonalization' => $item['depersonalization'],
                             'achievement_decline' => $item['achievement_decline'],
+                            'total' => $item['total'],
+                            'level' => $item['level'],
+                            'description' => $item['description'],
+                            'recommendation' => $item['recommendation'],
                             'result' => $item['result'],
                             'is_active' => true,
                             'updated_at' => now()

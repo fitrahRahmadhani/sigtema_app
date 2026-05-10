@@ -5,7 +5,7 @@
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         @endhasanyrole
 
-        <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Path</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Pattern</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Employee Comparison</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
@@ -1068,10 +1068,10 @@
                                     @endfor
                                 </tr>
 
-                                {{-- Performance Decline --}}
+                                {{--  Achievement Decline --}}
                                 <tr>
                                     <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                        Performance Decline
+                                         Achievement Decline
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 align-top text-gray-700">
@@ -1086,6 +1086,18 @@
                                     @endfor
                                 </tr>
 
+                                {{-- Level --}}
+                                <tr>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Level
+                                    </td>
+                                    @for ($i = 0; $i < $columnCount; $i++)
+                                        <td class="w-[400px] px-6 py-4 align-top text-gray-700">
+                                            {{ $selectedEmployees[$i]->burnout->level ?? '-' }}
+                                        </td>
+                                    @endfor
+                                </tr>
+
                                 {{-- Interpretation --}}
                                 <tr>
                                     <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
@@ -1093,13 +1105,19 @@
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 align-top text-gray-700">
-                                            @if (! empty($selectedEmployees[$i]->burnout->result))
-                                                <span class="font-medium">
-                                                    {!! strip_tags($selectedEmployees[$i]->burnout->result, '<i><b>') !!}
-                                                </span>
-                                            @else
-                                                <span class="text-gray-400">-</span>
-                                            @endif
+                                            {{ $selectedEmployees[$i]->burnout->description?? '-' }}
+                                        </td>
+                                    @endfor
+                                </tr>
+
+                                {{-- Recommendation --}}
+                                <tr>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Recommendation:
+                                    </td>
+                                    @for ($i = 0; $i < $columnCount; $i++)
+                                        <td class="w-[400px] px-6 py-4 align-top text-gray-700">
+                                            {{ $selectedEmployees[$i]->burnout->recommendation ?? '-' }}
                                         </td>
                                     @endfor
                                 </tr>

@@ -169,7 +169,9 @@ class Compare extends Component
                 'emotional_exhaustion' => '-',
                 'depersonalization' => '-',
                 'achievement_decline' => '-',
-                'result' => '-',
+                'level' => '-',
+                'description' => '-',
+                'recommendation' => '-',
             ];
         }
 
@@ -177,7 +179,9 @@ class Compare extends Component
             'emotional_exhaustion' => $employee->burnout->emotional_exhaustion ?? '-',
             'depersonalization' => $employee->burnout->depersonalization ?? '-',
             'achievement_decline' => $employee->burnout->achievement_decline ?? '-',
-            'result' => $employee->burnout->result ?? '-',
+            'level' => $employee->burnout->level ?? '-',
+            'description' => $employee->burnout->description ?? '-',
+            'recommendation' => $employee->burnout->recommendation ?? '-',
         ];
     }
 
