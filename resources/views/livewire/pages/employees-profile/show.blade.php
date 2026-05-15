@@ -29,6 +29,7 @@
                 </p>
             </div>
         </div>
+        
         {{-- Header --}}
         <div class="mb-8 flex flex-col items-start gap-6 lg:flex-row lg:gap-8">
             <div
@@ -1337,29 +1338,39 @@
 
         /* ================= INIT ================= */
         function initCharts() {
+            // Check if canvases exist and Chart library is loaded
+            const papiCanvas = document.getElementById('workDirectionCanvas');
+            const discCanvas = document.getElementById('disc1Canvas');
+
+            if (!papiCanvas || !discCanvas) {
+                console.warn('Chart canvases not found');
+                return;
+            }
+
+            if (typeof Chart === 'undefined' || typeof ChartDataLabels === 'undefined') {
+                console.warn('Chart library not ready, retrying...');
+                setTimeout(initCharts, 100);
+                return;
+            }
+
             drawPAPIChart();
             drawDISCCharts();
         }
 
-        if (typeof Chart === 'undefined') {
-            const s = document.createElement('script');
-            s.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-            s.onload = () => {
-                const s2 = document.createElement('script');
-                s2.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2';
-                s2.onload = initCharts;
-                document.head.appendChild(s2);
-            };
-            document.head.appendChild(s);
-        } else if (typeof ChartDataLabels === 'undefined') {
-            const s = document.createElement('script');
-            s.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2';
-            s.onload = initCharts;
-            document.head.appendChild(s);
-        } else {
-            initCharts();
+        // Initialize charts after DOM and scripts are ready
+        // Use setTimeout to ensure all CDN scripts have finished loading
+        setTimeout(initCharts, 0);
+
+        // Re-init after Livewire navigation (Livewire 3)
+        if (window.Livewire) {
+            Livewire.hook('commitQueue.animate', () => {
+                setTimeout(initCharts, 200);
+            });
         }
 
-        window.addEventListener('resize', () => location.reload());
+        window.addEventListener('resize', () => {
+            clearTimeout(window.resizeTimer);
+            window.resizeTimer = setTimeout(() => location.reload(), 250);
+        });
     </script>
 </div>
