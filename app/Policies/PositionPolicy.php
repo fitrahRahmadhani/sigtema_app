@@ -39,7 +39,7 @@ class PositionPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Position $position): bool
+    public function update(User $user, Position $position = null): bool
     {
         if ($user->hasRole('superadmin')) {
             return true;

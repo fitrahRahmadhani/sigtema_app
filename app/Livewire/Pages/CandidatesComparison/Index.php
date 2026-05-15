@@ -307,7 +307,7 @@ class Index extends Component
             // Load chart data for this employee
             $this->loadChartData($employee, $index);
 
-            // Dispatch event to initialize charts
+            // Dispatch event untuk update chart
             $this->dispatch('employee-selected', index: $index);
             $this->dispatch('charts-loaded');
 

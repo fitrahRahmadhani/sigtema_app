@@ -452,9 +452,7 @@
                                                             class="{{ $highlightedIndex === $index ? 'text-white/80' : 'text-gray-500' }} text-xs"
                                                         >
                                                             {{ $employee->employee_number }}
-                                                            @if ($employee->position)
-                                                                    • {{ $employee->position }}
-                                                            @endif
+                                                            • {{ $employee->position->name ?? $employee->email }}
                                                         </div>
                                                     </div>
                                                 </button>

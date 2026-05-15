@@ -99,9 +99,13 @@ class UnassignEmployeeModal extends Component
     {
 
         try {
-            $this->validate();
-            $this->authorize('create', [PositionHistory::class, Auth::user()?->company]);
             $position = Position::with('employee')->find($this->positionId);
+            if ($this->saveAsHistory){
+                $this->validate();
+                $this->authorize('create', [PositionHistory::class, Auth::user()?->company]);
+            }else{
+                $this->authorize('update', [Position::class, $position]);
+            }
 
             if (!$position) {
                 Toaster::error('Position not found.');

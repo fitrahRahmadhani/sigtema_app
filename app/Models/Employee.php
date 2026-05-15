@@ -127,7 +127,7 @@ class Employee extends Model
      */
     public function positionHistories()
     {
-        return $this->hasMany(PositionHistory::class);
+        return $this->hasMany(PositionHistory::class)->orderBy('start_date', 'desc');
     }
 
     public function psychogramResults()
