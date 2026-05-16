@@ -43,6 +43,11 @@ class Index extends Component
     public $isSuperadmin = false;
     public $selectedCompany = null;
 
+    // Options for dropdowns (will be filtered based on other selected filters)
+    public $bandOptions = [];
+    public $unitOptions = [];
+    public $departmentOptions = [];
+
     public function mount()
     {
         $this->user = Auth::user();
@@ -69,6 +74,7 @@ class Index extends Component
         $this->selectedCompany = Company::find($companyId);
         session(['employees_profile_company_id' => $companyId]);
         $this->resetPage();
+        $this->resetFilters();
     }
 
     public function changeCompany()
@@ -77,6 +83,7 @@ class Index extends Component
         $this->selectedCompany = null;
         session()->forget('employees_profile_company_id');
         $this->resetPage();
+        $this->resetFilters();
     }
 
     public function updatingSearch()
@@ -104,9 +111,180 @@ class Index extends Component
         $this->resetPage();
     }
 
+    public function resetFilters(): void
+    {
+        $this->search = '';
+        $this->filterGender = '';
+        $this->filterUnit = '';
+        $this->filterDepartment = '';
+        $this->filterBand = '';
+        $this->resetPage();
+    }
+
+    /**
+     * Get unique work units from position data
+     * Returns unique values from section, biro, department, directorate columns
+     */
+    private function getUniqueWorkUnits($positions): array
+    {
+        $units = collect();
+
+        foreach ($positions as $position) {
+            // Collect values from all unit columns
+            if ($position->section) {
+                $units->push($position->section);
+            }
+            if ($position->biro) {
+                $units->push($position->biro);
+            }
+            if ($position->department) {
+                $units->push($position->department);
+            }
+            if ($position->directorate) {
+                $units->push($position->directorate);
+            }
+        }
+
+        return $units->unique()->sort()->values()->toArray();
+    }
+
+    /**
+     * Build filter options based on current selected filters
+     * This makes the dropdown options dependent on each other
+     */
+    private function buildFilterOptions(): void
+    {
+        $companyId = $this->selectedCompanyId ?? Auth::user()->company_id;
+
+        // Get all employee IDs for this company
+        $companyEmployeeIds = Employee::where('company_id', $companyId)->pluck('id')->toArray();
+
+        // Build base query for positions (without current filters)
+        $basePositionQuery = Position::whereIn('employee_id', $companyEmployeeIds);
+
+        // Build base query for employees (without current filters)
+        $baseEmployeeQuery = Employee::where('company_id', $companyId);
+
+        // Get all positions data first
+        $allPositions = (clone $basePositionQuery)->get();
+
+        // Get all unique values
+        $allBands = (clone $baseEmployeeQuery)
+            ->whereNotNull('band')
+            ->distinct()
+            ->orderBy('band')
+            ->pluck('band')
+            ->toArray();
+
+        $allDepartments = $allPositions
+            ->whereNotNull('department')
+            ->pluck('department')
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
+
+        // Get all work units (from all unit columns)
+        $allUnits = $this->getUniqueWorkUnits($allPositions);
+
+        // Start with all options
+        $this->bandOptions = $allBands;
+        $this->departmentOptions = $allDepartments;
+        $this->unitOptions = $allUnits;
+
+        // Apply dependent filtering - start from bands, then filter departments and units
+        // based on employees in those bands
+        if (!empty($this->filterBand)) {
+            $bandEmployeeIds = (clone $baseEmployeeQuery)
+                ->where('band', $this->filterBand)
+                ->pluck('id')
+                ->toArray();
+
+            $bandPositions = Position::whereIn('employee_id', $bandEmployeeIds)->get();
+
+            $this->departmentOptions = array_values(array_intersect(
+                $this->departmentOptions,
+                $bandPositions->whereNotNull('department')->pluck('department')->unique()->sort()->values()->toArray()
+            ));
+
+            $this->unitOptions = array_values(array_intersect(
+                $this->unitOptions,
+                $this->getUniqueWorkUnits($bandPositions)
+            ));
+        }
+
+        // Apply department filter - get bands and units from employees in that department
+        if (!empty($this->filterDepartment)) {
+            $deptPositions = (clone $basePositionQuery)
+                ->where('department', $this->filterDepartment)
+                ->get();
+
+            $deptEmployeeIds = $deptPositions->pluck('employee_id')->toArray();
+
+            // Filter bands based on employees in this department
+            $this->bandOptions = array_values(array_intersect(
+                $this->bandOptions,
+                (clone $baseEmployeeQuery)->whereIn('id', $deptEmployeeIds)
+                    ->whereNotNull('band')
+                    ->distinct()
+                    ->orderBy('band')
+                    ->pluck('band')
+                    ->toArray()
+            ));
+
+            // Filter units based on positions in this department
+            $this->unitOptions = array_values(array_intersect(
+                $this->unitOptions,
+                $this->getUniqueWorkUnits($deptPositions)
+            ));
+        }
+
+        // Apply unit filter - get bands and departments from positions with this unit
+        if (!empty($this->filterUnit)) {
+            $unitPositions = (clone $basePositionQuery)
+                ->where(function ($q) {
+                    $q->where('section', $this->filterUnit)
+                        ->orWhere('biro', $this->filterUnit)
+                        ->orWhere('department', $this->filterUnit)
+                        ->orWhere('directorate', $this->filterUnit);
+                })
+                ->get();
+
+            $unitEmployeeIds = $unitPositions->pluck('employee_id')->toArray();
+
+            // Filter bands based on employees in positions with this unit
+            $this->bandOptions = array_values(array_intersect(
+                $this->bandOptions,
+                (clone $baseEmployeeQuery)->whereIn('id', $unitEmployeeIds)
+                    ->whereNotNull('band')
+                    ->distinct()
+                    ->orderBy('band')
+                    ->pluck('band')
+                    ->toArray()
+            ));
+
+            // Filter departments based on positions with this unit
+            $this->departmentOptions = array_values(array_intersect(
+                $this->departmentOptions,
+                $unitPositions->whereNotNull('department')->pluck('department')->unique()->sort()->values()->toArray()
+            ));
+        }
+
+        // Reset invalid selections if they no longer exist in filtered options
+        if (!empty($this->filterBand) && !in_array($this->filterBand, $this->bandOptions)) {
+            $this->filterBand = '';
+        }
+        if (!empty($this->filterDepartment) && !in_array($this->filterDepartment, $this->departmentOptions)) {
+            $this->filterDepartment = '';
+        }
+        if (!empty($this->filterUnit) && !in_array($this->filterUnit, $this->unitOptions)) {
+            $this->filterUnit = '';
+        }
+    }
+
     public function render()
     {
-        // Jika superadmin belum pilih company
+        // Jika superadmin belum pilih company, tidak perlu build filter options
         if ($this->isSuperadmin && !$this->selectedCompanyId) {
             return view('livewire.pages.employees-profile.index', [
                 'showCompanySelection' => true,
@@ -114,10 +292,15 @@ class Index extends Component
                 'isSuperadmin' => $this->isSuperadmin,
                 'selectedCompany' => null,
                 'employees' => collect(),
-                'units' => collect(),
+                'bands' => [],
+                'units' => [],
+                'departments' => [],
                 'total' => 0
             ]);
         }
+
+        // Build dependent filter options (only when company is selected)
+        $this->buildFilterOptions();
 
         // Tentukan company ID
         $companyId = $this->selectedCompanyId ?? Auth::user()->company_id;
@@ -166,44 +349,13 @@ class Index extends Component
         // Paginate
         $employees = $query->paginate(10);
 
-        // Get unique units untuk dropdown (menggunakan work_unit logic)
-        $units = Position::where('company_id', $companyId)
-            ->where(function ($query) {
-                $query->whereNotNull('section')
-                    ->orWhereNotNull('biro')
-                    ->orWhereNotNull('department')
-                    ->orWhereNotNull('directorate');
-            })
-            ->get()
-            ->map(function ($position) {
-                return $position->work_unit; // Pakai accessor work_unit dari model
-            })
-            ->filter()
-            ->unique()
-            ->sort()
-            ->values();
-
-        $departments = Position::where('company_id', $companyId)
-            ->whereNotNull('department')
-            ->pluck('department')
-            ->unique()
-            ->sort()
-            ->values();
-
-        $bands = Employee::where('company_id', $companyId)
-            ->whereNotNull('band')
-            ->distinct()
-            ->orderBy('band')
-            ->pluck('band')
-            ->toArray();
-
         return view('livewire.pages.employees-profile.index', [
             'showCompanySelection' => false,
             'employees' => $employees,
             'total' => $employees->total(),
-            'units' => $units,
-            'departments' => $departments,
-            'bands' => $bands,
+            'bands' => $this->bandOptions,
+            'units' => $this->unitOptions,
+            'departments' => $this->departmentOptions,
             'selectedCompany' => $selectedCompany,
             'isSuperadmin' => $this->isSuperadmin,
             'companies' => $this->companies
