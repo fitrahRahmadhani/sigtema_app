@@ -5,7 +5,7 @@
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         @endhasanyrole
 
-        <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Path</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Pattern</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Employee Comparison</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
@@ -1068,10 +1068,10 @@
                                     @endfor
                                 </tr>
 
-                                {{-- Performance Decline --}}
+                                {{--  Achievement Decline --}}
                                 <tr>
                                     <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
-                                        Performance Decline
+                                         Achievement Decline
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 align-top text-gray-700">
@@ -1086,6 +1086,18 @@
                                     @endfor
                                 </tr>
 
+                                {{-- Level --}}
+                                <tr>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Level
+                                    </td>
+                                    @for ($i = 0; $i < $columnCount; $i++)
+                                        <td class="w-[400px] px-6 py-4 align-top text-gray-700">
+                                            {{ $selectedEmployees[$i]->burnout->level ?? '-' }}
+                                        </td>
+                                    @endfor
+                                </tr>
+
                                 {{-- Interpretation --}}
                                 <tr>
                                     <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
@@ -1093,13 +1105,19 @@
                                     </td>
                                     @for ($i = 0; $i < $columnCount; $i++)
                                         <td class="w-[400px] px-6 py-4 align-top text-gray-700">
-                                            @if (! empty($selectedEmployees[$i]->burnout->result))
-                                                <span class="font-medium">
-                                                    {!! strip_tags($selectedEmployees[$i]->burnout->result, '<i><b>') !!}
-                                                </span>
-                                            @else
-                                                <span class="text-gray-400">-</span>
-                                            @endif
+                                            {{ $selectedEmployees[$i]->burnout->description?? '-' }}
+                                        </td>
+                                    @endfor
+                                </tr>
+
+                                {{-- Recommendation --}}
+                                <tr>
+                                    <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                                        Recommendation:
+                                    </td>
+                                    @for ($i = 0; $i < $columnCount; $i++)
+                                        <td class="w-[400px] px-6 py-4 align-top text-gray-700">
+                                            {{ $selectedEmployees[$i]->burnout->recommendation ?? '-' }}
                                         </td>
                                     @endfor
                                 </tr>
@@ -1646,48 +1664,67 @@
 
             // ── Bootstrap ────────────────────────────────────────────────────
             ensureChartJS(() => {
-                // Jalankan pertama kali
-                scheduleInit();
-
-                // Livewire 3 — event dari PHP component
-                document.addEventListener('livewire:init', () => {
-                    Livewire.on('employee-selected', () => scheduleInit());
-                    Livewire.on('charts-loaded', () => scheduleInit());
-
-                    Livewire.on('employee-cleared', (ev) => {
-                        const idx = Array.isArray(ev) ? ev[0]?.index : ev?.index;
-                        if (idx === undefined) return;
-
-                        const pc = document.getElementById(`papiChart-${idx}`);
-                        if (pc) {
-                            pc.getContext('2d').clearRect(0, 0, pc.width, pc.height);
-                            pc.parentElement?.querySelector('.radar-chart-container')?.remove();
-                            safeDestroy(chartStore.papi, `papiChart-${idx}`);
-                        }
-                        ['disc1', 'disc2', 'disc3'].forEach((t) => {
-                            const dc = document.getElementById(`${t}Chart-${idx}`);
-                            if (dc) {
-                                const ch = Chart.getChart(dc);
-                                if (ch) ch.destroy();
-                                safeDestroy(chartStore[t], `${t}Chart-${idx}`);
+                // MutationObserver untuk mendeteksi DOM changes
+                function setupMutationObserver() {
+                    const observer = new MutationObserver((mutations) => {
+                        const hasRelevantChanges = mutations.some(mutation => {
+                            if (mutation.type === 'attributes') {
+                                const attr = mutation.attributeName;
+                                return attr === 'data-papi-data' || attr === 'data-disc-data';
                             }
+                            if (mutation.type === 'childList') {
+                                return Array.from(mutation.addedNodes).some(node => {
+                                    if (node.nodeType !== Node.ELEMENT_NODE) return false;
+                                    return node.matches?.('[data-papi-data], [data-disc-data]') ||
+                                           node.querySelector?.('[data-papi-data], [data-disc-data]');
+                                });
+                            }
+                            return false;
                         });
+                        if (hasRelevantChanges) {
+                            setTimeout(() => initCharts(), 100);
+                        }
                     });
 
-                    // Livewire 3 hook — dipanggil setiap kali DOM selesai di-morph
-                    Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
-                        succeed(({ snapshot, effect }) => {
-                            scheduleInit();
-                        });
+                    const container = document.querySelector('div[wire\\:id]') || document.body;
+                    observer.observe(container, {
+                        attributes: true,
+                        attributeFilter: ['data-papi-data', 'data-disc-data'],
+                        childList: true,
+                        subtree: true
                     });
-                });
+                }
 
-                // Resize
-                let rt;
-                window.addEventListener('resize', () => {
-                    clearTimeout(rt);
-                    rt = setTimeout(scheduleInit, 250);
-                });
+                // Langsung jalankan scheduleInit dengan delay
+                // Ini lebih reliable daripada menunggu event
+                setTimeout(() => {
+                    scheduleInit();
+                    setupMutationObserver();
+
+                    // Langsung listen event di window
+                    window.addEventListener('employee-selected', () => {
+                        setTimeout(() => scheduleInit(), 200);
+                    });
+                    window.addEventListener('charts-loaded', () => {
+                        setTimeout(() => scheduleInit(), 200);
+                    });
+
+                    // Livewire 3 hook
+                    if (typeof Livewire !== 'undefined') {
+                        Livewire.hook('commit', ({ succeed }) => {
+                            succeed(() => {
+                                setTimeout(() => scheduleInit(), 100);
+                            });
+                        });
+                    }
+
+                    // Resize handler
+                    let rt;
+                    window.addEventListener('resize', () => {
+                        clearTimeout(rt);
+                        rt = setTimeout(() => scheduleInit(), 250);
+                    });
+                }, 300); // Delay untuk pastikan DOM sudah ready
             });
         })();
     </script>

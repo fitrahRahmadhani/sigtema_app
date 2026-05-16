@@ -141,7 +141,7 @@
 
                                     // Node Card
                                     $output .= '<div class="node-card-wrapper relative mb-4 mx-4" id="' . $nodeHtmlId . '">';
-                                    $output .= '<div class="' . $cardWidthClass . ' flex cursor-default items-center gap-4 rounded-xl border ' . ($isVacant ? 'bg-red-50 border-red-300' : 'bg-white border-gray-300') . ' p-4 shadow-lg transition-all duration-200 hover:shadow-xl relative">';
+                                    $output .= '<div class="' . $cardWidthClass . ' flex cursor-default items-start gap-4 rounded-xl border ' . ($isVacant ? 'bg-red-50 border-red-300' : 'bg-white border-gray-300') . ' p-4 shadow-lg transition-all duration-200 hover:shadow-xl relative">';
 
                                     // Profile Photo
                                     $photoUrl = $node['photo'] ? asset('storage/' . $node['photo']) : null;
@@ -159,9 +159,11 @@
 
                                     // Node Information
                                     $output .= '<div class="flex flex-col text-left flex-1 min-w-0">';
+                                    $output .= '<div class="mb-0.5 text-xs"' . ($isVacant ? 'text-red-500' : 'text-gray-600') . '">' . e($node['employee_number']) . '</div>';
                                     $output .= '<div class="' . $textSize . ' font-bold line-clamp-2' . ($isVacant ? ' text-red-500 italic' : ' text-gray-800') . '">' . e($node['name']) . '</div>';
-                                    $output .= '<div class="mt-0.5 ' . $subtextSize . ' font-medium ' . ($isVacant ? 'text-red-500' : 'text-gray-600') . ' truncate">' . e($node['title']) . '</div>';
-                                    $output .= '<div class="text-xs ' . ($isVacant ? 'text-red-500' : 'text-gray-500') . ' truncate">' . e($node['department']) . '</div>';
+                                    $output .= '<div class="mt-1 text-xs ' . ($isVacant ? 'text-red-500' : 'text-gray-600') . '">' . e($node['position_code']) . '</div>';
+                                    $output .= '<div class="mb-1 ' . $subtextSize . ' font-medium ' . ($isVacant ? 'text-red-500' : 'text-gray-600') . '">' . e($node['title']) . '</div>';
+                                    $output .= '<div class="text-xs ' . ($isVacant ? 'text-red-500' : 'text-gray-500') . '">' . e($node['department']) . '</div>';
 
                                     // Collapse/Expand Button
                                     if ($this->hasChildren($nodeId)) {
@@ -196,7 +198,7 @@
 
                                     // Employee Profile
                                     if (!$isVacant) {
-                                        $profileUrl = route('employees.show', $node['slug']);
+                                        $profileUrl = route('employees-profile.show', $node['slug']);
                                         $output .= '<a href="' . $profileUrl . '" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-md ' . ($isVacant ? 'text-red-700 hover:bg-red-100' : 'text-gray-700 hover:bg-gray-100') . ' transition-colors">';
                                         $output .= '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">';
                                         $output .= '<path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />';

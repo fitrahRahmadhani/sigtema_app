@@ -5,7 +5,7 @@
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         @endhasanyrole
 
-        <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Path</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Pattern</flux:breadcrumbs.item>
         <flux:breadcrumbs.item href="{{ route('employees-profile.index') }}">Employee Profile</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>{{ $employee->name }}'s Profile</flux:breadcrumbs.item>
     </flux:breadcrumbs>
@@ -29,6 +29,7 @@
                 </p>
             </div>
         </div>
+        
         {{-- Header --}}
         <div class="mb-8 flex flex-col items-start gap-6 lg:flex-row lg:gap-8">
             <div
@@ -780,7 +781,7 @@
                                 </tr>
                                 <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
                                     <td class="w-2/3 border-r border-gray-300 px-3 py-2 text-gray-800 sm:px-4">
-                                        Performance Decline
+                                        Achievement Decline
                                     </td>
                                     <td class="px-3 py-2 text-gray-600 sm:px-4">
                                         {{ $employee->burnout->achievement_decline ?? '-' }}
@@ -793,20 +794,30 @@
                                         Total Score
                                     </td>
                                     <td class="px-3 py-2 font-bold text-gray-600 sm:px-4">
-                                        {{ $employee->burnout?->getTotalScore() ?? '-' }}
+                                        <span>{{ $employee->burnout?->getTotalScore() ?? '-' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-t border-gray-300 transition-colors">
                                     <td colspan="2" class="px-3 py-3 sm:px-4">
-                                        <div class="mb-1 font-semibold text-gray-800">Interpretation:</div>
+                                        <p
+                                            class="mb-1 w-fit rounded-full bg-gray-200 px-4 py-1 font-semibold text-gray-800"
+                                        >
+                                            Level : {{ $employee->burnout?->level ?? '-' }}
+                                        </p>
+                                        <div class="mt-2 mb-1 font-semibold text-gray-800">Interpretation:</div>
                                         <div class="text-sm text-gray-700">
-                                            {!! strip_tags($employee->burnout?->result, '<i><b>') ?? '-' !!}
+                                            {{ $employee->burnout?->description ?? '-' }}
+                                        </div>
+                                        <div class="mt-2 mb-1 font-semibold text-gray-800">Recommendation:</div>
+                                        <div class="text-sm text-gray-700">
+                                            {{ $employee->burnout?->recommendation ?? '-' }}
                                         </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+                    <p class="p-2 text-gray-400 italic">* Lower is better</p>
                 </div>
             </div>
         </div>
@@ -1327,29 +1338,39 @@
 
         /* ================= INIT ================= */
         function initCharts() {
+            // Check if canvases exist and Chart library is loaded
+            const papiCanvas = document.getElementById('workDirectionCanvas');
+            const discCanvas = document.getElementById('disc1Canvas');
+
+            if (!papiCanvas || !discCanvas) {
+                console.warn('Chart canvases not found');
+                return;
+            }
+
+            if (typeof Chart === 'undefined' || typeof ChartDataLabels === 'undefined') {
+                console.warn('Chart library not ready, retrying...');
+                setTimeout(initCharts, 100);
+                return;
+            }
+
             drawPAPIChart();
             drawDISCCharts();
         }
 
-        if (typeof Chart === 'undefined') {
-            const s = document.createElement('script');
-            s.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-            s.onload = () => {
-                const s2 = document.createElement('script');
-                s2.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2';
-                s2.onload = initCharts;
-                document.head.appendChild(s2);
-            };
-            document.head.appendChild(s);
-        } else if (typeof ChartDataLabels === 'undefined') {
-            const s = document.createElement('script');
-            s.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2';
-            s.onload = initCharts;
-            document.head.appendChild(s);
-        } else {
-            initCharts();
+        // Initialize charts after DOM and scripts are ready
+        // Use setTimeout to ensure all CDN scripts have finished loading
+        setTimeout(initCharts, 0);
+
+        // Re-init after Livewire navigation (Livewire 3)
+        if (window.Livewire) {
+            Livewire.hook('commitQueue.animate', () => {
+                setTimeout(initCharts, 200);
+            });
         }
 
-        window.addEventListener('resize', () => location.reload());
+        window.addEventListener('resize', () => {
+            clearTimeout(window.resizeTimer);
+            window.resizeTimer = setTimeout(() => location.reload(), 250);
+        });
     </script>
 </div>

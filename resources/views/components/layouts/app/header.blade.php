@@ -6,6 +6,8 @@
     {{-- Spacer berfungsi untuk memberikan jarak antar elemen --}}
     <flux:spacer />
 
+    <livewire:components.modals.report-ticket-modal />
+
     {{-- Profile --}}
     <div
         @click="open = !open"

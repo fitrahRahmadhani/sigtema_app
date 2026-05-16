@@ -1,10 +1,12 @@
 <?php
 
+use App\Helpers\RoleRedirectHelper;
 use App\Support\SecurityLogger;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -24,6 +26,12 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->renderable(function (HttpException $e, Request $request) {
             if ($e->getStatusCode() === 403) {
+                if (Auth::check()) {
+                    $user = Auth::user();
+                    $homeRoute = RoleRedirectHelper::getHomeRoute($user);
+                    return redirect()->route($homeRoute);
+                }
+
                 SecurityLogger::forbidden($request, $e->getMessage());
             }
             return null;

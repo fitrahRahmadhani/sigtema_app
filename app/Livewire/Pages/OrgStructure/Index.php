@@ -157,6 +157,8 @@ class Index extends Component
             $this->nodes[] = [
                 'id' => $nodeId,
                 'position_id' => $positionId,
+                'employee_number' => $employee ? $employee->employee_number : null,
+                'position_code' => $position->position_code ?? null,
                 'name' => $employee ? $employee->name : 'Vacant Position',
                 'title' => $position->name,
                 'department' => $position->getWorkUnitAttribute(),

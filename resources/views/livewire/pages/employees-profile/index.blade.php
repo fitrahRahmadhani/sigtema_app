@@ -5,7 +5,7 @@
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         @endhasanyrole
 
-        <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Path</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item href="{{ route('career-path') }}">Career Pattern</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Employee Profile</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
@@ -374,13 +374,26 @@
                         </div>
                     </div>
 
-                    {{-- Results Count --}}
-                    <div class="border-t border-gray-200 pt-4 text-sm text-gray-600">
-                        Showing
-                        <span class="font-semibold">{{ $employees->count() }}</span>
-                        of
-                        <span class="font-semibold">{{ $employees->total() }}</span>
-                        employees
+                    {{-- Results Count & Reset Filter --}}
+                    <div class="flex items-center justify-between border-t border-gray-200 pt-4">
+                        <div class="text-sm text-gray-600">
+                            Showing
+                            <span class="font-semibold">{{ $employees->count() }}</span>
+                            of
+                            <span class="font-semibold">{{ $employees->total() }}</span>
+                            employees
+                        </div>
+                        @if ($search || $filterGender || $filterUnit || $filterDepartment || $filterBand)
+                            <button
+                                wire:click="resetFilters"
+                                class="flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                            >
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                Reset Filters
+                            </button>
+                        @endif
                     </div>
                 </div>
 
