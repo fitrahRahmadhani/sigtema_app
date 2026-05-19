@@ -355,7 +355,7 @@
                                 </tr>
 
                                 {{-- Email --}}
-                                <tr>
+                                {{-- <tr>
                                     <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Email
                                     </td>
@@ -368,10 +368,10 @@
                                             @endif
                                         </td>
                                     @endfor
-                                </tr>
+                                </tr> --}}
 
                                 {{-- Phone --}}
-                                <tr>
+                                {{-- <tr>
                                     <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
                                         Phone
                                     </td>
@@ -384,7 +384,7 @@
                                             @endif
                                         </td>
                                     @endfor
-                                </tr>
+                                </tr> --}}
 
                                 {{-- Personal Grade --}}
                                 <tr>
