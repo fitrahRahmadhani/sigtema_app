@@ -92,6 +92,8 @@ Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin']], fu
 
     // Innovations
     Route::get('innovations', App\Livewire\Pages\Innovations\Index::class)->name('innovations.index');
+    Route::get('innovations/create', App\Livewire\Pages\Innovations\Create::class)->name('innovations.create');
+    Route::get('innovations/{innovation}/edit', App\Livewire\Pages\Innovations\Edit::class)->name('innovations.edit');
 
     // Burnouts
     Route::get('burnouts', App\Livewire\Pages\Burnouts\Index::class)->name('burnouts.index');
