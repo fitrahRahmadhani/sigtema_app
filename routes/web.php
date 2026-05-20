@@ -118,6 +118,7 @@ Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin']], fu
     Route::get('bulk-upload/position-histories', \App\Livewire\Pages\BulkUploads\PositionHistories::class)->name('bulk-upload.position-histories');
     Route::get('bulk-upload/psychogram-aspects', \App\Livewire\Pages\BulkUploads\PsychogramAspects::class)->name('bulk-upload.psychogram-aspects');
     Route::get('bulk-upload/psychogram-results', \App\Livewire\Pages\BulkUploads\PsychogramResults::class)->name('bulk-upload.psychogram-results');
+    Route::get('bulk-upload/innovations', \App\Livewire\Pages\BulkUploads\Innovations::class)->name('bulk-upload.innovations');
     Route::get('bulk-upload/position-requirements', \App\Livewire\Pages\BulkUploads\PositionRequirements::class)->name('bulk-upload.position-requirements');
 
     // Requirements

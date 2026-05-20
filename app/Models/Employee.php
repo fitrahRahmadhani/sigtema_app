@@ -62,7 +62,7 @@ class Employee extends Model
      */
     public function educations()
     {
-        return $this->hasMany(Education::class);
+        return $this->hasMany(Education::class)->orderBy('start_date', 'desc');
     }
 
     // Jika perlu data yang sudah diformat
@@ -88,7 +88,7 @@ class Employee extends Model
 
     public function innovations()
     {
-        return $this->hasMany(Innovation::class)->where('is_active', true);
+        return $this->hasMany(Innovation::class)->where('is_active', true)->orderBy('created_at', 'desc');
     }
 
     /**
@@ -96,7 +96,7 @@ class Employee extends Model
      */
     public function mcuResults()
     {
-        return $this->hasMany(Mcu::class);
+        return $this->hasMany(Mcu::class)->orderBy('created_at', 'desc');
     }
 
     /**
