@@ -731,6 +731,73 @@
                                             Deactivate All Active
                                         </div>
                                     </button>
+                                    <div class="border-t border-gray-100 my-1"></div>
+                                    <button
+                                        wire:click="bulkDeleteInactive"
+                                        class="block w-full px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-700"
+                                    >
+                                        <div class="flex items-center">
+                                            <svg
+                                                class="mr-2 h-4 w-4 text-red-600"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                />
+                                            </svg>
+                                            Delete All Inactive
+                                        </div>
+                                    </button>
+                                    <button
+                                        wire:click="bulkDeleteActive"
+                                        class="block w-full px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-700"
+                                    >
+                                        <div class="flex items-center">
+                                            <svg
+                                                class="mr-2 h-4 w-4 text-red-600"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                />
+                                            </svg>
+                                            Delete All Active
+                                        </div>
+                                    </button>
+                                    <button
+                                        wire:click="bulkDeleteAll"
+                                        class="block w-full px-4 py-2 text-left text-sm text-red-700 transition-colors hover:bg-red-50 hover:text-red-900"
+                                    >
+                                        <div class="flex items-center">
+                                            <svg
+                                                class="mr-2 h-4 w-4 text-red-700"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.998-.833-2.732 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                                                />
+                                            </svg>
+                                            Delete All Records
+                                        </div>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -977,7 +1044,7 @@
                         <div class="col-span-1 flex items-center justify-center gap-2">
                             <a
                                 href="{{ route('innovations.edit', $innovation->id) }}"
-                                class="rounded-lg p-1.5 text-gray-600 transition-colors hover:bg-blue-50 hover:text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+                                class="rounded-lg p-1.5 text-gray-600 transition-colors hover:bg-yellow-50 hover:text-yellow-600 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:outline-none"
                                 title="Edit Innovation"
                             >
                                 <svg
@@ -1244,7 +1311,7 @@
                             <div class="flex items-center justify-end gap-2 border-t border-gray-100 pt-3">
                                 <a
                                     href="{{ route('innovations.edit', $innovation->id) }}"
-                                    class="rounded-lg p-2 text-gray-600 transition-colors hover:bg-blue-50 hover:text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+                                    class="rounded-lg p-2 text-gray-600 transition-colors hover:bg-yellow-50 hover:text-yellow-600 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:outline-none"
                                     title="Edit Innovation"
                                 >
                                     <svg
