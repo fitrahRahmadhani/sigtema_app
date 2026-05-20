@@ -104,7 +104,7 @@ class Employee extends Model
      */
     public function burnout()
     {
-        return $this->hasOne(Burnout::class);
+        return $this->hasOne(Burnout::class)->orderBy('created_at', 'desc');
     }
 
     public function mbti()
