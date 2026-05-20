@@ -270,23 +270,156 @@ class Index extends Component
         $mbti->delete();
     }
 
+    /**
+     * Bulk activate all inactive records
+     */
     public function bulkActivate()
     {
-        $count = Mbti::where('source', 'eksternal')
-            ->where('is_active', false)
-            ->update(['is_active' => true]);
+        $count = Mbti::where('is_active', false)->update(['is_active' => true]);
 
         Toaster::success("Successfully activated {$count} MBTI records.");
         $this->dispatch('refreshData');
     }
 
+    /**
+     * Bulk deactivate all active records
+     */
     public function bulkDeactivate()
     {
-        $count = Mbti::where('source', 'eksternal')
-            ->where('is_active', true)
-            ->update(['is_active' => false]);
+        $count = Mbti::where('is_active', true)->update(['is_active' => false]);
 
         Toaster::success("Successfully deactivated {$count} MBTI records.");
+        $this->dispatch('refreshData');
+    }
+
+    /**
+     * Bulk delete - confirmation for active records
+     */
+    public function bulkDeleteActive()
+    {
+        $count = Mbti::where('is_active', true)->count();
+        $this->deleteName = $count . ' active MBTI record' . ($count != 1 ? 's' : '');
+        $this->deleteType = 'Active MBTI Records';
+        $this->deleteToken = 'bulk_active';
+        $this->showDeleteModal = true;
+    }
+
+    /**
+     * Bulk delete - confirmation for inactive records
+     */
+    public function bulkDeleteInactive()
+    {
+        $count = Mbti::where('is_active', false)->count();
+        $this->deleteName = $count . ' inactive MBTI record' . ($count != 1 ? 's' : '');
+        $this->deleteType = 'Inactive MBTI Records';
+        $this->deleteToken = 'bulk_inactive';
+        $this->showDeleteModal = true;
+    }
+
+    /**
+     * Bulk delete - confirmation for all records
+     */
+    public function bulkDeleteAll()
+    {
+        $count = Mbti::count();
+        $this->deleteName = 'ALL ' . $count . ' MBTI record' . ($count != 1 ? 's' : '');
+        $this->deleteType = 'All MBTI Records';
+        $this->deleteToken = 'bulk_all';
+        $this->showDeleteModal = true;
+    }
+
+    /**
+     * Execute bulk delete based on token
+     */
+    public function executeBulkDelete()
+    {
+        $this->deleting = true;
+
+        try {
+            $deleted = 0;
+
+            switch ($this->deleteToken) {
+                case 'bulk_active':
+                    $deleted = Mbti::where('is_active', true)->delete();
+                    Toaster::success("Successfully deleted {$deleted} active MBTI records.");
+                    break;
+
+                case 'bulk_inactive':
+                    $deleted = Mbti::where('is_active', false)->delete();
+                    Toaster::success("Successfully deleted {$deleted} inactive MBTI records.");
+                    break;
+
+                case 'bulk_all':
+                    $deleted = Mbti::delete();
+                    Toaster::success("Successfully deleted all {$deleted} MBTI records.");
+                    break;
+
+                default:
+                    Toaster::error('Invalid bulk delete request.');
+            }
+
+            $this->resetDeleteState();
+            $this->dispatch('refreshData');
+        } catch (\Exception $e) {
+            $this->deleting = false;
+            $this->handleException('bulk delete MBTI records', $e->getMessage());
+        }
+    }
+
+    /**
+     * Override delete method to handle bulk deletes
+     */
+    public function delete()
+    {
+        $this->deleting = true;
+
+        // Check if this is a bulk delete operation
+        if (in_array($this->deleteToken, ['bulk_active', 'bulk_inactive', 'bulk_all'])) {
+            return $this->executeBulkDelete();
+        }
+
+        // Single item deletion
+        try {
+            $item = $this->getModelClass()::findOrFail($this->getIdFromToken());
+            $this->performDelete($item);
+            $this->resetDeleteState();
+            Toaster::success('MBTI record deleted successfully!');
+            $this->dispatch('refreshData');
+        } catch (\Exception $e) {
+            $this->resetDeleteState();
+            $this->handleException('delete MBTI record', $e->getMessage());
+        }
+    }
+
+    /**
+     * Get ID from encrypted token
+     */
+    protected function getIdFromToken()
+    {
+        if (!$this->deleteToken) {
+            return null;
+        }
+
+        try {
+            $payload = json_decode(\Illuminate\Support\Facades\Crypt::decryptString($this->deleteToken), true);
+            return $payload['id'] ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Toggle individual MBTI status
+     */
+    public function toggleStatus($id)
+    {
+        $mbti = Mbti::findOrFail($id);
+        $mbti->is_active = !$mbti->is_active;
+        $mbti->save();
+
+        $status = $mbti->is_active ? 'activated' : 'deactivated';
+        Toaster::success("MBTI record {$status} successfully.");
+
         $this->dispatch('refreshData');
     }
 
