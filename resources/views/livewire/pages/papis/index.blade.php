@@ -528,12 +528,177 @@
             </div>
 
             {{-- Results Info --}}
-            <div class="flex items-center justify-start">
+            <div class="flex items-center justify-between">
                 <div class="text-sm text-gray-600">
                     Showing {{ $papis->count() }} of {{ $papis->total() }} PAPI records
                     @if ($search)
                         <span class="text-gray-400">• Search: "{{ $search }}"</span>
                     @endif
+                </div>
+                <div class="flex items-center gap-2">
+                    {{-- Bulk Actions Dropdown --}}
+                    <div class="relative" x-data="{ open: false }">
+                        <button
+                            @click="open = !open"
+                            class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-[#721d21] focus:ring-offset-2 focus:outline-none"
+                        >
+                            <svg
+                                class="mr-2 h-4 w-4 text-gray-500"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                                />
+                            </svg>
+                            Bulk Actions
+                            <svg
+                                class="ml-2 h-4 w-4"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M19 9l-7 7-7-7"
+                                />
+                            </svg>
+                        </button>
+                        <div
+                            x-show="open"
+                            @click.away="open = false"
+                            x-transition:enter="transition duration-100 ease-out"
+                            x-transition:enter-start="scale-95 transform opacity-0"
+                            x-transition:enter-end="scale-100 transform opacity-100"
+                            x-transition:leave="transition duration-75 ease-in"
+                            x-transition:leave-start="scale-100 transform opacity-100"
+                            x-transition:leave-end="scale-95 transform opacity-0"
+                            class="ring-opacity-5 absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black focus:outline-none"
+                            style="display: none"
+                        >
+                            <div class="py-1">
+                                <button
+                                    wire:click="bulkActivate"
+                                    class="block w-full px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-green-50 hover:text-green-700"
+                                >
+                                    <div class="flex items-center">
+                                        <svg
+                                            class="mr-2 h-4 w-4 text-green-600"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                            />
+                                        </svg>
+                                        Activate All Inactive
+                                    </div>
+                                </button>
+                                <button
+                                    wire:click="bulkDeactivate"
+                                    class="block w-full px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-700"
+                                >
+                                    <div class="flex items-center">
+                                        <svg
+                                            class="mr-2 h-4 w-4 text-red-600"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                            />
+                                        </svg>
+                                        Deactivate All Active
+                                    </div>
+                                </button>
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <button
+                                    wire:click="bulkDeleteInactive"
+                                    class="block w-full px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-700"
+                                >
+                                    <div class="flex items-center">
+                                        <svg
+                                            class="mr-2 h-4 w-4 text-red-600"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                            />
+                                        </svg>
+                                        Delete All Inactive
+                                    </div>
+                                </button>
+                                <button
+                                    wire:click="bulkDeleteActive"
+                                    class="block w-full px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-700"
+                                >
+                                    <div class="flex items-center">
+                                        <svg
+                                            class="mr-2 h-4 w-4 text-red-600"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                            />
+                                        </svg>
+                                        Delete All Active
+                                    </div>
+                                </button>
+                                <button
+                                    wire:click="bulkDeleteAll"
+                                    class="block w-full px-4 py-2 text-left text-sm text-red-700 transition-colors hover:bg-red-50 hover:text-red-900"
+                                >
+                                    <div class="flex items-center">
+                                        <svg
+                                            class="mr-2 h-4 w-4 text-red-700"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.998-.833-2.732 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                                            />
+                                        </svg>
+                                        Delete All Records
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -639,8 +804,23 @@
                             @endif
                         </div>
 
-                        {{-- Actions - Hanya Delete --}}
+                        {{-- Actions --}}
                         <div class="col-span-1 flex items-center justify-center gap-2">
+                            <button
+                                wire:click="toggleStatus({{ $papi->id }})"
+                                class="rounded-lg p-1.5 text-gray-600 transition-colors hover:bg-green-50 hover:text-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
+                                title="{{ $papi->is_active ? 'Deactivate' : 'Activate' }}"
+                            >
+                                @if ($papi->is_active)
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-green-600">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                @else
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-red-600">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                @endif
+                            </button>
                             <button
                                 wire:click="confirmDelete({{ $papi->id }}, '{{ addslashes($papi->employee ? $papi->employee->name : $papi->employee_number) }}')"
                                 class="rounded-lg p-1.5 text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none"
@@ -802,12 +982,27 @@
                                 </div>
                             </div>
 
-                            {{-- Actions - Hanya Delete --}}
+                            {{-- Actions --}}
                             <div class="border-t border-gray-100 pt-3">
-                                <div class="flex justify-end">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button
+                                        wire:click="toggleStatus({{ $papi->id }})"
+                                        class="rounded-lg p-2 text-gray-600 transition-colors hover:bg-green-50 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
+                                        title="{{ $papi->is_active ? 'Deactivate' : 'Activate' }}"
+                                    >
+                                        @if ($papi->is_active)
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-green-600">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        @else
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-red-600">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        @endif
+                                    </button>
                                     <button
                                         wire:click="confirmDelete({{ $papi->id }}, '{{ addslashes($papi->employee ? $papi->employee->name : $papi->employee_number) }}')"
-                                        class="inline-flex items-center rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 transition-colors hover:bg-red-100 hover:text-red-800 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none"
+                                        class="rounded-lg p-2 text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none"
                                         title="Delete PAPI Record"
                                     >
                                         <svg
@@ -816,7 +1011,7 @@
                                             viewBox="0 0 24 24"
                                             stroke-width="1.5"
                                             stroke="currentColor"
-                                            class="mr-1 h-4 w-4"
+                                            class="h-5 w-5"
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -824,7 +1019,6 @@
                                                 d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                                             />
                                         </svg>
-                                        Delete Record
                                     </button>
                                 </div>
                             </div>
