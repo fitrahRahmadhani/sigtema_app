@@ -364,6 +364,52 @@
                 </div>
             </div>
 
+            {{-- Direct Permission Assignment --}}
+            <div class="rounded-lg border border-gray-200 bg-gray-50 p-6">
+                <div class="mb-4 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">Direct Permission Assignment</h3>
+                        <p class="mt-1 text-sm text-gray-500">Assign permissions directly to this user (bypassing role)</p>
+                    </div>
+                    <span class="rounded-full bg-orange-100 px-3 py-1 text-xs font-medium text-orange-800">Optional</span>
+                </div>
+
+                @if ($permissions->count() > 0)
+                    <div class="space-y-4">
+                        @foreach ($permissions as $guard => $guardPermissions)
+                            <div class="rounded-lg border border-gray-200 bg-white">
+                                <div class="border-b border-gray-100 bg-gray-50 px-4 py-2">
+                                    <span class="inline-flex items-center rounded bg-gray-200 px-2 py-0.5 text-xs font-bold uppercase">{{ $guard }}</span>
+                                    <span class="ml-2 text-xs text-gray-500">{{ $guardPermissions->count() }} permissions</span>
+                                </div>
+                                <div class="p-2">
+                                    @foreach ($guardPermissions as $permission)
+                                        <label class="flex cursor-pointer items-center gap-3 px-3 py-2 transition hover:bg-gray-50">
+                                            <input type="checkbox" wire:model="selectedPermissions" value="{{ $permission->name }}" class="h-4 w-4 rounded border-gray-300 text-[#721d21] focus:ring-[#721d21]" />
+                                            <span class="text-sm text-gray-700">{{ $permission->name }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <p class="mt-4 text-xs text-orange-600">
+                        <svg class="inline h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126Z"/>
+                        </svg>
+                        Direct permissions override role permissions. Use this to grant special access not available in user's roles.
+                    </p>
+                @else
+                    <div class="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-8 text-center">
+                        <p class="text-sm text-gray-500">No permissions available. Please create permissions first.</p>
+                    </div>
+                @endif
+
+                @error('selectedPermissions')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
             {{-- Form Actions --}}
             <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
                 <button
