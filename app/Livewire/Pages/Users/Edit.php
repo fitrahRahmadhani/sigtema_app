@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Users;
 use App\Livewire\Traits\HandleException;
 use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
+use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
@@ -33,6 +34,7 @@ class Edit extends Component
     public $band = '';
     public $company_id = '';
     public $selectedRoles = [];
+    public $selectedPermissions = [];
     public $profile_photo;
 
     public $existing_profile_photo = null;
@@ -55,6 +57,7 @@ class Edit extends Component
             'band' => 'nullable|numeric|min:1|max:5',
             'company_id' => 'nullable|exists:companies,id',
             'selectedRoles' => 'nullable|array',
+            'selectedPermissions' => 'nullable|array',
             'profile_photo' => 'nullable|image|max:2048',
         ];
     }
@@ -79,6 +82,7 @@ class Edit extends Component
         $this->band = $user->band ? (string)$user->band : '';
         $this->company_id = $user->company_id;
         $this->selectedRoles = $user->roles->pluck('name')->toArray();
+        $this->selectedPermissions = $user->getDirectPermissions()->pluck('name')->toArray();
         $this->existing_profile_photo = $user->profile_path;
 
         // Load companies
@@ -161,6 +165,14 @@ class Edit extends Component
                 $this->user->syncRoles([]);
             }
 
+            // Sync direct permissions
+            if (!empty($this->selectedPermissions)) {
+                $this->user->syncPermissions($this->selectedPermissions);
+            } else {
+                // Remove all direct permissions if none selected
+                $this->user->permissions()->detach();
+            }
+
             DB::commit();
 
             return redirect()->route('users.index')->success('User updated successfully!');
@@ -186,8 +198,15 @@ class Edit extends Component
     {
         $roles = Role::orderBy('name')->get();
 
+        // Get all permissions grouped by guard
+        $permissions = Permission::orderBy('guard_name')
+            ->orderBy('name')
+            ->get()
+            ->groupBy('guard_name');
+
         return view('livewire.pages.users.edit', [
             'roles' => $roles,
+            'permissions' => $permissions,
         ]);
     }
 }

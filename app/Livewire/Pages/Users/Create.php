@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Users;
 use App\Livewire\Traits\HandleException;
 use App\Livewire\Traits\UnauthorizedAccess;
 use App\Models\Company;
+use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +31,7 @@ class Create extends Component
     public $band = '';
     public $company_id = '';
     public $selectedRoles = [];
+    public $selectedPermissions = [];
     public $profile_photo;
     public $profile_photo_preview = null;
     public $bandOptions = [];
@@ -65,6 +67,7 @@ class Create extends Component
             'band' => 'nullable|numeric|min:1|max:5',
             'company_id' => 'nullable|exists:companies,id',
             'selectedRoles' => 'nullable|array',
+            'selectedPermissions' => 'nullable|array',
             'profile_photo' => 'nullable|image|max:2048',
         ];
     }
@@ -96,6 +99,7 @@ class Create extends Component
             'company_id.exists' => 'Selected company is invalid.',
 
             'selectedRoles.array' => 'Selected roles must be a valid array.',
+            'selectedPermissions.array' => 'Selected permissions must be a valid array.',
 
             'profile_photo.image' => 'Profile photo must be a valid image file.',
             'profile_photo.max' => 'Profile photo may not be greater than 2MB.',
@@ -141,6 +145,11 @@ class Create extends Component
                 $user->syncRoles($this->selectedRoles);
             }
 
+            // Assign direct permissions if selected
+            if (!empty($this->selectedPermissions)) {
+                $user->syncPermissions($this->selectedPermissions);
+            }
+
             DB::commit();
 
             return redirect()->route('users.index')->success('User created successfully!');
@@ -167,9 +176,16 @@ class Create extends Component
         $companies = Company::orderBy('name')->get();
         $roles = Role::orderBy('name')->get();
 
+        // Get all permissions grouped by guard
+        $permissions = Permission::orderBy('guard_name')
+            ->orderBy('name')
+            ->get()
+            ->groupBy('guard_name');
+
         return view('livewire.pages.users.create', [
             'companies' => $companies,
             'roles' => $roles,
+            'permissions' => $permissions,
         ]);
     }
 }
