@@ -97,6 +97,8 @@ Route::group(['middleware' => ['auth', 'verified', 'role:superadmin|admin']], fu
 
     // Burnouts
     Route::get('burnouts', App\Livewire\Pages\Burnouts\Index::class)->name('burnouts.index');
+    Route::get('burnouts/create', App\Livewire\Pages\Burnouts\Create::class)->name('burnouts.create');
+    Route::get('burnouts/{burnout}/edit', App\Livewire\Pages\Burnouts\Edit::class)->name('burnouts.edit');
 
     // Personalities
     // MBTI
