@@ -38,6 +38,10 @@ Route::group(['middleware' => ['auth', 'verified', 'role:superadmin']], function
     Route::get('role-permissions/create', App\Livewire\Pages\RolePermission\Create::class)->name('role-permissions.create');
     Route::get('role-permissions/{id}/edit', App\Livewire\Pages\RolePermission\Edit::class)->name('role-permissions.edit');
 
+    // Permissions
+    Route::get('permissions/create', App\Livewire\Pages\Permission\Create::class)->name('permissions.create');
+    Route::get('permissions/{id}/edit', App\Livewire\Pages\Permission\Edit::class)->name('permissions.edit');
+
     // Report Tickets
     Route::get('report-tickets', App\Livewire\Pages\ReportTickets\Index::class)->name('report-tickets.index');
 

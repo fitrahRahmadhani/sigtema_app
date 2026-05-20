@@ -12,6 +12,7 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 use Masmerise\Toaster\Toaster;
 use App\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 #[Layout('components.layouts.app')]
 #[Title('Edit Role - Role Management')]
@@ -68,8 +69,8 @@ class Edit extends Component
 
             DB::commit();
 
-            // Redirect to roles index
-            return redirect()->route('role-permissions.index')->success('Role updated successfully!');
+            Toaster::success('Role updated successfully!');
+            return redirect()->route('role-permissions.index');
         } catch (ValidationException $e) {
             DB::rollBack();
             Toaster::error('Failed to edit role: ' . $e->getMessage());
@@ -83,8 +84,47 @@ class Edit extends Component
         }
     }
 
+    public function togglePermission($permissionId)
+    {
+        try {
+            $permission = Permission::findOrFail($permissionId);
+
+            if ($this->role->hasPermissionTo($permission)) {
+                $this->role->revokePermissionTo($permission);
+                Toaster::info("Permission '{$permission->name}' removed from role '{$this->role->name}'");
+            } else {
+                $this->role->givePermissionTo($permission);
+                Toaster::success("Permission '{$permission->name}' added to role '{$this->role->name}'");
+            }
+        } catch (\Exception $e) {
+            Toaster::error('Failed to toggle permission: ' . $e->getMessage());
+        }
+    }
+
+    public function syncPermissions($permissionIds)
+    {
+        try {
+            $this->role->syncPermissions($permissionIds);
+            Toaster::success("Permissions synchronized for role '{$this->role->name}'!");
+        } catch (\Exception $e) {
+            Toaster::error('Failed to sync permissions: ' . $e->getMessage());
+        }
+    }
+
     public function render()
     {
-        return view('livewire.pages.role-permission.edit');
+        $this->role = Role::findOrFail($this->roleId);
+
+        // Get all permissions grouped by guard
+        $allPermissions = Permission::orderBy('guard_name')
+            ->orderBy('name')
+            ->get()
+            ->groupBy('guard_name');
+
+        return view('livewire.pages.role-permission.edit', [
+            'role' => $this->role,
+            'roleCount' => $this->roleCount,
+            'allPermissions' => $allPermissions,
+        ]);
     }
 }
