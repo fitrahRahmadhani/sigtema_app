@@ -286,6 +286,161 @@ class Index extends Component
         $burnout->delete();
     }
 
+    /**
+     * Bulk activate all inactive records
+     */
+    public function bulkActivate()
+    {
+        $count = Burnout::where('is_active', false)->update(['is_active' => true]);
+
+        Toaster::success("Successfully activated {$count} burnout records.");
+        $this->dispatch('refreshData');
+    }
+
+    /**
+     * Bulk deactivate all active records
+     */
+    public function bulkDeactivate()
+    {
+        $count = Burnout::where('is_active', true)->update(['is_active' => false]);
+
+        Toaster::success("Successfully deactivated {$count} burnout records.");
+        $this->dispatch('refreshData');
+    }
+
+    /**
+     * Bulk delete - confirmation for active records
+     */
+    public function bulkDeleteActive()
+    {
+        $count = Burnout::where('is_active', true)->count();
+        $this->deleteName = $count . ' active burnout record' . ($count != 1 ? 's' : '');
+        $this->deleteType = 'Active Burnout Records';
+        $this->deleteToken = 'bulk_active';
+        $this->showDeleteModal = true;
+    }
+
+    /**
+     * Bulk delete - confirmation for inactive records
+     */
+    public function bulkDeleteInactive()
+    {
+        $count = Burnout::where('is_active', false)->count();
+        $this->deleteName = $count . ' inactive burnout record' . ($count != 1 ? 's' : '');
+        $this->deleteType = 'Inactive Burnout Records';
+        $this->deleteToken = 'bulk_inactive';
+        $this->showDeleteModal = true;
+    }
+
+    /**
+     * Bulk delete - confirmation for all records
+     */
+    public function bulkDeleteAll()
+    {
+        $count = Burnout::count();
+        $this->deleteName = 'ALL ' . $count . ' burnout record' . ($count != 1 ? 's' : '');
+        $this->deleteType = 'All Burnout Records';
+        $this->deleteToken = 'bulk_all';
+        $this->showDeleteModal = true;
+    }
+
+    /**
+     * Execute bulk delete based on token
+     */
+    public function executeBulkDelete()
+    {
+        $this->deleting = true;
+
+        try {
+            $deleted = 0;
+
+            switch ($this->deleteToken) {
+                case 'bulk_active':
+                    $deleted = Burnout::where('is_active', true)->delete();
+                    Toaster::success("Successfully deleted {$deleted} active burnout records.");
+                    break;
+
+                case 'bulk_inactive':
+                    $deleted = Burnout::where('is_active', false)->delete();
+                    Toaster::success("Successfully deleted {$deleted} inactive burnout records.");
+                    break;
+
+                case 'bulk_all':
+                    $deleted = Burnout::delete();
+                    Toaster::success("Successfully deleted all {$deleted} burnout records.");
+                    break;
+
+                default:
+                    Toaster::error('Invalid bulk delete request.');
+            }
+
+            $this->resetDeleteState();
+            $this->dispatch('refreshData');
+        } catch (\Exception $e) {
+            $this->deleting = false;
+            $this->handleException('bulk delete burnout records', $e->getMessage());
+        }
+    }
+
+    /**
+     * Override delete method to handle bulk deletes
+     * Called when user clicks "Yes, Delete" in the modal
+     */
+    public function delete()
+    {
+        $this->deleting = true;
+
+        // Check if this is a bulk delete operation
+        if (in_array($this->deleteToken, ['bulk_active', 'bulk_inactive', 'bulk_all'])) {
+            return $this->executeBulkDelete();
+        }
+
+        // Single item deletion
+        try {
+            $item = $this->getModelClass()::findOrFail($this->getIdFromToken());
+            $this->performDelete($item);
+            $this->resetDeleteState();
+            Toaster::success('Burnout record deleted successfully!');
+            $this->dispatch('refreshData');
+        } catch (\Exception $e) {
+            $this->resetDeleteState();
+            $this->handleException('delete burnout record', $e->getMessage());
+        }
+    }
+
+    /**
+     * Get ID from encrypted token
+     */
+    protected function getIdFromToken()
+    {
+        if (!$this->deleteToken) {
+            return null;
+        }
+
+        try {
+            $payload = json_decode(\Illuminate\Support\Facades\Crypt::decryptString($this->deleteToken), true);
+            return $payload['id'] ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Toggle individual burnout status
+     */
+    public function toggleStatus($id)
+    {
+        $burnout = Burnout::findOrFail($id);
+        $burnout->is_active = !$burnout->is_active;
+        $burnout->save();
+
+        $status = $burnout->is_active ? 'activated' : 'deactivated';
+        Toaster::success("Burnout record {$status} successfully.");
+
+        // Refresh data without resetting pagination
+        $this->dispatch('refreshData');
+    }
+
     public function render()
     {
         $burnouts = Burnout::query()
