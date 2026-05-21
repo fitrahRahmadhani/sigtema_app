@@ -491,7 +491,7 @@
             @endif
 
             {{-- Candidate Grid --}}
-            <div id="candidate-match" class="grid grid-cols-1 gap-6 pb-24 md:grid-cols-2 lg:grid-cols-3">
+            <div id="candidate-match" class="grid grid-cols-1 gap-6 pb-24 md:grid-cols-2 lg:grid-cols-2">
                 @forelse ($recommendations as $index => $candidate)
                     @php
                         $employee = App\Models\Employee::find($candidate['employee_id']);
@@ -502,7 +502,7 @@
                     <label
                         class="group {{ $isDisabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:shadow-lg' }} {{ $isSelected ? 'ring-opacity-20 border-[#721d21] bg-[#721d210e] shadow-lg ring-1 ring-[#721d21]' : 'border-gray-200 bg-white hover:border-[#721d21]' }} flex h-full flex-col rounded-xl border-2 p-4 transition-all duration-300 ease-in-out"
                     >
-                        <div class="flex flex-1 gap-4">
+                        <div class="flex items-start gap-4">
                             <div class="flex w-full gap-4">
                                 {{-- Candidate Avatar & Rank --}}
                                 <div class="relative">
@@ -554,65 +554,12 @@
 
                                     {{-- AI Reason --}}
                                     <div class="mt-2">
-                                        <p class="text-sm text-gray-500">{{ $candidate['reason'] }}</p>
+                                        <p class=" text-gray-700 font-semibold">Overview</p>
+                                        <p class=" text-gray-700">{{ $candidate['reason'] }}</p>
                                     </div>
-
-                                    {{-- Strengths --}}
-                                    @if (! empty($candidate['strengths']))
-                                        <div class="mt-2">
-                                            <p class="text-xs font-semibold text-[#721d21]">STRENGTHS</p>
-                                            <ul class="mt-1 space-y-1">
-                                                @foreach (array_slice($candidate['strengths'], 0, 3) as $strength)
-                                                    <li class="flex items-start gap-2 text-xs">
-                                                        <svg
-                                                            class="mt-0.5 h-3 w-3 flex-shrink-0 text-green-500"
-                                                            fill="none"
-                                                            stroke="currentColor"
-                                                            viewBox="0 0 24 24"
-                                                        >
-                                                            <path
-                                                                stroke-linecap="round"
-                                                                stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M5 13l4 4L19 7"
-                                                            />
-                                                        </svg>
-                                                        <span>{{ $strength }}</span>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
-
-                                    {{-- Weaknesses --}}
-                                    @if (! empty($candidate['weaknesses']))
-                                        <div class="mt-2">
-                                            <p class="text-xs font-semibold text-red-600">CONSIDERATIONS</p>
-                                            <ul class="mt-1 space-y-1">
-                                                @foreach (array_slice($candidate['weaknesses'], 0, 2) as $weakness)
-                                                    <li class="flex items-start gap-2 text-xs">
-                                                        <svg
-                                                            class="mt-0.5 h-3 w-3 flex-shrink-0 text-red-500"
-                                                            fill="none"
-                                                            stroke="currentColor"
-                                                            viewBox="0 0 24 24"
-                                                        >
-                                                            <path
-                                                                stroke-linecap="round"
-                                                                stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M6 18L18 6M6 6l12 12"
-                                                            />
-                                                        </svg>
-                                                        <span>{{ $weakness }}</span>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
                                 </div>
+                                
                             </div>
-
                             {{-- Checkbox --}}
                             <div class="relative flex items-start pt-1">
                                 <input
@@ -637,9 +584,84 @@
                                 </div>
                             </div>
                         </div>
+                            <div class="py-2 my-4 border-y border-gray-200">
+                                {{-- Strengths --}}
+                                @if (! empty($candidate['strengths']))
+                                    <div class="mb-2">
+                                        <p class="text-sm font-semibold text-[#721d21]">STRENGTHS</p>
+                                        <ul class="mt-1 space-y-1">
+                                            @foreach (array_slice($candidate['strengths'], 0, 3) as $strength)
+                                                <li class="flex items-start gap-2 text-sm">
+                                                    <svg
+                                                        class="mt-0.5 h-3 w-3 flex-shrink-0 text-green-500"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M5 13l4 4L19 7"
+                                                        />
+                                                    </svg>
+                                                    <span>{{ $strength }}</span>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+
+                                {{-- Weaknesses --}}
+                                @if (! empty($candidate['weaknesses']))
+                                    <div class="mb-2">
+                                        <p class="text-sm font-semibold text-red-600">CONSIDERATIONS</p>
+                                        <ul class="mt-1 space-y-1">
+                                            @foreach (array_slice($candidate['weaknesses'], 0, 2) as $weakness)
+                                                <li class="flex items-start gap-2 text-sm">
+                                                    <svg
+                                                        class="mt-0.5 h-3 w-3 flex-shrink-0 text-red-500"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M6 18L18 6M6 6l12 12"
+                                                        />
+                                                    </svg>
+                                                    <span>{{ $weakness }}</span>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+
+                                {{-- Overall Insight --}}
+                                @if (! empty($candidate['psychological_insight']))
+                                    <div class="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                                        <p class="text-sm font-semibold text-gray-700 flex items-center gap-1">
+                                            PSYCHOLOGICAL INSIGHT
+                                        </p>
+
+                                        @if (! empty($candidate['psychological_insight']['summary']))
+                                            <p class="mt-2 text-sm text-gray-700 leading-relaxed">{{ $candidate['psychological_insight']['summary'] }}</p>
+                                        @endif
+
+                                        @if (! empty($candidate['psychological_insight']['personality_fit']))
+                                            <div class="mt-2 border-t border-gray-200 pt-2">
+                                                <p class="text-sm font-medium text-gray-700 leading-relaxed">{{ $candidate['psychological_insight']['personality_fit'] }}</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
 
                         {{-- Match Score & Footer --}}
                         <div class="mt-auto">
+
                             {{-- Recommendation Badge --}}
                             @if (! empty($candidate['recommendation']))
                                 <div class="my-2">

@@ -218,7 +218,7 @@
 
                         {{-- AI Strengths --}}
                         <tr>
-                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900 align-top">
                                 AI Strengths Analysis
                             </td>
                             @foreach ($selectedEmployees as $employee)
@@ -227,7 +227,7 @@
                                     $strengths = $aiInfo['strengths'] ?? [];
                                 @endphp
 
-                                <td class="w-[400px] px-6 py-4 text-gray-700">
+                                <td class="w-[400px] px-6 py-4 text-gray-700 align-top">
                                     @if (! empty($strengths))
                                         <ul class="space-y-1">
                                             @foreach ($strengths as $strength)
@@ -258,7 +258,7 @@
 
                         {{-- AI Development Areas --}}
                         <tr>
-                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900 align-top">
                                 AI Development Areas
                             </td>
                             @foreach ($selectedEmployees as $employee)
@@ -267,7 +267,7 @@
                                     $weaknesses = $aiInfo['weaknesses'] ?? [];
                                 @endphp
 
-                                <td class="w-[400px] px-6 py-4 text-gray-700">
+                                <td class="w-[400px] px-6 py-4 text-gray-700 align-top">
                                     @if (! empty($weaknesses))
                                         <ul class="space-y-1">
                                             @foreach ($weaknesses as $weakness)
@@ -296,6 +296,44 @@
                             @endforeach
                         </tr>
 
+                        {{-- AI Psychological Insight --}}
+                        <tr>
+                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900 align-top">
+                                <span class="flex items-center gap-2">
+                                    Psychological Insight
+                                </span>
+                            </td>
+                            @foreach ($selectedEmployees as $employee)
+                                @php
+                                    $aiInfo = $this->getAIInfoForEmployee($employee->id);
+                                    $psychologicalInsight = $aiInfo['psychological_insight'] ?? null;
+                                @endphp
+
+                                <td class="w-[400px] px-6 py-4 text-gray-700 align-top">
+                                    @if ($psychologicalInsight)
+                                        <div class="space-y-3">
+                                            {{-- Summary --}}
+                                            @if (! empty($psychologicalInsight['summary']))
+                                                <div class="rounded-lg border border-blue-200 bg-blue-50 p-3">
+                                                    <p class=" text-gray-700 leading-relaxed">{{ $psychologicalInsight['summary'] }}</p>
+                                                </div>
+                                            @endif
+
+                                            {{-- Personality Fit --}}
+                                            @if (! empty($psychologicalInsight['personality_fit']))
+                                                <div class="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                                                    <p class="font-semibold text-gray-600 mb-1">Personality Analysis</p>
+                                                    <p class="text-gray-700 leading-relaxed">{{ $psychologicalInsight['personality_fit'] }}</p>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-gray-400 text-sm">Psychological insight not available</span>
+                                    @endif
+                                </td>
+                            @endforeach
+                        </tr>
+
                         {{-- BASIC INFORMATION SECTION --}}
                         <tr class="color-gradient">
                             <td
@@ -304,26 +342,6 @@
                             >
                                 Basic Information
                             </td>
-                        </tr>
-
-                        {{-- Email --}}
-                        <tr>
-                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">Email</td>
-                            @foreach ($selectedEmployees as $employee)
-                                <td class="w-[400px] px-6 py-4 text-gray-700">
-                                    <span class="font-medium">{{ $employee->email ?? '-' }}</span>
-                                </td>
-                            @endforeach
-                        </tr>
-
-                        {{-- Phone --}}
-                        <tr>
-                            <td class="left-0 border-r bg-white px-6 py-4 pl-10 font-medium text-gray-900">Phone</td>
-                            @foreach ($selectedEmployees as $employee)
-                                <td class="w-[400px] px-6 py-4 text-gray-700">
-                                    <span class="font-medium">{{ $employee->phone ?? '-' }}</span>
-                                </td>
-                            @endforeach
                         </tr>
 
                         {{-- Personal Grade --}}
