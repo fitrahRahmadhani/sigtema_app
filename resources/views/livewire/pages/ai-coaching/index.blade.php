@@ -4,8 +4,6 @@
         @hasanyrole('superadmin|admin')
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         @endhasanyrole
-
-        <flux:breadcrumbs.item>AI Coaching</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
     {{-- ============================================================ --}}
@@ -115,7 +113,7 @@
                     {{-- Mode selection info --}}
                     <p class="text-sm text-zinc-500">
                         @if ($hasFullAccess)
-                            Sebagai <strong>Human Captain</strong>, Anda memiliki akses penuh untuk melakukan coaching ke seluruh karyawan di organisasi.
+                            Sebagai <strong>Super User Human Captain</strong>, Anda memiliki akses penuh untuk melakukan coaching ke seluruh karyawan di organisasi.
                         @elseif ($hasSubordinates)
                             Sebagai <strong>{{ $employee->position?->name ?? 'Leader' }}</strong>, Anda dapat melakukan coaching untuk diri sendiri atau anggota tim langsung.
                         @else
@@ -185,7 +183,7 @@
                     @if ($hasFullAccess)
                         <div>
                             <p class="mb-3 text-xs font-semibold tracking-widest text-blue-600 uppercase">
-                                Human Captain Mode
+                                Super User Human Captain Mode
                                 <span class="ml-1 font-normal text-zinc-400 normal-case">(Coaching seluruh karyawan)</span>
                             </p>
 
@@ -194,7 +192,7 @@
                                 <div class="relative">
                                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197 5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                                         </svg>
                                     </div>
                                     <input type="text" wire:model.live.debounce.300ms="searchEmployee" placeholder="Cari karyawan..." class="w-full rounded-xl border border-blue-200 bg-blue-50 py-3 pl-12 pr-4 text-sm text-zinc-800 placeholder-zinc-400 transition focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-purple-200 focus:outline-none"/>

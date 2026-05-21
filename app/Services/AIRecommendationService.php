@@ -118,19 +118,97 @@ class AIRecommendationService
             ]);
         }
 
-        $assessments = array_filter([
-            'mbti' => $employee->mbti?->mbti,
-            'disc' => $employee->disc ? array_values(array_filter([
+        // MBTI
+        if ($employee->mbti?->mbti) {
+            $data['mbti'] = $employee->mbti->mbti;
+        }
+
+        // DISC - only include if at least one interpretation is valid
+        if ($employee->disc) {
+            $validInterpretations = array_values(array_filter([
                 $employee->disc->interpretation1,
                 $employee->disc->interpretation2,
                 $employee->disc->interpretation3,
-            ])) : null,
-            'papi' => $employee->papi ? array_filter(
-                $employee->papi->only(['N', 'G', 'A', 'L', 'P', 'I', 'T', 'V', 'S', 'B', 'O', 'X', 'C', 'D', 'R', 'Z', 'E', 'K', 'F', 'W'])
-            ) : null,
-        ]);
-        if (!empty($assessments)) {
-            $data['assessments'] = $assessments;
+            ], fn($i) => $i && $i !== '(Skor tidak valid)'));
+
+            if (!empty($validInterpretations)) {
+                $data['disc'] = $validInterpretations;
+            }
+        }
+
+        // PAPI Kostick - grouped by categories with averages
+        if ($employee->papi) {
+            $papi = $employee->papi;
+            $papiData = [];
+
+            // Arah Kerja: N, G, A
+            $arahKerjaScores = array_filter([
+                $papi->N, $papi->G, $papi->A
+            ], fn($s) => $s !== null);
+            if (!empty($arahKerjaScores)) {
+                $papiData['arah_kerja'] = round(array_sum($arahKerjaScores) / count($arahKerjaScores), 1);
+            }
+
+            // Kepemimpinan: L, P, I
+            $kepemimpinanScores = array_filter([
+                $papi->L, $papi->P, $papi->I
+            ], fn($s) => $s !== null);
+            if (!empty($kepemimpinanScores)) {
+                $papiData['kepemimpinan'] = round(array_sum($kepemimpinanScores) / count($kepemimpinanScores), 1);
+            }
+
+            // Aktivitas: T, V
+            $aktivitasScores = array_filter([$papi->T, $papi->V], fn($s) => $s !== null);
+            if (!empty($aktivitasScores)) {
+                $papiData['aktivitas'] = round(array_sum($aktivitasScores) / count($aktivitasScores), 1);
+            }
+
+            // Pergaulan: O, B, S, X
+            $pergaulanScores = array_filter([
+                $papi->O, $papi->B, $papi->S, $papi->X
+            ], fn($s) => $s !== null);
+            if (!empty($pergaulanScores)) {
+                $papiData['pergaulan'] = round(array_sum($pergaulanScores) / count($pergaulanScores), 1);
+            }
+
+            // Gaya Kerja: C, D, R
+            $gayaKerjaScores = array_filter([
+                $papi->C, $papi->D, $papi->R
+            ], fn($s) => $s !== null);
+            if (!empty($gayaKerjaScores)) {
+                $papiData['gaya_kerja'] = round(array_sum($gayaKerjaScores) / count($gayaKerjaScores), 1);
+            }
+
+            // Sifat: Z, E, K
+            $sifatScores = array_filter([
+                $papi->Z, $papi->E, $papi->K
+            ], fn($s) => $s !== null);
+            if (!empty($sifatScores)) {
+                $papiData['sifat'] = round(array_sum($sifatScores) / count($sifatScores), 1);
+            }
+
+            // Ketaatan: F, W
+            $ketaatanScores = array_filter([$papi->F, $papi->W], fn($s) => $s !== null);
+            if (!empty($ketaatanScores)) {
+                $papiData['ketaatan'] = round(array_sum($ketaatanScores) / count($ketaatanScores), 1);
+            }
+
+            if (!empty($papiData)) {
+                $data['papi'] = $papiData;
+            }
+        }
+
+        if (!empty($data['assessments']) || isset($data['mbti']) || isset($data['disc']) || isset($data['papi'])) {
+            $assessments = array_filter([
+                'mbti' => $data['mbti'] ?? null,
+                'disc' => $data['disc'] ?? null,
+                'papi' => $data['papi'] ?? null,
+            ]);
+            if (!empty($assessments)) {
+                $data['assessments'] = $assessments;
+            }
+            // Clean up individual fields
+            unset($data['mbti'], $data['disc'], $data['papi']);
         }
 
         if ($employee->innovations->isNotEmpty()) {
@@ -148,8 +226,9 @@ class AIRecommendationService
             ])->toArray();
         }
 
-        if ($employee->burnout?->result) {
-            $data['burnout'] = $employee->burnout->result;
+        // Burnout - send only level
+        if ($employee->burnout?->level) {
+            $data['burnout_level'] = $employee->burnout->level;
         }
 
         if ($employee->position?->name) {
@@ -237,24 +316,37 @@ class AIRecommendationService
         }
 
         return <<<PROMPT
-            Expert HR consultant. Role: {$position->name} (Band {$position->band}).
+            Expert HR consultant di industri semen dengan latar belakang psikologi mendalam. Role: {$position->name} (Band {$position->band}).
             {$requirementsText}
             BANDS: 1=TopMgmt (High) 2=SrMgr 3=Mgr 4=JrOfficer 5=Staff (Low)
             SCORING: 0-30=Unfit 31-50=Marginal 51-70=Moderate 71-85=Good 86-100=Excellent
-            PENALIZE: skill gaps, low experience, burnout (lower is better), irrelevant bg, band gap >1 without potential
+            PENALIZE: skill gaps, low experience, burnout level (lower is better), irrelevant bg, band gap >1 without potential
             REWARD: skill match, relevant exp, progression, certs, innovation, achievements, cross-functional exp, current_position (if relevant)
-            NOTE: 1-level band gap allowed if strong potential shown.  MCU is minor factor, if it falls under a strength point, display the score only
+            NOTE: 1-level band gap allowed if strong potential shown. MCU is minor factor, if it falls under a strength point, display the score only
+
+            PAPI KOSTICK CATEGORIES (rerata dari skor individual):
+            - arah_kerja: rerata N, G, A (Menyelesaikan Tugas Pribadi, Pekerja Keras, Hasrat Berprestasi)
+            - kepemimpinan: rerata L, P, I (Peran sbg Pemimpin, Mengendalikan Orang Lain, Mudah Memutuskan)
+            - aktivitas: rerata T, V (Tempo Kerja, Stamina)
+            - pergaulan: rerata O, B, S, X (Kebutuhan utk Mendekati & Menyayangi, Kebutuhan thd Kelompok, Pergaulan Sosial, Mendapatkan Perhatian)
+            - gaya_kerja: rerata C, D, R (Suka Pekerjaan Teratur, Suka Pekerjaan Terperinci, Tipe Teoritis)
+            - sifat: rerata Z, E, K (Hasrat Berubah, Pengendalian Emosi, Agresivitas)
+            - ketaatan: rerata F, W (Dukungan utk Arahan, Kebutuhan Taat Aturan)
 
             DATA: {$dataJson}
 
             OUTPUT: JSON array, each item:
             - "employee_id": int
             - "match_score": int
-            - "reason": string (2-3 sentences in Bahasa Indonesia)
-            - "strengths": max 3 strings, WHY each fits THIS role
-            - "weaknesses": max 3 strings, WHY each is a gap FOR THIS role
+            - "reason": string (3-4 sentences in Bahasa Indonesia)
+            - "strengths": 0 - 3 strings, WHY each fits THIS role
+            - "weaknesses": 0 - 3 strings, WHY each is a gap FOR THIS role
+            - "psychological_insight": {
+                "summary": string (comprehensive psychological profile analysis in Bahasa Indonesia, 3-4 sentences covering personality traits, work style, interpersonal approach, and overall fit for this role),
+                "personality_fit": string (detailed analysis of how PAPI categories, MBTI, and DISC results align with the role requirements in Bahasa Indonesia)
+              }
 
-            RULES: sort desc, [] if none >50, be honest.
+            RULES: sort desc, [] if none >50, be honest. psychological_insight should be deeply analyzed based on PAPI categories (arah_kerja, kepemimpinan, aktivitas, pergaulan, gaya_kerja, sifat, ketaatan), MBTI type, and DISC patterns if available.
             JSON ONLY.
             PROMPT;
     }
@@ -285,12 +377,13 @@ class AIRecommendationService
             }
 
             $validResults[] = [
-                'employee_id'    => intval($result['employee_id']),
-                'match_score'    => $score,
-                'reason'         => $result['reason']     ?? 'Analisis tidak tersedia',
-                'strengths'      => $result['strengths']  ?? [],
-                'weaknesses'     => $result['weaknesses'] ?? [],
-                'recommendation' => $this->getRecommendationLabel($score)
+                'employee_id'         => intval($result['employee_id']),
+                'match_score'         => $score,
+                'reason'              => $result['reason']              ?? 'Analisis tidak tersedia',
+                'strengths'           => $result['strengths']           ?? [],
+                'weaknesses'          => $result['weaknesses']          ?? [],
+                'psychological_insight' => $result['psychological_insight'] ?? null,
+                'recommendation'     => $this->getRecommendationLabel($score)
             ];
         }
 
