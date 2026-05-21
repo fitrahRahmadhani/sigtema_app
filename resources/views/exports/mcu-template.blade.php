@@ -10,22 +10,22 @@
         {{-- BARIS CONTOH - HAPUS SEBELUM UPLOAD --}}
         <tr style="background-color: #fed7d7">
             <td>CONTOH: EMP001</td>
-            <td>CONTOH: K1</td>
+            <td>CONTOH: 3</td>
             <td>CONTOH: {{ $currentYear }}</td>
         </tr>
         <tr style="background-color: #fed7d7">
             <td>CONTOH: EMP001</td>
-            <td>CONTOH: K2</td>
+            <td>CONTOH: 4.5</td>
             <td>CONTOH: {{ $currentYear - 1 }}</td>
         </tr>
         <tr style="background-color: #fed7d7">
             <td>CONTOH: EMP002</td>
-            <td>CONTOH: K1</td>
+            <td>CONTOH: 2.5</td>
             <td>CONTOH: {{ $currentYear }}</td>
         </tr>
         <tr style="background-color: #fed7d7">
             <td>CONTOH: EMP002</td>
-            <td>CONTOH: K1</td>
+            <td>CONTOH: 5</td>
             <td>CONTOH: {{ $currentYear - 1 }}</td>
         </tr>
 
@@ -85,7 +85,7 @@
         </tr>
         <tr>
             <td colspan="3" style="background-color: #dbeafe; color: #1e40af; padding: 8px">
-                2. result: Hasil MCU (contoh: K1, K2, K3, K4, K5)
+                2. result: Hasil MCU (nilai 1-5, bisa decimal, contoh: 2.5, 3, 4.5, 5)
             </td>
         </tr>
         <tr>

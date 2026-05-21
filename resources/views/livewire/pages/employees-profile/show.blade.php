@@ -693,19 +693,32 @@
                             <tbody>
                                 @forelse ($employee->mcuResults as $mcu)
                                     <tr class="border-b border-gray-300 transition-colors hover:bg-gray-50">
-                                        <td
-                                            class="w-1/3 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4"
-                                        >
+                                        <td class="w-1/3 border-r border-gray-300 px-3 py-2 text-center text-gray-800 sm:px-4">
                                             {{ $mcu->year }}
                                         </td>
                                         <td class="px-3 py-2 text-center">
-                                            @for ($i = 0; $i < $mcu->result; $i++)
-                                                <span class="inline-block text-2xl text-yellow-500">★</span>
+                                            @php
+                                                $result = $mcu->result;
+                                                $maxStars = 5;
+                                            @endphp
+
+                                            @for ($i = 1; $i <= $maxStars; $i++)
+                                                @if ($result >= $i)
+                                                    {{-- Bintang penuh --}}
+                                                    <span class="inline-block text-2xl text-yellow-500">★</span>
+                                                @elseif ($result >= ($i - 0.5))
+                                                    {{-- Setengah bintang --}}
+                                                    <span class="relative inline-block text-2xl">
+                                                        <span class="text-gray-300">★</span>
+                                                        <span class="absolute inset-0 overflow-hidden w-1/2 text-yellow-500">★</span>
+                                                    </span>
+                                                @else
+                                                    {{-- Bintang kosong --}}
+                                                    <span class="inline-block text-2xl text-gray-300">★</span>
+                                                @endif
                                             @endfor
 
-                                            @for ($i = $mcu->result; $i < 5; $i++)
-                                                <span class="inline-block text-2xl text-gray-300">★</span>
-                                            @endfor
+                                            <span class="ml-2 text-sm text-gray-500">({{ number_format($result, 1) }})</span>
                                         </td>
                                     </tr>
                                 @empty
