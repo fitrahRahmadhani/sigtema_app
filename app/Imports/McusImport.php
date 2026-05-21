@@ -81,7 +81,7 @@ class McusImport implements ToCollection, WithHeadingRow
                 // Validate data
                 $validator = Validator::make($mcuData, [
                     'employee_id' => 'required|exists:employees,id',
-                    'result' => 'required|string|max:255',
+                    'result' => 'required|numeric|min:1|max:5',
                     'year' => 'required|integer|min:2000|max:' . (date('Y') + 1),
                 ]);
 

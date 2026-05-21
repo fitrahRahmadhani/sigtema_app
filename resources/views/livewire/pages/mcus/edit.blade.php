@@ -109,11 +109,25 @@
                                     1 (Worst)
                                 </option>
                                 <option
+                                    value="1.5"
+                                    {{ $result == '1.5' ? 'selected' : '' }}
+                                    class="text-orange-700"
+                                >
+                                    1.5
+                                </option>
+                                <option
                                     value="2"
                                     {{ $result == '2' ? 'selected' : '' }}
                                     class="text-orange-700"
                                 >
                                     2
+                                </option>
+                                <option
+                                    value="2.5"
+                                    {{ $result == '2.5' ? 'selected' : '' }}
+                                    class="text-yellow-700"
+                                >
+                                    2.5
                                 </option>
                                 <option
                                     value="3"
@@ -123,11 +137,25 @@
                                     3
                                 </option>
                                 <option
+                                    value="3.5"
+                                    {{ $result == '3.5' ? 'selected' : '' }}
+                                    class="text-lime-700"
+                                >
+                                    3.5
+                                </option>
+                                <option
                                     value="4"
                                     {{ $result == '4' ? 'selected' : '' }}
                                     class="text-blue-700"
                                 >
                                     4
+                                </option>
+                                <option
+                                    value="4.5"
+                                    {{ $result == '4.5' ? 'selected' : '' }}
+                                    class="text-green-700"
+                                >
+                                    4.5
                                 </option>
                                 <option
                                     value="5"

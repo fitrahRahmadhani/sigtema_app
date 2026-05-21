@@ -363,9 +363,13 @@
                             >
                                 <option value="">Select Result</option>
                                 <option value="1" class="text-red-700">1 (Worst)</option>
+                                <option value="1.5" class="text-orange-700">1.5</option>
                                 <option value="2" class="text-orange-700">2</option>
+                                <option value="2.5" class="text-yellow-700">2.5</option>
                                 <option value="3" class="text-yellow-700">3</option>
+                                <option value="3.5" class="text-lime-700">3.5</option>
                                 <option value="4" class="text-blue-700">4</option>
+                                <option value="4.5" class="text-green-700">4.5</option>
                                 <option value="5" class="text-green-700">5 (Best)</option>
                             </select>
                             <svg
