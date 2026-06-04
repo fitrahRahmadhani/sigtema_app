@@ -4,12 +4,15 @@ namespace App\Livewire\Pages\CandidatesComparison;
 
 use App\Models\Company;
 use App\Models\Employee;
+use App\Models\EmployeeHierarchy;
+use App\Models\Position;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layouts.app')]
 #[Title('Employee Comparison')]
@@ -25,6 +28,13 @@ class Index extends Component
     public $showSearchDropdown = [false, false, false];
     public $columnCount = 3;
     public $isSuperadmin = false;
+    public $canSearchAllEmployees = false;
+    public $hasSubordinates = false;
+    public $subordinateIds = [];
+    public $userBandLevel = '';
+    public $accessRestricted = false;
+    public $accessMessage = '';
+    public $subordinateCount = 0;
 
     // New properties for chart data
     public $papiChartData = [];
@@ -37,16 +47,58 @@ class Index extends Component
     {
         $this->user = Auth::user();
 
-        $this->isSuperadmin = $this->user->hasRole('superadmin');
+        // Cek tipe user
+        $isSuperadmin = $this->user->hasRole('superadmin');
+        $isAdminOrHcOperator = $this->user->hasRole('admin') || $this->user->hasRole('hc-operator');
 
-        if ($this->isSuperadmin) {
+        if ($isSuperadmin) {
+            // Superadmin: pilih company terlebih dahulu
+            $this->isSuperadmin = true;
             $this->companies = Company::where('is_active', true)->get();
             $this->selectedCompanyId = session('candidates_comparison_company_id') ?? request('company_id');
+            $this->canSearchAllEmployees = true;
+            $this->userBandLevel = 'Superadmin - All access';
 
             if ($this->selectedCompanyId) {
                 $this->selectedCompany = Company::find($this->selectedCompanyId);
             }
+        } elseif ($isAdminOrHcOperator) {
+            // Admin & HC-Operator: tidak perlu pilih company, langsung gunakan company_id dari User
+            $this->isSuperadmin = false;
+            $this->selectedCompanyId = $this->user->company_id;
+            $this->selectedCompany = Company::find($this->selectedCompanyId);
+            $this->companies = Company::where('id', $this->selectedCompanyId)->get();
+            $this->canSearchAllEmployees = true;
+            $this->userBandLevel = 'Admin/HC-Operator - All access';
         } else {
+            // Non-admin users - cek berdasarkan band
+            $this->isSuperadmin = false;
+            $this->loadSubordinates();
+
+            $userBand = $this->user->band;
+
+            // Band 1: akses penuh ke semua karyawan
+            if ($userBand == 1) {
+                $this->canSearchAllEmployees = true;
+                $this->userBandLevel = 'Band 1 - All access';
+            }
+            // Band 2: bisa pilih selvel (band 2) dan bawah (band 3, 4, 5)
+            elseif ($userBand == 2) {
+                $this->canSearchAllEmployees = false;
+                $this->userBandLevel = 'Band 2 - Same level and subordinates';
+            }
+            // Band 3, 4, 5: hanya bisa lihat anggota tim
+            else {
+                $this->canSearchAllEmployees = false;
+                $this->userBandLevel = 'Band 3 - Team members only';
+
+                if (!$this->hasSubordinates) {
+                    $this->accessRestricted = true;
+                    $this->accessMessage = 'You cannot use this feature because you do not have any team members.';
+                }
+            }
+
+            // Gunakan company_id dari User
             $this->selectedCompanyId = $this->user->company_id;
             $this->selectedCompany = Company::find($this->selectedCompanyId);
             $this->companies = Company::where('id', $this->user->company_id)->get();
@@ -54,6 +106,49 @@ class Index extends Component
 
         // Initialize chart data arrays
         $this->initializeChartData();
+    }
+
+    /**
+     * Load subordinates (anggota tim) untuk user
+     */
+    private function loadSubordinates(): void
+    {
+        $currentEmployee = Employee::with('position')
+            ->where('email', $this->user->email)
+            ->first();
+
+        if (!$currentEmployee || !$currentEmployee->position) {
+            $this->hasSubordinates = false;
+            $this->subordinateIds = [];
+            $this->subordinateCount = 0;
+            return;
+        }
+
+        $positionId = $currentEmployee->position->id;
+        $companyId = $currentEmployee->company_id;
+
+        // Ambil position_id bawahan langsung dari EmployeeHierarchy
+        $subordinatePositionIds = EmployeeHierarchy::where('company_id', $companyId)
+            ->where('superior_id', $positionId)
+            ->pluck('position_id')
+            ->toArray();
+
+        if (empty($subordinatePositionIds)) {
+            $this->hasSubordinates = false;
+            $this->subordinateIds = [];
+            $this->subordinateCount = 0;
+            return;
+        }
+
+        // Ambil employee IDs dari position bawahan (lewat relasi Position -> employee_id)
+        $subordinateEmployees = Position::whereIn('id', $subordinatePositionIds)
+            ->whereNotNull('employee_id')
+            ->pluck('employee_id')
+            ->toArray();
+
+        $this->hasSubordinates = !empty($subordinateEmployees);
+        $this->subordinateIds = $subordinateEmployees;
+        $this->subordinateCount = count($subordinateEmployees);
     }
 
     public function updated($property)
@@ -236,7 +331,7 @@ class Index extends Component
 
     public function updatedSearchTerms($value, $index)
     {
-        // Don't search if no company selected
+        // Jangan search jika tidak ada company selected
         if (!$this->selectedCompanyId) {
             return;
         }
@@ -247,7 +342,7 @@ class Index extends Component
                 ->pluck('id')
                 ->toArray();
 
-            $this->searchResults[$index] = Employee::with([
+            $query = Employee::with([
                 'position',
                 'educations',
                 'technicalCompetencies',
@@ -257,14 +352,8 @@ class Index extends Component
                 'company',
                 'papi',
                 'disc',
-                // Hapus softCompetencies dari eager loading
             ])
                 ->where('company_id', $this->selectedCompanyId)
-                ->when(
-                    $this->user->hasRole('head-of-unit'),
-                    fn($q) =>
-                    $q->where('band', '>=', (int) $this->user->band)
-                )
                 ->where(function ($query) use ($value) {
                     $query->where('name', 'like', "%{$value}%")
                         ->orWhere('email', 'like', "%{$value}%")
@@ -274,8 +363,25 @@ class Index extends Component
                         });
                 })
                 ->whereNotIn('id', $selectedIds)
-                ->limit(5)
-                ->get();
+                ->limit(5);
+
+            // Terapkan filter berdasarkan role dan band
+            $isAdminOrHcOperator = $this->user->hasRole('admin') || $this->user->hasRole('hc-operator');
+            $userBand = $this->user->band;
+
+            // Admin & HC-Operator: akses penuh, tidak perlu filter band
+            if (!$isAdminOrHcOperator) {
+                // Band 2: hanya bisa pilih band 2 ke bawah (3, 4, 5)
+                if ($userBand == 2) {
+                    $query->where('band', '>=', 2);
+                }
+                // Band 3+: hanya tampilkan anggota tim
+                elseif ($userBand >= 3 && !empty($this->subordinateIds)) {
+                    $query->whereIn('id', $this->subordinateIds);
+                }
+            }
+
+            $this->searchResults[$index] = $query->get();
 
             $this->showSearchDropdown[$index] = !empty($this->searchResults[$index]);
         } else {
@@ -299,6 +405,26 @@ class Index extends Component
         ])->find($employeeId);
 
         if ($employee) {
+            // Validasi akses berdasarkan role dan band
+            $isAdminOrHcOperator = $this->user->hasRole('admin') || $this->user->hasRole('hc-operator');
+            $userBand = $this->user->band;
+
+            if (!$isAdminOrHcOperator) {
+                // Band 2: harus band 2 ke bawah
+                if ($userBand == 2 && $employee->band < 2) {
+                    Toaster::error('You do not have access to select this employee. Band 2 can only select employees with band 2 or lower.');
+                    return;
+                }
+
+                // Band 3+: harus anggota tim
+                if ($userBand >= 3) {
+                    if (!in_array($employee->id, $this->subordinateIds)) {
+                        Toaster::error('You do not have access to select this employee. You can only select your team members.');
+                        return;
+                    }
+                }
+            }
+
             $this->selectedEmployees[$index] = $employee;
             $this->searchTerms[$index] = $employee->name;
             $this->showSearchDropdown[$index] = false;
@@ -336,13 +462,20 @@ class Index extends Component
 
     public function render()
     {
-        $showCompanySelection = $this->isSuperadmin && !$this->selectedCompanyId;
+        // Hanya superadmin yang perlu pilih company
+        $showCompanySelection = $this->user->hasRole('superadmin') && !$this->selectedCompanyId;
 
         return view('livewire.pages.candidates-comparison.index', [
             'showCompanySelection' => $showCompanySelection,
             'companies' => $this->companies,
             'isSuperadmin' => $this->isSuperadmin,
-            'selectedCompany' => $this->selectedCompany
+            'selectedCompany' => $this->selectedCompany,
+            'canSearchAllEmployees' => $this->canSearchAllEmployees,
+            'hasSubordinates' => $this->hasSubordinates,
+            'userBandLevel' => $this->userBandLevel,
+            'accessRestricted' => $this->accessRestricted,
+            'accessMessage' => $this->accessMessage,
+            'subordinateCount' => $this->subordinateCount,
         ]);
     }
 }
