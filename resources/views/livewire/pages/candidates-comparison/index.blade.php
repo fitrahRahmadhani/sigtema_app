@@ -1,7 +1,7 @@
 <div class="space-y-4 p-2">
-    {{-- Breadcrumbs --}}
+        {{-- Breadcrumbs --}}
     <flux:breadcrumbs>
-        @hasanyrole('superadmin|admin')
+        @hasanyrole('superadmin|admin|hc-operator')
             <flux:breadcrumbs.item href="{{ route('dashboard') }}">Dashboard</flux:breadcrumbs.item>
         @endhasanyrole
 
@@ -35,7 +35,14 @@
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Employee Comparison</h1>
 
-                    {{-- Company Info with Change Button --}}
+                    {{-- Company Info (Admin & HC-Operator) --}}
+                    @if (!$isSuperadmin && $selectedCompany)
+                        <div class="mt-1 flex items-center gap-2">
+                            <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
+                        </div>
+                    @endif
+
+                    {{-- Company Info with Change Button (Superadmin only) --}}
                     @if ($isSuperadmin && $selectedCompany)
                         <div class="mt-1 flex items-center gap-2">
                             <span class="text-sm text-gray-600">{{ $selectedCompany->name }}</span>
@@ -59,7 +66,7 @@
             </div>
 
             {{-- Add Column Button --}}
-            @if (! $showCompanySelection && $columnCount < 5)
+            @if (! $showCompanySelection && !$accessRestricted && $columnCount < 5)
                 <button
                     wire:click="addColumn"
                     class="color-gradient flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2 font-medium text-white transition focus:ring-2 focus:ring-red-900 focus:ring-offset-2 focus:outline-none"
@@ -78,6 +85,27 @@
                 </button>
             @endif
         </div>
+
+        {{-- Access Denied Alert --}}
+    @if ($accessRestricted)
+        <div class="rounded-lg border border-red-200 bg-red-50 p-4">
+            <div class="flex items-start gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                <div class="flex-1">
+                    <h3 class="font-medium text-red-800">Feature Not Available</h3>
+                    <p class="mt-1 text-sm text-red-600">{{ $accessMessage }}</p>
+                    <a href="{{ route('dashboard') }}" class="mt-3 inline-flex items-center gap-1 text-sm font-medium text-red-700 hover:text-red-800">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    @endif
 
         {{-- COMPANY SELECTION SECTION --}}
         @if ($showCompanySelection)
@@ -133,7 +161,7 @@
                                 </div>
                                 <div>
                                     <h4 class="font-semibold text-gray-900">{{ $company->name }}</h4>
-                                    <p class="text-sm text-gray-500">{{ $company->employees_count ?? 0 }} karyawan</p>
+                                    <p class="text-sm text-gray-500">{{ $company->employees_count ?? 0 }} employees</p>
                                 </div>
                             </div>
                         </button>
@@ -143,19 +171,21 @@
         @endif
 
         {{-- COMPARISON TABLE SECTION --}}
-        @if (! $showCompanySelection)
+        @if (! $showCompanySelection && !$accessRestricted)
             @if ($selectedCompany)
-                {{-- Info Box --}}
-                <div class="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                    <div class="text-sm text-gray-600">
-                        Comparing employees at
-                        <span class="font-semibold">{{ $selectedCompany->name }}</span>
+                @if($isSuperadmin)
+                    {{-- Info Box --}}
+                    <div class="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+                        <div class="text-sm text-gray-600">
+                            Comparing employees at
+                            <span class="font-semibold">{{ $selectedCompany->name }}</span>
+                        </div>
                     </div>
-                </div>
+                @endif
 
-                {{-- Info Box --}}
-                <div class="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-                    <div class="flex flex-col items-start gap-2 text-sm text-yellow-600">
+                {{-- User Access Info Box --}}
+                <div class="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                    <div class="flex flex-col items-start gap-2 text-sm text-blue-600">
                         <div class="flex items-center gap-2 text-base">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -169,18 +199,30 @@
                                     clip-rule="evenodd"
                                 />
                             </svg>
-                            <h6 class="font-semibold">Information</h6>
+                            <h6 class="font-semibold">Access Information</h6>
                         </div>
+                        <p class="flex items-center gap-2">
+                            <span class="font-medium">{{ $userBandLevel }}</span>
+                            @if (!$canSearchAllEmployees && $hasSubordinates)
+                                <span class="rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-700">{{ $subordinateCount }} team members</span>
+                            @endif
+                        </p>
+                        @if (!$canSearchAllEmployees && $hasSubordinates && $user->band == 2)
+                            <p>
+                                You can only compare employees who are
+                                <span class="font-semibold">band 2, band 3, band 4, or band 5</span>
+                            </p>
+                        @endif
+                        @if (!$canSearchAllEmployees && $hasSubordinates && $user->band == 3)
+                            <p>
+                                You can only compare employees who are
+                                <span class="font-semibold">your team members</span>
+                            </p>
+                        @endif
                         <p>
                             <span class="font-semibold">If charts do not appear,</span>
                             please refresh the page
                         </p>
-                        @hasrole('head-of-unit')
-                            <p>
-                                You can only compare employees
-                                <span class="font-semibold">at or below your band level</span>
-                            </p>
-                        @endhasrole
                     </div>
                 </div>
 
