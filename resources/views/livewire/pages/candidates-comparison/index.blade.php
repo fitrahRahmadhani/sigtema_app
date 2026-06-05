@@ -87,25 +87,61 @@
         </div>
 
         {{-- Access Denied Alert --}}
-    @if ($accessRestricted)
-        <div class="rounded-lg border border-red-200 bg-red-50 p-4">
-            <div class="flex items-start gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-                <div class="flex-1">
-                    <h3 class="font-medium text-red-800">Feature Not Available</h3>
-                    <p class="mt-1 text-sm text-red-600">{{ $accessMessage }}</p>
-                    <a href="{{ route('dashboard') }}" class="mt-3 inline-flex items-center gap-1 text-sm font-medium text-red-700 hover:text-red-800">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        Back to Dashboard
-                    </a>
+        @if ($accessRestricted)
+            <div class="mb-8 overflow-hidden rounded-2xl border border-red-200 shadow-sm">
+                {{-- Banner --}}
+                <div class="color-gradient px-6 py-5">
+                    <div class="flex items-center gap-4">
+                        <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-white/20">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Access Restricted</h3>
+                            <p class="mt-0.5 text-sm text-white/80">
+                                Your account level does not have permission to use the AI Candidate Analysis feature.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Body --}}
+                <div class="bg-red-50 p-6">
+                    {{-- Current Status Alert --}}
+                    <div class="flex items-start gap-3 rounded-xl border border-red-200 bg-white p-4 shadow-sm">
+                        <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-red-100">
+                            <svg class="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">Why can't I access this feature?</p>
+                            <p class="mt-1 text-sm text-gray-600">
+                                Your account is registered as <strong>Band {{ $user->band }}</strong> and currently
+                                has <strong>no subordinates</strong> assigned. You must have at least one direct subordinate
+                                to use this feature. Please <strong>report this issue</strong> if you believe this is incorrect.
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Back Button --}}
+                    <div class="mt-6">
+                        <a
+                            href="{{ route('dashboard') }}"
+                            class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 hover:shadow active:scale-95"
+                        >
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Back to Dashboard
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-    @endif
+        @endif
 
         {{-- COMPANY SELECTION SECTION --}}
         @if ($showCompanySelection)

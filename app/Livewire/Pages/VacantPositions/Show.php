@@ -4,6 +4,7 @@ namespace App\Livewire\Pages\VacantPositions;
 
 use App\Jobs\ProcessAIRecommendationsJob;
 use App\Models\Employee;
+use App\Models\EmployeeHierarchy;
 use App\Models\Position;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -32,6 +33,8 @@ class Show extends Component
     public $availableEmployees = [];
     public $selectedForAnalysis = [];
     public $maxCandidates = 10;
+    public $canSearchEmployees = true;
+    public $hasSubordinates = false;
 
     public function mount(Position $position)
     {
@@ -51,6 +54,106 @@ class Show extends Component
             $this->aiProcessing    = false;
             $this->aiProgress      = 100;
         }
+
+        $this->checkSearchAccess();
+    }
+
+    /**
+     * Determine if the current user has permission to search and add employees.
+     *
+     * Rules:
+     * - Superadmin / Admin / HC-Operator → full access to all employees within the company
+     * - Band 4+ (Head of Unit)           → can search employees at same band or lower
+     * - Band 3 with subordinates         → can only search their direct subordinates
+     * - Band 3 without subordinates      → NO access at all
+     */
+    private function checkSearchAccess(): void
+    {
+        // HC-Operator has the same full access as Admin, regardless of band
+        if ($this->user->hasRole('hc-operator')) {
+            $this->canSearchEmployees = true;
+            $this->hasSubordinates    = true;
+            return;
+        }
+
+        if ($this->user->band === 3) {
+            $subordinateIds        = $this->getSubordinateIds();
+            $this->hasSubordinates = count($subordinateIds) > 0;
+
+            // Band 3 without subordinates → cannot search
+            $this->canSearchEmployees = $this->hasSubordinates;
+        } else {
+            // Band 4+, Admin, Superadmin → full access
+            $this->canSearchEmployees = true;
+            $this->hasSubordinates    = true;
+        }
+    }
+
+    /**
+     * Find the Employee record that corresponds to the logged-in User.
+     * Bridge between users and employees tables is the email column.
+     */
+    private function getUserEmployee(): ?Employee
+    {
+        return Employee::where('email', $this->user->email)
+            ->where('company_id', $this->user->company_id)
+            ->first();
+    }
+
+    /**
+     * Get the Position record that belongs to the current user's Employee record.
+     * positions.employee_id → employees.id
+     */
+    private function getUserPosition(): ?Position
+    {
+        $employee = $this->getUserEmployee();
+
+        if (!$employee) {
+            return null;
+        }
+
+        return Position::where('employee_id', $employee->id)->first();
+    }
+
+    /**
+     * Get IDs of all direct subordinate employees under the current user.
+     *
+     * Flow:
+     *   users.email
+     *     → employees.email          (find employee record)
+     *     → positions.employee_id    (find their position)
+     *     → employee_hierarchies.superior_id = position.id (find subordinate positions)
+     *     → positions.employee_id    (find employees in those positions)
+     *     → employees.id             (return their IDs)
+     */
+    public function getSubordinateIds(): array
+    {
+        $userPosition = $this->getUserPosition();
+
+        if (!$userPosition) {
+            return [];
+        }
+
+        // Get all position IDs that are direct subordinates of the user's position
+        $subordinatePositionIds = EmployeeHierarchy::where('company_id', $this->user->company_id)
+            ->where('superior_id', $userPosition->id)
+            ->pluck('position_id')
+            ->toArray();
+
+        if (empty($subordinatePositionIds)) {
+            return [];
+        }
+
+        // Get employee IDs that currently hold those subordinate positions
+        return Employee::where('company_id', $this->user->company_id)
+            ->whereIn('id', function ($query) use ($subordinatePositionIds) {
+                $query->select('employee_id')
+                    ->from('positions')
+                    ->whereIn('id', $subordinatePositionIds)
+                    ->whereNotNull('employee_id');
+            })
+            ->pluck('id')
+            ->toArray();
     }
 
     private function cacheKey(): string
@@ -86,27 +189,43 @@ class Show extends Component
             return;
         }
 
+        // Guard: user without permission cannot search
+        if (!$this->canSearchEmployees) {
+            Toaster::warning('You do not have permission to search employees.');
+            return;
+        }
+
         $selectedIds = array_keys($this->selectedForAnalysis);
 
-        $this->availableEmployees = Employee::with(['position:id,name,employee_id'])
+        $query = Employee::with(['position:id,name,employee_id'])
             ->select(['id', 'name', 'employee_number', 'band', 'company_id'])
             ->where('company_id', $this->position->company_id)
-            ->when(
-                $this->user->hasRole('head-of-unit'),
-                fn($q) =>
-                $q->where('band', '>=', (int) $this->user->band)
-            )
             ->where(function ($q) {
                 $q->where('name', 'LIKE', '%' . $this->searchTerm . '%')
                     ->orWhere('employee_number', 'LIKE', '%' . $this->searchTerm . '%');
             })
-            ->when(
-                !empty($selectedIds),
-                fn($q) =>
-                $q->whereNotIn('id', $selectedIds)
-            )
-            ->limit(20)
-            ->get()
+            ->whereNotIn('id', $selectedIds)
+            ->limit(20);
+
+        if ($this->user->band === 3 && $this->hasSubordinates && ! $this->user->hasRole('hc-operator')) {
+            // Band 3 with subordinates → can ONLY search their direct subordinates
+            $subordinateIds = $this->getSubordinateIds();
+
+            if (empty($subordinateIds)) {
+                $this->availableEmployees = [];
+                return;
+            }
+
+            $query->whereIn('id', $subordinateIds);
+        } elseif (!$this->user->hasRole('superadmin|admin|hc-operator')) {
+            // Band 4+ Head of Unit → can search same band or lower
+            // Guard against null band
+            $userBand = (int) ($this->user->band ?? 1);
+            $query->where('band', '>=', $userBand);
+        }
+        // Superadmin / Admin / HC-Operator → no additional filter, full company access
+
+        $this->availableEmployees = $query->get()
             ->mapWithKeys(fn($employee) => [
                 $employee->id => [
                     'id'              => $employee->id,
@@ -121,8 +240,13 @@ class Show extends Component
 
     public function addToAnalysis($employeeId)
     {
+        if (!$this->canSearchEmployees) {
+            Toaster::warning('You do not have permission to add employees.');
+            return;
+        }
+
         if (count($this->selectedForAnalysis) >= $this->maxCandidates) {
-            Toaster::warning("Maximum {$this->maxCandidates} candidates can be analyzed");
+            Toaster::warning("Maximum {$this->maxCandidates} candidates can be analyzed.");
             return;
         }
 
@@ -144,13 +268,13 @@ class Show extends Component
     {
         $employeeIds = array_keys($this->selectedForAnalysis);
 
-        if (count($employeeIds) === 0) {
-            Toaster::warning('Select at least 1 candidate to analyze');
+        if (count($employeeIds) < 1) {
+            Toaster::warning('Select at least 1 candidate to analyze.');
             return;
         }
 
         if (count($employeeIds) > $this->maxCandidates) {
-            Toaster::warning("Maximum {$this->maxCandidates} candidates per analysis");
+            Toaster::warning("Maximum {$this->maxCandidates} candidates per analysis.");
             return;
         }
 
@@ -213,19 +337,19 @@ class Show extends Component
     {
         if (count($this->selectedCandidates) > 5) {
             $this->selectedCandidates = array_slice($this->selectedCandidates, 0, 5);
-            Toaster::warning('Maximum 5 candidates can be selected for comparison');
+            Toaster::warning('Maximum 5 candidates can be selected for comparison.');
         }
     }
 
     public function compareSelected()
     {
         if (count($this->selectedCandidates) < 2) {
-            Toaster::warning('Comparison must have at least 2 candidates');
+            Toaster::warning('Comparison must have at least 2 candidates.');
             return;
         }
 
         if (count($this->selectedCandidates) > 5) {
-            Toaster::warning('Max. 5 candidates can be compared');
+            Toaster::warning('Max. 5 candidates can be compared.');
             return;
         }
 
